@@ -1,0 +1,22 @@
+{
+    "name": "whsv26/functional",
+    "description": "Common use functions",
+    "type": "library",
+    "authors": [
+        {
+            "name": "whsv26",
+            "email": "whsv26@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "vimeo/psalm": "^4.7",
+        "lstrojny/functional-php": "^1.17",
+        "klimick/psalm-show-type": "^1.0"
+    },
+    "autoload": {
+        "files": [
+            "src/Fp/Map.php",
+            "src/Fp/Reduce.php"
+        ]
+    }
+}
