@@ -16,7 +16,11 @@
     "autoload": {
         "files": [
             "src/Fp/Map.php",
-            "src/Fp/Reduce.php"
+            "src/Fp/Reduce.php",
+            "src/Fp/Fold.php",
+            "src/Fp/Function1.php",
+            "src/Fp/Function2.php",
+            "src/Fp/Curry.php"
         ]
     }
 }
