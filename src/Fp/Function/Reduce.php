@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Fp\Function;
 
 /**
- * @template TK of array-key
- * @template TV
+ * @psalm-template TK of array-key
+ * @psalm-template TV
  *
  * @psalm-param non-empty-array<TK, TV> $collection
  * @psalm-param callable(TV, TV): TV $callback
+ *
  * @psalm-return TV
  */
 function reduce(iterable $collection, callable $callback): mixed

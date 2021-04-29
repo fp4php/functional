@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Fp\Function;
 
 /**
- * @template TK of array-key
- * @template TV
- * @template TA of TV
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ * @psalm-template TA of TV
  *
  * @psalm-param TA $init
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TV): TV $callback
+ *
  * @psalm-return TV
  */
 function fold(mixed $init, iterable $collection, callable $callback): mixed

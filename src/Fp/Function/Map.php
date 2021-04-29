@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace Fp\Function;
 
 /**
- * @template TK of array-key
- * @template TVI
- * @template TVO
+ * P.S. Check PHP copy on write optimisation behaviour
+ */
+
+/**
+ * @psalm-template TK of array-key
+ * @psalm-template TVI
+ * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TVI> $collection
- * @psalm-param \Closure(TVI, TK): TVO $callback
+ * @psalm-param \Closure(TVI, TK, iterable<TK, TVI>): TVO $callback
+ * 
  * @psalm-return array<TK, TVO>
  */
 function map(iterable $collection, callable $callback): array
@@ -18,7 +23,7 @@ function map(iterable $collection, callable $callback): array
     $aggregation = [];
 
     foreach ($collection as $index => $element) {
-        $aggregation[$index] = $callback($element, $index);
+        $aggregation[$index] = $callback($element, $index, $collection);
     }
 
     return $aggregation;
