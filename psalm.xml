@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <psalm
     errorLevel="1"
-    resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
@@ -17,5 +16,10 @@
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
+        <DuplicateFunction errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="src/Fp/Function"/>
+            </errorLevel>
+        </DuplicateFunction>
     </issueHandlers>
 </psalm>
