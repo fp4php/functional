@@ -14,13 +14,14 @@
         "klimick/psalm-show-type": "^1.0"
     },
     "autoload": {
+        "psr-4": {
+            "Fp\\Functional\\": "src/Fp/Functional"
+        },
         "files": [
-            "src/Fp/Map.php",
-            "src/Fp/Reduce.php",
-            "src/Fp/Fold.php",
-            "src/Fp/Function1.php",
-            "src/Fp/Function2.php",
-            "src/Fp/Curry.php"
+            "src/Fp/Function/Map.php",
+            "src/Fp/Function/Reduce.php",
+            "src/Fp/Function/Fold.php",
+            "src/Fp/Function/Curry.php"
         ]
     }
 }

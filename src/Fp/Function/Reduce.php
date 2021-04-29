@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp;
+namespace Fp\Function;
 
 /**
  * @template TK of array-key
