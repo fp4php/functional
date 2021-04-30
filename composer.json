@@ -15,7 +15,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Fp\\Functional\\": "src/Fp/Functional"
+            "Fp\\Functional\\": "src/Fp/Functional",
+            "Fp\\Psalm\\": "src/Fp/Psalm"
         },
         "files": [
             "src/Fp/Function/Map.php",
@@ -23,7 +24,11 @@
             "src/Fp/Function/Fold.php",
             "src/Fp/Function/Curry.php",
             "src/Fp/Function/First.php",
-            "src/Fp/Function/Head.php"
+            "src/Fp/Function/Head.php",
+            "src/Fp/Function/Tail.php"
         ]
+    },
+    "require": {
+        "ext-simplexml": "*"
     }
 }
