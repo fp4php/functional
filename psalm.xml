@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="1"
+    errorLevel="3"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
@@ -12,6 +12,7 @@
         </ignoreFiles>
     </projectFiles>
     <plugins>
+        <pluginClass class="Fp\Psalm\CurryPlugin"/>
         <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
     </plugins>
     <issueHandlers>
