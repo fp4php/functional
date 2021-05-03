@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
-use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
 use Psalm\Codebase;
 use Psalm\CodeLocation;
@@ -123,16 +122,21 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
 
             $param_type = $param->type ?? Type::getMixed();
 
-            Option::of(self::getArgType($arg, $statements_source))
-                ->map(function (Union $arg_type) use ($param_type, $codebase) {
-                    $is_subtype_of = $codebase->isTypeContainedByType($arg_type, $param_type);
-                    return !$is_subtype_of ? $arg_type : null;
-                })
-                ->map(fn(Union $arg_type) => self::issueInvalidArgument(
-                    function_id: $function_id,
-                    code_location: $location,
-                    expected_type: (string) $param_type)
-                );
+            if (is_null($arg_type = self::getArgType($arg, $statements_source))) {
+                continue;
+            }
+
+            $is_subtype_of = $codebase->isTypeContainedByType($arg_type, $param_type);
+
+            if ($is_subtype_of) {
+                continue;
+            }
+
+            self::issueInvalidArgument(
+                function_id: $function_id,
+                code_location: $location,
+                expected_type: (string) $param_type
+            );
         }
     }
 
