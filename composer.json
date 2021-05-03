@@ -19,12 +19,13 @@
             "Fp\\Psalm\\": "src/Fp/Psalm"
         },
         "files": [
-            "src/Fp/Function/Map.php",
-            "src/Fp/Function/Reduce.php",
-            "src/Fp/Function/Fold.php",
-          "src/Fp/Function/Partial.php",
+            "src/Fp/Function/Every.php",
             "src/Fp/Function/First.php",
+            "src/Fp/Function/Fold.php",
             "src/Fp/Function/Head.php",
+            "src/Fp/Function/Map.php",
+            "src/Fp/Function/Partial.php",
+            "src/Fp/Function/Reduce.php",
             "src/Fp/Function/Tail.php"
         ]
     },
