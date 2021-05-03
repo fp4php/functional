@@ -21,7 +21,7 @@ function partial(callable $callback, mixed ...$args): callable
  */
 function partialLeft(callable $callback, mixed ...$args): callable
 {
-    return fn(...$freeArgs) => $callback(...array_merge($args, $freeArgs));
+    return fn(mixed ...$freeArgs): mixed => $callback(...array_merge($args, $freeArgs));
 }
 
 /**
@@ -30,7 +30,7 @@ function partialLeft(callable $callback, mixed ...$args): callable
  */
 function partialRight(callable $callback, mixed ...$args): callable
 {
-    return fn(...$freeArgs) => $callback(...array_merge($freeArgs, array_reverse($args)));
+    return fn(mixed ...$freeArgs): mixed => $callback(...array_merge($freeArgs, array_reverse($args)));
 }
 
 
