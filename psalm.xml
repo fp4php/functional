@@ -12,7 +12,7 @@
         </ignoreFiles>
     </projectFiles>
     <plugins>
-        <pluginClass class="Fp\Psalm\CurryPlugin"/>
+        <pluginClass class="Fp\Psalm\PartialPlugin"/>
         <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
     </plugins>
     <issueHandlers>
