@@ -15,10 +15,10 @@ namespace Fp\Function;
  *
  * @psalm-param iterable<TK, TVI> $collection
  * @psalm-param \Closure(TVI, TK, iterable<TK, TVI>): TVO $callback
- * 
+ *
  * @psalm-return array<TK, TVO>
  */
-function map(iterable $collection, callable $callback): array
+function map(iterable $collection, \Closure $callback): array
 {
     $aggregation = [];
 

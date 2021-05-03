@@ -15,7 +15,7 @@ use Fp\Functional\Option\Option;
  *
  * @psalm-return Option<TV>
  */
-function first(iterable $collection, ?callable $callback = null): Option
+function first(iterable $collection, ?\Closure $callback = null): Option
 {
     if (is_null($callback)) {
         return head($collection);

@@ -4,22 +4,30 @@ declare(strict_types=1);
 
 namespace Fp\Function;
 
+use Fp\Functional\Option\Option;
+
 /**
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
- * @psalm-param non-empty-array<TK, TV> $collection
- * @psalm-param callable(TV, TV): TV $callback
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param \Closure(TV, TV): TV $callback
  *
- * @psalm-return TV
+ * @psalm-return Option<TV>
  */
-function reduce(iterable $collection, callable $callback): mixed
+function reduce(iterable $collection, \Closure $callback): Option
 {
-    $acc = array_shift($collection);
+    $tail = tail($collection);
 
-    foreach ($collection as $element) {
-        $acc = $callback($acc, $element);
-    }
+    return head($collection)
+        ->map(function (mixed $head) use ($tail, $callback): mixed {
+            /** @var TV $acc */
+            $acc = $head;
 
-    return $acc;
+            foreach ($tail as $element) {
+                $acc = $callback($acc, $element);
+            }
+
+            return $acc;
+        });
 }
