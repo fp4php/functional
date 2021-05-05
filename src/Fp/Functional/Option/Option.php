@@ -46,6 +46,23 @@ abstract class Option
 
     /**
      * @psalm-template B
+     * @param Closure(A): Option<B> $closure
+     * @psalm-return Option<B>
+     */
+    public function flatMap(Closure $closure): Option
+    {
+        if ($this->isEmpty()) {
+            return new None();
+        }
+
+        /** @psalm-var A $value */
+        $value = $this->value;
+
+        return $closure($value);
+    }
+
+    /**
+     * @psalm-template B
      * @param B|null $value
      * @psalm-return Option<B>
      */
@@ -58,4 +75,14 @@ abstract class Option
      * @psalm-return A|null
      */
     public abstract function get(): mixed;
+
+    /**
+     * @template T
+     * @psalm-param T $fallback
+     * @psalm-return A|T
+     */
+    public function getOrElse(mixed $fallback): mixed
+    {
+        return $this->get() ?? $fallback;
+    }
 }

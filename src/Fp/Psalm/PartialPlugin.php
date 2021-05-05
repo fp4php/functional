@@ -61,7 +61,7 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
 
         return head($args)
             ->map(fn(Arg $head_arg) => self::getArgType($head_arg, $source))
-            ->map(fn(Union $head_arg_type) => head($head_arg_type->getClosureTypes())->get())
+            ->flatMap(fn(Union $head_arg_type) => head($head_arg_type->getClosureTypes()))
             ->map(function (TClosure $closure_type) use ($function_id, $source, $args, $location, $codebase, $is_partial_right) {
                 $closure_type_copy = clone $closure_type;
                 $closure_params = $closure_type_copy->params ?? [];

@@ -3,6 +3,7 @@
 use Behat\Behat\Context\Context;
 
 use function Fp\Function\fold;
+use function Fp\Function\second;
 use function Symfony\Component\String\u;
 
 /**
@@ -57,10 +58,10 @@ class ExpressionContext implements Context
      */
     protected function analyze(string $expr): array
     {
+        $psalmPath = __DIR__ . '/../../vendor/bin/psalm';
         $tmp_file_name = tempnam(sys_get_temp_dir(), 'psalm_');
         file_put_contents($tmp_file_name, $expr);
 
-        $psalmPath = __DIR__.'/../../vendor/bin/psalm';
         exec(
             sprintf('%s --output-format=compact %s', ...[
                 $psalmPath,
@@ -84,10 +85,11 @@ class ExpressionContext implements Context
             init: '',
             collection: $lines,
             callback: function (string $acc, string $line) {
-                return $acc . (string) (u($line)->match('/res: (.+?)\s*?\|/u')[1] ?? '');
+                /** @var list<string> */
+                $matches = u($line)->match('/res: (.+?)\s*?\|/u');
+
+                return $acc . (second($matches)->getOrElse(''));
             }
         );
     }
-
-
 }
