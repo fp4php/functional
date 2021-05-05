@@ -20,7 +20,7 @@ abstract class Option
     ) {
     }
 
-    protected function isEmpty(): bool
+    public function isEmpty(): bool
     {
         return $this instanceof None;
     }

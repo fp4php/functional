@@ -11,7 +11,7 @@ use Fp\Functional\Option\Option;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param null|\Closure(TV, TK): bool $callback
+ * @psalm-param null|\Closure(TV, TK, iterable<TK, TV>): bool $callback
  *
  * @psalm-return Option<TV>
  */
@@ -24,7 +24,7 @@ function first(iterable $collection, ?\Closure $callback = null): Option
     $first = null;
 
     foreach ($collection as $index => $element) {
-        if ($callback($element, $index)) {
+        if ($callback($element, $index, $collection)) {
             $first = $element;
             break;
         }

@@ -13,7 +13,7 @@ namespace Fp\Function;
  *
  * @psalm-return bool
  */
-function every($collection, \Closure $callback, bool $strict = true): bool
+function every(iterable $collection, \Closure $callback, bool $strict = true): bool
 {
     $result = !$strict;
 
