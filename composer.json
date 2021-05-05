@@ -8,6 +8,10 @@
             "email": "whsv26@gmail.com"
         }
     ],
+    "require": {
+        "php": "^8.0",
+        "ext-simplexml": "*"
+    },
     "require-dev": {
         "vimeo/psalm": "^4.7",
         "lstrojny/functional-php": "^1.17",
@@ -30,8 +34,5 @@
             "src/Fp/Function/Second.php",
             "src/Fp/Function/Tail.php"
         ]
-    },
-    "require": {
-        "ext-simplexml": "*"
     }
 }
