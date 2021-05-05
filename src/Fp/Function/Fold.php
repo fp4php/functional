@@ -20,7 +20,7 @@ function fold(mixed $init, iterable $collection, callable $callback): mixed
     $acc = $init;
 
     foreach ($collection as $element) {
-        $acc = $callback($acc, $element);
+        $acc = call_user_func($callback, $acc, $element);
     }
 
     return $acc;

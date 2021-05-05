@@ -11,11 +11,11 @@ use Fp\Functional\Option\Option;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param \Closure(TV, TV): TV $callback
+ * @psalm-param callable(TV, TV): TV $callback
  *
  * @psalm-return Option<TV>
  */
-function reduce(iterable $collection, \Closure $callback): Option
+function reduce(iterable $collection, callable $callback): Option
 {
     $tail = tail($collection);
 
@@ -25,7 +25,7 @@ function reduce(iterable $collection, \Closure $callback): Option
             $acc = $head;
 
             foreach ($tail as $element) {
-                $acc = $callback($acc, $element);
+                $acc = call_user_func($callback, $acc, $element);
             }
 
             return $acc;

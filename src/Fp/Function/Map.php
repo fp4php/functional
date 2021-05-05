@@ -10,16 +10,16 @@ namespace Fp\Function;
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TVI> $collection
- * @psalm-param \Closure(TVI, TK): TVO $callback
+ * @psalm-param callable(TVI, TK): TVO $callback
  *
  * @psalm-return array<TK, TVO>
  */
-function map(iterable $collection, \Closure $callback): array
+function map(iterable $collection, callable $callback): array
 {
     $aggregation = [];
 
     foreach ($collection as $index => $element) {
-        $aggregation[$index] = $callback($element, $index);
+        $aggregation[$index] = call_user_func($callback, $element, $index);
     }
 
     return $aggregation;
