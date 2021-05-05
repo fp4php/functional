@@ -11,7 +11,8 @@
     "require-dev": {
         "vimeo/psalm": "^4.7",
         "lstrojny/functional-php": "^1.17",
-        "klimick/psalm-show-type": "^1.0"
+        "klimick/psalm-show-type": "^1.0",
+        "behat/behat": "^3.8"
     },
     "autoload": {
         "psr-4": {
