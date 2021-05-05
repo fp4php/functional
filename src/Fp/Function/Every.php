@@ -9,7 +9,7 @@ namespace Fp\Function;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param \Closure(TV, TK, iterable<TK, TV>): bool $callback
+ * @psalm-param \Closure(TV, TK): bool $callback
  *
  * @psalm-return bool
  */
@@ -20,7 +20,7 @@ function every(iterable $collection, \Closure $callback, bool $strict = true): b
     foreach ($collection as $index => $element) {
         $result = true;
 
-        if (!$callback($element, $index, $collection)) {
+        if (!$callback($element, $index)) {
             $result = false;
             break;
         }

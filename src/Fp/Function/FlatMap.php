@@ -10,7 +10,7 @@ namespace Fp\Function;
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TVI> $collection
- * @psalm-param \Closure(TVI, TK, iterable<TK, TVI>): iterable<array-key, TVO> $callback
+ * @psalm-param \Closure(TVI, TK): iterable<array-key, TVO> $callback
  *
  * @psalm-return list<TVO>
  */
@@ -19,7 +19,7 @@ function flatMap(iterable $collection, \Closure $callback): array
     $flattened = [];
 
     foreach ($collection as $index => $element) {
-        $result = $callback($element, $index, $collection);
+        $result = $callback($element, $index);
 
         foreach ($result as $item) {
             $flattened[] = $item;
