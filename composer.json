@@ -26,6 +26,7 @@
         "files": [
             "src/Fp/Function/Every.php",
             "src/Fp/Function/First.php",
+            "src/Fp/Function/FlatMap.php",
             "src/Fp/Function/Fold.php",
             "src/Fp/Function/Head.php",
             "src/Fp/Function/Map.php",
