@@ -27,6 +27,7 @@
             "src/Fp/Function/Map.php",
             "src/Fp/Function/Partial.php",
             "src/Fp/Function/Reduce.php",
+            "src/Fp/Function/Second.php",
             "src/Fp/Function/Tail.php"
         ]
     },
