@@ -13,7 +13,7 @@ namespace Fp\Function;
  *
  * @psalm-return array<TK, TV>
  */
-function select(iterable $collection, callable $callback): array
+function filter(iterable $collection, callable $callback): array
 {
     $aggregation = [];
 

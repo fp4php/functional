@@ -34,7 +34,7 @@
             "src/Fp/Function/Partial.php",
             "src/Fp/Function/Reduce.php",
             "src/Fp/Function/Second.php",
-            "src/Fp/Function/Select.php",
+            "src/Fp/Function/Filter.php",
             "src/Fp/Function/Some.php",
             "src/Fp/Function/Tail.php"
         ]
