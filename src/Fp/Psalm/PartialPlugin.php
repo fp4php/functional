@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
+use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
 use Psalm\Codebase;
 use Psalm\CodeLocation;
@@ -60,7 +61,7 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
         $codebase = $source->getCodebase();
 
         return head($args)
-            ->map(fn(Arg $head_arg) => self::getArgType($head_arg, $source))
+            ->flatMap(fn(Arg $head_arg) => self::getArgType($head_arg, $source))
             ->flatMap(fn(Union $head_arg_type) => head($head_arg_type->getClosureTypes()))
             ->map(function (TClosure $closure_type) use ($function_id, $source, $args, $location, $codebase, $is_partial_right) {
                 $closure_type_copy = clone $closure_type;
@@ -121,12 +122,13 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
             }
 
             $param_type = $param->type ?? Type::getMixed();
+            $arg_type = self::getArgType($arg, $statements_source);
 
-            if (is_null($arg_type = self::getArgType($arg, $statements_source))) {
+            if ($arg_type->isEmpty()) {
                 continue;
             }
 
-            $is_subtype_of = $codebase->isTypeContainedByType($arg_type, $param_type);
+            $is_subtype_of = $codebase->isTypeContainedByType($arg_type->get(), $param_type);
 
             if ($is_subtype_of) {
                 continue;
@@ -152,8 +154,11 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
         IssueBuffer::accepts($issue);
     }
 
-    private static function getArgType(Arg $arg, StatementsSource $source): ?Union
+    /**
+     * @psalm-return Option<Union>
+     */
+    private static function getArgType(Arg $arg, StatementsSource $source): Option
     {
-        return $source->getNodeTypeProvider()->getType($arg->value);
+        return Option::of($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

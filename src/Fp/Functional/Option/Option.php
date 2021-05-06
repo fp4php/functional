@@ -20,6 +20,9 @@ abstract class Option
     ) {
     }
 
+    /**
+     * @psalm-assert-if-false Some<A> $this
+     */
     public function isEmpty(): bool
     {
         return $this instanceof None;
