@@ -2,6 +2,8 @@
 
 use Behat\Behat\Context\Context;
 
+use Behat\Gherkin\Node\PyStringNode;
+
 use function Fp\Function\fold;
 use function Fp\Function\second;
 use function Symfony\Component\String\u;
@@ -28,6 +30,19 @@ class ExpressionContext implements Context
     public function givenExpression(string $expr): void
     {
         $traced_expr = u($expr)
+            ->prepend('<?php /** @psalm-trace $res */ $res = ')
+            ->append(' ?>')
+            ->toString();
+
+        $this->expr = $traced_expr;
+    }
+
+    /**
+     * @Given /expression:/
+     */
+    public function givenExpressionMultiline(PyStringNode $expr): void
+    {
+        $traced_expr = u($expr->getRaw())
             ->prepend('<?php /** @psalm-trace $res */ $res = ')
             ->append(' ?>')
             ->toString();
@@ -86,7 +101,7 @@ class ExpressionContext implements Context
             collection: $lines,
             callback: function (string $acc, string $line) {
                 /** @var list<string> */
-                $matches = u($line)->match('/res: (.+?)\s*?\|/u');
+                $matches = u($line)->match('/res: (.+?)\s*?\|$/u');
 
                 return $acc . (second($matches)->getOrElse(''));
             }
