@@ -23,10 +23,6 @@ use function Fp\Function\head;
 use function Fp\Function\map;
 use function Fp\Function\tail;
 
-/**
- * @psalm-suppress all
- * @psalm-suppress All
- */
 class PartitionPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
