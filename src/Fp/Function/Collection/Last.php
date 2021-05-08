@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Function;
+namespace Fp\Function\Collection;
 
 use Fp\Functional\Option\Option;
 
@@ -15,20 +15,15 @@ use Fp\Functional\Option\Option;
  *
  * @psalm-return Option<TV>
  */
-function first(iterable $collection, ?callable $predicate = null): Option
+function last(iterable $collection, ?callable $predicate = null): Option
 {
-    if (is_null($predicate)) {
-        return head($collection);
-    }
-
-    $first = null;
+    $last = null;
 
     foreach ($collection as $index => $element) {
-        if (call_user_func($predicate, $element, $index)) {
-            $first = $element;
-            break;
+        if (is_null($predicate) || call_user_func($predicate, $element, $index)) {
+            $last = $element;
         }
     }
 
-    return Option::of($first);
+    return Option::of($last);
 }

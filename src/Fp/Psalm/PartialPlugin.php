@@ -20,8 +20,8 @@ use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
-use function Fp\Function\head;
-use function Fp\Function\tail;
+use function Fp\Function\Collection\head;
+use function Fp\Function\Collection\tail;
 use function Symfony\Component\String\u;
 
 class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface

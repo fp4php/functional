@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Function;
+namespace Fp\Function\Collection;
 
 /**
  * @psalm-template TK of array-key

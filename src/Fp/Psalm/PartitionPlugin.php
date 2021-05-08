@@ -19,9 +19,9 @@ use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
-use function Fp\Function\head;
-use function Fp\Function\map;
-use function Fp\Function\tail;
+use function Fp\Function\Collection\head;
+use function Fp\Function\Collection\map;
+use function Fp\Function\Collection\tail;
 
 class PartitionPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {

@@ -24,22 +24,22 @@
             "Fp\\Psalm\\": "src/Fp/Psalm"
         },
         "files": [
-            "src/Fp/Function/Every.php",
-            "src/Fp/Function/First.php",
-            "src/Fp/Function/FlatMap.php",
-            "src/Fp/Function/Fold.php",
-            "src/Fp/Function/Group.php",
-            "src/Fp/Function/Head.php",
+            "src/Fp/Function/Collection/Every.php",
+            "src/Fp/Function/Collection/First.php",
+            "src/Fp/Function/Collection/FlatMap.php",
+            "src/Fp/Function/Collection/Fold.php",
+            "src/Fp/Function/Collection/Group.php",
+            "src/Fp/Function/Collection/Head.php",
+            "src/Fp/Function/Collection/Last.php",
+            "src/Fp/Function/Collection/Map.php",
+            "src/Fp/Function/Collection/Partition.php",
+            "src/Fp/Function/Collection/Reduce.php",
+            "src/Fp/Function/Collection/Second.php",
+            "src/Fp/Function/Collection/Filter.php",
+            "src/Fp/Function/Collection/Some.php",
+            "src/Fp/Function/Collection/Tail.php",
             "src/Fp/Function/Id.php",
-            "src/Fp/Function/Last.php",
-            "src/Fp/Function/Map.php",
-            "src/Fp/Function/Partial.php",
-            "src/Fp/Function/Partition.php",
-            "src/Fp/Function/Reduce.php",
-            "src/Fp/Function/Second.php",
-            "src/Fp/Function/Filter.php",
-            "src/Fp/Function/Some.php",
-            "src/Fp/Function/Tail.php"
+            "src/Fp/Function/Partial.php"
         ]
     }
 }
