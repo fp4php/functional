@@ -31,6 +31,7 @@
             "src/Fp/Function/Group.php",
             "src/Fp/Function/Head.php",
             "src/Fp/Function/Id.php",
+            "src/Fp/Function/Last.php",
             "src/Fp/Function/Map.php",
             "src/Fp/Function/Partial.php",
             "src/Fp/Function/Partition.php",
