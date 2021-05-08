@@ -9,11 +9,11 @@ namespace Fp\Function;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool $callback
+ * @psalm-param callable(TV, TK): bool $predicate
  *
  * @psalm-return bool
  */
-function some(iterable $collection, callable $callback): bool
+function some(iterable $collection, callable $predicate): bool
 {
-    return !(first($collection, $callback)->isEmpty());
+    return !(first($collection, $predicate)->isEmpty());
 }

@@ -9,18 +9,18 @@ namespace Fp\Function;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool $callback
+ * @psalm-param callable(TV, TK): bool $predicate
  *
  * @psalm-return bool
  */
-function every(iterable $collection, callable $callback, bool $strict = true): bool
+function every(iterable $collection, callable $predicate, bool $strict = true): bool
 {
     $result = !$strict;
 
     foreach ($collection as $index => $element) {
         $result = true;
 
-        if (!call_user_func($callback, $element, $index)) {
+        if (!call_user_func($predicate, $element, $index)) {
             $result = false;
             break;
         }

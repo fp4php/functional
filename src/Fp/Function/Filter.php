@@ -9,16 +9,16 @@ namespace Fp\Function;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool $callback
+ * @psalm-param callable(TV, TK): bool $predicate
  *
  * @psalm-return array<TK, TV>
  */
-function filter(iterable $collection, callable $callback): array
+function filter(iterable $collection, callable $predicate): array
 {
     $aggregation = [];
 
     foreach ($collection as $index => $element) {
-        if (call_user_func($callback, $element, $index)) {
+        if (call_user_func($predicate, $element, $index)) {
             $aggregation[$index] = $element;
         }
     }

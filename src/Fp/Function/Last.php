@@ -11,16 +11,16 @@ use Fp\Functional\Option\Option;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param null|callable(TV, TK): bool $callback
+ * @psalm-param null|callable(TV, TK): bool $predicate
  *
  * @psalm-return Option<TV>
  */
-function last(iterable $collection, ?callable $callback = null): Option
+function last(iterable $collection, ?callable $predicate = null): Option
 {
     $last = null;
 
     foreach ($collection as $index => $element) {
-        if (is_null($callback) || call_user_func($callback, $element, $index)) {
+        if (is_null($predicate) || call_user_func($predicate, $element, $index)) {
             $last = $element;
         }
     }
