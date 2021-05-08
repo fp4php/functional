@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Either;
 
+use Fp\Functional\Option\None;
+use Fp\Functional\Option\Option;
+use Fp\Functional\Option\Some;
+
 /**
  * @template-covariant L
  * @template-covariant R
@@ -37,6 +41,50 @@ abstract class Either
 
             return $ifLeft($this->get());
         }
+    }
+
+    /**
+     * @psalm-template RO
+     * @param \Closure(R): RO $closure
+     * @psalm-return Either<L, RO>
+     */
+    public function map(\Closure $closure): Either
+    {
+        if ($this->isLeft()) {
+            return new Left($this->get());
+        }
+
+        /**
+         * @var Right<L, R> $this
+         */
+
+        return new Right($closure($this->get()));
+    }
+
+    /**
+     * @psalm-template RO
+     * @param \Closure(R): Either<L, RO> $closure
+     * @psalm-return Either<L, RO>
+     */
+    public function flatMap(\Closure $closure): Either
+    {
+        if ($this->isLeft()) {
+            return new Left($this->get());
+        }
+
+        /**
+         * @var Right<L, R> $this
+         */
+
+        return $closure($this->get());
+    }
+
+    /**
+     * @return Option<R>
+     */
+    public function toOption(): Option
+    {
+        return $this->isRight() ? new Some($this->get()) : new None();
     }
 
     /**
