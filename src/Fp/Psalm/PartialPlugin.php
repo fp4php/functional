@@ -42,9 +42,9 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
     public static function getFunctionIds(): array
     {
         return [
-            'fp\function\partial',
-            'fp\function\partialleft',
-            'fp\function\partialright',
+            'fp\function\callable\partial',
+            'fp\function\callable\partialleft',
+            'fp\function\callable\partialright',
         ];
     }
 

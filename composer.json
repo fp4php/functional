@@ -49,7 +49,9 @@
             "src/Fp/Function/Reflection/GetReflectionClass.php",
             "src/Fp/Function/Reflection/GetReflectionProperty.php",
             "src/Fp/Function/Id.php",
-            "src/Fp/Function/Partial.php"
+            "src/Fp/Function/Callable/Partial.php",
+            "src/Fp/Function/Callable/PartialLeft.php",
+            "src/Fp/Function/Callable/PartialRight.php"
         ]
     }
 }
