@@ -9,6 +9,8 @@ use ReflectionException;
 use ReflectionProperty;
 
 /**
+ * @template T of object
+ * @psalm-param T|class-string<T> $class
  * @psalm-return Either<ReflectionException, ReflectionProperty>
  */
 function getReflectionProperty(object|string $class, string $property): Either

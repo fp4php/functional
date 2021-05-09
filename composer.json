@@ -24,6 +24,11 @@
             "Fp\\Psalm\\": "src/Fp/Psalm"
         },
         "files": [
+            "src/Fp/Function/Cast/AsArray.php",
+            "src/Fp/Function/Cast/AsClassString.php",
+            "src/Fp/Function/Cast/AsList.php",
+            "src/Fp/Function/Cast/AsNonEmptyArray.php",
+            "src/Fp/Function/Cast/AsNonEmptyList.php",
             "src/Fp/Function/Collection/Every.php",
             "src/Fp/Function/Collection/First.php",
             "src/Fp/Function/Collection/FlatMap.php",
@@ -41,6 +46,7 @@
             "src/Fp/Function/Collection/Some.php",
             "src/Fp/Function/Collection/Tail.php",
             "src/Fp/Function/Reflection/GetNamedTypes.php",
+            "src/Fp/Function/Reflection/GetReflectionClass.php",
             "src/Fp/Function/Reflection/GetReflectionProperty.php",
             "src/Fp/Function/Id.php",
             "src/Fp/Function/Partial.php"
