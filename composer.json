@@ -40,7 +40,7 @@
             "src/Fp/Function/Collection/Filter.php",
             "src/Fp/Function/Collection/Some.php",
             "src/Fp/Function/Collection/Tail.php",
-            "src/Fp/Function/Reflection/GetNamedType.php",
+            "src/Fp/Function/Reflection/GetNamedTypes.php",
             "src/Fp/Function/Id.php",
             "src/Fp/Function/Partial.php"
         ]

@@ -6,6 +6,7 @@ namespace Fp\Functional\Option;
 
 use Closure;
 use Generator;
+use Throwable;
 
 /**
  * @template-covariant A
@@ -66,22 +67,6 @@ abstract class Option
         return $closure($value);
     }
 
-//    /**
-//     * @psalm-template TI1
-//     * @psalm-template TI2
-//     * @psalm-template TO
-//     *
-//     * @psalm-param Option<TI1> $o1
-//     * @psalm-param Option<TI2> $o2
-//     * @psalm-param Closure(TI1, TI2): Option<TO> $closure
-//     *
-//     * @psalm-return Option<TO>
-//     */
-//    public static function flatMap2(Option $o1, Option $o2, Closure $closure): Option
-//    {
-//        return $o1->flatMap(fn($v1) => $o2->flatMap(fn($v2) => $closure($v1, $v2)));
-//    }
-
     /**
      * @template TS
      * @template TO
@@ -114,6 +99,20 @@ abstract class Option
     public static function of(mixed $value): Option
     {
         return is_null($value) ? new None() : new Some($value);
+    }
+
+    /**
+     * @psalm-template B
+     * @psalm-param callable(): B|null $callback
+     * @psalm-return Option<B>
+     */
+    public static function try(callable $callback): Option
+    {
+        try {
+            return self::of(call_user_func($callback));
+        } catch (Throwable) {
+            return new None();
+        }
     }
 
     /**

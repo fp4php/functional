@@ -25,8 +25,9 @@ use SimpleXMLElement;
 use function Fp\Function\Collection\first;
 use function Fp\Function\Collection\firstInstanceOf;
 use function Fp\Function\Collection\getByKey;
+use function Fp\Function\Collection\map;
 use function Fp\Function\Collection\second;
-use function Fp\Function\Reflection\getNamedType;
+use function Fp\Function\Reflection\getNamedTypes;
 
 class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
@@ -51,12 +52,38 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
      */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
-        $source = $event->getStatementsSource();
-        $args = $event->getCallArgs();
-        $get_arg_type = fn(Arg $arg): Option => self::getArgType($arg, $source);
+        return Option::do(function () use ($event) {
+                $fqcn = yield self::getClassName($event);
+                $key = yield self::getKey($event);
+                $property_reflection = yield self::getPropertyReflection($fqcn, $key);
 
-        $fqcn = first($args)
-            ->flatMap($get_arg_type)
+                return implode('|', map(getNamedTypes(
+                    $property_reflection),
+                    fn(ReflectionNamedType $nt) => $nt->getName())
+                );
+            })
+            ->map(fn(string $property_type) => Type::parseString($property_type))
+            ->map(fn(Union $property_type) => new Union([
+                new TArray([Type::getArrayKey(), $property_type])
+            ]))
+            ->get();
+    }
+
+    /**
+     * @psalm-return Option<ReflectionProperty>
+     */
+    private static function getPropertyReflection(string $fqcn, string $key): Option
+    {
+        return Option::try(fn() => new ReflectionProperty($fqcn, $key));
+    }
+
+    /**
+     * @psalm-return Option<string>
+     */
+    private static function getClassName(FunctionReturnTypeProviderEvent $event): Option
+    {
+        return first($event->getCallArgs())
+            ->flatMap(fn(Arg $arg): Option => self::getArgType($arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $collection_type) => getByKey($collection_type->getAtomicTypes(), 'array'))
             ->map(fn(Atomic $a) => match(true) {
                 ($a instanceof TArray) => $a->type_params[1],
@@ -68,21 +95,17 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
                 TNamedObject::class
             )
             ->map(fn(TNamedObject $named_object) => $named_object->value));
+    }
 
-        $key = second($args)
-            ->flatMap($get_arg_type)
+    /**
+     * @psalm-return Option<string>
+     */
+    private static function getKey(FunctionReturnTypeProviderEvent $event): Option
+    {
+        return second($event->getCallArgs())
+            ->flatMap(fn(Arg $arg): Option => self::getArgType($arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $key) => firstInstanceOf($key->getAtomicTypes(), TLiteralString::class))
             ->map(fn(TLiteralString $literal) => $literal->value);
-
-        return Option::flatMap2($fqcn, $key, function (string $fqcn, string $key) {
-                $property_reflection = new ReflectionProperty($fqcn, $key);
-                return Option::of(getNamedType($property_reflection));
-            })
-            ->map(fn(ReflectionNamedType $property_type) => Type::parseString($property_type->getName()))
-            ->map(fn(Union $property_type) => new Union([
-                new TArray([Type::getArrayKey(), $property_type])
-            ]))
-            ->get();
     }
 
     /**

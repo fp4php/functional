@@ -9,6 +9,7 @@ use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use Generator;
+use Throwable;
 
 /**
  * @template-covariant L
@@ -105,6 +106,26 @@ abstract class Either
         } while ($generator->valid());
 
         return new Right($generator->getReturn());
+    }
+
+    /**
+     * @psalm-template TLI of Throwable
+     * @psalm-template TRI
+     * @psalm-param callable(): TRI $callback
+     * @psalm-return Either<TLI, TRI>
+     */
+    public static function try(callable $callback): Either
+    {
+        try {
+            /** @var Right<TLI, TRI> $r */
+            $r = Right::of(call_user_func($callback));
+
+        } catch (Throwable $exception) {
+            /** @var Left<TLI, TRI> $r */
+            $r = Left::of($exception);
+        }
+
+        return $r;
     }
 
     /**
