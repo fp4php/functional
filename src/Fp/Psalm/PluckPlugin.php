@@ -19,9 +19,9 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 use ReflectionNamedType;
-use ReflectionProperty;
 use SimpleXMLElement;
 
+use function Fp\Function\Cast\asClassString;
 use function Fp\Function\Collection\first;
 use function Fp\Function\Collection\firstInstanceOf;
 use function Fp\Function\Collection\getByKey;
@@ -71,7 +71,7 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
     }
 
     /**
-     * @psalm-return Option<string>
+     * @psalm-return Option<class-string>
      */
     private static function getClassName(FunctionReturnTypeProviderEvent $event): Option
     {
@@ -87,7 +87,7 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
                 $template_value_type->getAtomicTypes(),
                 TNamedObject::class
             )
-            ->map(fn(TNamedObject $named_object) => $named_object->value));
+            ->flatMap(fn(TNamedObject $named_object) => asClassString($named_object->value)));
     }
 
     /**
