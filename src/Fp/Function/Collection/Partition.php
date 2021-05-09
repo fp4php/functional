@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Function\Collection;
 
+use Fp\Psalm\PartitionPlugin;
+
 /**
+ * @see PartitionPlugin
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *

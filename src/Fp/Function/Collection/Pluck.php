@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Function\Collection;
 
+use Fp\Psalm\PluckPlugin;
+
 /**
+ * @see PluckPlugin
+ *
  * @psalm-suppress MixedAssignment
  *
  * @psalm-param iterable<array-key, object|array> $collection
