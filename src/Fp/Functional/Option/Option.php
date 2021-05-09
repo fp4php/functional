@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Fp\Functional\Option;
 
 use Closure;
+use Generator;
 
 /**
  * @template-covariant A
+ * @psalm-yield A
  * @psalm-immutable
  */
 abstract class Option
@@ -64,20 +66,44 @@ abstract class Option
         return $closure($value);
     }
 
+//    /**
+//     * @psalm-template TI1
+//     * @psalm-template TI2
+//     * @psalm-template TO
+//     *
+//     * @psalm-param Option<TI1> $o1
+//     * @psalm-param Option<TI2> $o2
+//     * @psalm-param Closure(TI1, TI2): Option<TO> $closure
+//     *
+//     * @psalm-return Option<TO>
+//     */
+//    public static function flatMap2(Option $o1, Option $o2, Closure $closure): Option
+//    {
+//        return $o1->flatMap(fn($v1) => $o2->flatMap(fn($v2) => $closure($v1, $v2)));
+//    }
+
     /**
-     * @psalm-template TI1
-     * @psalm-template TI2
-     * @psalm-template TO
-     *
-     * @psalm-param Option<TI1> $o1
-     * @psalm-param Option<TI2> $o2
-     * @psalm-param Closure(TI1, TI2): Option<TO> $closure
-     *
+     * @template TS
+     * @template TO
+     * @psalm-param callable(): Generator<int, Option<TS>, TS, TO> $computation
      * @psalm-return Option<TO>
      */
-    public static function flatMap2(Option $o1, Option $o2, Closure $closure): Option
-    {
-        return $o1->flatMap(fn(mixed $v1) => $o2->flatMap(fn(mixed $v2) => $closure($v1, $v2)));
+    public static function do(callable $computation): Option {
+        $generator = $computation();
+
+        do {
+            $currentStep = $generator->current();
+
+            if (!$currentStep->isEmpty()) {
+                $generator->send($currentStep->get());
+            } else {
+                /** @var Option<TO> $currentStep */
+                return $currentStep;
+            }
+
+        } while ($generator->valid());
+
+        return Option::of($generator->getReturn());
     }
 
     /**
