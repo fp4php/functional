@@ -26,3 +26,17 @@ function filter(iterable $collection, callable $predicate): array
     return $aggregation;
 }
 
+/**
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ *
+ * @psalm-param iterable<TK, TV|null> $collection
+ *
+ * @psalm-return array<TK, TV>
+ */
+function filterNotNull(iterable $collection): array
+{
+    return filter($collection, fn(mixed $v) => !is_null($v));
+}
+
+

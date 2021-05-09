@@ -9,6 +9,8 @@ use PhpParser\Node\Arg;
 use Psalm\Codebase;
 use Psalm\CodeLocation;
 use Psalm\Context;
+use Psalm\Internal\MethodIdentifier;
+use Psalm\Internal\Type\Comparator\CallableTypeComparator;
 use Psalm\Issue\InvalidArgument;
 use Psalm\IssueBuffer;
 use Psalm\Plugin\Hook\FunctionReturnTypeProviderInterface;
@@ -16,11 +18,19 @@ use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
 use Psalm\Type;
+use Psalm\Type\Atomic;
+use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
+use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
+use function Fp\Function\Collection\filterNotNull;
+use function Fp\Function\Collection\filterNullable;
+use function Fp\Function\Collection\first;
+use function Fp\Function\Collection\firstInstanceOf;
 use function Fp\Function\Collection\head;
+use function Fp\Function\Collection\map;
 use function Fp\Function\Collection\tail;
 use function Symfony\Component\String\u;
 
@@ -44,6 +54,7 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
     }
 
     /**
+     * @psalm-suppress InternalClass, InternalMethod
      * @inheritDoc
      */
     public static function getFunctionReturnType(
@@ -62,18 +73,25 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
 
         return head($args)
             ->flatMap(fn(Arg $head_arg) => self::getArgType($head_arg, $source))
-            ->flatMap(fn(Union $head_arg_type) => head($head_arg_type->getClosureTypes()))
-            ->map(function (TClosure $closure_type) use ($function_id, $source, $args, $location, $codebase, $is_partial_right) {
+            ->flatMap(fn(Union $head_arg_type) => head(array_merge(
+                $head_arg_type->getClosureTypes(),
+                $head_arg_type->getCallableTypes(),
+                filterNotNull(map(
+                    $head_arg_type->getAtomicTypes(),
+                    fn(Atomic $atomic) => CallableTypeComparator::getCallableFromAtomic($codebase, $atomic)
+                ))
+            )))
+            ->map(function (TClosure|TCallable $closure_type) use ($function_id, $source, $args, $location, $codebase, $is_partial_right) {
                 $closure_type_copy = clone $closure_type;
                 $closure_params = $closure_type_copy->params ?? [];
                 $tail_args = tail($args);
 
-                self::assertValidClosureArgs(
+                self::assertValidArgs(
                     function_id: $function_id,
                     codebase: $codebase,
                     statements_source: $source,
                     location: $location,
-                    closure: $closure_type_copy,
+                    callable: $closure_type_copy,
                     args: $tail_args,
                     is_partial_right: $is_partial_right
                 );
@@ -98,20 +116,20 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
     /**
      * @psalm-param array<array-key, Arg> $args
      */
-    private static function assertValidClosureArgs(
+    private static function assertValidArgs(
         string $function_id,
         Codebase $codebase,
         StatementsSource $statements_source,
         CodeLocation $location,
-        TClosure $closure,
+        TClosure|TCallable $callable,
         array $args,
         bool $is_partial_right
     ): void
     {
         $args_list = array_values($args);
         $params_list = $is_partial_right
-            ? array_reverse($closure->params ?? [])
-            : $closure->params ?? [];
+            ? array_reverse($callable->params ?? [])
+            : $callable->params ?? [];
 
         for ($i = 0; $i < count($args); $i++) {
             $arg = $args_list[$i] ?? null;
