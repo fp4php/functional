@@ -35,7 +35,7 @@ function first(iterable $collection, ?callable $predicate = null): Option
 
 /**
  * @psalm-template TK of array-key
- * @psalm-template TV
+ * @psalm-template TV of object
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TV> $collection
