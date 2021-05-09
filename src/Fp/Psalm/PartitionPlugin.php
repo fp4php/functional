@@ -36,7 +36,7 @@ class PartitionPlugin implements PluginEntryPointInterface, FunctionReturnTypePr
     public static function getFunctionIds(): array
     {
         return [
-            'fp\function\partition',
+            'fp\function\collection\partition',
         ];
     }
 

@@ -33,11 +33,13 @@
             "src/Fp/Function/Collection/Last.php",
             "src/Fp/Function/Collection/Map.php",
             "src/Fp/Function/Collection/Partition.php",
+            "src/Fp/Function/Collection/Pluck.php",
             "src/Fp/Function/Collection/Reduce.php",
             "src/Fp/Function/Collection/Second.php",
             "src/Fp/Function/Collection/Filter.php",
             "src/Fp/Function/Collection/Some.php",
             "src/Fp/Function/Collection/Tail.php",
+            "src/Fp/Function/Reflection/GetNamedType.php",
             "src/Fp/Function/Id.php",
             "src/Fp/Function/Partial.php"
         ]
