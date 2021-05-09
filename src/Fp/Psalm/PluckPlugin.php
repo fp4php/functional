@@ -46,6 +46,7 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
     }
 
     /**
+     * @todo TKeyedArray support
      * @inheritDoc
      */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
