@@ -28,6 +28,7 @@ use function Fp\Function\Collection\getByKey;
 use function Fp\Function\Collection\map;
 use function Fp\Function\Collection\second;
 use function Fp\Function\Reflection\getNamedTypes;
+use function Fp\Function\Reflection\getReflectionProperty;
 
 class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
@@ -55,7 +56,7 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
         return Option::do(function () use ($event) {
                 $fqcn = yield self::getClassName($event);
                 $key = yield self::getKey($event);
-                $property_reflection = yield self::getPropertyReflection($fqcn, $key);
+                $property_reflection = yield getReflectionProperty($fqcn, $key)->toOption();
 
                 return implode('|', map(getNamedTypes(
                     $property_reflection),
@@ -67,14 +68,6 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
                 new TArray([Type::getArrayKey(), $property_type])
             ]))
             ->get();
-    }
-
-    /**
-     * @psalm-return Option<ReflectionProperty>
-     */
-    private static function getPropertyReflection(string $fqcn, string $key): Option
-    {
-        return Option::try(fn() => new ReflectionProperty($fqcn, $key));
     }
 
     /**
