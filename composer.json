@@ -28,6 +28,7 @@
             "src/Fp/Function/Collection/First.php",
             "src/Fp/Function/Collection/FlatMap.php",
             "src/Fp/Function/Collection/Fold.php",
+            "src/Fp/Function/Collection/GetByKey.php",
             "src/Fp/Function/Collection/Group.php",
             "src/Fp/Function/Collection/Head.php",
             "src/Fp/Function/Collection/Last.php",
