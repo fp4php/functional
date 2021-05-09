@@ -25,6 +25,7 @@
         },
         "files": [
             "src/Fp/Function/Cast/AsArray.php",
+            "src/Fp/Function/Cast/AsCallableString.php",
             "src/Fp/Function/Cast/AsClassString.php",
             "src/Fp/Function/Cast/AsList.php",
             "src/Fp/Function/Cast/AsNonEmptyArray.php",
