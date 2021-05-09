@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Function;
 
+const id = '\Fp\Function\id';
+
 /**
  * @psalm-template T
  *
