@@ -32,3 +32,24 @@ function first(iterable $collection, ?callable $predicate = null): Option
 
     return Option::of($first);
 }
+
+/**
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ * @psalm-template TVO
+ *
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param class-string<TVO> $fqcn
+ *
+ * @psalm-return Option<TVO>
+ */
+function firstInstanceOf(iterable $collection, string $fqcn): Option
+{
+    /** @var Option<TVO> $first */
+    $first = first(
+        $collection,
+        fn(mixed $v): bool => is_a($v, $fqcn, true)
+    );
+
+    return $first;
+}

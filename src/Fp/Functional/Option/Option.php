@@ -65,6 +65,22 @@ abstract class Option
     }
 
     /**
+     * @psalm-template TI1
+     * @psalm-template TI2
+     * @psalm-template TO
+     *
+     * @psalm-param Option<TI1> $o1
+     * @psalm-param Option<TI2> $o2
+     * @psalm-param Closure(TI1, TI2): Option<TO> $closure
+     *
+     * @psalm-return Option<TO>
+     */
+    public static function flatMap2(Option $o1, Option $o2, Closure $closure): Option
+    {
+        return $o1->flatMap(fn(mixed $v1) => $o2->flatMap(fn(mixed $v2) => $closure($v1, $v2)));
+    }
+
+    /**
      * @psalm-template B
      * @param B|null $value
      * @psalm-return Option<B>

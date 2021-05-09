@@ -12,9 +12,10 @@
         </ignoreFiles>
     </projectFiles>
     <plugins>
+        <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
         <pluginClass class="Fp\Psalm\PartitionPlugin"/>
         <pluginClass class="Fp\Psalm\PartialPlugin"/>
-        <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
+        <pluginClass class="Fp\Psalm\PluckPlugin"/>
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
