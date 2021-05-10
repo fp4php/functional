@@ -62,4 +62,16 @@ final class Tuple3
             $tuple[2],
         );
     }
+
+    /**
+     * @return array{T1,T2,T3}
+     */
+    public function toArray(): array
+    {
+        return [
+            $this->getFirst(),
+            $this->getSecond(),
+            $this->getThird(),
+        ];
+    }
 }

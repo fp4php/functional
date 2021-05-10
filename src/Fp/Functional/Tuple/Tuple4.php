@@ -75,4 +75,17 @@ final class Tuple4
             $tuple[3],
         );
     }
+
+    /**
+     * @return array{T1,T2,T3,T4}
+     */
+    public function toArray(): array
+    {
+        return [
+            $this->getFirst(),
+            $this->getSecond(),
+            $this->getThird(),
+            $this->getFourth(),
+        ];
+    }
 }

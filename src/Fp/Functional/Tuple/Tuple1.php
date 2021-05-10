@@ -36,4 +36,14 @@ final class Tuple1
             $tuple[0],
         );
     }
+
+    /**
+     * @return array{T1}
+     */
+    public function toArray(): array
+    {
+        return [
+            $this->getFirst(),
+        ];
+    }
 }

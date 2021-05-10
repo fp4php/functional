@@ -49,4 +49,15 @@ final class Tuple2
             $tuple[1],
         );
     }
+
+    /**
+     * @return array{T1,T2}
+     */
+    public function toArray(): array
+    {
+        return [
+            $this->getFirst(),
+            $this->getSecond(),
+        ];
+    }
 }
