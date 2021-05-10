@@ -18,7 +18,8 @@
         "klimick/psalm-show-type": "^1.0",
         "behat/behat": "^3.8",
         "nikic/php-parser": "^4.10",
-        "phpunit/phpunit": "^9"
+        "phpunit/phpunit": "^9",
+        "mtdowling/jmespath.php": "^2.6"
     },
     "autoload": {
         "psr-4": {
@@ -28,11 +29,15 @@
         },
         "files": [
             "src/Fp/Function/Cast/AsArray.php",
+            "src/Fp/Function/Cast/AsBool.php",
             "src/Fp/Function/Cast/AsCallableString.php",
             "src/Fp/Function/Cast/AsClassString.php",
+            "src/Fp/Function/Cast/AsFloat.php",
+            "src/Fp/Function/Cast/AsInt.php",
             "src/Fp/Function/Cast/AsList.php",
             "src/Fp/Function/Cast/AsNonEmptyArray.php",
             "src/Fp/Function/Cast/AsNonEmptyList.php",
+            "src/Fp/Function/Cast/AsString.php",
             "src/Fp/Function/Collection/Every.php",
             "src/Fp/Function/Collection/First.php",
             "src/Fp/Function/Collection/FlatMap.php",

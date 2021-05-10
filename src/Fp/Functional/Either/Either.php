@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Either;
 
-use Closure;
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
@@ -20,21 +19,21 @@ use Throwable;
 abstract class Either
 {
     /**
-     * @psalm-param Closure(): R $or
+     * @psalm-param \Closure(): R $or
      * @psalm-return R
      */
-    public function getOrElse(Closure $or): mixed
+    public function getOrElse(\Closure $or): mixed
     {
         return $this->isRight() ? $this->get() : $or();
     }
 
     /**
      * @template T
-     * @psalm-param Closure(L): T $ifLeft
-     * @psalm-param Closure(R): T $ifRight
+     * @psalm-param \Closure(L): T $ifLeft
+     * @psalm-param \Closure(R): T $ifRight
      * @return T
      */
-    public function fold(Closure $ifLeft, Closure $ifRight): mixed
+    public function fold(\Closure $ifLeft, \Closure $ifRight): mixed
     {
         if ($this->isRight()) {
             return $ifRight($this->get());
@@ -49,10 +48,10 @@ abstract class Either
 
     /**
      * @psalm-template RO
-     * @param Closure(R): RO $closure
+     * @psalm-param \Closure(R): RO $closure
      * @psalm-return Either<L, RO>
      */
-    public function map(Closure $closure): Either
+    public function map(\Closure $closure): Either
     {
         if ($this->isLeft()) {
             return new Left($this->get());
@@ -67,10 +66,10 @@ abstract class Either
 
     /**
      * @psalm-template RO
-     * @param Closure(R): Either<L, RO> $closure
+     * @psalm-param \Closure(R): Either<L, RO> $closure
      * @psalm-return Either<L, RO>
      */
-    public function flatMap(Closure $closure): Either
+    public function flatMap(\Closure $closure): Either
     {
         if ($this->isLeft()) {
             return new Left($this->get());

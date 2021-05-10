@@ -103,7 +103,7 @@ abstract class Option
 
     /**
      * @psalm-template B
-     * @psalm-param callable(): B|null $callback
+     * @psalm-param (callable(): (B|null)) $callback
      * @psalm-return Option<B>
      */
     public static function try(callable $callback): Option

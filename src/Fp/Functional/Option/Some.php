@@ -14,7 +14,7 @@ final class Some extends Option
     /**
      * @param A $value
      */
-    public function __construct(int|float|bool|string|object $value)
+    public function __construct(int|float|bool|string|object|array $value)
     {
         parent::__construct($value);
     }

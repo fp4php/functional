@@ -15,12 +15,12 @@ final class Left extends Either
     /**
      * @var L
      */
-    private int|float|bool|string|object $value;
+    private int|float|bool|string|object|array $value;
 
     /**
      * @psalm-param L $value
      */
-    public function __construct(int|float|bool|string|object $value)
+    public function __construct(int|float|bool|string|object|array $value)
     {
         $this->value = $value;
     }
@@ -31,7 +31,7 @@ final class Left extends Either
      * @psalm-param LI $value
      * @psalm-return self<LI, RI>
      */
-    public static function of(int|float|bool|string|object $value): self
+    public static function of(int|float|bool|string|object|array $value): self
     {
         return new self($value);
     }
@@ -39,7 +39,7 @@ final class Left extends Either
     /**
      * @psalm-return L
      */
-    public function get(): int|float|bool|string|object
+    public function get(): int|float|bool|string|object|array
     {
         return $this->value;
     }
