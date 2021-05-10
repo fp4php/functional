@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Psalm\PluckPlugin;
+use Fp\Psalm\PluckFunctionReturnTypeProvider;
 
 /**
- * @see PluckPlugin
+ * @see PluckFunctionReturnTypeProvider
  *
  * @psalm-suppress MixedAssignment
  *

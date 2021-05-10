@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Callable;
 
-use Fp\Psalm\PartialPlugin;
+use Fp\Psalm\PartialFunctionReturnTypeProvider;
 
 /**
  * Partial application from first argument
- * @see PartialPlugin
+ * @see PartialFunctionReturnTypeProvider
  */
 function partialLeft(callable $callback, mixed ...$args): callable
 {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Psalm\PartitionPlugin;
+use Fp\Psalm\PartitionFunctionReturnTypeProvider;
 
 /**
- * @see PartitionPlugin
+ * @see PartitionFunctionReturnTypeProvider
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

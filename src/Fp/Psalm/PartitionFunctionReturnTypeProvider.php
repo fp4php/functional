@@ -24,7 +24,7 @@ use function Fp\Collection\head;
 use function Fp\Collection\map;
 use function Fp\Collection\tail;
 
-class PartitionPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
+class PartitionFunctionReturnTypeProvider implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {

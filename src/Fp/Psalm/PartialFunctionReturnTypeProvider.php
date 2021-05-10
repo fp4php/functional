@@ -28,7 +28,7 @@ use function Fp\Collection\map;
 use function Fp\Collection\tail;
 use function Symfony\Component\String\u;
 
-class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
+class PartialFunctionReturnTypeProvider implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {

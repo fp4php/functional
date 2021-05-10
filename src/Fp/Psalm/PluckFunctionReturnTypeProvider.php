@@ -30,7 +30,7 @@ use function Fp\Evidence\proveClassString;
 use function Fp\Reflection\getNamedTypes;
 use function Fp\Reflection\getReflectionProperty;
 
-class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
+class PluckFunctionReturnTypeProvider implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {

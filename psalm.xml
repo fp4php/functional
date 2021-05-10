@@ -14,9 +14,10 @@
     </projectFiles>
     <plugins>
         <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
-        <pluginClass class="Fp\Psalm\PartitionPlugin"/>
-        <pluginClass class="Fp\Psalm\PartialPlugin"/>
-        <pluginClass class="Fp\Psalm\PluckPlugin"/>
+
+        <pluginClass class="Fp\Psalm\PartialFunctionReturnTypeProvider"/>
+        <pluginClass class="Fp\Psalm\PartitionFunctionReturnTypeProvider"/>
+        <pluginClass class="Fp\Psalm\PluckFunctionReturnTypeProvider"/>
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
