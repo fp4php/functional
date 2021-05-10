@@ -11,6 +11,7 @@ use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\pop;
+use function Fp\Collection\reduce;
 use function Fp\Evidence\proveString;
 use function Fp\Collection\fold;
 use function Fp\Json\jsonSearch;
@@ -88,13 +89,8 @@ abstract class PhpBlockTestCase extends TestCase
      */
     private function parseTraceResult(array $lines): Option
     {
-        $json = fold(
-            init: '',
-            collection: $lines,
-            callback: fn(string $acc, string $line) => $acc . $line
-        );
-
-        return jsonSearch("[?type=='Trace'].message|[0]", $json)
+        return reduce($lines, fn(string $acc, string $line) => $acc . $line)
+            ->flatMap(fn(string $json) => jsonSearch("[?type=='Trace'].message|[0]", $json))
             ->flatMap(fn($message) => proveString($message))
             ->map(fn(string $message) => u($message)->after('$result: ')->toString());
     }
