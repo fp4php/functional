@@ -9,9 +9,9 @@ use Fp\Functional\Option\Option;
 /**
  * @psalm-template T
  * @psalm-param T $potential
- * @psalm-return Option<string>
+ * @psalm-return Option<bool>
  */
-function proveString(mixed $potential): Option
+function proveBool(mixed $potential): Option
 {
-    return Option::of(is_string($potential) ? $potential : null);
+    return Option::of(is_bool($potential) ? $potential : null);
 }

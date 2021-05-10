@@ -11,7 +11,7 @@ use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Function\Cast\asList;
-use function Fp\Function\Cast\proveString;
+use function Fp\Function\Evidence\proveString;
 use function Fp\Function\Collection\fold;
 use function Fp\Function\Collection\last;
 use function Fp\Function\Collection\reverse;

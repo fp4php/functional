@@ -29,8 +29,6 @@
         "files": [
             "src/Fp/Function/Cast/AsArray.php",
             "src/Fp/Function/Cast/AsBool.php",
-            "src/Fp/Function/Cast/AsCallableString.php",
-            "src/Fp/Function/Cast/AsClassString.php",
             "src/Fp/Function/Cast/AsFloat.php",
             "src/Fp/Function/Cast/AsInt.php",
             "src/Fp/Function/Cast/AsList.php",
@@ -53,6 +51,8 @@
             "src/Fp/Function/Collection/Filter.php",
             "src/Fp/Function/Collection/Some.php",
             "src/Fp/Function/Collection/Tail.php",
+            "src/Fp/Function/Evidence/ProveCallableString.php",
+            "src/Fp/Function/Evidence/ProveClassString.php",
             "src/Fp/Function/Evidence/ProveString.php",
             "src/Fp/Function/Reflection/GetNamedTypes.php",
             "src/Fp/Function/Reflection/GetReflectionClass.php",

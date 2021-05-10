@@ -21,12 +21,12 @@ use Psalm\Type\Union;
 use ReflectionNamedType;
 use SimpleXMLElement;
 
-use function Fp\Function\Cast\asClassString;
 use function Fp\Function\Collection\first;
 use function Fp\Function\Collection\firstInstanceOf;
 use function Fp\Function\Collection\getByKey;
 use function Fp\Function\Collection\map;
 use function Fp\Function\Collection\second;
+use function Fp\Function\Evidence\proveClassString;
 use function Fp\Function\Reflection\getNamedTypes;
 use function Fp\Function\Reflection\getReflectionProperty;
 
@@ -87,7 +87,7 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
                 $template_value_type->getAtomicTypes(),
                 TNamedObject::class
             )
-            ->flatMap(fn(TNamedObject $named_object) => asClassString($named_object->value)));
+            ->flatMap(fn(TNamedObject $named_object) => proveClassString($named_object->value)));
     }
 
     /**
