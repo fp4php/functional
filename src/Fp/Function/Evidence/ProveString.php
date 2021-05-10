@@ -11,7 +11,7 @@ use Fp\Functional\Option\Option;
  * @psalm-param T $potential
  * @psalm-return Option<string>
  */
-function asString(mixed $potential): Option
+function proveString(mixed $potential): Option
 {
     return Option::of(is_string($potential) ? $potential : null);
 }

@@ -11,12 +11,11 @@ use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Function\Cast\asList;
-use function Fp\Function\Cast\asString;
+use function Fp\Function\Cast\proveString;
 use function Fp\Function\Collection\fold;
 use function Fp\Function\Collection\last;
 use function Fp\Function\Collection\reverse;
 use function Fp\Function\Collection\tail;
-use function Fp\Function\Json\jsonDecode;
 use function Fp\Function\Json\jsonSearch;
 use function Symfony\Component\String\u;
 
@@ -100,7 +99,7 @@ abstract class PhpBlockTestCase extends TestCase
         );
 
         return jsonSearch("[?type=='Trace'].message|[0]", $json)
-            ->flatMap(fn($message) => asString($message))
+            ->flatMap(fn($message) => proveString($message))
             ->map(fn(string $message) => u($message)->after('$result: ')->toString());
     }
 
