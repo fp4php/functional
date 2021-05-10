@@ -15,7 +15,7 @@ use Fp\Functional\Either\Right;
 function jsonDecode(string $json): Either
 {
     /** @var array $decoded */
-    $decoded = json_decode(json: $json, associative: true, flags: JSON_THROW_ON_ERROR);
+    $decoded = json_decode(json: $json, associative: true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
         return Left::of(json_last_error_msg());
