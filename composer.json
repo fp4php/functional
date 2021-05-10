@@ -1,6 +1,6 @@
 {
     "name": "whsv26/functional",
-    "description": "Common use functions",
+    "description": "PHP Functional Programming library",
     "type": "library",
     "authors": [
         {
@@ -23,8 +23,7 @@
     "autoload": {
         "psr-4": {
             "Fp\\Functional\\": "src/Fp/Functional",
-            "Fp\\Psalm\\": "src/Fp/Psalm",
-            "Tests\\": "tests/"
+            "Fp\\Psalm\\": "src/Fp/Psalm"
         },
         "files": [
             "src/Fp/Functions/Cast/AsArray.php",
@@ -68,5 +67,10 @@
             "src/Fp/Functions/Callable/PartialLeft.php",
             "src/Fp/Functions/Callable/PartialRight.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     }
 }

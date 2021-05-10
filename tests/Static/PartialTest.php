@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace Tests\Static;
+
+use Tests\PhpBlockTestCase;
 
 final class PartialTest extends PhpBlockTestCase
 {

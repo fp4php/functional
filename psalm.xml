@@ -9,7 +9,6 @@
         <directory name="src"/>
         <ignoreFiles>
             <directory name="vendor"/>
-            <directory name="tests"/>
         </ignoreFiles>
     </projectFiles>
     <plugins>
@@ -26,5 +25,10 @@
                 <directory name="src/Fp/Functions"/>
             </errorLevel>
         </DuplicateFunction>
+        <PropertyNotSetInConstructor errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </PropertyNotSetInConstructor>
     </issueHandlers>
 </psalm>

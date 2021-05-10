@@ -10,13 +10,9 @@ use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
-use function Fp\Cast\asList;
 use function Fp\Collection\pop;
 use function Fp\Evidence\proveString;
 use function Fp\Collection\fold;
-use function Fp\Collection\last;
-use function Fp\Collection\reverse;
-use function Fp\Collection\tail;
 use function Fp\Json\jsonSearch;
 use function Symfony\Component\String\u;
 
