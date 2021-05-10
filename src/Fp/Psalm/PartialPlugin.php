@@ -6,9 +6,7 @@ namespace Fp\Psalm;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
-use Psalm\Codebase;
 use Psalm\CodeLocation;
-use Psalm\Context;
 use Psalm\Internal\Type\Comparator\CallableTypeComparator;
 use Psalm\Issue\InvalidArgument;
 use Psalm\IssueBuffer;
@@ -24,10 +22,10 @@ use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
-use function Fp\Function\Collection\filterNotNull;
-use function Fp\Function\Collection\head;
-use function Fp\Function\Collection\map;
-use function Fp\Function\Collection\tail;
+use function Fp\Collection\filterNotNull;
+use function Fp\Collection\head;
+use function Fp\Collection\map;
+use function Fp\Collection\tail;
 use function Symfony\Component\String\u;
 
 class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
@@ -43,9 +41,9 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
     public static function getFunctionIds(): array
     {
         return [
-            'fp\function\callable\partial',
-            'fp\function\callable\partialleft',
-            'fp\function\callable\partialright',
+            'fp\callable\partial',
+            'fp\callable\partialleft',
+            'fp\callable\partialright',
         ];
     }
 

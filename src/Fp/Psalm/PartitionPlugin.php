@@ -19,10 +19,10 @@ use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
-use function Fp\Function\Cast\asNonEmptyArray;
-use function Fp\Function\Collection\head;
-use function Fp\Function\Collection\map;
-use function Fp\Function\Collection\tail;
+use function Fp\Cast\asNonEmptyArray;
+use function Fp\Collection\head;
+use function Fp\Collection\map;
+use function Fp\Collection\tail;
 
 class PartitionPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
@@ -37,7 +37,7 @@ class PartitionPlugin implements PluginEntryPointInterface, FunctionReturnTypePr
     public static function getFunctionIds(): array
     {
         return [
-            'fp\function\collection\partition',
+            'fp\collection\partition',
         ];
     }
 

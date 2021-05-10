@@ -22,7 +22,7 @@
         <Trace errorLevel="error"/>
         <DuplicateFunction errorLevel="suppress">
             <errorLevel type="suppress">
-                <directory name="src/Fp/Function"/>
+                <directory name="src/Fp/Functions"/>
             </errorLevel>
         </DuplicateFunction>
     </issueHandlers>

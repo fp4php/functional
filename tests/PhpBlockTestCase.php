@@ -10,14 +10,14 @@ use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
-use function Fp\Function\Cast\asList;
-use function Fp\Function\Collection\pop;
-use function Fp\Function\Evidence\proveString;
-use function Fp\Function\Collection\fold;
-use function Fp\Function\Collection\last;
-use function Fp\Function\Collection\reverse;
-use function Fp\Function\Collection\tail;
-use function Fp\Function\Json\jsonSearch;
+use function Fp\Cast\asList;
+use function Fp\Collection\pop;
+use function Fp\Evidence\proveString;
+use function Fp\Collection\fold;
+use function Fp\Collection\last;
+use function Fp\Collection\reverse;
+use function Fp\Collection\tail;
+use function Fp\Json\jsonSearch;
 use function Symfony\Component\String\u;
 
 /**

@@ -9,7 +9,7 @@ final class PartitionTest extends PhpBlockTestCase
     public function testWithOnePredicate(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Collection\partition(
+            $result = \Fp\Collection\partition(
                 [2, 3, 4, 5], 
                 fn(int $v) => $v % 2 === 0
             );
@@ -21,7 +21,7 @@ final class PartitionTest extends PhpBlockTestCase
     public function testWithTwoPredicates(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Collection\partition(
+            $result = \Fp\Collection\partition(
                 [1],
                 fn(int $v) => $v % 2 === 0,
                 fn(int $v) => $v % 2 === 1,

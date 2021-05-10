@@ -10,7 +10,7 @@ final class PartialTest extends PhpBlockTestCase
     {
         $phpBlock = <<<'PHP'
             $callback = fn(int $a, string $b, bool $c): bool => true;
-            $result = \Fp\Function\Callable\partialLeft($callback, 1);
+            $result = \Fp\Callable\partialLeft($callback, 1);
         PHP;
 
         $this->assertBlockType($phpBlock, 'pure-Closure(string, bool): true');
@@ -20,7 +20,7 @@ final class PartialTest extends PhpBlockTestCase
     {
         $phpBlock = <<<'PHP'
             $callback = fn(int $a, string $b): bool => true;
-            $result = \Fp\Function\Callable\partialLeft($callback, 1);
+            $result = \Fp\Callable\partialLeft($callback, 1);
         PHP;
 
         $this->assertBlockType($phpBlock, 'pure-Closure(string): true');
@@ -30,7 +30,7 @@ final class PartialTest extends PhpBlockTestCase
     {
         $phpBlock = <<<'PHP'
             $callback = fn(int $a): bool => true;
-            $result = \Fp\Function\Callable\partialLeft($callback, 1);
+            $result = \Fp\Callable\partialLeft($callback, 1);
         PHP;
 
         $this->assertBlockType($phpBlock, 'pure-Closure(): true');
@@ -40,7 +40,7 @@ final class PartialTest extends PhpBlockTestCase
     {
         $phpBlock = <<<'PHP'
             $callback = fn(int $a, string $b, bool $c): bool => true;
-            $result = \Fp\Function\Callable\partialRight($callback, true);
+            $result = \Fp\Callable\partialRight($callback, true);
         PHP;
 
         $this->assertBlockType($phpBlock, 'pure-Closure(int, string): true');
@@ -50,7 +50,7 @@ final class PartialTest extends PhpBlockTestCase
     {
         $phpBlock = <<<'PHP'
             $callback = fn(int $a, string $b) => true;
-            $result = \Fp\Function\Callable\partialRight($callback, '');
+            $result = \Fp\Callable\partialRight($callback, '');
         PHP;
 
         $this->assertBlockType($phpBlock, 'pure-Closure(int): true');
@@ -60,7 +60,7 @@ final class PartialTest extends PhpBlockTestCase
     {
         $phpBlock = <<<'PHP'
             $callback = fn(int $a): bool => true;
-            $result = \Fp\Function\Callable\partialRight($callback, 1);
+            $result = \Fp\Callable\partialRight($callback, 1);
         PHP;
 
         $this->assertBlockType($phpBlock, 'pure-Closure(): true');

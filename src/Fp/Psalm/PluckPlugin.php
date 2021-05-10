@@ -21,14 +21,14 @@ use Psalm\Type\Union;
 use ReflectionNamedType;
 use SimpleXMLElement;
 
-use function Fp\Function\Collection\first;
-use function Fp\Function\Collection\firstInstanceOf;
-use function Fp\Function\Collection\getByKey;
-use function Fp\Function\Collection\map;
-use function Fp\Function\Collection\second;
-use function Fp\Function\Evidence\proveClassString;
-use function Fp\Function\Reflection\getNamedTypes;
-use function Fp\Function\Reflection\getReflectionProperty;
+use function Fp\Collection\first;
+use function Fp\Collection\firstInstanceOf;
+use function Fp\Collection\getByKey;
+use function Fp\Collection\map;
+use function Fp\Collection\second;
+use function Fp\Evidence\proveClassString;
+use function Fp\Reflection\getNamedTypes;
+use function Fp\Reflection\getReflectionProperty;
 
 class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
 {
@@ -43,7 +43,7 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
     public static function getFunctionIds(): array
     {
         return [
-            'fp\function\collection\pluck',
+            'fp\collection\pluck',
         ];
     }
 

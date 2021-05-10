@@ -9,7 +9,7 @@ final class MapTest extends PhpBlockTestCase
     public function testListOfInt(): void
     {
         $phpBlock = <<<'PHP'
-            use function Fp\Function\Collection\map;
+            use function Fp\Collection\map;
 
             /** 
              * @psalm-return list<int> 
@@ -25,7 +25,7 @@ final class MapTest extends PhpBlockTestCase
     public function testArrayOfInt(): void
     {
         $phpBlock = <<<'PHP'
-            use function Fp\Function\Collection\map;
+            use function Fp\Collection\map;
 
             /** 
              * @psalm-return array<string, int> 

@@ -10,7 +10,7 @@ final class PluckTest extends PhpBlockTestCase
     {
         $phpBlock = <<<'PHP'
             use Tests\Mock\Foo;
-            use function Fp\Function\Collection\pluck;
+            use function Fp\Collection\pluck;
             
             $result = pluck([new Foo(1), new Foo(2)], 'a');
         PHP;
