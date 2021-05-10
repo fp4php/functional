@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Static;
+namespace Tests\Static\Collection;
 
 use Tests\PhpBlockTestCase;
 
