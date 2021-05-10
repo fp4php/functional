@@ -16,12 +16,9 @@ function getNamedTypes(ReflectionProperty $property): array
 {
     $type = $property->getType();
 
-    if (is_null($type)) {
-        return [];
-    }
-
     return match (true) {
         ($type instanceof ReflectionNamedType) => [$type],
         ($type instanceof ReflectionUnionType) => $type->getTypes(),
+        default => [],
     };
 }
