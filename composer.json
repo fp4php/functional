@@ -10,15 +10,15 @@
     ],
     "require": {
         "php": "^8.0",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "mtdowling/jmespath.php": "^2.6"
     },
     "require-dev": {
         "vimeo/psalm": "^4.7",
         "lstrojny/functional-php": "^1.17",
         "klimick/psalm-show-type": "^1.0",
         "nikic/php-parser": "^4.10",
-        "phpunit/phpunit": "^9",
-        "mtdowling/jmespath.php": "^2.6"
+        "phpunit/phpunit": "^9"
     },
     "autoload": {
         "psr-4": {

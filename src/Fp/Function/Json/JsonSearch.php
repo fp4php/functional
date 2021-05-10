@@ -10,6 +10,9 @@ use Fp\Functional\Option\Option;
 use function JmesPath\search;
 
 /**
+ * JsonPath search
+ * @see jmespath
+ *
  * @psalm-return Option<array|scalar>
  */
 function jsonSearch(string $expr, array|string $data): Option
