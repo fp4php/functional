@@ -34,6 +34,7 @@
             "src/Fp/Function/Cast/AsList.php",
             "src/Fp/Function/Cast/AsNonEmptyArray.php",
             "src/Fp/Function/Cast/AsNonEmptyList.php",
+            "src/Fp/Function/Collection/Copy.php",
             "src/Fp/Function/Collection/Every.php",
             "src/Fp/Function/Collection/First.php",
             "src/Fp/Function/Collection/FlatMap.php",
