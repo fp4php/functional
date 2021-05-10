@@ -19,6 +19,7 @@ use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
+use function Fp\Function\Cast\asNonEmptyArray;
 use function Fp\Function\Collection\head;
 use function Fp\Function\Collection\map;
 use function Fp\Function\Collection\tail;
@@ -68,14 +69,13 @@ class PartitionPlugin implements PluginEntryPointInterface, FunctionReturnTypePr
                     ...array_values($head_arg_type->getCallableTypes()),
                 ]);
 
-                /** @var non-empty-array<string|int, Union> $partitions */
-                $partitions = map(
+                return map(
                     range(1, $partition_count + 1),
                     fn() => clone $upper_union
                 );
-
-                return new Union([new TKeyedArray($partitions)]);
             })
+            ->flatMap(fn(array $partitions) => asNonEmptyArray($partitions))
+            ->map(fn(array $non_empty_partitions) => new Union([new TKeyedArray($non_empty_partitions)]))
             ->get();
     }
 

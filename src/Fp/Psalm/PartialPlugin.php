@@ -98,11 +98,6 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
             ->get();
     }
 
-    private static function callableFromAtomic()
-    {
-
-    }
-
     /**
      * @psalm-param array<array-key, Arg> $args
      */

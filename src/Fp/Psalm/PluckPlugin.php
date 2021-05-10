@@ -58,8 +58,8 @@ class PluckPlugin implements PluginEntryPointInterface, FunctionReturnTypeProvid
                 $key = yield self::getKey($event);
                 $property_reflection = yield getReflectionProperty($fqcn, $key)->toOption();
 
-                return implode('|', map(getNamedTypes(
-                    $property_reflection),
+                return implode('|', map(
+                    getNamedTypes($property_reflection),
                     fn(ReflectionNamedType $nt) => $nt->getName())
                 );
             })
