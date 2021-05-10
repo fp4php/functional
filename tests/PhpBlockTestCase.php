@@ -99,9 +99,7 @@ abstract class PhpBlockTestCase extends TestCase
             callback: fn(string $acc, string $line) => $acc . $line
         );
 
-        return jsonDecode($json)
-            ->toOption()
-            ->flatMap(fn(array $decoded) => jsonSearch("[?type=='Trace'].message|[0]", $decoded))
+        return jsonSearch("[?type=='Trace'].message|[0]", $json)
             ->flatMap(fn($message) => asString($message))
             ->map(fn(string $message) => u($message)->after('$result: ')->toString());
     }
