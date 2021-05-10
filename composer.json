@@ -50,6 +50,7 @@
             "src/Fp/Function/Collection/Reduce.php",
             "src/Fp/Function/Collection/Reverse.php",
             "src/Fp/Function/Collection/Second.php",
+            "src/Fp/Function/Collection/Shift.php",
             "src/Fp/Function/Collection/Filter.php",
             "src/Fp/Function/Collection/Some.php",
             "src/Fp/Function/Collection/Tail.php",

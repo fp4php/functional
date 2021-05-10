@@ -17,11 +17,11 @@ use function Fp\Function\Cast\asNonEmptyList;
  *
  * @psalm-return Option<Tuple2<TV, list<TV>>>
  */
-function pop(iterable $collection): Option
+function shift(iterable $collection): Option
 {
     return asNonEmptyList($collection)
         ->map(fn($list) => new Tuple2(
-            first: array_pop($list),
+            first: array_shift($list),
             second: $list
         ));
 }
