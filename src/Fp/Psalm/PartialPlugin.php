@@ -12,7 +12,8 @@ use Psalm\Context;
 use Psalm\Internal\Type\Comparator\CallableTypeComparator;
 use Psalm\Issue\InvalidArgument;
 use Psalm\IssueBuffer;
-use Psalm\Plugin\Hook\FunctionReturnTypeProviderInterface;
+use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
+use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
@@ -52,40 +53,29 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
      * @psalm-suppress InternalClass, InternalMethod
      * @inheritDoc
      */
-    public static function getFunctionReturnType(
-        StatementsSource $statements_source,
-        string $function_id,
-        array $call_args,
-        Context $context,
-        CodeLocation $code_location
-    ): ?Union
+    public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
-        $is_partial_right = u($function_id)->endsWith('right');
-        $location = $code_location;
-        $source = $statements_source;
-        $args = $call_args;
-        $codebase = $source->getCodebase();
-
-        return head($args)
-            ->flatMap(fn(Arg $head_arg) => self::getArgType($head_arg, $source))
+        return head($event->getCallArgs())
+            ->flatMap(fn(Arg $head_arg) => self::getArgType($head_arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $head_arg_type) => head(array_merge(
                 $head_arg_type->getClosureTypes(),
                 $head_arg_type->getCallableTypes(),
                 filterNotNull(map(
-                    $head_arg_type->getAtomicTypes(),
-                    fn(Atomic $atomic) => CallableTypeComparator::getCallableFromAtomic($codebase, $atomic)
+                    collection: $head_arg_type->getAtomicTypes(),
+                    callback: fn(Atomic $atomic) => CallableTypeComparator::getCallableFromAtomic(
+                        codebase: $event->getStatementsSource()->getCodebase(),
+                        input_type_part: $atomic
+                    )
                 ))
             )))
-            ->map(function (TClosure|TCallable $closure_type) use ($function_id, $source, $args, $location, $codebase, $is_partial_right) {
+            ->map(function (TClosure|TCallable $closure_type) use ($event) {
+                $is_partial_right = u($event->getFunctionId())->endsWith('right');
                 $closure_type_copy = clone $closure_type;
                 $closure_params = $closure_type_copy->params ?? [];
-                $tail_args = tail($args);
+                $tail_args = tail($event->getCallArgs());
 
                 self::assertValidArgs(
-                    function_id: $function_id,
-                    codebase: $codebase,
-                    statements_source: $source,
-                    location: $location,
+                    event: $event,
                     callable: $closure_type_copy,
                     args: $tail_args,
                     is_partial_right: $is_partial_right
@@ -108,19 +98,24 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
             ->get();
     }
 
+    private static function callableFromAtomic()
+    {
+
+    }
+
     /**
      * @psalm-param array<array-key, Arg> $args
      */
     private static function assertValidArgs(
-        string $function_id,
-        Codebase $codebase,
-        StatementsSource $statements_source,
-        CodeLocation $location,
+        FunctionReturnTypeProviderEvent $event,
         TClosure|TCallable $callable,
         array $args,
         bool $is_partial_right
     ): void
     {
+        $source = $event->getStatementsSource();
+        $codebase = $source->getCodebase();
+
         $args_list = array_values($args);
         $params_list = $is_partial_right
             ? array_reverse($callable->params ?? [])
@@ -135,7 +130,7 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
             }
 
             $param_type = $param->type ?? Type::getMixed();
-            $arg_type = self::getArgType($arg, $statements_source);
+            $arg_type = self::getArgType($arg, $event->getStatementsSource());
 
             if ($arg_type->isEmpty()) {
                 continue;
@@ -148,8 +143,8 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
             }
 
             self::issueInvalidArgument(
-                function_id: $function_id,
-                code_location: $location,
+                function_id: $event->getFunctionId(),
+                code_location: $event->getCodeLocation(),
                 expected_type: (string) $param_type
             );
         }
@@ -159,9 +154,9 @@ class PartialPlugin implements PluginEntryPointInterface, FunctionReturnTypeProv
     private static function issueInvalidArgument(string $function_id, CodeLocation $code_location, string $expected_type): void
     {
         $issue = new InvalidArgument(
-            sprintf('argument should be of type %s', $expected_type),
-            $code_location,
-            $function_id
+            message: sprintf('argument should be of type %s', $expected_type),
+            code_location: $code_location,
+            function_id: $function_id
         );
 
         IssueBuffer::accepts($issue);
