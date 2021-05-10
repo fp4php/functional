@@ -9,54 +9,60 @@ final class PartialTest extends PhpBlockTestCase
     public function testPartialLeftForClosure3(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Callable\partialLeft(function(int $a, string $b, bool $c): bool {}, 1);
+            $callback = fn(int $a, string $b, bool $c): bool => true;
+            $result = \Fp\Function\Callable\partialLeft($callback, 1);
         PHP;
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(string, bool): bool');
+        $this->assertBlockType($phpBlock, 'pure-Closure(string, bool): true');
     }
 
     public function testPartialLeftForClosure2(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Callable\partialLeft(function(int $a, string $b): bool {}, 1);
+            $callback = fn(int $a, string $b): bool => true;
+            $result = \Fp\Function\Callable\partialLeft($callback, 1);
         PHP;
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(string): bool');
+        $this->assertBlockType($phpBlock, 'pure-Closure(string): true');
     }
 
     public function testPartialLeftForClosure1(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Callable\partialLeft(function(int $a): bool {}, 1);
+            $callback = fn(int $a): bool => true;
+            $result = \Fp\Function\Callable\partialLeft($callback, 1);
         PHP;
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(): bool');
+        $this->assertBlockType($phpBlock, 'pure-Closure(): true');
     }
 
     public function testPartialRightForClosure3(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Callable\partialRight(function(int $a, string $b, bool $c): bool {}, true);
+            $callback = fn(int $a, string $b, bool $c): bool => true;
+            $result = \Fp\Function\Callable\partialRight($callback, true);
         PHP;
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(int, string): bool');
+        $this->assertBlockType($phpBlock, 'pure-Closure(int, string): true');
     }
 
     public function testPartialRightForClosure2(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Callable\partialRight(function(int $a, string $b): bool {}, '');
+            $callback = fn(int $a, string $b) => true;
+            $result = \Fp\Function\Callable\partialRight($callback, '');
         PHP;
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(int): bool');
+        $this->assertBlockType($phpBlock, 'pure-Closure(int): true');
     }
 
     public function testPartialRightForClosure1(): void
     {
         $phpBlock = <<<'PHP'
-            $result = \Fp\Function\Callable\partialRight(function(int $a): bool {}, 1);
+            $callback = fn(int $a): bool => true;
+            $result = \Fp\Function\Callable\partialRight($callback, 1);
         PHP;
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(): bool');
+        $this->assertBlockType($phpBlock, 'pure-Closure(): true');
     }
 }

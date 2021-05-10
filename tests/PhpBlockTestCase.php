@@ -53,6 +53,8 @@ abstract class PhpBlockTestCase extends TestCase
     }
 
     /**
+     * Manipulates AST
+     *
      * @psalm-param PhpBlock $block
      * @psalm-return PhpBlock
      */
@@ -83,6 +85,7 @@ abstract class PhpBlockTestCase extends TestCase
     }
 
     /**
+     * Extracts psalm trace result
      * @psalm-param list<string> $lines
      * @psalm-return Option<string>
      */
@@ -102,6 +105,8 @@ abstract class PhpBlockTestCase extends TestCase
     }
 
     /**
+     * Assert that last php block expression is of provided type
+     *
      * @psalm-param PhpBlock $block
      * @psalm-param BlockType $type
      */
