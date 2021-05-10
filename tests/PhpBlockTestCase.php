@@ -16,8 +16,8 @@ use function Fp\Function\Collection\fold;
 use function Fp\Function\Collection\last;
 use function Fp\Function\Collection\reverse;
 use function Fp\Function\Collection\tail;
-use function Fp\Function\String\jsonDecode;
-use function Fp\Function\String\jsonSearch;
+use function Fp\Function\Json\jsonDecode;
+use function Fp\Function\Json\jsonSearch;
 use function Symfony\Component\String\u;
 
 /**
@@ -27,6 +27,8 @@ use function Symfony\Component\String\u;
 abstract class PhpBlockTestCase extends TestCase
 {
     /**
+     * Extracts php block last expression type
+     *
      * @psalm-param PhpBlock $block
      * @psalm-return Option<BlockType>
      */
@@ -35,13 +37,13 @@ abstract class PhpBlockTestCase extends TestCase
         $preparedBlock = $this->prepareBlock($block);
 
         $psalmPath = __DIR__ . '/../vendor/bin/psalm';
-        $tmp_file_name = tempnam(sys_get_temp_dir(), 'psalm_');
-        file_put_contents($tmp_file_name, $preparedBlock);
+        $tmpFileName = tempnam(sys_get_temp_dir(), 'psalm_');
+        file_put_contents($tmpFileName, $preparedBlock);
 
         exec(
             sprintf('%s --output-format=json %s', ...[
                 $psalmPath,
-                $tmp_file_name,
+                $tmpFileName,
             ]),
             $output
         );

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Function\String;
+namespace Fp\Function\Json;
 
 use Fp\Functional\Option\Option;
 
