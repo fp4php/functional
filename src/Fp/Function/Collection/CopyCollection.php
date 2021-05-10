@@ -12,7 +12,7 @@ namespace Fp\Function\Collection;
  *
  * @psalm-return array<TK, TV>
  */
-function copy(iterable $collection): array
+function copyCollection(iterable $collection): array
 {
     $aggregation = [];
 

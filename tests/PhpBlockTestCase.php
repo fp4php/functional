@@ -11,6 +11,7 @@ use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Function\Cast\asList;
+use function Fp\Function\Collection\pop;
 use function Fp\Function\Evidence\proveString;
 use function Fp\Function\Collection\fold;
 use function Fp\Function\Collection\last;
@@ -71,9 +72,8 @@ abstract class PhpBlockTestCase extends TestCase
 
         $mappedAst = Option::do(function () use ($ast) {
             $stmts = yield Option::of($ast);
-            $listOfStmts = asList($stmts);
-            $reversedHead = yield last($listOfStmts);
-            $reversedTail = reverse(tail(reverse($listOfStmts)));
+            $tuple = yield pop($stmts);
+            [$reversedHead, $reversedTail] = $tuple->toArray();
 
             $docComment = new Doc('/** @psalm-trace $result */', $reversedHead->getStartLine());
             $reversedHead->setDocComment($docComment);
