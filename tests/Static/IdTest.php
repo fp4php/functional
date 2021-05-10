@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Static;
 
-use Fp\Functional\Option\Option;
-use Fp\Functional\Tuple\Tuple2;
 use Tests\PhpBlockTestCase;
 
 final class IdTest extends PhpBlockTestCase
