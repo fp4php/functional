@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Fp\Function;
+namespace Fp;
 
-const id = '\Fp\Function\id';
+const id = '\Fp\id';
 
 /**
  * @psalm-template T
