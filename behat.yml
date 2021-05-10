@@ -1,6 +1,0 @@
-default:
-    suites:
-        expression:
-            paths: ['%paths.base%/features/expression']
-            contexts:
-                - ExpressionContext

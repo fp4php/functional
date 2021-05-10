@@ -16,7 +16,6 @@
         "vimeo/psalm": "^4.7",
         "lstrojny/functional-php": "^1.17",
         "klimick/psalm-show-type": "^1.0",
-        "behat/behat": "^3.8",
         "nikic/php-parser": "^4.10",
         "phpunit/phpunit": "^9",
         "mtdowling/jmespath.php": "^2.6"
