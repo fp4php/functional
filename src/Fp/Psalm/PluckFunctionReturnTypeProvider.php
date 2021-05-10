@@ -23,7 +23,7 @@ use SimpleXMLElement;
 
 use function Fp\Collection\first;
 use function Fp\Collection\firstInstanceOf;
-use function Fp\Collection\getByKey;
+use function Fp\Collection\at;
 use function Fp\Collection\map;
 use function Fp\Collection\second;
 use function Fp\Evidence\proveClassString;
@@ -77,7 +77,7 @@ class PluckFunctionReturnTypeProvider implements PluginEntryPointInterface, Func
     {
         return first($event->getCallArgs())
             ->flatMap(fn(Arg $arg): Option => self::getArgType($arg, $event->getStatementsSource()))
-            ->flatMap(fn(Union $collection_type) => getByKey($collection_type->getAtomicTypes(), 'array'))
+            ->flatMap(fn(Union $collection_type) => at($collection_type->getAtomicTypes(), 'array'))
             ->map(fn(Atomic $a) => match(true) {
                 ($a instanceof TArray) => $a->type_params[1],
                 ($a instanceof TKeyedArray) => $a->getGenericValueType(),
