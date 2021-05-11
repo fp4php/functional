@@ -7,7 +7,7 @@ namespace Fp\Callable;
 use function Fp\Collection\filterNotNull;
 use function Fp\Collection\fold;
 
-use const Fp\Function\id;
+use const Fp\id;
 
 /**
  * @todo drop suppress
