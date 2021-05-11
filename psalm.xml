@@ -30,5 +30,6 @@
                 <directory name="tests"/>
             </errorLevel>
         </PropertyNotSetInConstructor>
+        <UnusedClosureParam errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

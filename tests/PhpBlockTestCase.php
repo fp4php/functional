@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 use function Fp\Collection\pop;
 use function Fp\Collection\reduce;
 use function Fp\Evidence\proveString;
-use function Fp\Collection\fold;
 use function Fp\Json\jsonSearch;
 use function Symfony\Component\String\u;
 
