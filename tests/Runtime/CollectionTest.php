@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Runtime;
 
 use PHPUnit\Framework\TestCase;
-
 use Tests\Mock\Foo;
 
 use function Fp\Collection\at;
@@ -29,7 +28,7 @@ use function Fp\Collection\shift;
 use function Fp\Collection\some;
 use function Fp\Collection\tail;
 
-final class CollectionFunctionTest extends TestCase
+final class CollectionTest extends TestCase
 {
     public function testAt(): void
     {

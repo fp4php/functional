@@ -12,5 +12,5 @@ use Fp\Psalm\PartialFunctionReturnTypeProvider;
  */
 function partial(callable $callback, mixed ...$args): callable
 {
-    return partialLeft($callback, $args);
+    return partialLeft($callback, ...$args);
 }
