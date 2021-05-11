@@ -29,11 +29,11 @@ abstract class Either
 
     /**
      * @template T
-     * @psalm-param \Closure(L): T $ifLeft
      * @psalm-param \Closure(R): T $ifRight
+     * @psalm-param \Closure(L): T $ifLeft
      * @return T
      */
-    public function fold(\Closure $ifLeft, \Closure $ifRight): mixed
+    public function fold(\Closure $ifRight, \Closure $ifLeft): mixed
     {
         if ($this->isRight()) {
             return $ifRight($this->get());
