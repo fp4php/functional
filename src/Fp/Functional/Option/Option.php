@@ -136,8 +136,9 @@ abstract class Option
     public abstract function get(): mixed;
 
     /**
-     * @psalm-param A $fallback
-     * @psalm-return A
+     * @psalm-template B
+     * @psalm-param B $fallback
+     * @psalm-return B
      */
     public function getOrElse(mixed $fallback): mixed
     {
