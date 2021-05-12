@@ -20,43 +20,11 @@ final class Tuple4
      * @param T4 $fourth
      */
     public function __construct(
-        private mixed $first,
-        private mixed $second,
-        private mixed $third,
-        private mixed $fourth,
+        public mixed $first,
+        public mixed $second,
+        public mixed $third,
+        public mixed $fourth,
     ) {}
-
-    /**
-     * @psalm-return T1
-     */
-    public function getFirst(): mixed
-    {
-        return $this->first;
-    }
-
-    /**
-     * @psalm-return T2
-     */
-    public function getSecond(): mixed
-    {
-        return $this->second;
-    }
-
-    /**
-     * @psalm-return T3
-     */
-    public function getThird(): mixed
-    {
-        return $this->third;
-    }
-
-    /**
-     * @psalm-return T4
-     */
-    public function getFourth(): mixed
-    {
-        return $this->fourth;
-    }
 
     /**
      * @psalm-template TI1
@@ -82,10 +50,10 @@ final class Tuple4
     public function toArray(): array
     {
         return [
-            $this->getFirst(),
-            $this->getSecond(),
-            $this->getThird(),
-            $this->getFourth(),
+            $this->first,
+            $this->second,
+            $this->third,
+            $this->fourth,
         ];
     }
 }

@@ -16,25 +16,9 @@ final class Tuple2
      * @param T2 $second
      */
     public function __construct(
-        private mixed $first,
-        private mixed $second,
+        public mixed $first,
+        public mixed $second,
     ) {}
-
-    /**
-     * @psalm-return T1
-     */
-    public function getFirst(): mixed
-    {
-        return $this->first;
-    }
-
-    /**
-     * @psalm-return T2
-     */
-    public function getSecond(): mixed
-    {
-        return $this->second;
-    }
 
     /**
      * @psalm-template TI1
@@ -56,8 +40,8 @@ final class Tuple2
     public function toArray(): array
     {
         return [
-            $this->getFirst(),
-            $this->getSecond(),
+            $this->first,
+            $this->second,
         ];
     }
 }

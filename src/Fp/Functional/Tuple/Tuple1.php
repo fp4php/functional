@@ -14,16 +14,8 @@ final class Tuple1
      * @param T1 $first
      */
     public function __construct(
-        private mixed $first,
+        public mixed $first,
     ) {}
-
-    /**
-     * @psalm-return T1
-     */
-    public function getFirst(): mixed
-    {
-        return $this->first;
-    }
 
     /**
      * @psalm-template TI1
@@ -43,7 +35,7 @@ final class Tuple1
     public function toArray(): array
     {
         return [
-            $this->getFirst(),
+            $this->first,
         ];
     }
 }
