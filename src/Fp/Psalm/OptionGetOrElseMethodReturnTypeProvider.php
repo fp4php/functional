@@ -12,6 +12,7 @@ use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
 use Psalm\Type;
+use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
@@ -35,17 +36,31 @@ class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterfa
     {
         return Option::do(function () use ($event) {
             yield proveTrue('getorelse' === $event->getMethodNameLowercase());
-            $arg = yield head($event->getCallArgs());
-            $lower_boundary = yield self::getLowerBoundary($event);
-            $upper_boundary = yield self::getUpperBoundary($event);
-
-            return Type::getBool();
+            $lower = yield self::getLowerBoundary($event);
+            $upper = yield self::getUpperBoundary($event);
+            return yield self::raiseToUpperBoundary($lower, $upper);
         })->get();
     }
 
-    public function raiseToUpperBoundary(Union $lower, Union $upper): Option
+    /**
+     * @psalm-return Option<Union>
+     */
+    public static function raiseToUpperBoundary(Union $lower, Union $upper): Option
     {
+        return Option::do(function () use ($lower, $upper) {
+            yield proveTrue(self::isEmptyArrayOrList($upper));
+            yield proveTrue($lower->isArray());
 
+            return $lower;
+        });
+    }
+
+    public static function isEmptyArrayOrList(Union $type): bool
+    {
+        $emptyList = new Union([new TList(Type::getEmpty())]);
+
+        return $type->equals(Type::getEmptyArray())
+            || $type->equals($emptyList);
     }
 
     /**
