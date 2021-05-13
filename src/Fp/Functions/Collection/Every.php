@@ -13,7 +13,7 @@ namespace Fp\Collection;
  *
  * @psalm-return bool
  */
-function every(iterable $collection, callable $predicate, bool $strict = true): bool
+function every(iterable $collection, callable $predicate, bool $strict = false): bool
 {
     $result = !$strict;
 
@@ -39,7 +39,7 @@ function every(iterable $collection, callable $predicate, bool $strict = true): 
  *
  * @psalm-return bool
  */
-function everyOf(iterable $collection, string $fqcn, bool $strict = true): bool
+function everyOf(iterable $collection, string $fqcn, bool $strict = false): bool
 {
     return every(
         $collection,
