@@ -24,6 +24,9 @@ use function Fp\Collection\filter;
 use function Fp\Collection\head;
 use function Fp\Evidence\proveTrue;
 
+/**
+ * @todo
+ */
 class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterface, MethodReturnTypeProviderInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
@@ -34,7 +37,7 @@ class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterfa
 
     public static function getClassLikeNames(): array
     {
-        return [Option::class];
+        return [/*Option::class*/];
     }
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
