@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime;
+namespace Tests\Runtime\Callable;
 
 use PHPUnit\Framework\TestCase;
 

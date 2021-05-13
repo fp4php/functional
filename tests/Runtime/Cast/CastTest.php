@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime;
+namespace Tests\Runtime\Cast;
 
 use Fp\Functional\Option\None;
 use PHPUnit\Framework\TestCase;

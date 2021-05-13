@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime;
+namespace Tests\Runtime\Collection;
 
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Foo;
@@ -28,7 +28,7 @@ use function Fp\Collection\shift;
 use function Fp\Collection\some;
 use function Fp\Collection\tail;
 
-final class CollectionTest extends TestCase
+final class EveryTest extends TestCase
 {
     public function testAt(): void
     {
