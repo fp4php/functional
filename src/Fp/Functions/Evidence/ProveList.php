@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 
 use function Fp\Collection\everyOf;
 use function Fp\Collection\head;
+use function Fp\Collection\isSequence;
 use function Fp\Collection\keys;
 
 /**

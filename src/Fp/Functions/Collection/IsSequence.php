@@ -2,10 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Evidence;
-
-use function Fp\Collection\keys;
-use function Fp\Collection\reverse;
+namespace Fp\Collection;
 
 /**
  * @psalm-template TK of array-key
@@ -16,22 +13,20 @@ use function Fp\Collection\reverse;
  */
 function isSequence(iterable $collection, int $from = 0, string $direction = 'ASC'): bool
 {
-    $keys = $direction === 'ASC'
-        ? keys($collection)
-        : keys(reverse($collection));
-
-    $sign = $direction === 'ASC' ? -1 : 1;
+    $elements = $direction === 'ASC'
+        ? $collection
+        : reverse($collection);
 
     $isSequence = true;
-    $previousKey = $from + $sign;
+    $previousElement = $from - 1;
 
-    foreach ($keys as $key) {
-        if (!is_int($key) || $key - $previousKey !== -$sign) {
+    foreach ($elements as $element) {
+        if (!is_int($element) || $element - $previousElement !== 1) {
             $isSequence = false;
             break;
         }
 
-        $previousKey = $key;
+        $previousElement = $element;
     }
 
 
