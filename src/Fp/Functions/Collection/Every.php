@@ -28,3 +28,22 @@ function every(iterable $collection, callable $predicate, bool $strict = true): 
 
     return $result;
 }
+
+/**
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ * @psalm-template TVO
+
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param class-string<TVO> $fqcn
+ *
+ * @psalm-return bool
+ */
+function everyOf(iterable $collection, string $fqcn, bool $strict = true): bool
+{
+    return every(
+        $collection,
+        fn(mixed $v) => is_a($v, $fqcn, true),
+        $strict
+    );
+}
