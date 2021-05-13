@@ -68,3 +68,24 @@ function proveListOf(iterable $collection, string $fqcn, bool $strict = false): 
         return $list;
     });
 }
+
+/**
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ * @psalm-template TVO
+ *
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param class-string<TVO> $fqcn
+ *
+ * @psalm-return Option<non-empty-list<TVO>>
+ */
+function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $strict = false): Option
+{
+    return Option::do(function () use ($collection, $fqcn, $strict) {
+        $list = yield proveListOf($collection, $fqcn, $strict);
+        yield head($list);
+
+        /** @var non-empty-list<TVO> $list */
+        return $list;
+    });
+}
