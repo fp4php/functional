@@ -7,6 +7,7 @@ namespace Fp\Evidence;
 use Fp\Functional\Option\Option;
 
 use function Fp\Collection\everyOf;
+use function Fp\Collection\head;
 use function Fp\Collection\keys;
 
 /**
@@ -25,6 +26,25 @@ function proveList(iterable $collection): Option
 
         /** @var list<TV> $array */
         return $array;
+    });
+}
+
+/**
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ *
+ * @psalm-param iterable<TK, TV> $collection
+ *
+ * @psalm-return Option<non-empty-list<TV>>
+ */
+function proveNonEmptyList(iterable $collection): Option
+{
+    return Option::do(function () use ($collection) {
+        $list = yield proveList($collection);
+        yield head($list);
+
+        /** @var non-empty-list<TV> $list */
+        return $list;
     });
 }
 
