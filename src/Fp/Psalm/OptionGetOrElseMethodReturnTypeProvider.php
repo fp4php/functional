@@ -12,10 +12,15 @@ use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
 use Psalm\Type;
+use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TList;
+use Psalm\Type\Atomic\TNonEmptyArray;
+use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
+use function Fp\Cast\asList;
+use function Fp\Collection\filter;
 use function Fp\Collection\head;
 use function Fp\Evidence\proveTrue;
 
@@ -47,13 +52,31 @@ class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterfa
      */
     public static function raiseToUpperBoundary(Union $lower, Union $upper): Option
     {
-        return Option::do(function () use ($lower, $upper) {
-            yield proveTrue(self::isEmptyArrayOrList($upper));
-            yield proveTrue($lower->isArray());
+//        $ada = Type::combineUnionTypes($lower, $upper);
 
-            return $lower;
-        });
+        $x = SumTypeCombiner::reduce(asList(array_merge(
+            array_values($lower->getAtomicTypes()),
+            array_values($upper->getAtomicTypes())
+        )));
+        return Option::of($x);
+
+//        return Option::do(function () use ($lower, $upper) {
+//            return ;
+//        });
+
+//        return Option::do(function () use ($lower, $upper) {
+//            yield proveTrue(self::isEmptyArrayOrList($upper));
+//            yield proveTrue($lower->isArray());
+//            $a = yield head($lower->getAtomicTypes());
+//
+//            return ($a instanceof TNonEmptyArray || $a instanceof TNonEmptyList)
+//                ? new Union([self::stripNonEmpty($a)])
+//                : $lower;
+//        });
     }
+
+
+
 
     public static function isEmptyArrayOrList(Union $type): bool
     {
@@ -61,6 +84,14 @@ class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterfa
 
         return $type->equals(Type::getEmptyArray())
             || $type->equals($emptyList);
+    }
+
+    public static function stripNonEmpty(TNonEmptyArray|TNonEmptyList $type): TArray|TList
+    {
+        return match (true) {
+            ($type instanceof TNonEmptyArray) => new TArray([$type->type_params[0], $type->type_params[1]]),
+            ($type instanceof TNonEmptyList) => new TList($type->type_param),
+        };
     }
 
     /**
