@@ -6,14 +6,13 @@ namespace Fp\Psalm\TypeCombiner\SumType;
 
 use Fp\Psalm\TypeCombiner\TypeCombinerInterface;
 use Psalm\Type;
-use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TList;
 use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
-use function Fp\Collection\every;
+use function Fp\Collection\everyOf;
 use function Fp\Collection\map;
 use function Fp\Collection\some;
 
@@ -27,7 +26,7 @@ class ListTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return every($types, fn(Atomic $a) => $a instanceof TList);
+        return everyOf($types, TList::class, true);
     }
 
     /**

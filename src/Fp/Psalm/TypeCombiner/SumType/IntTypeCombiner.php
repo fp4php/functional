@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Fp\Psalm\TypeCombiner\SumType;
 
 use Fp\Psalm\TypeCombiner\TypeCombinerInterface;
-use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TInt;
 
 use function Fp\Cast\asList;
-use function Fp\Collection\every;
+use function Fp\Collection\everyOf;
 use function Fp\Collection\partition;
 
 /**
@@ -22,7 +21,7 @@ class IntTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return every($types, fn(Atomic $a) => $a instanceof TInt);
+        return everyOf($types, TInt::class, true);
     }
 
     /**
