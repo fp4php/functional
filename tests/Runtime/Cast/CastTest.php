@@ -22,6 +22,7 @@ final class CastTest extends TestCase
         $c = ['a' => 1, 'b' => 2, 'c' => 3];
 
         $this->assertEquals($c, asArray($c));
+        $this->assertEquals([1, 2, 3], asArray($c, false));
     }
 
     public function testAsBool(): void
