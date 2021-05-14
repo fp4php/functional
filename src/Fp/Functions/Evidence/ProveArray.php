@@ -47,11 +47,11 @@ function proveNonEmptyArray(iterable $collection): Option
  *
  * @psalm-return Option<array<TK, TVO>>
  */
-function proveArrayOf(iterable $collection, string $fqcn, bool $strict = false): Option
+function proveArrayOf(iterable $collection, string $fqcn): Option
 {
-    return Option::do(function () use ($collection, $fqcn, $strict) {
+    return Option::do(function () use ($collection, $fqcn) {
         $array = yield proveArray($collection);
-        yield proveTrue(everyOf($array, $fqcn, $strict));
+        yield proveTrue(everyOf($array, $fqcn, false));
 
         /** @var array<TK, TVO> $array */
         return $array;
@@ -71,7 +71,7 @@ function proveArrayOf(iterable $collection, string $fqcn, bool $strict = false):
 function proveNonEmptyArrayOf(iterable $collection, string $fqcn): Option
 {
     return Option::do(function () use ($collection, $fqcn) {
-        $array = yield proveArrayOf($collection, $fqcn, false);
+        $array = yield proveArrayOf($collection, $fqcn);
         yield head($array);
 
         /** @var non-empty-array<TK, TVO> $array */

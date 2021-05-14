@@ -34,13 +34,9 @@ final class ProveArrayTest extends TestCase
 
     public function testProveArrayOf(): void
     {
-        $this->assertInstanceOf(None::class, proveArrayOf(new FooIterable(), Foo::class, true));
-        $this->assertInstanceOf(None::class, proveArrayOf(new FooIterable(), Foo::class, false));
-
-        $this->assertInstanceOf(Some::class, proveArrayOf([], Foo::class, false));
-        $this->assertInstanceOf(None::class, proveArrayOf([], Foo::class, true));
-
-        $this->assertInstanceOf(Some::class, proveArrayOf([new Foo(1)], Foo::class, false));
+        $this->assertInstanceOf(None::class, proveArrayOf(new FooIterable(), Foo::class));
+        $this->assertInstanceOf(Some::class, proveArrayOf([], Foo::class));
+        $this->assertInstanceOf(Some::class, proveArrayOf([new Foo(1)], Foo::class));
         $this->assertInstanceOf(None::class, proveArrayOf([new Foo(1), new Bar(true)], Foo::class));
     }
 
