@@ -11,13 +11,11 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Union;
 
-use function Fp\Cast\asArray;
-use function Fp\Cast\asList;
 use function Fp\Cast\asNonEmptyArray;
 use function Fp\Collection\everyOf;
 use function Fp\Collection\map;
 use function Fp\Collection\some;
-use function Fp\Evidence\proveNonEmptyList;
+use function Fp\Collection\someOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 
 /**
@@ -54,8 +52,7 @@ class ArrayTypeCombiner implements TypeCombinerInterface
             $keyAtomics = yield asNonEmptyArray($keyAtomics, false);
             $valueAtomics = yield asNonEmptyArray($valueAtomics, false);
 
-            $hasPossiblyEmptyArray = some($types, fn(TArray $l) => $l::class === TArray::class);
-            $combinedArray = $hasPossiblyEmptyArray
+            $combinedArray = someOf($types, TArray::class, true)
                 ? new TArray([new Union($keyAtomics), new Union($valueAtomics)])
                 : new TNonEmptyArray([new Union($keyAtomics), new Union($valueAtomics)]);
 

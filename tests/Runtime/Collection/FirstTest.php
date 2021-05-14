@@ -13,7 +13,7 @@ use function Fp\Collection\copyCollection;
 use function Fp\Collection\every;
 use function Fp\Collection\filter;
 use function Fp\Collection\first;
-use function Fp\Collection\firstInstanceOf;
+use function Fp\Collection\firstOf;
 use function Fp\Collection\flatMap;
 use function Fp\Collection\fold;
 use function Fp\Collection\group;
@@ -47,7 +47,7 @@ final class FirstTest extends TestCase
     {
         $foo = new Foo(1);
 
-        $this->assertEquals($foo, firstInstanceOf([1, $foo, 3], Foo::class)->get());
-        $this->assertNull(firstInstanceOf([1, $foo, 3], Bar::class)->get());
+        $this->assertEquals($foo, firstOf([1, $foo, 3], Foo::class)->get());
+        $this->assertNull(firstOf([1, $foo, 3], Bar::class)->get());
     }
 }

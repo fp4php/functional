@@ -28,9 +28,9 @@ function some(iterable $collection, callable $predicate): bool
  *
  * @psalm-return bool
  */
-function someOf(iterable $collection, string $fqcn): bool
+function someOf(iterable $collection, string $fqcn, bool $strict = false): bool
 {
-    return firstInstanceOf($collection, $fqcn)->fold(
+    return firstOf($collection, $fqcn, $strict)->fold(
         fn() => true,
         fn() => false,
     );

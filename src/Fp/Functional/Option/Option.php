@@ -116,15 +116,18 @@ abstract class Option
     }
 
     /**
-     * @template T
-     * @psalm-param \Closure(A): T $ifSome
-     * @psalm-param \Closure(): T $ifNone
-     * @return T
+     * @psalm-template B
+     * @psalm-param \Closure(A): B $ifSome
+     * @psalm-param \Closure(): B $ifNone
+     * @psalm-return B
      */
     public function fold(\Closure $ifSome, \Closure $ifNone): mixed
     {
         if (!$this->isEmpty()) {
-            return $ifSome($this->get());
+            /** @var A $v */
+            $v = $this->get();
+
+            return $ifSome($v);
         } else {
             return $ifNone();
         }

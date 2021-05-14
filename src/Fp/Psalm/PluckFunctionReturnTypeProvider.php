@@ -22,7 +22,7 @@ use ReflectionNamedType;
 use SimpleXMLElement;
 
 use function Fp\Collection\first;
-use function Fp\Collection\firstInstanceOf;
+use function Fp\Collection\firstOf;
 use function Fp\Collection\at;
 use function Fp\Collection\map;
 use function Fp\Collection\second;
@@ -83,7 +83,7 @@ class PluckFunctionReturnTypeProvider implements PluginEntryPointInterface, Func
                 ($a instanceof TKeyedArray) => $a->getGenericValueType(),
                 default => null
             })
-            ->flatMap(fn(Union $template_value_type) => firstInstanceOf(
+            ->flatMap(fn(Union $template_value_type) => firstOf(
                 $template_value_type->getAtomicTypes(),
                 TNamedObject::class
             )
@@ -97,7 +97,7 @@ class PluckFunctionReturnTypeProvider implements PluginEntryPointInterface, Func
     {
         return second($event->getCallArgs())
             ->flatMap(fn(Arg $arg): Option => self::getArgType($arg, $event->getStatementsSource()))
-            ->flatMap(fn(Union $key) => firstInstanceOf($key->getAtomicTypes(), TLiteralString::class))
+            ->flatMap(fn(Union $key) => firstOf($key->getAtomicTypes(), TLiteralString::class))
             ->map(fn(TLiteralString $literal) => $literal->value);
     }
 
