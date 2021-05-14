@@ -6,7 +6,11 @@ namespace Tests\Runtime\Collection;
 
 use PHPUnit\Framework\TestCase;
 
+use Tests\Mock\Bar;
+use Tests\Mock\Foo;
+
 use function Fp\Collection\some;
+use function Fp\Collection\someOf;
 
 final class SomeTest extends TestCase
 {
@@ -20,6 +24,19 @@ final class SomeTest extends TestCase
         $this->assertFalse(some(
             [2, 3 ,4],
             fn(int $v) => $v < 2
+        ));
+    }
+
+    public function testSomeOf(): void
+    {
+        $this->assertTrue(someOf(
+            [1, new Foo(1)],
+            Foo::class
+        ));
+
+        $this->assertFalse(someOf(
+            [1, new Foo(1)],
+            Bar::class
         ));
     }
 }
