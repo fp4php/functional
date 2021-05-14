@@ -10,7 +10,7 @@ final class MapTest extends PhpBlockTestCase
 {
     public function testListOfInt(): void
     {
-        $phpBlock = <<<'PHP'
+        $phpBlock = /** @lang InjectablePHP */ '
             use function Fp\Collection\map;
 
             /** 
@@ -19,14 +19,14 @@ final class MapTest extends PhpBlockTestCase
             function getCollection() {}
             
             $result = map(getCollection(), fn(int $value, int $key) => (string) $value);
-        PHP;
+        ';
 
         $this->assertBlockType($phpBlock, 'array<int, numeric-string>');
     }
 
     public function testArrayOfInt(): void
     {
-        $phpBlock = <<<'PHP'
+        $phpBlock = /** @lang InjectablePHP */ '
             use function Fp\Collection\map;
 
             /** 
@@ -35,7 +35,7 @@ final class MapTest extends PhpBlockTestCase
             function getCollection() {}
             
             $result = map(getCollection(), fn(int $value, int $key) => (string) $value);
-        PHP;
+        ';
 
         $this->assertBlockType($phpBlock, 'array<string, numeric-string>');
     }

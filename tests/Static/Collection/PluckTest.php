@@ -10,12 +10,12 @@ final class PluckTest extends PhpBlockTestCase
 {
     public function testIntProperty(): void
     {
-        $phpBlock = <<<'PHP'
+        $phpBlock = /** @lang InjectablePHP */ '
             use Tests\Mock\Foo;
             use function Fp\Collection\pluck;
             
-            $result = pluck([new Foo(1), new Foo(2)], 'a');
-        PHP;
+            $result = pluck([new Foo(1), new Foo(2)], "a");
+        ';
 
         $this->assertBlockType($phpBlock, 'array<array-key, int>');
     }

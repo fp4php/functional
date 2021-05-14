@@ -10,14 +10,14 @@ final class CopyCollectionTest extends PhpBlockTestCase
 {
     public function testWithArray(): void
     {
-        $phpBlock = <<<'PHP'
+        $phpBlock = /** @lang InjectablePHP */ '
             /** 
              * @psalm-return array<string, int> 
              */
             function getCollection(): array { return []; }
             
             $result = \Fp\Collection\copyCollection(getCollection());
-        PHP;
+        ';
 
         $this->assertBlockType($phpBlock, 'array<string, int>');
     }
