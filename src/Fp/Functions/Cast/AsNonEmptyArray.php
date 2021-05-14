@@ -11,13 +11,17 @@ use function Fp\Collection\head;
 /**
  * @psalm-template TK of array-key
  * @psalm-template TV
+ * @psalm-template TP of bool
+ *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-return Option<non-empty-array<TK, TV>>
+ * @psalm-param TP $preserveKeys
+ *
+ * @psalm-return (TP is true ? Option<non-empty-array<TK, TV>> : Option<non-empty-array<int, TV>>)
  */
-function asNonEmptyArray(iterable $collection): Option
+function asNonEmptyArray(iterable $collection, bool $preserveKeys = true): Option
 {
     /** @var Option<non-empty-array<TK, TV>> $array */
-    $array = head($collection)->map(fn() => asArray($collection));
+    $array = head($collection)->map(fn() => asArray($collection, $preserveKeys));
 
     return $array;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeCombiner\SumType;
 
+use Fp\Functional\Option\Option;
 use Fp\Psalm\TypeCombiner\TypeCombinerInterface;
 use Psalm\Type;
 use Psalm\Type\Atomic\TArray;
@@ -12,9 +13,12 @@ use Psalm\Type\Union;
 
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
+use function Fp\Cast\asNonEmptyArray;
 use function Fp\Collection\everyOf;
 use function Fp\Collection\map;
 use function Fp\Collection\some;
+use function Fp\Evidence\proveNonEmptyList;
+use function Fp\Evidence\proveNonEmptyListOf;
 
 /**
  * @implements TypeCombinerInterface<TArray>
@@ -34,28 +38,31 @@ class ArrayTypeCombiner implements TypeCombinerInterface
      */
     public function combine(array $types): array
     {
-        $hasPossiblyEmptyArray = some($types, fn(TArray $l) => $l::class === TArray::class);
-        $keyTypeParams = asList(map($types, fn(TArray $list) => $list->type_params[0]));
-        $valueTypeParams = asList(map($types, fn(TArray $list) => $list->type_params[1]));
+        $combinedOption = Option::do(function () use ($types) {
+            $keyTypeParams = map($types, fn(TArray $list) => $list->type_params[0]);
+            $valueTypeParams = map($types, fn(TArray $list) => $list->type_params[1]);
 
-        if (empty($keyTypeParams) || empty($valueTypeParams)) {
-            return asList($types);
-        }
+            $keyTypeParams = yield proveNonEmptyListOf($keyTypeParams, Union::class);
+            $valueTypeParams = yield proveNonEmptyListOf($valueTypeParams, Union::class);
 
-        $combinedKeyTypeParams = Type::combineUnionTypeArray($keyTypeParams, null);
-        $combinedValueTypeParams = Type::combineUnionTypeArray($valueTypeParams, null);
+            $combinedKeyTypeParams = Type::combineUnionTypeArray($keyTypeParams, null);
+            $combinedValueTypeParams = Type::combineUnionTypeArray($valueTypeParams, null);
 
-        $keyAtomics = asArray($combinedKeyTypeParams->getAtomicTypes(), false);
-        $valueAtomics = asArray($combinedValueTypeParams->getAtomicTypes(), false);
+            $keyAtomics = $combinedKeyTypeParams->getAtomicTypes();
+            $valueAtomics = $combinedValueTypeParams->getAtomicTypes();
 
-        if (empty($keyAtomics) || empty($valueAtomics)) {
-            return asList($types);
-        }
+            $keyAtomics = yield asNonEmptyArray($keyAtomics, false);
+            $valueAtomics = yield asNonEmptyArray($valueAtomics, false);
 
-        $reducedArray = $hasPossiblyEmptyArray
-            ? new TArray([new Union($keyAtomics), new Union($valueAtomics)])
-            : new TNonEmptyArray([new Union($keyAtomics), new Union($valueAtomics)]);
+            $hasPossiblyEmptyArray = some($types, fn(TArray $l) => $l::class === TArray::class);
+            $combinedArray = $hasPossiblyEmptyArray
+                ? new TArray([new Union($keyAtomics), new Union($valueAtomics)])
+                : new TNonEmptyArray([new Union($keyAtomics), new Union($valueAtomics)]);
 
-        return [$reducedArray];
+            return [$combinedArray];
+
+        });
+
+        return $combinedOption->get() ?? $types;
     }
 }
