@@ -13,5 +13,6 @@ final class AtTest extends TestCase
     public function testAt(): void
     {
         $this->assertTrue(at(['a' => true], 'a')->get());
+        $this->assertNull(at(['a' => true], 'b')->get());
     }
 }

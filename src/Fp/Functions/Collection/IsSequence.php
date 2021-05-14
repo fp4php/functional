@@ -5,23 +5,19 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 /**
- * @psalm-template TK of array-key
- * @psalm-template TV
+ * @psalm-template TK
  *
- * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param iterable<TK, int|string> $collection
  * @psalm-param 'ASC'|'DESC' $direction
  */
 function isSequence(iterable $collection, int $from = 0, string $direction = 'ASC'): bool
 {
-    $elements = $direction === 'ASC'
-        ? $collection
-        : reverse($collection);
-
     $isSequence = true;
-    $previousElement = $from - 1;
+    $sign = $direction === 'ASC' ? -1 : 1;
+    $previousElement = $from + $sign;
 
-    foreach ($elements as $element) {
-        if (!is_int($element) || $element - $previousElement !== 1) {
+    foreach ($collection as $element) {
+        if (!is_int($element) || $element - $previousElement !== -$sign) {
             $isSequence = false;
             break;
         }
