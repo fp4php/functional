@@ -28,7 +28,6 @@ function every(iterable $collection, callable $predicate): bool
 }
 
 /**
- * @todo
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO

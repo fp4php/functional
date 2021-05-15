@@ -11,10 +11,8 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Union;
 
-use function Fp\Cast\asNonEmptyArray;
 use function Fp\Collection\everyOf;
 use function Fp\Collection\map;
-use function Fp\Collection\any;
 use function Fp\Collection\anyOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 
@@ -40,26 +38,30 @@ class ArrayTypeCombiner implements TypeCombinerInterface
             $keyTypeParams = map($types, fn(TArray $list) => $list->type_params[0]);
             $valueTypeParams = map($types, fn(TArray $list) => $list->type_params[1]);
 
-            $keyTypeParams = yield proveNonEmptyListOf($keyTypeParams, Union::class);
-            $valueTypeParams = yield proveNonEmptyListOf($valueTypeParams, Union::class);
-
-            $combinedKeyTypeParams = Type::combineUnionTypeArray($keyTypeParams, null);
-            $combinedValueTypeParams = Type::combineUnionTypeArray($valueTypeParams, null);
-
-            $keyAtomics = $combinedKeyTypeParams->getAtomicTypes();
-            $valueAtomics = $combinedValueTypeParams->getAtomicTypes();
-
-            $keyAtomics = yield asNonEmptyArray($keyAtomics, false);
-            $valueAtomics = yield asNonEmptyArray($valueAtomics, false);
+            $combinedKeyTypeParam = yield $this->combineTypeParams($keyTypeParams);
+            $combinedValueTypeParam = yield $this->combineTypeParams($valueTypeParams);
 
             $combinedArray = anyOf($types, TArray::class, true)
-                ? new TArray([new Union($keyAtomics), new Union($valueAtomics)])
-                : new TNonEmptyArray([new Union($keyAtomics), new Union($valueAtomics)]);
+                ? new TArray([$combinedKeyTypeParam, $combinedValueTypeParam])
+                : new TNonEmptyArray([$combinedKeyTypeParam, $combinedValueTypeParam]);
 
             return [$combinedArray];
-
         });
 
         return $combinedOption->get() ?? $types;
+    }
+
+
+    /**
+     * @template TK of array-key
+     * @psalm-param iterable<TK, Union> $typeParams
+     * @psalm-return Option<Union>
+     */
+    private function combineTypeParams(iterable $typeParams): Option
+    {
+        return Option::do(function () use ($typeParams) {
+            $provenTypeParams = yield proveNonEmptyListOf($typeParams, Union::class);
+            return Type::combineUnionTypeArray($provenTypeParams, null);
+        });
     }
 }
