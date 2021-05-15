@@ -10,8 +10,11 @@ use function Fp\Collection\fold;
 use const Fp\id;
 
 /**
- * @todo drop suppress
- * @psalm-suppress InvalidReturnStatement, InvalidReturnType
+ * Compose functions
+ * Output of one function will be passed as input to another function
+ *
+ * Given callable(int): bool and callable(bool): string
+ * Returns callable(int): string
  *
  * @psalm-template A
  * @psalm-template B
@@ -47,6 +50,8 @@ use const Fp\id;
  *     func_num_args() is 9 ? callable(A): K : (
  *     callable(A): L
  * )))))))))
+ *
+ * @psalm-suppress InvalidReturnStatement, InvalidReturnType
  */
 function compose(
     callable $aToB,
@@ -67,7 +72,7 @@ function compose(
         id,
         $callables,
         function(callable $acc, callable $c) {
-            return fn(mixed $v): mixed => $c($acc($v));
+            return fn(mixed $v): mixed => call_user_func($c, $acc($v));
         }
     );
 }
