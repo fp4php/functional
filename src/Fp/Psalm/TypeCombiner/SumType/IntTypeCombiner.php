@@ -8,7 +8,6 @@ use Fp\Psalm\TypeCombiner\TypeCombinerInterface;
 use Psalm\Type\Atomic\TInt;
 
 use function Fp\Cast\asList;
-use function Fp\Collection\everyOf;
 use function Fp\Collection\partition;
 
 /**
@@ -16,14 +15,6 @@ use function Fp\Collection\partition;
  */
 class IntTypeCombiner implements TypeCombinerInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public function supports(array $types): bool
-    {
-        return !empty($types) && everyOf($types, TInt::class);
-    }
-
     /**
      * @inheritdoc
      */

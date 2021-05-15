@@ -13,12 +13,6 @@ use Psalm\Type\Atomic;
 interface TypeCombinerInterface
 {
     /**
-     * @psalm-template B of Atomic
-     * @psalm-param list<B> $types
-     */
-    public function supports(array $types): bool;
-
-    /**
      * @psalm-param list<A> $types
      * @psalm-return list<A>
      */

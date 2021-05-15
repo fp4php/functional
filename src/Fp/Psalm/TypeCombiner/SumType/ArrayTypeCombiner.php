@@ -11,7 +11,6 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Union;
 
-use function Fp\Collection\everyOf;
 use function Fp\Collection\map;
 use function Fp\Collection\anyOf;
 use function Fp\Evidence\proveNonEmptyListOf;
@@ -21,14 +20,6 @@ use function Fp\Evidence\proveNonEmptyListOf;
  */
 class ArrayTypeCombiner implements TypeCombinerInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public function supports(array $types): bool
-    {
-        return !empty($types) && everyOf($types, TArray::class);
-    }
-
     /**
      * @inheritdoc
      */
