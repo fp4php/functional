@@ -7,6 +7,8 @@ namespace Fp\Collection;
 use Fp\Functional\Option\Option;
 
 /**
+ * Returns collection first element
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *

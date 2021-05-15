@@ -55,7 +55,8 @@ function proveNonEmptyList(iterable $collection): Option
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn
+ * @psalm-param class-string<TVO> $fqcn fully qualified class name
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return Option<list<TVO>>
  */
@@ -76,7 +77,8 @@ function proveListOf(iterable $collection, string $fqcn, bool $invariant = false
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn
+ * @psalm-param class-string<TVO> $fqcn fully qualified class name
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return Option<non-empty-list<TVO>>
  */

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 /**
+ * Copy collection in reversed order
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *

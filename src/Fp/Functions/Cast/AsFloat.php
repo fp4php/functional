@@ -12,11 +12,11 @@ use Fp\Functional\Option\Option;
  *
  * @psalm-template T
  *
- * @psalm-param T $potential
+ * @psalm-param T $subject
  *
  * @psalm-return Option<float>
  */
-function asFloat(mixed $potential): Option
+function asFloat(mixed $subject): Option
 {
-    return Option::of(filter_var($potential, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE));
+    return Option::of(filter_var($subject, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE));
 }

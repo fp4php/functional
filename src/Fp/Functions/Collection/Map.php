@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 /**
+ * Map collection values into new collection
+ * Keys are preserved
+ *
  * @psalm-template TK of array-key
  * @psalm-template TVI
  * @psalm-template TVO

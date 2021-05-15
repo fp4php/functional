@@ -7,6 +7,9 @@ namespace Fp\Collection;
 use Fp\Functional\Option\Option;
 
 /**
+ * Returns second collection element
+ * None if there is no second collection element
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *

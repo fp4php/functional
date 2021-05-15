@@ -43,7 +43,8 @@ function proveNonEmptyArray(iterable $collection): Option
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn
+ * @psalm-param class-string<TVO> $fqcn fully qualified class name
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return Option<array<TK, TVO>>
  */
@@ -64,7 +65,8 @@ function proveArrayOf(iterable $collection, string $fqcn, bool $invariant = fals
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn
+ * @psalm-param class-string<TVO> $fqcn fully qualified class name
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return Option<non-empty-array<TK, TVO>>
  */

@@ -10,6 +10,10 @@ use Fp\Functional\Tuple\Tuple2;
 use function Fp\Cast\asNonEmptyList;
 
 /**
+ * Shift first collection element
+ * and return Tuple2 containing this element and other collection elements
+ * If there is no first element then returns None
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *

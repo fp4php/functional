@@ -6,10 +6,15 @@ namespace Fp\Collection;
 
 use Fp\Psalm\PartitionFunctionReturnTypeProvider;
 
+use Tests\Runtime\Collection\PartitionTest;
+
 use function Fp\of;
 
 /**
- * @see PartitionFunctionReturnTypeProvider
+ * Divide collection by given conditions
+ *
+ * Given ['a' => 1, 'b' => 2] and condition fn(int $x) => $x % 2 === 0
+ * Returns [['b' => 2], ['a' => 1]]
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -18,6 +23,8 @@ use function Fp\of;
  * @psalm-param callable(TV, TK): bool ...$predicates
  *
  * @psalm-return array<array-key, array<TK, TV>>
+ *
+ * @see PartitionFunctionReturnTypeProvider
  */
 function partition(iterable $collection, callable ...$predicates): array
 {
@@ -39,6 +46,10 @@ function partition(iterable $collection, callable ...$predicates): array
 }
 
 /**
+ * Divide collection by given classes
+ *
+ * @see PartitionTest::testPartitionOf for usage example
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *

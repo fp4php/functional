@@ -7,6 +7,8 @@ namespace Fp\Collection;
 use function Fp\of;
 
 /**
+ * Filter collection by condition
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TP of bool
@@ -35,6 +37,8 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
 }
 
 /**
+ * Filter not null elements
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TP of bool
@@ -54,14 +58,17 @@ function filterNotNull(iterable $collection, bool $preserveKeys = true): array
 }
 
 /**
+ * Filter elements of given class
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
  * @psalm-template TP of bool
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn
+ * @psalm-param class-string<TVO> $fqcn fully qualified class name
  * @psalm-param TP $preserveKeys
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
  */

@@ -10,6 +10,7 @@ namespace Fp;
 
  * @psalm-param T $subject
  * @psalm-param class-string<TO> $fqcn
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return bool
  *

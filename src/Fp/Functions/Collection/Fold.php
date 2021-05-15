@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 /**
+ * Fold many elements into one
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TA of TV
  *
- * @psalm-param TA $init
+ * @psalm-param TA $init initial accumulator value
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TV): TV $callback
+ * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
  *
  * @psalm-return TV
  */

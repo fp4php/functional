@@ -8,6 +8,13 @@ use ArrayAccess;
 use Fp\Functional\Option\Option;
 
 /**
+ * Find element by it's key
+ *
+ * O(1) for arrays and classes which implement {@see ArrayAccess}
+ * O(N) for other cases
+ *
+ * Returns None if there is no such collection element
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *

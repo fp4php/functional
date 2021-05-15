@@ -21,6 +21,11 @@
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
+        <UnusedVariable errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="src/Fp/Functions"/>
+            </errorLevel>
+        </UnusedVariable>
         <DuplicateFunction errorLevel="suppress">
             <errorLevel type="suppress">
                 <directory name="src/Fp/Functions"/>

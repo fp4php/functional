@@ -7,11 +7,14 @@ namespace Fp\Collection;
 use Fp\Functional\Option\Option;
 
 /**
+ * Reduce multiple elements into one
+ * Returns None for empty collection
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TV): TV $callback
+ * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
  *
  * @psalm-return Option<TV>
  */

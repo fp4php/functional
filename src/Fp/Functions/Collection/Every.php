@@ -7,6 +7,9 @@ namespace Fp\Collection;
 use function Fp\of;
 
 /**
+ * Returns true if every collection element satisfies the condition
+ * false otherwise
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -30,12 +33,16 @@ function every(iterable $collection, callable $predicate): bool
 }
 
 /**
+ * Returns true if every collection element is of given class
+ * false otherwise
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
 
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn
+ * @psalm-param class-string<TVO> $fqcn fully qualified class name
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return bool
  */

@@ -9,6 +9,8 @@ use Fp\Functional\Option\Option;
 use function Fp\of;
 
 /**
+ * Find first element which satisfies the condition
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -36,12 +38,15 @@ function first(iterable $collection, ?callable $predicate = null): Option
 }
 
 /**
+ * Find first element of given class
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn
+ * @psalm-param class-string<TVO> $fqcn fully qualified class name
+ * @psalm-param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-return Option<TVO>
  */

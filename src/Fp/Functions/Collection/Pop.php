@@ -10,6 +10,10 @@ use Fp\Functional\Tuple\Tuple2;
 use function Fp\Cast\asNonEmptyList;
 
 /**
+ * Pop last collection element
+ * and return Tuple2 containing this element and other collection elements
+ * If there is no last element then returns None
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
