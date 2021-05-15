@@ -7,15 +7,17 @@ namespace Fp\Cast;
 /**
  * @psalm-template TK of array-key
  * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param iterable<TK, TV> ...$collections
  * @psalm-return list<TV>
  */
-function asList(iterable $collection): array
+function asList(iterable ...$collections): array
 {
     $aggregate = [];
 
-    foreach ($collection as $element) {
-        $aggregate[] = $element;
+    foreach ($collections as $collection) {
+        foreach ($collection as $element) {
+            $aggregate[] = $element;
+        }
     }
 
     return $aggregate;
