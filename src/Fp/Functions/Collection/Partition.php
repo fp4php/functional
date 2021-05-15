@@ -6,6 +6,8 @@ namespace Fp\Collection;
 
 use Fp\Psalm\PartitionFunctionReturnTypeProvider;
 
+use function Fp\of;
+
 /**
  * @see PartitionFunctionReturnTypeProvider
  *
@@ -104,7 +106,7 @@ function partitionOf(
          * @var class-string $c
          */
         foreach ($classes as $partition => $c) {
-            if (is_a($element, $c)) {
+            if (of($element, $c, $invariant)) {
                 $partitions[$partition][] = $element;
                 continue 2;
             }

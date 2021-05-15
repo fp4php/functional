@@ -59,11 +59,11 @@ function proveNonEmptyList(iterable $collection): Option
  *
  * @psalm-return Option<list<TVO>>
  */
-function proveListOf(iterable $collection, string $fqcn): Option
+function proveListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
 {
-    return Option::do(function () use ($collection, $fqcn) {
+    return Option::do(function () use ($collection, $fqcn, $invariant) {
         $list = yield proveList($collection);
-        yield proveTrue(everyOf($list, $fqcn, false));
+        yield proveTrue(everyOf($list, $fqcn, $invariant));
 
         /** @var list<TVO> $list */
         return $list;
@@ -80,10 +80,10 @@ function proveListOf(iterable $collection, string $fqcn): Option
  *
  * @psalm-return Option<non-empty-list<TVO>>
  */
-function proveNonEmptyListOf(iterable $collection, string $fqcn): Option
+function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
 {
-    return Option::do(function () use ($collection, $fqcn) {
-        $list = yield proveListOf($collection, $fqcn);
+    return Option::do(function () use ($collection, $fqcn, $invariant) {
+        $list = yield proveListOf($collection, $fqcn, $invariant);
         yield head($list);
 
         /** @var non-empty-list<TVO> $list */

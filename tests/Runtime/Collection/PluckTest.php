@@ -11,6 +11,25 @@ use function Fp\Collection\pluck;
 
 final class PluckTest extends TestCase
 {
+    public function testPluckOfNonExistentKey(): void
+    {
+        $this->assertEquals(
+            [null, null],
+            pluck(
+                [['a' => 1], ['a' => 2]],
+                'b'
+            )
+        );
+
+        $this->assertEquals(
+            [null, null],
+            pluck(
+                [new Foo(1), new Foo(3)],
+                'b'
+            )
+        );
+    }
+
     public function testPluck(): void
     {
         $this->assertEquals(

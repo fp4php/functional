@@ -6,6 +6,8 @@ namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
 
+use function Fp\of;
+
 /**
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -48,9 +50,7 @@ function firstOf(iterable $collection, string $fqcn, bool $invariant = false): O
     /** @var Option<TVO> $first */
     $first = first(
         $collection,
-        fn(mixed $v): bool => $invariant
-            ? $v::class === $fqcn
-            : is_a($v, $fqcn, true)
+        fn(mixed $v): bool => of($v, $fqcn, $invariant)
     );
 
     return $first;

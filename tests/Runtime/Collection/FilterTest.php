@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
+use Tests\Mock\SubBar;
+
 use function Fp\Collection\filter;
 use function Fp\Collection\filterOf;
 use function Fp\Collection\filterNotNull;
@@ -38,10 +40,11 @@ final class FilterTest extends TestCase
         );
     }
 
-    public function testFilterInstancesOf(): void
+    public function testFilterOf(): void
     {
         $foo = new Foo(1);
         $bar = new Bar(true);
+        $subBar = new SubBar(true);
 
         $this->assertEquals(
             [2 => $bar],
@@ -56,6 +59,11 @@ final class FilterTest extends TestCase
         $this->assertEquals(
             [$bar],
             filterOf([1, $foo, $bar, 4], Bar::class, false)
+        );
+
+        $this->assertEquals(
+            [2 => $bar],
+            filterOf([1, $subBar, $bar, 4], Bar::class, invariant: true)
         );
     }
 }

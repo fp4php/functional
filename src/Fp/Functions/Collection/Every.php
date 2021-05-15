@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use function Fp\of;
+
 /**
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -41,8 +43,6 @@ function everyOf(iterable $collection, string $fqcn, bool $invariant = false): b
 {
     return every(
         $collection,
-        fn(mixed $v) => $invariant
-            ? $v::class === $fqcn
-            : is_a($v, $fqcn, true)
+        fn(mixed $v) => of($v, $fqcn, $invariant)
     );
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use function Fp\of;
+
 /**
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -68,9 +70,7 @@ function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = true,
     /** @var array<TK, TVO> $instances */
     $instances = filter(
         $collection,
-        fn(mixed $v): bool => $invariant
-            ? $v::class === $fqcn
-            : is_a($v, $fqcn, true),
+        fn(mixed $v): bool => of($v, $fqcn, $invariant),
         $preserveKeys
     );
 

@@ -6,13 +6,20 @@ namespace Tests\Runtime\Collection;
 
 use PHPUnit\Framework\TestCase;
 
+use Tests\Mock\FooIterable;
+
 use function Fp\Collection\at;
 
 final class AtTest extends TestCase
 {
-    public function testAt(): void
+    public function testAtWithArray(): void
     {
         $this->assertTrue(at(['a' => true], 'a')->get());
         $this->assertNull(at(['a' => true], 'b')->get());
+    }
+
+    public function testAtWithIterable(): void
+    {
+        $this->assertNull(at(new FooIterable(), 'b')->get());
     }
 }

@@ -21,9 +21,9 @@ function pluck(iterable $collection, string $key): array
 
     foreach ($collection as $index => $element) {
         $value = match (true) {
-            (is_object($element)) => $element->{$key},
-            (is_array($element)) => $element[$key],
-        } ?? null;
+            (is_object($element)) => $element->{$key} ?? null,
+            (is_array($element)) => $element[$key] ?? null,
+        };
 
         $aggregation[$index] = $value;
     }
