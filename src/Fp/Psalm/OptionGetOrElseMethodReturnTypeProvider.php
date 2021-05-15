@@ -18,9 +18,7 @@ use SimpleXMLElement;
 use function Fp\Collection\head;
 use function Fp\Evidence\proveTrue;
 
-/**
- * @todo
- */
+
 class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterface, MethodReturnTypeProviderInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void

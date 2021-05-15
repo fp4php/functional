@@ -36,7 +36,7 @@ final class EveryTest extends TestCase
             false
         ));
 
-        $this->assertFalse(everyOf(
+        $this->assertTrue(everyOf(
             [],
             Foo::class,
             true

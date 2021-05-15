@@ -19,7 +19,9 @@ use function Fp\Collection\anyOf;
 use function Fp\Collection\partitionOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 
-
+/**
+ * @internal
+ */
 class ArrayTypeCombiner implements TypeCombinerInterface
 {
     public function supports(array $types): bool

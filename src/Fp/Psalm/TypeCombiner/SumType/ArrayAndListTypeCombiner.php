@@ -21,7 +21,9 @@ use function Fp\Collection\partitionOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 use function Fp\of;
 
-
+/**
+ * @internal
+ */
 class ArrayAndListTypeCombiner implements TypeCombinerInterface
 {
     public function supports(array $types): bool

@@ -13,6 +13,9 @@ use Psalm\Type\Union;
 use function Fp\Cast\asList;
 use function Fp\Collection\any;
 
+/**
+ * @internal
+ */
 class EmptyArrayTypeCombiner implements TypeCombinerInterface
 {
     /**
@@ -32,12 +35,6 @@ class EmptyArrayTypeCombiner implements TypeCombinerInterface
     }
 
     public function isEmptyArray(Atomic $a): bool
-    {
-        $union = new Union([$a]);
-        return $union->hasEmptyArray();
-    }
-
-    public function isNonEmptyArray(Atomic $a): bool
     {
         $union = new Union([$a]);
         return $union->hasEmptyArray();

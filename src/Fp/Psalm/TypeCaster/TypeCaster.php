@@ -9,6 +9,9 @@ use Psalm\Type\Atomic\TList;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNonEmptyList;
 
+/**
+ * @internal
+ */
 class TypeCaster
 {
     public static function nonEmptyListToList(TNonEmptyList $list): TList

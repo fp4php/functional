@@ -17,6 +17,9 @@ use function Fp\Collection\map;
 use function Fp\Collection\partitionOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 
+/**
+ * @internal
+ */
 class ListTypeCombiner implements TypeCombinerInterface
 {
     public function supports(array $types): bool

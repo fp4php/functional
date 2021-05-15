@@ -6,6 +6,9 @@ namespace Fp\Psalm\TypeCombiner;
 
 use Psalm\Type\Atomic;
 
+/**
+ * @internal
+ */
 interface TypeCombinerInterface
 {
     /**

@@ -17,6 +17,9 @@ use function Fp\Collection\map;
 use function Fp\Collection\partition;
 use function Fp\Collection\partitionOf;
 
+/**
+ * @internal
+ */
 class ListLikeKeyedArrayTypeCombiner implements TypeCombinerInterface
 {
     /**

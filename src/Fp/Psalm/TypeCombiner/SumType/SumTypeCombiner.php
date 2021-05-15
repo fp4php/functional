@@ -12,6 +12,9 @@ use Psalm\Type\Union;
 use function Fp\Cast\asList;
 use function Fp\Collection\flatMap;
 
+/**
+ * @internal
+ */
 class SumTypeCombiner
 {
     /**
