@@ -9,9 +9,14 @@ use Fp\Functional\Option\Option;
 use function Fp\Collection\head;
 
 /**
+ * Try copy and cast collection to non-empty-list
+ * Returns None if there is no first collection element
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
+ *
  * @psalm-param iterable<TK, TV> $collection
+ *
  * @psalm-return Option<non-empty-list<TV>>
  */
 function asNonEmptyList(iterable $collection): Option

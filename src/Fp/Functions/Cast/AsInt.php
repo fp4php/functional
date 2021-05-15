@@ -7,8 +7,13 @@ namespace Fp\Cast;
 use Fp\Functional\Option\Option;
 
 /**
+ * Try cast integer like value
+ * Returns None if cast is not possible
+ *
  * @psalm-template T
+ *
  * @psalm-param T $potential
+ *
  * @psalm-return Option<int>
  */
 function asInt(mixed $potential): Option
