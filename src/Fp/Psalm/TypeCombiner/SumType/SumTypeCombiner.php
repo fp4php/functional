@@ -17,6 +17,7 @@ use Psalm\Type\Atomic\TString;
 use Psalm\Type\Union;
 
 use function Fp\Cast\asList;
+use function Fp\Collection\isNonEmptySequence;
 use function Fp\Collection\isSequence;
 use function Fp\Collection\keys;
 use function Fp\Collection\map;
@@ -99,7 +100,7 @@ class SumTypeCombiner
     {
         [$listLikes, $arrayLikes, $tail] = partition(
             $keyedArrays,
-            fn(TKeyedArray $a) => isSequence(keys($a->properties)),
+            fn(TKeyedArray $a) => isNonEmptySequence(keys($a->properties)),
             fn(TKeyedArray $a) => $a->getGenericKeyType()->isSingle() && $a->getGenericValueType()->isSingle()
         );
 
