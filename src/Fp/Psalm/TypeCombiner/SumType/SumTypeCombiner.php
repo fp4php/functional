@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeCombiner\SumType;
 
+use Fp\Functional\Tuple\Tuple3;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TBool;
@@ -11,6 +12,7 @@ use Psalm\Type\Atomic\TFloat;
 use Psalm\Type\Atomic\TInt;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TList;
+use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Atomic\TString;
 use Psalm\Type\Union;
 
@@ -63,23 +65,10 @@ class SumTypeCombiner
         [$bools, $strings, $ints, $floats, $keyedArrays, $arrays, $lists, $tail] = $partitions;
 
         // keyed
-        [$listLikeKeyedArrays, $arrayLikeKeyedArrays, $keyedArrays] = partition(
-            $keyedArrays,
-            fn(TKeyedArray $a) => isSequence(keys($a->properties)),
-            fn(TKeyedArray $a) => $a->getGenericKeyType()->isSingle() && $a->getGenericValueType()->isSingle()
-        );
+        [$castedLists, $castedArrays, $keyedArrays] = $this->tryCastToListOrArray($keyedArrays)->toArray();
 
-        $listLikeKeyedArrays = map($listLikeKeyedArrays, function (TKeyedArray $a) {
-            $a->is_list = true;
-            return $a->getList();
-        });
-
-        $arrayLikeKeyedArrays = map($arrayLikeKeyedArrays, function (TKeyedArray $a) {
-            return $a->getGenericArrayType();
-        });
-
-        $listsWithLikes = [...asList($listLikeKeyedArrays), ...$lists];
-        $arraysWithLikes = [...asList($arrayLikeKeyedArrays), ...$arrays];
+        $listsWithLikes = [...asList($castedLists), ...$lists];
+        $arraysWithLikes = [...asList($castedArrays), ...$arrays];
 
         $combinedBools = $this->boolTypeCombiner->combine($bools);
         $combinedStrings = $this->stringTypeCombiner->combine($strings);
@@ -100,5 +89,31 @@ class SumTypeCombiner
         ];
 
         return new Union($reducedAtomics);
+    }
+
+    /**
+     * @psalm-param list<TKeyedArray> $keyedArrays
+     * @psalm-return Tuple3<list<TNonEmptyList>, list<TArray>, list<TKeyedArray>>
+     */
+    private function tryCastToListOrArray(array $keyedArrays): Tuple3
+    {
+        [$listLikes, $arrayLikes, $tail] = partition(
+            $keyedArrays,
+            fn(TKeyedArray $a) => isSequence(keys($a->properties)),
+            fn(TKeyedArray $a) => $a->getGenericKeyType()->isSingle() && $a->getGenericValueType()->isSingle()
+        );
+
+        $lists = map($listLikes, function (TKeyedArray $a): TNonEmptyList {
+            $a->is_list = true;
+            return $a->getList();
+        });
+
+        $arrays = map($arrayLikes, function (TKeyedArray $a): TArray {
+            return $a->getGenericArrayType();
+        });
+
+        return Tuple3::ofArray([
+            asList($lists), asList($arrays), asList($tail)
+        ]);
     }
 }
