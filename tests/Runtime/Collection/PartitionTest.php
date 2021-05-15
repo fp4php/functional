@@ -6,7 +6,11 @@ namespace Tests\Runtime\Collection;
 
 use PHPUnit\Framework\TestCase;
 
+use Tests\Mock\Bar;
+use Tests\Mock\Foo;
+
 use function Fp\Collection\partition;
+use function Fp\Collection\partitionOf;
 
 final class PartitionTest extends TestCase
 {
@@ -30,6 +34,49 @@ final class PartitionTest extends TestCase
                 fn(int $v) => $v === 2,
                 fn(int $v) => $v === 3,
                 fn(int $v) => $v === 4,
+            )
+        );
+    }
+
+    public function testPartitionOf(): void
+    {
+        $foo = new Foo(1);
+        $bar = new Bar(true);
+
+        $this->assertEquals(
+            [[], []],
+            partitionOf(
+                [],
+                true,
+                Foo::class
+            )
+        );
+
+        $this->assertEquals(
+            [[$foo], [$bar]],
+            partitionOf(
+                [$foo, $bar],
+                true,
+                Foo::class
+            )
+        );
+
+        $this->assertEquals(
+            [[$foo, $foo], []],
+            partitionOf(
+                [$foo, $foo],
+                true,
+                Foo::class
+            )
+        );
+
+        $this->assertEquals(
+            [[$foo, $foo], [$bar], [1]],
+            partitionOf(
+                [$foo, $foo, $bar, 1],
+                true,
+                Foo::class,
+                Bar::class
             )
         );
     }
