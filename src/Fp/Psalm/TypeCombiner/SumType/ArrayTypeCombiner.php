@@ -11,23 +11,28 @@ use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Union;
 
+use function Fp\Collection\filterOf;
 use function Fp\Collection\map;
 use function Fp\Collection\anyOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 
-/**
- * @implements TypeCombinerInterface<TArray>
- */
+
 class ArrayTypeCombiner implements TypeCombinerInterface
 {
+    public function supports(array $types): bool
+    {
+        return anyOf($types, TArray::class);
+    }
+
     /**
      * @inheritdoc
      */
     public function combine(array $types): array
     {
         $combinedOption = Option::do(function () use ($types) {
-            $keyTypeParams = map($types, fn(TArray $list) => $list->type_params[0]);
-            $valueTypeParams = map($types, fn(TArray $list) => $list->type_params[1]);
+            $arrays = filterOf($types, TArray::class);
+            $keyTypeParams = map($arrays, fn(TArray $list) => $list->type_params[0]);
+            $valueTypeParams = map($arrays, fn(TArray $list) => $list->type_params[1]);
 
             $combinedKeyTypeParam = yield $this->combineTypeParams($keyTypeParams);
             $combinedValueTypeParam = yield $this->combineTypeParams($valueTypeParams);

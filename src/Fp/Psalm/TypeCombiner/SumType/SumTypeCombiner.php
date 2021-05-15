@@ -18,7 +18,6 @@ use Psalm\Type\Union;
 
 use function Fp\Cast\asList;
 use function Fp\Collection\isNonEmptySequence;
-use function Fp\Collection\isSequence;
 use function Fp\Collection\keys;
 use function Fp\Collection\map;
 use function Fp\Collection\partition;
@@ -38,10 +37,9 @@ class SumTypeCombiner
 
     public function __construct()
     {
-        $this->boolTypeCombiner = new BoolTypeCombiner();
-        $this->stringTypeCombiner = new StringTypeCombiner();
-        $this->intTypeCombiner = new IntTypeCombiner();
-        $this->floatTypeCombiner = new FloatTypeCombiner();
+        $this->pipeline = [
+
+        ];
         $this->arrayTypeCombiner = new ArrayTypeCombiner();
         $this->listTypeCombiner = new ListTypeCombiner();
     }
@@ -64,9 +62,9 @@ class SumTypeCombiner
         );
 
         [$bools, $strings, $ints, $floats, $keyedArrays, $arrays, $lists, $tail] = $partitions;
-
-        // keyed
-        [$castedLists, $castedArrays, $keyedArrays] = $this->tryCastToListOrArray($keyedArrays)->toArray();
+        [$castedLists, $castedArrays, $keyedArrays] = $this
+            ->tryCastToListOrArray($keyedArrays)
+            ->toArray();
 
         $listsWithLikes = [...asList($castedLists), ...$lists];
         $arraysWithLikes = [...asList($castedArrays), ...$arrays];
@@ -78,7 +76,7 @@ class SumTypeCombiner
         $combinedArrays = $this->arrayTypeCombiner->combine($arraysWithLikes);
         $combinedLists = $this->listTypeCombiner->combine($listsWithLikes);
 
-        $reducedAtomics = [
+        $combinedAtomics = [
             ...$combinedBools,
             ...$combinedStrings,
             ...$combinedInts,
@@ -89,7 +87,7 @@ class SumTypeCombiner
             ...asList($tail),
         ];
 
-        return new Union($reducedAtomics);
+        return new Union($combinedAtomics);
     }
 
     /**
@@ -116,5 +114,10 @@ class SumTypeCombiner
         return Tuple3::ofArray([
             asList($lists), asList($arrays), asList($tail)
         ]);
+    }
+
+    private function passThrough(array $types): array
+    {
+
     }
 }

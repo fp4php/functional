@@ -7,30 +7,33 @@ namespace Fp\Psalm\TypeCombiner\SumType;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\TypeCombiner\TypeCombinerInterface;
 use Psalm\Type;
-use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TList;
 use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 
 use function Fp\Collection\anyOf;
+use function Fp\Collection\filterOf;
 use function Fp\Collection\map;
 use function Fp\Evidence\proveNonEmptyListOf;
 
-/**
- * @implements TypeCombinerInterface<TList>
- */
 class ListTypeCombiner implements TypeCombinerInterface
 {
+    public function supports(array $types): bool
+    {
+        return anyOf($types, TList::class);
+    }
+
     /**
      * @inheritdoc
      */
     public function combine(array $types): array
     {
         $combinedOption = Option::do(function () use ($types) {
-            $typeParams = map($types, fn(TList $list) => $list->type_param);
+            $lists = filterOf($types, TList::class);
+            $typeParams = map($lists, fn(TList $list) => $list->type_param);
             $combinedTypeParam = yield $this->combineTypeParams($typeParams);
 
-            $combinedArray = anyOf($types, TArray::class, true)
+            $combinedArray = anyOf($types, TList::class, true)
                 ? new TList($combinedTypeParam)
                 : new TNonEmptyList($combinedTypeParam);
 
