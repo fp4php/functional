@@ -33,13 +33,13 @@ abstract class PhpBlockTestCase extends TestCase
         $preparedBlock = $this->prepareBlock($block);
 
         $psalmPath = __DIR__ . '/../vendor/bin/psalm';
-        $tmpFileName = tempnam(sys_get_temp_dir(), 'psalm_');
-        file_put_contents($tmpFileName, $preparedBlock);
+        $path = sys_get_temp_dir() . '/psalm_stub.php';
+        file_put_contents($path, $preparedBlock);
 
         exec(
             sprintf('%s --output-format=json %s', ...[
                 $psalmPath,
-                $tmpFileName,
+                $path,
             ]),
             $output
         );
