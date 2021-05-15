@@ -27,7 +27,7 @@ use function Fp\Collection\reduce;
 use function Fp\Collection\reverse;
 use function Fp\Collection\second;
 use function Fp\Collection\shift;
-use function Fp\Collection\some;
+use function Fp\Collection\any;
 use function Fp\Collection\tail;
 
 final class FirstTest extends TestCase

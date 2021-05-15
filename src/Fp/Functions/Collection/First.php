@@ -43,12 +43,12 @@ function first(iterable $collection, ?callable $predicate = null): Option
  *
  * @psalm-return Option<TVO>
  */
-function firstOf(iterable $collection, string $fqcn, bool $strict = false): Option
+function firstOf(iterable $collection, string $fqcn, bool $invariant = false): Option
 {
     /** @var Option<TVO> $first */
     $first = first(
         $collection,
-        fn(mixed $v): bool => $strict
+        fn(mixed $v): bool => $invariant
             ? $v::class === $fqcn
             : is_a($v, $fqcn, true)
     );

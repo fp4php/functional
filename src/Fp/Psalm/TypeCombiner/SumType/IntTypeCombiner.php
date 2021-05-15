@@ -21,7 +21,7 @@ class IntTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return everyOf($types, TInt::class, true);
+        return !empty($types) && everyOf($types, TInt::class);
     }
 
     /**

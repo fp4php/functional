@@ -21,7 +21,7 @@ class StringTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return everyOf($types, TString::class, true);
+        return !empty($types) && everyOf($types, TString::class);
     }
 
     /**

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeCombiner\SumType;
 
+use Fp\Functional\Option\Option;
+use Fp\Functional\Tuple\Tuple8;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TBool;
@@ -17,6 +19,7 @@ use Psalm\Type\Union;
 use function Fp\Cast\asList;
 use function Fp\Collection\map;
 use function Fp\Collection\partition;
+use function Fp\Evidence\proveListOf;
 
 /**
  * @todo
@@ -25,19 +28,20 @@ class SumTypeCombiner
 {
     /**
      * @psalm-param list<Atomic> $atomics
+     * @psalm-return Option<Tuple8<
+     *     list<TBool>,
+     *     list<TString>,
+     *     list<TInt>,
+     *     list<TFloat>,
+     *     list<TArray>,
+     *     list<TKeyedArray>,
+     *     list<TList>,
+     *     list<Atomic>
+     * >>
      */
-    public function combine(array $atomics): Union
+    private function partAtomicsByType(array $atomics)
     {
-        [
-            $booleans,
-            $strings,
-            $integers,
-            $floats,
-            $arrays,
-            $keyedArrays,
-            $lists,
-            $tail,
-        ] = partition(
+        $partitions = partition(
             $atomics,
             fn(Atomic $v) => $v instanceof TBool,
             fn(Atomic $v) => $v instanceof TString,
@@ -47,6 +51,33 @@ class SumTypeCombiner
             fn(Atomic $v) => $v instanceof TKeyedArray,
             fn(Atomic $v) => $v instanceof TList,
         );
+
+        return Option::do(function () use ($partitions) {
+            $booleans = yield proveListOf(asList($partitions[0]), TBool::class);
+            $strings = yield proveListOf(asList($partitions[1]), TString::class);
+            $integers = yield proveListOf(asList($partitions[2]), TInt::class);
+            $floats = yield proveListOf(asList($partitions[3]), TFloat::class);
+            $arrays = yield proveListOf(asList($partitions[4]), TArray::class);
+            $keyedArrays = yield proveListOf(asList($partitions[5]), TKeyedArray::class);
+            $lists = yield proveListOf(asList($partitions[6]), TList::class);
+            $tail = asList($partitions[7]);
+
+            return Tuple8::ofArray([$booleans, $strings, $integers, $floats, $arrays, $keyedArrays, $lists, $tail]);
+        });
+    }
+
+    /**
+     * @psalm-param list<Atomic> $atomics
+     */
+    public function combine(array $atomics): Union
+    {
+        Option::do(function () use ($atomics) {
+            $partitions = yield $this->partAtomicsByType($atomics);
+            [$booleans, $strings, $integers, $floats, $arrays, $keyedArrays, $lists, $tail] = $partitions->toArray();
+
+        });
+
+
 
         $keyedArrays = instancesOf($keyedArrays, TKeyedArray::class);
 
@@ -87,21 +118,5 @@ class SumTypeCombiner
         ];
 
         return new Union($reducedAtomics);
-    }
-
-
-    private function isList(TKeyedArray $keyedArray): bool
-    {
-        $isList = true;
-        $previousKey = -1;
-
-        foreach ($keyedArray->properties as $key => $value) {
-            if ($key - $previousKey !== 1) {
-                $isList = false;
-                break;
-            }
-        }
-
-        return $isList;
     }
 }

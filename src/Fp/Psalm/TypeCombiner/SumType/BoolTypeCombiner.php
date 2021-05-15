@@ -21,7 +21,7 @@ class BoolTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return everyOf($types, TBool::class, true);
+        return !empty($types) && everyOf($types, TBool::class);
     }
 
     /**

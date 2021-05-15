@@ -8,18 +8,19 @@ use Psalm\Type\Atomic;
 
 /**
  * @see Atomic
- * @psalm-template T of Atomic
+ * @psalm-template A of Atomic
  */
 interface TypeCombinerInterface
 {
     /**
-     * @psalm-param list<T> $types
+     * @psalm-template B of Atomic
+     * @psalm-param list<B> $types
      */
     public function supports(array $types): bool;
 
     /**
-     * @psalm-param list<T> $types
-     * @psalm-return list<T>
+     * @psalm-param list<A> $types
+     * @psalm-return list<A>
      */
     public function combine(array $types): array;
 }

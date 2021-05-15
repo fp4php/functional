@@ -13,7 +13,7 @@ namespace Fp\Collection;
  *
  * @psalm-return bool
  */
-function some(iterable $collection, callable $predicate): bool
+function any(iterable $collection, callable $predicate): bool
 {
     return !(first($collection, $predicate)->isEmpty());
 }
@@ -28,9 +28,9 @@ function some(iterable $collection, callable $predicate): bool
  *
  * @psalm-return bool
  */
-function someOf(iterable $collection, string $fqcn, bool $strict = false): bool
+function anyOf(iterable $collection, string $fqcn, bool $invariant = false): bool
 {
-    return firstOf($collection, $fqcn, $strict)->fold(
+    return firstOf($collection, $fqcn, $invariant)->fold(
         fn() => true,
         fn() => false,
     );

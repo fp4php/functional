@@ -13,13 +13,11 @@ namespace Fp\Collection;
  *
  * @psalm-return bool
  */
-function every(iterable $collection, callable $predicate, bool $strict = false): bool
+function every(iterable $collection, callable $predicate): bool
 {
-    $result = !$strict;
+    $result = true;
 
     foreach ($collection as $index => $element) {
-        $result = true;
-
         if (!call_user_func($predicate, $element, $index)) {
             $result = false;
             break;
@@ -30,6 +28,7 @@ function every(iterable $collection, callable $predicate, bool $strict = false):
 }
 
 /**
+ * @todo
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
@@ -39,11 +38,12 @@ function every(iterable $collection, callable $predicate, bool $strict = false):
  *
  * @psalm-return bool
  */
-function everyOf(iterable $collection, string $fqcn, bool $strict = false): bool
+function everyOf(iterable $collection, string $fqcn, bool $invariant = false): bool
 {
     return every(
         $collection,
-        fn(mixed $v) => is_a($v, $fqcn, true),
-        $strict
+        fn(mixed $v) => $invariant
+            ? $v::class === $fqcn
+            : is_a($v, $fqcn, true)
     );
 }

@@ -14,8 +14,8 @@ use Psalm\Type\Union;
 use function Fp\Cast\asNonEmptyArray;
 use function Fp\Collection\everyOf;
 use function Fp\Collection\map;
-use function Fp\Collection\some;
-use function Fp\Collection\someOf;
+use function Fp\Collection\any;
+use function Fp\Collection\anyOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 
 /**
@@ -28,7 +28,7 @@ class ArrayTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return everyOf($types, TArray::class, true);
+        return !empty($types) && everyOf($types, TArray::class);
     }
 
     /**
@@ -52,7 +52,7 @@ class ArrayTypeCombiner implements TypeCombinerInterface
             $keyAtomics = yield asNonEmptyArray($keyAtomics, false);
             $valueAtomics = yield asNonEmptyArray($valueAtomics, false);
 
-            $combinedArray = someOf($types, TArray::class, true)
+            $combinedArray = anyOf($types, TArray::class, true)
                 ? new TArray([new Union($keyAtomics), new Union($valueAtomics)])
                 : new TNonEmptyArray([new Union($keyAtomics), new Union($valueAtomics)]);
 

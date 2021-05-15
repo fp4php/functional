@@ -63,12 +63,12 @@ function filterNotNull(iterable $collection, bool $preserveKeys = true): array
  *
  * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
  */
-function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = true, bool $strict = false): array
+function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = true, bool $invariant = false): array
 {
     /** @var array<TK, TVO> $instances */
     $instances = filter(
         $collection,
-        fn(mixed $v): bool => $strict
+        fn(mixed $v): bool => $invariant
             ? $v::class === $fqcn
             : is_a($v, $fqcn, true),
         $preserveKeys

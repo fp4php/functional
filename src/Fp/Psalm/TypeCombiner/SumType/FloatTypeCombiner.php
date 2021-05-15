@@ -21,7 +21,7 @@ class FloatTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return everyOf($types, TFloat::class, true);
+        return !empty($types) && everyOf($types, TFloat::class);
     }
 
     /**

@@ -14,7 +14,7 @@ use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 use function Fp\Collection\everyOf;
 use function Fp\Collection\map;
-use function Fp\Collection\some;
+use function Fp\Collection\any;
 
 /**
  * @implements TypeCombinerInterface<TList>
@@ -26,7 +26,7 @@ class ListTypeCombiner implements TypeCombinerInterface
      */
     public function supports(array $types): bool
     {
-        return everyOf($types, TList::class, true);
+        return !empty($types) && everyOf($types, TList::class);
     }
 
     /**
@@ -34,7 +34,7 @@ class ListTypeCombiner implements TypeCombinerInterface
      */
     public function combine(array $types): array
     {
-        $hasPossiblyEmptyList = some($types, fn(TList $l) => $l::class === TList::class);
+        $hasPossiblyEmptyList = any($types, fn(TList $l) => $l::class === TList::class);
         $typeParams = asList(map($types, fn(TList $list) => $list->type_param));
 
         if (empty($typeParams)) {
