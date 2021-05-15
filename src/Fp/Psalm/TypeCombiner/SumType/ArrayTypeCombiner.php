@@ -8,12 +8,15 @@ use Fp\Functional\Option\Option;
 use Fp\Psalm\TypeCombiner\TypeCombinerInterface;
 use Psalm\Type;
 use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TList;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Union;
 
+use function Fp\Cast\asList;
 use function Fp\Collection\filterOf;
 use function Fp\Collection\map;
 use function Fp\Collection\anyOf;
+use function Fp\Collection\partitionOf;
 use function Fp\Evidence\proveNonEmptyListOf;
 
 
@@ -30,7 +33,7 @@ class ArrayTypeCombiner implements TypeCombinerInterface
     public function combine(array $types): array
     {
         $combinedOption = Option::do(function () use ($types) {
-            $arrays = filterOf($types, TArray::class);
+            [$arrays, $notArrays] = partitionOf($types, false, TArray::class);
             $keyTypeParams = map($arrays, fn(TArray $list) => $list->type_params[0]);
             $valueTypeParams = map($arrays, fn(TArray $list) => $list->type_params[1]);
 
@@ -41,7 +44,7 @@ class ArrayTypeCombiner implements TypeCombinerInterface
                 ? new TArray([$combinedKeyTypeParam, $combinedValueTypeParam])
                 : new TNonEmptyArray([$combinedKeyTypeParam, $combinedValueTypeParam]);
 
-            return [$combinedArray];
+            return asList([$combinedArray], $notArrays);
         });
 
         return $combinedOption->get() ?? $types;

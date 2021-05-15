@@ -12,15 +12,9 @@ use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
-use Psalm\Type;
-use Psalm\Type\Atomic\TArray;
-use Psalm\Type\Atomic\TList;
-use Psalm\Type\Atomic\TNonEmptyArray;
-use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 use SimpleXMLElement;
 
-use function Fp\Cast\asList;
 use function Fp\Collection\head;
 use function Fp\Evidence\proveTrue;
 
@@ -34,7 +28,6 @@ class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterfa
         $registration->registerHooksFromClass(self::class);
     }
 
-
     public static function getClassLikeNames(): array
     {
         return [Option::class];
@@ -46,23 +39,8 @@ class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterfa
             yield proveTrue('getorelse' === $event->getMethodNameLowercase());
             $lower = yield self::getLowerBoundary($event);
             $upper = yield self::getUpperBoundary($event);
-            return yield self::combineBoundaries($lower, $upper);
+            return SumTypeCombiner::combineUnions([$lower, $upper]);
         })->get();
-    }
-
-    /**
-     * @psalm-return Option<Union>
-     */
-    public static function combineBoundaries(Union $lower, Union $upper): Option
-    {
-        $sum_combiner = new SumTypeCombiner();
-
-        $combined_union_type = $sum_combiner->combine(asList(array_merge(
-            asList($lower->getAtomicTypes()),
-            asList($upper->getAtomicTypes())
-        )));
-
-        return Option::of($combined_union_type);
     }
 
     /**
