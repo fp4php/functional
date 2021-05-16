@@ -10,7 +10,6 @@ In case of long computation chain you can use do notation to shorten
 amount of code. Do-notation is just syntax-sugar.
 
 ``` php
-
 /** 
  * @return Option<User> 
  */
@@ -80,7 +79,6 @@ Allow short-circuiting the computation if there was step which returned
 Left (error outcome).
 
 ``` php
-
 /** 
  * @return Either<string, User> 
  */
@@ -156,7 +154,6 @@ Prevents null pointer exceptions and allow short-circuiting the
 computation if there was step which returned None.
 
 ``` php
-
 /** 
  * @return Option<User> 
  */

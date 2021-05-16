@@ -188,5 +188,15 @@
 
 
 
+- #### proveOf
+  Prove that subject is of given class
+
+  ```php
+  /** @var Option<Foo> $result */
+  $result = proveOf(new Bar(), Foo::class);
+  ```
+
+
+
 
 

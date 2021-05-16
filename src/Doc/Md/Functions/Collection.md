@@ -281,17 +281,6 @@
   ```
 
 
-
-- #### second
-  Returns second collection element. None if there is no second collection element
-
-  ```php
-  second([[1, 2, 3]])->get(); // 2   
-  ```
-
-
-
-
 - #### shift
   Shift first collection element and return Tuple2 containing this element and other collection elements. If there is no first element then returns None
 

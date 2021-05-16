@@ -40,7 +40,6 @@
   - [reduce](#reduce)
   - [reverse](#reverse)
   - [second](#second)
-  - [second](#second)
   - [shift](#shift)
   - [tail](#tail)
 - [Evidence](#Evidence)
@@ -60,6 +59,7 @@
   - [proveFloat](#proveFloat)
   - [proveInt](#proveInt)
   - [proveString](#proveString)
+  - [proveOf](#proveOf)
 - [Json](#Json)
   - [jsonDecode](#jsonDecode)
   - [jsonSearch](#jsonSearch)
@@ -70,127 +70,127 @@
 
 # Callable
 
-  - #### compose
-    
+-   #### compose
+
     Compose functions. Output of one function will be passed as input to
     another function
-    
+
     ``` php
     $aToB = fn(int $a): bool => true;
     $bToC = fn(bool $b): string => (string) $b;
     $cTod = fn(string $c): float => (float) $c;
-    
+
     /** @var callable(int): float $result */
     $result = \Fp\Callable\compose($aToB, $bToC, $cTod);
     ```
 
-  - #### partial and partialLeft
-    
+-   #### partial and partialLeft
+
     Partial application from first function argument
-    
+
     ``` php
     $callback = fn(int $a, string $b, bool $c): bool => true;
-    
+
     /** @var callable(bool): bool $result */
     $result = \Fp\Callable\partial($callback, 1, "string");
-    
+
     /** @var callable(bool): bool $result */
     $result = \Fp\Callable\partialLeft($callback, 1, "string");
     ```
 
-  - #### partialRight
-    
+-   #### partialRight
+
     Partial application from last function argument
-    
+
     ``` php
     $callback = fn(int $a, string $b, bool $c): bool => true;
-    
+
     /** @var callable(int): bool $result */
     $result = \Fp\Callable\partialRight($callback, true, "string");
     ```
 
 # Cast
 
-  - #### asArray
-    
+-   #### asArray
+
     Copy collection as array
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var array<string, int> $result */
     $result = asArray(getCollection());
     ```
 
-  - #### asBool
-    
+-   #### asBool
+
     Try cast boolean like value. Returns None if cast is not possible
-    
+
     ``` php
     /** @var Option<bool> $result */
     $result = asBool('yes');
     ```
 
-  - #### asFloat
-    
+-   #### asFloat
+
     Try cast float like value. Returns None if cast is not possible
-    
+
     ``` php
     /** @var Option<float> $result */
     $result = asFloat('1.1');
     ```
 
-  - #### asInt
-    
+-   #### asInt
+
     Try cast integer like value. Returns None if cast is not possible
-    
+
     ``` php
     /** @var Option<int> $result */
     $result = asInt(1);
     ```
 
-  - #### asList
-    
+-   #### asList
+
     Copy one or multiple collections as list
-    
+
     ``` php
     $result = asList([1], ['prop' => 2], [3, 4]); // [1, 2, 3, 4]
     ```
 
-  - #### asNonEmptyArray
-    
+-   #### asNonEmptyArray
+
     Try copy and cast collection to non-empty-array. Returns None if
     there is no first collection element
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<non-empty-array<string, int>> $result */
     $result = asNonEmptyArray(getCollection());
     ```
 
-  - #### asNonEmptyList
-    
+-   #### asNonEmptyList
+
     Try copy and cast collection to non-empty-list. Returns None if
     there is no first collection element
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<non-empty-list<int>> $result */
     $result = asNonEmptyList(getCollection());
     ```
 
 # Collection
 
-  - #### any
-    
+-   #### any
+
     Returns true if there is collection element which satisfies the
     condition and false otherwise
-    
+
     ``` php
     any(
       [1, 2, 3],
@@ -198,104 +198,104 @@
     ); // true
     ```
 
-  - #### anyOf
-    
+-   #### anyOf
+
     Returns true if there is collection element of given class and false
     otherwise
-    
+
     ``` php
     anyOf([new Foo(), 2, 3], Foo::class); // true
     ```
 
-  - #### at
-    
+-   #### at
+
     Find element by it's key
-    
+
     O(1) for arrays and classes which implement ArrayAccess. O(N) for
     other cases
-    
+
     ``` php
     /** @var Option<Foo|int> $result */
     $result = at([new Foo(), 2, 3], 1);
     ```
 
-  - #### copyCollection
-    
+-   #### copyCollection
+
     Copy any iterable collection into php array
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var array<string, int> $result */
     $result = copyCollection(getCollection);
     ```
 
-  - #### every
-    
+-   #### every
+
     Returns true if every collection element satisfies the condition and
     false otherwise
-    
+
     ``` php
     every([1, 2], fn(int $v): bool => $v === 1); // false
     ```
 
-  - #### everyOf
-    
+-   #### everyOf
+
     Returns true if every collection element is of given class false
     otherwise
-    
+
     ``` php
     everyOf([1, new Foo()], Foo::class); // false
     ```
 
-  - #### filter
-    
+-   #### filter
+
     Filter collection by condition. Preserves keys by default
-    
+
     ``` php
     filter([1, 2], fn(int $v): bool => $v === 2); // [1 => 2]
     ```
 
-  - #### filterNotNull
-    
+-   #### filterNotNull
+
     Filter not null elements. Preserves keys by default
-    
+
     ``` php
     filterNotNull([1, null, 2]); // [0 => 1, 2 => 2]
     ```
 
-  - #### filterOf
-    
+-   #### filterOf
+
     Filter elements of given class. Preserves keys by default
-    
+
     ``` php
     /** @var array<0|1|2, Foo> $result */
     $result = filterOf([1, new Foo(), 2], Foo::class);
     ```
 
-  - #### first
-    
+-   #### first
+
     Find first element which satisfies the condition
-    
+
     ``` php
     /** @var Option<int> $result */
     $result = first([1, 2], fn(int $v): bool => $v === 2);
     ```
 
-  - #### firstOf
-    
+-   #### firstOf
+
     Find first element of given class
-    
+
     ``` php
     /** @var Option<Foo> $result */
     $result = firstOf([1, new Foo(1), new Foo(2)], Foo::class);
     ```
 
-  - #### flatMap
-    
+-   #### flatMap
+
     Flat map Consists of map and flatten operations
-    
+
     ``` php
     /**
      * 1) map [1, 4] to [[0, 1, 2], [3, 4, 5]]
@@ -304,106 +304,106 @@
     flatMap([1, 4], fn(int $x) => [$x - 1, $x, $x + 1]); // [0, 1, 2, 3, 4, 5]
     ```
 
-  - #### fold
-    
+-   #### fold
+
     Fold many elements into one
-    
+
     ``` php
     fold(
       '', 
       ['a', 'b', 'c'], 
       fn(string $accumulator, $currentValue) => $accumulator . $currentValue
     ); 
-    
+
     // 'abc'
     ```
 
-  - #### group
-    
+-   #### group
+
     Group collection elements by key returned by function
-    
+
     ``` php
     group( 
       [1, 2, 3], 
       fn(int $v): int => $v
     ); 
-    
+
     // [1 => [1], 2 => [2], 3 => [3]]
     ```
 
-  - #### head
-    
+-   #### head
+
     Returns collection first element
-    
+
     ``` php
     /** @var Option<int> $result */
     $result = head([1, 2, 3]); 
     ```
 
-  - #### isSequence
-    
+-   #### isSequence
+
     Check if collection is ascending or descending integer sequence from
     given start value
-    
+
     ``` php
     isSequence([1, 2, 3]); // false
     isSequence([0, 1, 2, 3]); // true 
     isSequence([]); // true 
     ```
 
-  - #### isNonEmptySequence
-    
+-   #### isNonEmptySequence
+
     Check if collection is non empty ascending or descending integer
     sequence from given start value
-    
+
     ``` php
     isNonEmptySequence([1, 2, 3]); // false
     isNonEmptySequence([0, 1, 2, 3]); // true
     isNonEmptySequence([]); // false 
     ```
 
-  - #### keys
-    
+-   #### keys
+
     Returns list of collection keys
-    
+
     ``` php
     keys(['a' => 1, 'b' => 2]); // ['a', 'b']
     ```
 
-  - #### last
-    
+-   #### last
+
     Returns last collection element and None if there is no last element
-    
+
     ``` php
     /** @var Option<int> $result */
     $result = last([1, 2, 3]);
     ```
 
-  - #### map
-    
+-   #### map
+
     Map collection values into new collection. Keys are preserved
-    
+
     ``` php
     map([1, 2, 3], fn(int $v) => (string) $v); // ['1', '2', '3']
     ```
 
-  - #### partition
-    
+-   #### partition
+
     Divide collection by given conditions
-    
+
     ``` php
     partition(
       ['a' => 1, 'b' => 2],
       fn(int $x) => $x % 2 === 0 
     );
-    
+
     // [['b' => 2], ['a' => 1]]
     ```
 
-  - #### partitionOf
-    
+-   #### partitionOf
+
     Divide collection by given classes
-    
+
     ``` php
     /** @var array{list<Foo>, list<Bar>, list<Foo|Bar>} $result */
     $result = partitionOf(
@@ -411,275 +411,275 @@
       Foo::class,
       Bar::class 
     );
-    
+
     // [[$foo], [$bar], []]
     ```
 
-  - #### pluck
-    
+-   #### pluck
+
     Map every collection element into given property/key value
-    
+
     ``` php
     pluck([['a' => 1], ['a' => 2]], 'a'); // [1, 2]   
     ```
 
-  - #### pop
-    
+-   #### pop
+
     Pop last collection element and return Tuple2 containing this
     element and other collection elements. If there is no last element
     then returns None
-    
+
     ``` php
     [$head, $tail] = pop([[1, 2, 3]])->toArray(); // [3, [1, 2]]   
     ```
 
-  - #### reduce
-    
+-   #### reduce
+
     Reduce multiple elements into one. Returns None for empty collection
-    
+
     ``` php
     /** @var Option<string> $option */
     $option = reduce(
       ['a', 'b', 'c'], 
       fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
     ); 
-    
+
     $option->get(); // 'abc'
     ```
 
-  - #### reverse
-    
+-   #### reverse
+
     Copy collection in reversed order
-    
+
     ``` php
     reverse([[1, 2, 3]]); // [3, 2, 1]   
     ```
 
-  - #### second
-    
+-   #### second
+
     Returns second collection element. None if there is no second
     collection element
-    
+
     ``` php
     second([[1, 2, 3]])->get(); // 2   
     ```
 
-  - #### second
-    
-    Returns second collection element. None if there is no second
-    collection element
-    
-    ``` php
-    second([[1, 2, 3]])->get(); // 2   
-    ```
+-   #### shift
 
-  - #### shift
-    
     Shift first collection element and return Tuple2 containing this
     element and other collection elements. If there is no first element
     then returns None
-    
+
     ``` php
     [$head, $tail] = shift([[1, 2, 3]])->toArray(); // [1, [2, 3]]   
     ```
 
-  - #### tail
-    
+-   #### tail
+
     Returns every collection element except first
-    
+
     ``` php
     tail([[1, 2, 3]]); // [2, 3]   
     ```
 
 # Evidence
 
-  - #### proveArray
-    
+-   #### proveArray
+
     Prove that given collection is of array type
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<array<string, int>> $result */
     $result = proveArray(getCollection());
     ```
 
-  - #### proveNonEmptyArray
-    
+-   #### proveNonEmptyArray
+
     Prove that given collection is of non-empty-array type
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<non-empty-array<string, int>> $result */
     $result = proveNonEmptyArray(getCollection());
     ```
 
-  - #### proveArrayOf
-    
+-   #### proveArrayOf
+
     Prove that collection is of array type and every element is of given
     class
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<array<string, Foo>> $result */
     $result = proveArrayOf(getCollection(), Foo::class);
     ```
 
-  - #### proveNonEmptyArrayOf
-    
+-   #### proveNonEmptyArrayOf
+
     Prove that collection is of non-empty-array type and every element
     is of given class
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<non-empty-array<string, Foo>> $result */
     $result = proveNonEmptyArrayOf(getCollection(), Foo::class);
     ```
 
-  - #### proveList
-    
+-   #### proveList
+
     Prove that given collection is of list type
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<list<string, int>> $result */
     $result = proveList(getCollection());
     ```
 
-  - #### proveNonEmptyList
-    
+-   #### proveNonEmptyList
+
     Prove that given collection is of non-empty-list type
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<non-empty-list<string, int>> $result */
     $result = proveNonEmptyList(getCollection());
     ```
 
-  - #### proveListOf
-    
+-   #### proveListOf
+
     Prove that collection is of array type and every element is of given
     class
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<list<string, Foo>> $result */
     $result = proveListOf(getCollection(), Foo::class);
     ```
 
-  - #### proveNonEmptyListOf
-    
+-   #### proveNonEmptyListOf
+
     Prove that collection is of non-empty-list type and every element is
     of given class
-    
+
     ``` php
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
-    
+
     /** @var Option<non-empty-list<string, Foo>> $result */
     $result = proveNonEmptyListOf(getCollection(), Foo::class);
     ```
 
-  - #### proveBool
-    
+-   #### proveBool
+
     Prove that subject is of boolean type
-    
+
     ``` php
     /** @var Option<bool> $result */
     $result = proveBool($subject);
     ```
 
-  - #### proveTrue
-    
+-   #### proveTrue
+
     Prove that subject is of boolean type and it's value is true
-    
+
     ``` php
     /** @var Option<true> $result */
     $result = proveTrue($subject);
     ```
 
-  - #### proveFalse
-    
+-   #### proveFalse
+
     Prove that subject is of boolean type and it's value is false
-    
+
     ``` php
     /** @var Option<false> $result */
     $result = proveFalse($subject);
     ```
 
-  - #### proveCallableString
-    
+-   #### proveCallableString
+
     Prove that subject is of callable-string type
-    
+
     ``` php
     /** @var Option<callable-string> $result */
     $result = proveCallableString($subject);
     ```
 
-  - #### proveClassString
-    
+-   #### proveClassString
+
     Prove that subject is of class-string type
-    
+
     ``` php
     /** @var Option<class-string> $result */
     $result = proveClassString($subject);
     ```
 
-  - #### proveFloat
-    
+-   #### proveFloat
+
     Prove that subject is of float type
-    
+
     ``` php
     /** @var Option<float> $result */
     $result = proveFloat($subject);
     ```
 
-  - #### proveInt
-    
+-   #### proveInt
+
     Prove that subject is of int type
-    
+
     ``` php
     /** @var Option<int> $result */
     $result = proveInt($subject);
     ```
 
-  - #### proveString
-    
+-   #### proveString
+
     Prove that subject is of string type
-    
+
     ``` php
     /** @var Option<string> $result */
     $result = proveString($subject);
     ```
 
+-   #### proveOf
+
+    Prove that subject is of given class
+
+    ``` php
+    /** @var Option<Foo> $result */
+    $result = proveOf(new Bar(), Foo::class);
+    ```
+
 # Json
 
-  - #### jsonDecode
-    
+-   #### jsonDecode
+
     Decode json string into associative array. Returns Left on error
-    
+
     ``` php
     jsonDecode('{"a": [{"b": true}]}')->get(); // ['a' => [['b' => true]]] 
     ```
 
-  - #### jsonSearch
-    
+-   #### jsonSearch
+
     Search by JsonPath expression. Returns None if there is no data by
     given expression. @see jmespath
-    
+
     ``` php
     jsonSearch('a[0].b', ['a' => [['b' => true]]]); // true
     jsonSearch('a[0].b', '{"a": [{"b": true}]}'); // true
@@ -687,30 +687,30 @@
 
 # Reflection
 
-  - #### getNamedTypes
-    
+-   #### getNamedTypes
+
     Returns property types by property reflection
-    
+
     ``` php
     $fooProp = new ReflectionProperty(Foo::class, 'a');
-    
+
     /** @var list<ReflectionNamedType> $result */
     $result = getNamedTypes($fooProp); 
     ```
 
-  - #### getReflectionProperty
-    
+-   #### getReflectionProperty
+
     Returns property reflection or Left on exception
-    
+
     ``` php
     /** @var Either<ReflectionException, ReflectionProperty> $result */
     $result = getReflectionProperty(Foo::class, 'a'); 
     ```
 
-  - #### getReflectionClass
-    
+-   #### getReflectionClass
+
     Returns class reflection or Left on exception
-    
+
     ``` php
     /** @var Either<ReflectionException, ReflectionClass> $result */
     $result = getReflectionClass(Foo::class); 
