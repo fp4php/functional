@@ -18,6 +18,9 @@ final class JsonTest extends TestCase
     {
         $this->assertInstanceOf(Left::class, jsonDecode(''));
         $this->assertInstanceOf(Right::class, jsonDecode('{"a": [{"b": true}]}'));
+        $this->assertEquals(1, jsonDecode('1')->get());
+        $this->assertEquals("1", jsonDecode('"1"')->get());
+        $this->assertEquals(true, jsonDecode('true')->get());
     }
 
     public function testJsonSearch(): void

@@ -14,7 +14,7 @@ use Fp\Functional\Either\Right;
  *
  * @param string $json
  *
- * @return Either<string, array>
+ * @return Either<string, array|scalar>
  */
 function jsonDecode(string $json): Either
 {
