@@ -41,13 +41,13 @@ class DocLinker
         return $parser->getHeaders();
     }
 
-    public function link(): void
+    public function link(string $pattern): void
     {
-        $dirs = glob(__DIR__ . '/doc/*/', GLOB_ONLYDIR);
+        $dirs = glob($pattern, GLOB_ONLYDIR);
 
         foreach ($dirs as $dir) {
             $fromPattern = $dir . '*.md';
-            $to = __DIR__ . '/../doc/' . basename($dir) . '.md';
+            $to = __DIR__ . '/../../doc/' . basename($dir) . '.md';
             $commandLine = "pandoc --from gfm --to gfm --output $to $fromPattern";
 
             Process::fromShellCommandline($commandLine)->run();

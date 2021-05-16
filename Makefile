@@ -1,5 +1,9 @@
-PSALM := vendor/bin/psalm
-PHPUNIT := vendor/bin/phpunit
+PHP=php
+PSALM=vendor/bin/psalm
+PHPUNIT=vendor/bin/phpunit
+
+build-doc:
+	php ./linker.php
 
 psalm-analyse:
 	$(PSALM) src
@@ -12,3 +16,4 @@ run-static-tests:
 
 run-runtime-tests:
 	$(PHPUNIT) tests/Runtime
+
