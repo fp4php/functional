@@ -171,4 +171,9 @@ abstract class Either
     {
         return Right::of($value);
     }
+
+    /**
+     * @psalm-return L|R
+     */
+    abstract public function get(): int|float|bool|string|object|array;
 }
