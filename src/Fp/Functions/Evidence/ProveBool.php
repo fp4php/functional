@@ -7,31 +7,45 @@ namespace Fp\Evidence;
 use Fp\Functional\Option\Option;
 
 /**
+ * Prove that subject is of boolean type
+ *
  * @psalm-template T
- * @psalm-param T $potential
+ *
+ * @psalm-param T $subject
+ *
  * @psalm-return Option<bool>
  */
-function proveBool(mixed $potential): Option
+function proveBool(mixed $subject): Option
 {
-    return Option::of(is_bool($potential) ? $potential : null);
+    return Option::of(is_bool($subject) ? $subject : null);
 }
 
 /**
+ * Prove that subject is of boolean type
+ * and it's value is true
+ *
  * @psalm-template T
- * @psalm-param T $potential
+ *
+ * @psalm-param T $subject
+ *
  * @psalm-return Option<true>
  */
-function proveTrue(mixed $potential): Option
+function proveTrue(mixed $subject): Option
 {
-    return Option::of(is_bool($potential) && true === $potential ? $potential : null);
+    return Option::of(is_bool($subject) && true === $subject ? $subject : null);
 }
 
 /**
+ * Prove that subject is of boolean type
+ * and it's value is false
+ *
  * @psalm-template T
- * @psalm-param T $potential
+ *
+ * @psalm-param T $subject
+ *
  * @psalm-return Option<false>
  */
-function proveFalse(mixed $potential): Option
+function proveFalse(mixed $subject): Option
 {
-    return Option::of(is_bool($potential) && false === $potential ? $potential : null);
+    return Option::of(is_bool($subject) && false === $subject ? $subject : null);
 }

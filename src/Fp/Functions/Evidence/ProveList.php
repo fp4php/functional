@@ -12,6 +12,8 @@ use function Fp\Collection\isSequence;
 use function Fp\Collection\keys;
 
 /**
+ * Prove that given collection is of list type
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -31,6 +33,8 @@ function proveList(iterable $collection): Option
 }
 
 /**
+ * Prove that given collection is of non-empty-list type
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -50,6 +54,9 @@ function proveNonEmptyList(iterable $collection): Option
 }
 
 /**
+ * Prove that collection is of list type
+ * and every element is of given class
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
@@ -72,6 +79,9 @@ function proveListOf(iterable $collection, string $fqcn, bool $invariant = false
 }
 
 /**
+ * Prove that collection is of non-empty-list type
+ * and every element is of given class
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO

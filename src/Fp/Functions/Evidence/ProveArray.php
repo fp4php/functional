@@ -10,9 +10,13 @@ use function Fp\Collection\everyOf;
 use function Fp\Collection\head;
 
 /**
+ * Prove that given collection is of array type
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
+ *
  * @psalm-param iterable<TK, TV> $collection
+ *
  * @psalm-return Option<array<TK, TV>>
  */
 function proveArray(iterable $collection): Option
@@ -21,9 +25,13 @@ function proveArray(iterable $collection): Option
 }
 
 /**
+ * Prove that given collection is of non-empty-array type
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
+ *
  * @psalm-param iterable<TK, TV> $collection
+ *
  * @psalm-return Option<non-empty-array<TK, TV>>
  */
 function proveNonEmptyArray(iterable $collection): Option
@@ -38,6 +46,9 @@ function proveNonEmptyArray(iterable $collection): Option
 }
 
 /**
+ * Prove that collection is of array type
+ * and every element is of given class
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
@@ -60,6 +71,9 @@ function proveArrayOf(iterable $collection, string $fqcn, bool $invariant = fals
 }
 
 /**
+ * Prove that collection is of non-empty-array type
+ * and every element is of given class
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
