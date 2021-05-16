@@ -2,6 +2,8 @@ PHP=php
 PSALM=vendor/bin/psalm
 PHPUNIT=vendor/bin/phpunit
 
+default: build-doc
+
 build-doc:
 	php ./linker.php
 
