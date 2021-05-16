@@ -29,6 +29,7 @@ $ vendor/bin/psalm-plugin enable Fp\\Psalm\\OptionGetOrElseMethodReturnTypeProvi
 ## Contribution
 
 ### Build documentation
+
 1) Install dependencies
   ```console
   whsv26@whsv26:~$ sudo apt install pandoc
