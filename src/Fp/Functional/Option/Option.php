@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Fp\Functional\Option;
 
 use Closure;
+use Fp\Functional\Either\Either;
+use Fp\Functional\Either\Left;
+use Fp\Functional\Either\Right;
 use Generator;
 use Throwable;
 
@@ -149,6 +152,8 @@ abstract class Option
     }
 
     /**
+     * Fabric method
+     *
      * @psalm-template B
      * @psalm-param B $value
      * @psalm-return Some<B>
@@ -159,10 +164,36 @@ abstract class Option
     }
 
     /**
+     * Fabric method
+     *
      * @psalm-return None
      */
     public static function none(): None
     {
         return new None();
+    }
+
+    /**
+     * @psalm-template B
+     * @psalm-param callable(): B $right
+     * @psalm-return Either<A, B>
+     */
+    public function toLeft(callable $right): Either
+    {
+        return !$this->isEmpty()
+            ? new Left($this->value)
+            : new Right(call_user_func($right));
+    }
+
+    /**
+     * @psalm-template B
+     * @psalm-param callable(): B $left
+     * @psalm-return Either<B, A>
+     */
+    public function toRight(callable $left): Either
+    {
+        return !$this->isEmpty()
+            ? new Right($this->value)
+            : new Left(call_user_func($left));
     }
 }
