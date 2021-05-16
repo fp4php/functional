@@ -147,4 +147,22 @@ abstract class Option
     {
         return $this->get() ?? $fallback;
     }
+
+    /**
+     * @psalm-template B
+     * @psalm-param B $value
+     * @psalm-return Some<B>
+     */
+    public static function some(int|float|bool|string|object|array $value): Some
+    {
+        return new Some($value);
+    }
+
+    /**
+     * @psalm-return None
+     */
+    public static function none(): None
+    {
+        return new None();
+    }
 }

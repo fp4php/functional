@@ -151,4 +151,24 @@ abstract class Either
     {
         return $this instanceof Right;
     }
+
+    /**
+     * @psalm-template LI
+     * @psalm-param LI $value
+     * @psalm-return Left<LI, empty>
+     */
+    public static function left(int|float|bool|string|object|array $value): Left
+    {
+        return Left::of($value);
+    }
+
+    /**
+     * @psalm-template RI
+     * @psalm-param RI $value
+     * @psalm-return Right<empty, RI>
+     */
+    public static function right(int|float|bool|string|object|array $value): Right
+    {
+        return Right::of($value);
+    }
 }
