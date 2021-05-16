@@ -14,7 +14,7 @@ use function JmesPath\search;
  * Returns None if there is no data by given expression
  *
  * @psalm-param string $expr json path expression
- * @psalm-param string $data json-string or decoded into associative array json
+ * @psalm-param array|string $data json-string or decoded into associative array json
  *
  * @psalm-return Option<array|scalar>
  *
