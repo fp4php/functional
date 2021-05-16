@@ -17,9 +17,8 @@
 
   - #### compose
     
-    Compose functions
-    
-    Output of one function will be passed as input to another function
+    Compose functions Output of one function will be passed as input to
+    another function
     
     ``` php
     $aToB = fn(int $a): bool => true;
@@ -71,9 +70,7 @@
 
   - #### asBool
     
-    Try cast boolean like value
-    
-    Returns None if cast is not possible
+    Try cast boolean like value Returns None if cast is not possible
     
     ``` php
     /** @var Option<bool> $result */
@@ -82,9 +79,7 @@
 
   - #### asFloat
     
-    Try cast float like value
-    
-    Returns None if cast is not possible
+    Try cast float like value Returns None if cast is not possible
     
     ``` php
     /** @var Option<float> $result */
@@ -93,9 +88,7 @@
 
   - #### asInt
     
-    Try cast integer like value
-    
-    Returns None if cast is not possible
+    Try cast integer like value Returns None if cast is not possible
     
     ``` php
     /** @var Option<int> $result */
@@ -112,9 +105,8 @@
 
   - #### asNonEmptyArray
     
-    Try copy and cast collection to non-empty-array
-    
-    Returns None if there is no first collection element
+    Try copy and cast collection to non-empty-array Returns None if
+    there is no first collection element
     
     ``` php
     /** @psalm-return iterable<string, int> */
@@ -126,9 +118,8 @@
 
   - #### asNonEmptyList
     
-    Try copy and cast collection to non-empty-list
-    
-    Returns None if there is no first collection element
+    Try copy and cast collection to non-empty-list Returns None if there
+    is no first collection element
     
     ``` php
     /** @psalm-return iterable<string, int> */
