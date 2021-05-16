@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 /**
- * Copy any iterable collection to php array
+ * Copy any iterable collection into php array
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

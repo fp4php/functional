@@ -8,6 +8,7 @@ use function Fp\of;
 
 /**
  * Filter collection by condition
+ * Preserves keys by default
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -38,6 +39,7 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
 
 /**
  * Filter not null elements
+ * Preserves keys by default
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -59,6 +61,7 @@ function filterNotNull(iterable $collection, bool $preserveKeys = true): array
 
 /**
  * Filter elements of given class
+ * Preserves keys by default
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

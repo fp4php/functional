@@ -1,7 +1,6 @@
 # Callable
 - #### compose
-  Compose functions
-  Output of one function will be passed as input to another function
+  Compose functions. Output of one function will be passed as input to another function
   
   ```php
   $aToB = fn(int $a): bool => true;
