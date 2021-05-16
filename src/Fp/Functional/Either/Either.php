@@ -19,12 +19,13 @@ use Throwable;
 abstract class Either
 {
     /**
-     * @psalm-param \Closure(): R $or
-     * @psalm-return R
+     * @psalm-template F
+     * @psalm-param F $fallback
+     * @psalm-return R|F
      */
-    public function getOrElse(\Closure $or): mixed
+    public function getOrElse(mixed $fallback): mixed
     {
-        return $this->isRight() ? $this->get() : $or();
+        return $this->isRight() ? $this->get() : $fallback;
     }
 
     /**
