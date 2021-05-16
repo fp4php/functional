@@ -60,6 +60,13 @@
   - [proveFloat](#proveFloat)
   - [proveInt](#proveInt)
   - [proveString](#proveString)
+- [Json](#Json)
+  - [jsonDecode](#jsonDecode)
+  - [jsonSearch](#jsonSearch)
+- [Reflection](#Reflection)
+  - [getNamedTypes](#getNamedTypes)
+  - [getReflectionProperty](#getReflectionProperty)
+  - [getReflectionClass](#getReflectionClass)
 
 # Callable
 
@@ -656,4 +663,55 @@
     ``` php
     /** @var Option<string> $result */
     $result = proveString($subject);
+    ```
+
+# Json
+
+  - #### jsonDecode
+    
+    Decode json string into associative array. Returns Left on error
+    
+    ``` php
+    jsonDecode('{"a": [{"b": true}]}')->get(); // ['a' => [['b' => true]]] 
+    ```
+
+  - #### jsonSearch
+    
+    Search by JsonPath expression. Returns None if there is no data by
+    given expression. @see jmespath
+    
+    ``` php
+    jsonSearch('a[0].b', ['a' => [['b' => true]]]); // true
+    jsonSearch('a[0].b', '{"a": [{"b": true}]}'); // true
+    ```
+
+# Reflection
+
+  - #### getNamedTypes
+    
+    Returns property types by property reflection
+    
+    ``` php
+    $fooProp = new ReflectionProperty(Foo::class, 'a');
+    
+    /** @var list<ReflectionNamedType> $result */
+    $result = getNamedTypes($fooProp); 
+    ```
+
+  - #### getReflectionProperty
+    
+    Returns property reflection or Left on exception
+    
+    ``` php
+    /** @var Either<ReflectionException, ReflectionProperty> $result */
+    $result = getReflectionProperty(Foo::class, 'a'); 
+    ```
+
+  - #### getReflectionClass
+    
+    Returns class reflection or Left on exception
+    
+    ``` php
+    /** @var Either<ReflectionException, ReflectionClass> $result */
+    $result = getReflectionClass(Foo::class); 
     ```
