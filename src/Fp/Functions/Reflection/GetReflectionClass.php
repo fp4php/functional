@@ -9,8 +9,12 @@ use ReflectionClass;
 use ReflectionException;
 
 /**
+ * Returns class reflection or Left on exception
+ *
  * @template T of object
+ *
  * @psalm-param T|class-string<T> $objectOrClass
+ *
  * @psalm-return Either<ReflectionException, ReflectionClass>
  */
 function getReflectionClass(object|string $objectOrClass): Either

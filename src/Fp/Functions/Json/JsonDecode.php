@@ -9,7 +9,11 @@ use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
 
 /**
+ * Decode json string into associative array
+ * Returns Left on error
+ *
  * @param string $json
+ *
  * @return Either<string, array>
  */
 function jsonDecode(string $json): Either

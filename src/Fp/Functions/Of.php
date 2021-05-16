@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fp;
 
 /**
+ * Check if subject is of given class
+ *
  * @psalm-template T
  * @psalm-template TO
 

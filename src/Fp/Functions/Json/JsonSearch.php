@@ -10,10 +10,15 @@ use Fp\Functional\Option\Option;
 use function JmesPath\search;
 
 /**
- * JsonPath search
- * @see jmespath
+ * Search by JsonPath expression
+ * Returns None if there is no data by given expression
+ *
+ * @psalm-param string $expr json path expression
+ * @psalm-param string $data json-string or decoded into associative array json
  *
  * @psalm-return Option<array|scalar>
+ *
+ * @see jmespath
  */
 function jsonSearch(string $expr, array|string $data): Option
 {

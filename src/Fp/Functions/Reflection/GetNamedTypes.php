@@ -9,7 +9,10 @@ use ReflectionProperty;
 use ReflectionUnionType;
 
 /**
+ * Returns property types by property reflection
+ *
  * @param ReflectionProperty $property
+ *
  * @return list<ReflectionNamedType>
  */
 function getNamedTypes(ReflectionProperty $property): array

@@ -7,6 +7,8 @@ namespace Fp;
 const id = '\Fp\id';
 
 /**
+ * Identity function
+ *
  * @psalm-template T
  *
  * @psalm-param T $value
