@@ -82,7 +82,7 @@
     $cTod = fn(string $c): float => (float) $c;
 
     /** @var callable(int): float $result */
-    $result = \Fp\Callable\compose($aToB, $bToC, $cTod);
+    $result = compose($aToB, $bToC, $cTod);
     ```
 
 -   #### partial and partialLeft
@@ -93,10 +93,10 @@
     $callback = fn(int $a, string $b, bool $c): bool => true;
 
     /** @var callable(bool): bool $result */
-    $result = \Fp\Callable\partial($callback, 1, "string");
+    $result = partial($callback, 1, "string");
 
     /** @var callable(bool): bool $result */
-    $result = \Fp\Callable\partialLeft($callback, 1, "string");
+    $result = partialLeft($callback, 1, "string");
     ```
 
 -   #### partialRight
@@ -107,7 +107,7 @@
     $callback = fn(int $a, string $b, bool $c): bool => true;
 
     /** @var callable(int): bool $result */
-    $result = \Fp\Callable\partialRight($callback, true, "string");
+    $result = partialRight($callback, true, "string");
     ```
 
 # Cast
