@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Static\Monads;
+namespace Tests\Static\Monads\Option;
 
 use Tests\Mock\Foo;
 use Tests\PhpBlockTestCase;
 
-final class OptionTest extends PhpBlockTestCase
+final class OptionGetOrElseTest extends PhpBlockTestCase
 {
     public function testGetOrElseWithInt(): void
     {

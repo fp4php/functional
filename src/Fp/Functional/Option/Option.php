@@ -18,13 +18,10 @@ use Throwable;
  */
 abstract class Option
 {
-    protected function __construct(
-        /**
-         * @var A
-         */
-        protected mixed $value
-    ) {
-    }
+    /**
+     * @psalm-param A
+     */
+    protected function __construct(protected mixed $value) {}
 
     /**
      * @psalm-assert-if-false Some<A> $this

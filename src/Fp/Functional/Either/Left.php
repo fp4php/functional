@@ -13,17 +13,9 @@ namespace Fp\Functional\Either;
 final class Left extends Either
 {
     /**
-     * @var L
-     */
-    private int|float|bool|string|object|array $value;
-
-    /**
      * @psalm-param L $value
      */
-    public function __construct(int|float|bool|string|object|array $value)
-    {
-        $this->value = $value;
-    }
+    public function __construct(private int|float|bool|string|object|array $value) {}
 
     /**
      * @template LI
