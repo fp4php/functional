@@ -23,6 +23,7 @@ $ vendor/bin/psalm-plugin enable Fp\\Psalm\\PartialFunctionReturnTypeProvider
 $ vendor/bin/psalm-plugin enable Fp\\Psalm\\PartitionFunctionReturnTypeProvider
 $ vendor/bin/psalm-plugin enable Fp\\Psalm\\PluckFunctionReturnTypeProvider
 $ vendor/bin/psalm-plugin enable Fp\\Psalm\\OptionGetOrElseMethodReturnTypeProvider
+$ vendor/bin/psalm-plugin enable Fp\\Psalm\\ProveTrueExpressionAnalysis
 ```
 
 
