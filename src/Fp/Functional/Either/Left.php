@@ -15,7 +15,7 @@ final class Left extends Either
     /**
      * @psalm-param L $value
      */
-    public function __construct(private int|float|bool|string|object|array $value) {}
+    public function __construct(protected int|float|bool|string|object|array $value) {}
 
     /**
      * @template LI

@@ -12,11 +12,16 @@ namespace Fp\Functional\Option;
 final class Some extends Option
 {
     /**
-     * @param A $value
+     * @psalm-var A
+     */
+    protected mixed $value;
+
+    /**
+     * @psalm-param A $value
      */
     public function __construct(int|float|bool|string|object|array $value)
     {
-        parent::__construct($value);
+        $this->value = $value;
     }
 
     /**
@@ -24,9 +29,6 @@ final class Some extends Option
      */
     public function get(): mixed
     {
-        /** @psalm-var A $value */
-        $value = $this->value;
-
-        return $value;
+        return $this->value;
     }
 }

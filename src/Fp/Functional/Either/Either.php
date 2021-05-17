@@ -25,25 +25,25 @@ abstract class Either
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        return $this->isRight() ? $this->get() : $fallback;
+        return $this->isRight() ? $this->value : $fallback;
     }
 
     /**
-     * @template T
-     * @psalm-param \Closure(R): T $ifRight
-     * @psalm-param \Closure(L): T $ifLeft
-     * @return T
+     * @psalm-template TO
+     * @psalm-param \Closure(R): TO $ifRight
+     * @psalm-param \Closure(L): TO $ifLeft
+     * @psalm-return TO
      */
     public function fold(\Closure $ifRight, \Closure $ifLeft): mixed
     {
         if ($this->isRight()) {
-            return $ifRight($this->get());
+            return $ifRight($this->value);
         } else {
             /**
              * @var Left<L, R> $this
              */
 
-            return $ifLeft($this->get());
+            return $ifLeft($this->value);
         }
     }
 
@@ -55,14 +55,14 @@ abstract class Either
     public function map(\Closure $closure): Either
     {
         if ($this->isLeft()) {
-            return new Left($this->get());
+            return new Left($this->value);
         }
 
         /**
          * @var Right<L, R> $this
          */
 
-        return new Right($closure($this->get()));
+        return new Right($closure($this->value));
     }
 
     /**
@@ -73,14 +73,14 @@ abstract class Either
     public function flatMap(\Closure $closure): Either
     {
         if ($this->isLeft()) {
-            return new Left($this->get());
+            return new Left($this->value);
         }
 
         /**
          * @var Right<L, R> $this
          */
 
-        return $closure($this->get());
+        return $closure($this->value);
     }
 
     /**
@@ -129,11 +129,11 @@ abstract class Either
     }
 
     /**
-     * @return Option<R>
+     * @psalm-return Option<R>
      */
     public function toOption(): Option
     {
-        return $this->isRight() ? new Some($this->get()) : new None();
+        return $this->isRight() ? new Some($this->value) : new None();
     }
 
     /**
@@ -150,6 +150,17 @@ abstract class Either
     public function isRight(): bool
     {
         return $this instanceof Right;
+    }
+
+    /**
+     * @psalm-return Either<R, L>
+     */
+    public function swap(): Either
+    {
+        return match (true) {
+            ($this instanceof Right) => new Left($this->value),
+            ($this instanceof Left) => new Right($this->value),
+        };
     }
 
     /**

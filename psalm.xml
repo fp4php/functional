@@ -37,6 +37,11 @@
                 <directory name="tests"/>
             </errorLevel>
         </PropertyNotSetInConstructor>
+        <DuplicateClass errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="src/Fp/Functional"/>
+            </errorLevel>
+        </DuplicateClass>
         <UnusedClosureParam errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

@@ -28,7 +28,7 @@ function jsonSearch(string $expr, array|string $data): Option
 
     return $decoded
         ->toOption()
-        ->map(function (array $decoded) use ($expr) {
+        ->map(function (array|int|float|string|bool $decoded) use ($expr) {
             /** @var array|scalar|null $result */
             $result = search($expr, $decoded);
 

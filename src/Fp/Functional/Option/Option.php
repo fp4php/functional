@@ -19,11 +19,6 @@ use Throwable;
 abstract class Option
 {
     /**
-     * @psalm-param A
-     */
-    protected function __construct(protected mixed $value) {}
-
-    /**
      * @psalm-assert-if-false Some<A> $this
      */
     public function isEmpty(): bool
@@ -42,7 +37,6 @@ abstract class Option
             return new None();
         }
 
-        /** @psalm-var A $value */
         $value = $this->value;
 
         $result = $closure($value);
@@ -61,7 +55,6 @@ abstract class Option
             return new None();
         }
 
-        /** @psalm-var A $value */
         $value = $this->value;
 
         return $closure($value);
@@ -123,14 +116,9 @@ abstract class Option
      */
     public function fold(\Closure $ifSome, \Closure $ifNone): mixed
     {
-        if (!$this->isEmpty()) {
-            /** @var A $v */
-            $v = $this->get();
-
-            return $ifSome($v);
-        } else {
-            return $ifNone();
-        }
+        return !$this->isEmpty()
+            ? $ifSome($this->value)
+            : $ifNone();
     }
 
     /**
@@ -145,7 +133,9 @@ abstract class Option
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        return $this->get() ?? $fallback;
+        return !$this->isEmpty()
+            ? $this->value
+            : $fallback;
     }
 
     /**

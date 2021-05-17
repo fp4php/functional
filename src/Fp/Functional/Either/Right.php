@@ -15,7 +15,7 @@ final class Right extends Either
     /**
      * @psalm-param R $value
      */
-    public function __construct(private int|float|bool|string|object|array $value) {}
+    public function __construct(protected int|float|bool|string|object|array $value) {}
 
     /**
      * @template LI
