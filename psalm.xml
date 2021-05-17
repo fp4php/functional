@@ -18,6 +18,7 @@
         <pluginClass class="Fp\Psalm\PartitionFunctionReturnTypeProvider"/>
         <pluginClass class="Fp\Psalm\PluckFunctionReturnTypeProvider"/>
         <pluginClass class="Fp\Psalm\OptionGetOrElseMethodReturnTypeProvider"/>
+        <pluginClass class="Fp\Psalm\ProveTrueExpressionAnalysis"/>
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
