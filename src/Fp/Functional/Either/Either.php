@@ -66,6 +66,20 @@ abstract class Either
     }
 
     /**
+     * @psalm-template LO
+     * @psalm-param \Closure(L): LO $closure
+     * @psalm-return Either<LO, R>
+     */
+    public function mapLeft(\Closure $closure): Either
+    {
+        /** @psalm-suppress InvalidArgument */
+        return $this
+            ->swap()
+            ->map($closure)
+            ->swap();
+    }
+
+    /**
      * @psalm-template RO
      * @psalm-param \Closure(R): Either<L, RO> $closure
      * @psalm-return Either<L, RO>

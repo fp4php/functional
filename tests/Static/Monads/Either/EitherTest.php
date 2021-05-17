@@ -81,4 +81,51 @@ final class EitherTest extends PhpBlockTestCase
             'numeric-string'
         );
     }
+
+    public function testSwap(): void
+    {
+        $this->assertBlockType(
+        /** @lang InjectablePHP */ '
+                use Fp\Functional\Either\Either;
+                
+                /**
+                 * @psalm-return Either<string, int>
+                 */
+                function getEither(): Either {
+                    return rand(0, 1)
+                        ? Either::right(1)
+                        : Either::left("error!");
+                }
+
+                $result = getEither()
+                    ->flatMap(fn(int $v) => Either::right((bool) $v))
+                    ->swap();
+            ',
+            strtr('Either<bool,string>', ['Either' => Either::class])
+        );
+    }
+
+    public function testMapLeft(): void
+    {
+        $this->assertBlockType(
+        /** @lang InjectablePHP */ '
+                use Fp\Functional\Either\Either;
+                
+                /**
+                 * @psalm-return Either<string, int>
+                 */
+                function getEither(): Either {
+                    return rand(0, 1)
+                        ? Either::right(1)
+                        : Either::left("error!");
+                }
+
+                $result = getEither()
+                    ->flatMap(fn(int $v) => Either::right((float) $v))
+                    ->mapLeft(fn(string $e) => (bool) $e)
+                    ->mapLeft(fn(bool $e) => (int) $e);
+            ',
+            strtr('Either<0|1,float>', ['Either' => Either::class])
+        );
+    }
 }
