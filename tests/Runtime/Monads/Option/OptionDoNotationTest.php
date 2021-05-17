@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Runtime\Monads\Option;
+
+use Fp\Functional\Option\None;
+use Fp\Functional\Option\Option;
+use Fp\Functional\Option\Some;
+use PHPUnit\Framework\TestCase;
+
+final class OptionDoNotationTest extends TestCase
+{
+    public function testWithoutYieldStatements(): void
+    {
+        $items = [];
+
+        $mappedOption = Option::do(function() use ($items) {
+            $mapped = [];
+
+            /** @psalm-suppress MixedAssignment */
+            foreach ($items as $item) {
+                $mapped[] = yield Option::of($item);
+            }
+
+            return $mapped;
+        });
+
+        $this->assertEquals([], $mappedOption->get());
+    }
+
+    public function testWithAtLeastOneYieldStatement(): void
+    {
+        $mappedOption = Option::do(function() {
+            $a = 1;
+            $b = yield Option::of(2);
+            $c = yield new Some(3);
+            $d = yield Option::some(4);
+            $e = 5;
+
+            return [$a, $b, $c, $d, $e];
+        });
+
+        $this->assertEquals([1, 2, 3, 4, 5], $mappedOption->get());
+    }
+
+    public function testShortCircuit(): void
+    {
+        $mappedOption = Option::do(function() {
+            $a = 1;
+            $b = yield Option::of(2);
+            $c = yield new Some(3);
+            $d = yield Option::none();
+            $e = 5;
+
+            return [$a, $b, $c, $d, $e];
+        });
+
+        $this->assertNull($mappedOption->get());
+        $this->assertInstanceOf(None::class, $mappedOption);
+    }
+}

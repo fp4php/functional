@@ -79,7 +79,7 @@ abstract class Option
     public static function do(callable $computation): Option {
         $generator = $computation();
 
-        do {
+        while ($generator->valid()) {
             $currentStep = $generator->current();
 
             if (!$currentStep->isEmpty()) {
@@ -89,7 +89,7 @@ abstract class Option
                 return $currentStep;
             }
 
-        } while ($generator->valid());
+        }
 
         return Option::of($generator->getReturn());
     }

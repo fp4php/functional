@@ -93,7 +93,7 @@ abstract class Either
     public static function do(callable $computation): Either {
         $generator = $computation();
 
-        do {
+        while ($generator->valid()) {
             $currentStep = $generator->current();
 
             if ($currentStep->isRight()) {
@@ -103,7 +103,7 @@ abstract class Either
                 return $currentStep;
             }
 
-        } while ($generator->valid());
+        }
 
         return new Right($generator->getReturn());
     }
