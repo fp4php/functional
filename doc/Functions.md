@@ -54,11 +54,12 @@
   - [proveBool](#proveBool)
   - [proveTrue](#proveTrue)
   - [proveFalse](#proveFalse)
+  - [proveString](#proveString)
+  - [proveNonEmptyString](#proveNonEmptyString)
   - [proveCallableString](#proveCallableString)
   - [proveClassString](#proveClassString)
   - [proveFloat](#proveFloat)
   - [proveInt](#proveInt)
-  - [proveString](#proveString)
   - [proveOf](#proveOf)
 - [Json](#Json)
   - [jsonDecode](#jsonDecode)
@@ -611,6 +612,26 @@
     $result = proveFalse($subject);
     ```
 
+-   #### proveString
+
+    Prove that subject is of string type
+
+    ``` php
+    /** @var Option<string> $result */
+    $result = proveString($subject);
+    ```
+
+-   #### proveNonEmptyString
+
+    Prove that subject is of given class
+
+    ``` php
+    $possiblyEmptyString = '';
+
+    /** @var Option<non-empty-string> $result */
+    $result = proveNonEmptyString($possiblyEmptyString);
+    ```
+
 -   #### proveCallableString
 
     Prove that subject is of callable-string type
@@ -645,15 +666,6 @@
     ``` php
     /** @var Option<int> $result */
     $result = proveInt($subject);
-    ```
-
--   #### proveString
-
-    Prove that subject is of string type
-
-    ``` php
-    /** @var Option<string> $result */
-    $result = proveString($subject);
     ```
 
 -   #### proveOf

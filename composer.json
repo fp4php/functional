@@ -62,8 +62,6 @@
             "src/Fp/Functions/Collection/Tail.php",
             "src/Fp/Functions/Evidence/ProveArray.php",
             "src/Fp/Functions/Evidence/ProveBool.php",
-            "src/Fp/Functions/Evidence/ProveCallableString.php",
-            "src/Fp/Functions/Evidence/ProveClassString.php",
             "src/Fp/Functions/Evidence/ProveFloat.php",
             "src/Fp/Functions/Evidence/ProveInt.php",
             "src/Fp/Functions/Evidence/ProveList.php",

@@ -19,6 +19,7 @@ use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
+
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
