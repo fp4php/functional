@@ -7,8 +7,10 @@ declare(strict_types=1);
 namespace Fp\Psalm;
 
 use Fp\Functional\Option\Option;
-use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node;
 use PhpParser\Node\Expr\Yield_;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use Psalm\Node\Expr\VirtualFuncCall;
 use Psalm\Node\Name\VirtualFullyQualified;
 use Psalm\Internal\Analyzer\ClosureAnalyzer;
@@ -21,7 +23,6 @@ use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
 
 use function Fp\Evidence\proveOf;
-use function Fp\Evidence\proveTrue;
 
 final class ProveTrueExpressionAnalysis implements AfterExpressionAnalysisInterface, PluginEntryPointInterface
 {
@@ -46,20 +47,49 @@ final class ProveTrueExpressionAnalysis implements AfterExpressionAnalysisInterf
             yield proveOf($statements_source->getSource(), ClosureAnalyzer::class);
             $statements_analyzer = yield proveOf($statements_source, StatementsAnalyzer::class);
 
-            $yield = yield proveOf($event->getExpr(), Yield_::class);
-            $func_call = yield proveOf($yield->value, FuncCall::class);
-
-            yield proveTrue('Fp\Evidence\proveTrue' === $func_call->name->getAttribute('resolvedName'));
+            $prove_true_args = yield self::getProveTrueArgsFromYield($event->getExpr());
 
             FunctionCallAnalyzer::analyze(
                 $statements_analyzer,
                 new VirtualFuncCall(
                     new VirtualFullyQualified('assert'),
-                    $func_call->args,
+                    $prove_true_args,
                 ),
                 $event->getContext(),
             );
         })
         ->get();
+    }
+
+    /**
+     * @return Option<array<array-key, Node\Arg>>
+     */
+    private static function getProveTrueArgsFromYield(Node\Expr $expr): Option
+    {
+        if (!($expr instanceof Yield_)) {
+            return Option::none();
+        }
+
+        $visitor = new class extends NodeVisitorAbstract {
+            /** @var array<array-key, Node\Arg> */
+            public ?array $proveTrueArgs = null;
+
+            public function leaveNode(Node $node): void
+            {
+                if (null !== $this->proveTrueArgs) {
+                    return;
+                }
+
+                if ($node instanceof Node\Expr\FuncCall && 'Fp\Evidence\proveTrue' === $node->name->getAttribute('resolvedName')) {
+                    $this->proveTrueArgs = $node->args;
+                }
+            }
+        };
+
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($visitor);
+        $traverser->traverse([$expr]);
+
+        return Option::of($visitor->proveTrueArgs);
     }
 }
