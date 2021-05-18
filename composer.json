@@ -73,7 +73,8 @@
             "src/Fp/Functions/Reflection/GetReflectionClass.php",
             "src/Fp/Functions/Reflection/GetReflectionProperty.php",
             "src/Fp/Functions/Id.php",
-            "src/Fp/Functions/Of.php"
+            "src/Fp/Functions/Of.php",
+            "src/Fp/Functions/Unit.php"
         ]
     },
     "autoload-dev": {
