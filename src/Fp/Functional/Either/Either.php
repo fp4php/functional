@@ -198,6 +198,24 @@ abstract class Either
     }
 
     /**
+     * @psalm-template LI
+     * @psalm-template RI
+     * @psalm-param LI $left
+     * @psalm-param RI $right
+     * @psalm-return Either<LI, RI>
+     */
+    public static function cond(
+        bool $condition,
+        int|float|bool|string|object|array $right,
+        int|float|bool|string|object|array $left,
+    ): Either
+    {
+        return $condition
+            ? Right::of($right)
+            : Left::of($left);
+    }
+
+    /**
      * @psalm-return L|R
      */
     abstract public function get(): int|float|bool|string|object|array;
