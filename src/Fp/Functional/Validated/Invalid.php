@@ -13,25 +13,21 @@ namespace Fp\Functional\Validated;
 final class Invalid extends Validated
 {
     /**
-     * @psalm-param E $value
+     * @var non-empty-list<E>
      */
-    public function __construct(protected int|float|bool|string|object|array $value) {}
+    protected array $value;
 
     /**
-     * @template EE
-     * @template AA
-     * @psalm-param EE $value
-     * @psalm-return self<EE, AA>
+     * @psalm-param non-empty-list<E> $value
      */
-    public static function of(int|float|bool|string|object|array $value): self
-    {
-        return new self($value);
+    public function __construct(array $value) {
+        $this->value = $value;
     }
 
     /**
-     * @psalm-return E
+     * @psalm-return non-empty-list<E>
      */
-    public function get(): int|float|bool|string|object|array
+    public function get(): array
     {
         return $this->value;
     }
