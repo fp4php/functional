@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Monads\Option;
+namespace Tests\Runtime\Classes\Option;
 
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;

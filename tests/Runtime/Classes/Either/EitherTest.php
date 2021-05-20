@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Monads\Either;
+namespace Tests\Runtime\Classes\Either;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;

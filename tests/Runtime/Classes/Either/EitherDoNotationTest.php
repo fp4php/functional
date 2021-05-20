@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Monads\Option;
+namespace Tests\Runtime\Classes\Either;
 
-use Fp\Functional\Option\None;
-use Fp\Functional\Option\Option;
-use Fp\Functional\Option\Some;
+use Fp\Functional\Either\Either;
+use Fp\Functional\Either\Left;
+use Fp\Functional\Either\Right;
 use PHPUnit\Framework\TestCase;
 
-final class OptionDoNotationTest extends TestCase
+final class EitherDoNotationTest extends TestCase
 {
     public function testWithoutYieldStatements(): void
     {
         $items = [];
 
-        $mappedOption = Option::do(function() use ($items) {
+        $mappedOption = Either::do(function() use ($items) {
             $mapped = [];
 
             /** @psalm-suppress MixedAssignment */
             foreach ($items as $item) {
-                $mapped[] = yield Option::of($item);
+                $mapped[] = yield Either::right($item);
             }
 
             return $mapped;
@@ -31,11 +31,11 @@ final class OptionDoNotationTest extends TestCase
 
     public function testWithAtLeastOneYieldStatement(): void
     {
-        $mappedOption = Option::do(function() {
+        $mappedOption = Either::do(function() {
             $a = 1;
-            $b = yield Option::of(2);
-            $c = yield new Some(3);
-            $d = yield Option::some(4);
+            $b = yield Either::right(2);
+            $c = yield new Right(3);
+            $d = yield Either::right(4);
             $e = 5;
 
             return [$a, $b, $c, $d, $e];
@@ -46,17 +46,17 @@ final class OptionDoNotationTest extends TestCase
 
     public function testShortCircuit(): void
     {
-        $mappedOption = Option::do(function() {
+        $mappedOption = Either::do(function() {
             $a = 1;
-            $b = yield Option::of(2);
-            $c = yield new Some(3);
-            $d = yield Option::none();
+            $b = yield Either::right(2);
+            $c = yield new Right(3);
+            $d = yield Either::left('error!');
             $e = 5;
 
             return [$a, $b, $c, $d, $e];
         });
 
-        $this->assertNull($mappedOption->get());
-        $this->assertInstanceOf(None::class, $mappedOption);
+        $this->assertEquals('error!', $mappedOption->get());
+        $this->assertInstanceOf(Left::class, $mappedOption);
     }
 }
