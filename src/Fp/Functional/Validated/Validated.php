@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Validated;
 
+use Fp\Functional\Either\Either;
+use Fp\Functional\Either\Left;
+use Fp\Functional\Either\Right;
+use Fp\Functional\Option\None;
+use Fp\Functional\Option\Option;
+use Fp\Functional\Option\Some;
+
 /**
  * @template-covariant E
  * @template-covariant A
- * @psalm-yield A
  * @psalm-immutable
  */
 abstract class Validated
@@ -124,6 +130,42 @@ abstract class Validated
          */
 
         return call_user_func($ifInvalid, $this->value);
+    }
+
+    /**
+     * @psalm-return Either<non-empty-list<E>, non-empty-list<A>>
+     */
+    public function toEither(): Either
+    {
+        if ($this->isValid()) {
+            $value = $this->value;
+
+            /** @psalm-var Right<empty, non-empty-list<A>> $right */
+            $right = new Right($value);
+
+            return $right;
+        }
+
+        /**
+         * @var Invalid<E, A> $this
+         */
+
+        $value = $this->value;
+
+        /** @psalm-var Left<non-empty-list<E>, empty> $left */
+        $left = new Left($value);
+
+        return $left;
+    }
+
+    /**
+     * @psalm-return Option<non-empty-list<A>>
+     */
+    public function toOption(): Option
+    {
+        return $this->isValid()
+            ? new Some($this->value)
+            : new None();
     }
 
 }
