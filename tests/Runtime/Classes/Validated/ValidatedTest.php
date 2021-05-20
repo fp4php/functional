@@ -8,6 +8,7 @@ use Fp\Functional\Validated\Validated;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\map;
+use function Fp\Collection\reduceNel;
 
 final class ValidatedTest extends TestCase
 {
@@ -49,5 +50,24 @@ final class ValidatedTest extends TestCase
 
         $this->assertEquals([2, 4, 6], validateEvenList([2, 4, 6])->get());
         $this->assertEquals(['3 is not even', '5 is not even'], validateEvenList([3, 5, 6])->get());
+    }
+
+    public function testFold(): void
+    {
+        $validated = Validated::valid(1)
+            ->combine(Validated::invalid('[err1]'))
+            ->combine(Validated::valid(2))
+            ->combine(Validated::invalid('[err2]'));
+
+        $this->assertEquals('[err1][err2]', $validated->fold(
+            fn(array $validNel) => reduceNel(
+                $validNel,
+                fn(int $acc, int $i) => $acc + $i
+            ),
+            fn(array $invalidNel) => reduceNel(
+                $invalidNel,
+                fn(string $acc, string $err) => $acc .  $err
+            ),
+        ));
     }
 }
