@@ -55,4 +55,28 @@ final class OptionDoNotationTest extends PhpBlockTestCase
                 ])
         );
     }
+
+    public function testWithFilter(): void
+    {
+        $this->assertBlockType(
+        /** @lang InjectablePHP */ '
+                use Fp\Functional\Option\Option;
+
+                $result = Option::do(function() {
+                    $num = yield Option::some(10);
+
+                    if ($num < 10) {
+                        return yield Option::none();
+                    }
+
+                    return $num + 32;
+                });
+            ',
+            strtr(
+                'Option<positive-int>',
+                [
+                    'Option' => Option::class,
+                ])
+        );
+    }
 }

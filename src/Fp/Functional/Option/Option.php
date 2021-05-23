@@ -88,6 +88,7 @@ abstract class Option
      * @psalm-template B
      * @param B|null $value
      * @psalm-return Option<B>
+     * @psalm-pure
      */
     public static function of(mixed $value): Option
     {
@@ -143,9 +144,10 @@ abstract class Option
      *
      * @psalm-template B
      * @psalm-param B $value
-     * @psalm-return Some<B>
+     * @psalm-return Option<B>
+     * @psalm-pure
      */
-    public static function some(int|float|bool|string|object|array $value): Some
+    public static function some(int|float|bool|string|object|array $value): Option
     {
         return new Some($value);
     }
@@ -153,9 +155,10 @@ abstract class Option
     /**
      * Fabric method
      *
-     * @psalm-return None
+     * @psalm-return Option<empty>
+     * @psalm-pure
      */
-    public static function none(): None
+    public static function none(): Option
     {
         return new None();
     }

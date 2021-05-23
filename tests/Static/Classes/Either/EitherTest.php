@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Tests\Static\Classes\Either;
 
 use Fp\Functional\Either\Either;
-use Fp\Functional\Either\Left;
-use Fp\Functional\Either\Right;
 use Tests\PhpBlockTestCase;
 
 final class EitherTest extends PhpBlockTestCase
@@ -20,7 +18,7 @@ final class EitherTest extends PhpBlockTestCase
                 
                 $result = Either::right(1);
             ',
-            strtr('Right<empty, 1>', ['Right' => Right::class])
+            strtr('Either<empty, 1>', ['Either' => Either::class])
         );
 
         $this->assertBlockType(
@@ -29,7 +27,7 @@ final class EitherTest extends PhpBlockTestCase
                 
                 $result = Either::left(1);
             ',
-            strtr('Left<1, empty>', ['Left' => Left::class])
+            strtr('Either<1, empty>', ['Either' => Either::class])
         );
     }
 

@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Fp\Functional\Either;
 
 /**
- * @template-covariant L
  * @template-covariant R
  * @psalm-immutable
- * @extends Either<L, R>
+ * @extends Either<empty, R>
  */
 final class Right extends Either
 {
@@ -18,10 +17,10 @@ final class Right extends Either
     public function __construct(protected int|float|bool|string|object|array $value) {}
 
     /**
-     * @template LI
      * @template RI
      * @psalm-param RI $value
-     * @psalm-return self<LI, RI>
+     * @psalm-return self<RI>
+     * @psalm-pure
      */
     public static function of(int|float|bool|string|object|array $value): self
     {
