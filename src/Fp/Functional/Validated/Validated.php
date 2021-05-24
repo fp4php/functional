@@ -25,6 +25,7 @@ abstract class Validated
      * @psalm-param EE $value
      *
      * @psalm-return Invalid<EE, AA>
+     * @psalm-pure
      */
     public static function invalid(mixed $value): Invalid
     {
@@ -38,6 +39,7 @@ abstract class Validated
      * @psalm-param AA $value
      *
      * @psalm-return Valid<EE, AA>
+     * @psalm-pure
      */
     public static function valid(mixed $value): Valid
     {
@@ -98,6 +100,7 @@ abstract class Validated
      * @psalm-param EE $left
      * @psalm-param AA $right
      * @psalm-return Validated<EE, AA>
+     * @psalm-pure
      */
     public static function cond(
         bool $condition,
@@ -139,11 +142,7 @@ abstract class Validated
     {
         if ($this->isValid()) {
             $value = $this->value;
-
-            /** @psalm-var Right<empty, non-empty-list<A>> $right */
-            $right = new Right($value);
-
-            return $right;
+            return new Right($value);
         }
 
         /**
@@ -152,10 +151,7 @@ abstract class Validated
 
         $value = $this->value;
 
-        /** @psalm-var Left<non-empty-list<E>, empty> $left */
-        $left = new Left($value);
-
-        return $left;
+        return new Left($value);
     }
 
     /**

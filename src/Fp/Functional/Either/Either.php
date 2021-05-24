@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Either;
 
-use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
-use Fp\Functional\Option\Some;
 use Generator;
 use Throwable;
 
@@ -59,7 +57,7 @@ abstract class Either
         }
 
         /**
-         * @var Right<L, R> $this
+         * @var Right<R> $this
          */
 
         return new Right($closure($this->value));
@@ -91,7 +89,7 @@ abstract class Either
         }
 
         /**
-         * @var Right<L, R> $this
+         * @var Right<R> $this
          */
 
         return $closure($this->value);
@@ -131,15 +129,11 @@ abstract class Either
     public static function try(callable $callback): Either
     {
         try {
-            /** @var Right<TLI, TRI> $r */
-            $r = Right::of(call_user_func($callback));
-
+            return Right::of(call_user_func($callback));
         } catch (Throwable $exception) {
-            /** @var Left<TLI, TRI> $r */
-            $r = Left::of($exception);
+            /** @var Left<TLI> */
+            return Left::of($exception);
         }
-
-        return $r;
     }
 
     /**
@@ -147,11 +141,11 @@ abstract class Either
      */
     public function toOption(): Option
     {
-        return $this->isRight() ? new Some($this->value) : new None();
+        return $this->isRight() ? Option::some($this->value) : Option::none();
     }
 
     /**
-     * @psalm-assert-if-true Left<L, R> $this
+     * @psalm-assert-if-true Left<L> $this
      */
     public function isLeft(): bool
     {
@@ -159,7 +153,7 @@ abstract class Either
     }
 
     /**
-     * @psalm-assert-if-true Right<L, R> $this
+     * @psalm-assert-if-true Right<R> $this
      */
     public function isRight(): bool
     {
@@ -180,9 +174,10 @@ abstract class Either
     /**
      * @psalm-template LI
      * @psalm-param LI $value
-     * @psalm-return Left<LI, empty>
+     * @psalm-return Either<LI, empty>
+     * @psalm-pure
      */
-    public static function left(int|float|bool|string|object|array $value): Left
+    public static function left(int|float|bool|string|object|array $value): Either
     {
         return Left::of($value);
     }
@@ -190,9 +185,10 @@ abstract class Either
     /**
      * @psalm-template RI
      * @psalm-param RI $value
-     * @psalm-return Right<empty, RI>
+     * @psalm-return Either<empty, RI>
+     * @psalm-pure
      */
-    public static function right(int|float|bool|string|object|array $value): Right
+    public static function right(int|float|bool|string|object|array $value): Either
     {
         return Right::of($value);
     }
@@ -203,6 +199,7 @@ abstract class Either
      * @psalm-param LI $left
      * @psalm-param RI $right
      * @psalm-return Either<LI, RI>
+     * @psalm-pure
      */
     public static function cond(
         bool $condition,

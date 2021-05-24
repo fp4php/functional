@@ -6,9 +6,8 @@ namespace Fp\Functional\Either;
 
 /**
  * @template-covariant L
- * @template-covariant R
  * @psalm-immutable
- * @extends Either<L, R>
+ * @extends Either<L, empty>
  */
 final class Left extends Either
 {
@@ -19,9 +18,9 @@ final class Left extends Either
 
     /**
      * @template LI
-     * @template RI
      * @psalm-param LI $value
-     * @psalm-return self<LI, RI>
+     * @psalm-return self<LI>
+     * @psalm-pure
      */
     public static function of(int|float|bool|string|object|array $value): self
     {
