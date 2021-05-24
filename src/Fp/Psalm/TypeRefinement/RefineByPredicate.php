@@ -33,7 +33,7 @@ final class RefineByPredicate
     public static function for(RefinementContext $context): Option
     {
         return Option::do(function() use ($context) {
-            [$collection_key_type, $collection_val_type] = yield self::getCollectionTypeParameter(
+            [$collection_key_type, $collection_val_type] = yield self::getCollectionTypeParameters(
                 collection_arg: $context->collection_arg,
                 provider: $context->provider
             );
@@ -64,7 +64,7 @@ final class RefineByPredicate
      *
      * @return Option<CollectionTypeParameters>
      */
-    private static function getCollectionTypeParameter(Node\Arg $collection_arg, NodeTypeProvider $provider): Option
+    private static function getCollectionTypeParameters(Node\Arg $collection_arg, NodeTypeProvider $provider): Option
     {
         return Option::do(function() use ($collection_arg, $provider) {
             $collection_type = yield Option::of($provider->getType($collection_arg->value));
