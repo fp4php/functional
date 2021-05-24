@@ -14,6 +14,7 @@
     <plugins>
         <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
 
+        <pluginClass class="Fp\Psalm\FilterFunctionReturnTypeProvider"/>
         <pluginClass class="Fp\Psalm\PartialFunctionReturnTypeProvider"/>
         <pluginClass class="Fp\Psalm\PartitionFunctionReturnTypeProvider"/>
         <pluginClass class="Fp\Psalm\PluckFunctionReturnTypeProvider"/>
