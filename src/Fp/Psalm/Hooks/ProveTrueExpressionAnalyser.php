@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\PluginHook;
+namespace Fp\Psalm\Hooks;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node;

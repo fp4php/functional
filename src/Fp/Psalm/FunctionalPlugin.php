@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
-use Fp\Psalm\PluginHook\FilterFunctionReturnTypeProvider;
-use Fp\Psalm\PluginHook\OptionGetOrElseMethodReturnTypeProvider;
-use Fp\Psalm\PluginHook\PartialFunctionReturnTypeProvider;
-use Fp\Psalm\PluginHook\PartitionFunctionReturnTypeProvider;
-use Fp\Psalm\PluginHook\PluckFunctionReturnTypeProvider;
-use Fp\Psalm\PluginHook\ProveTrueExpressionAnalyser;
+use Fp\Psalm\Hooks\FilterFunctionReturnTypeProvider;
+use Fp\Psalm\Hooks\OptionGetOrElseMethodReturnTypeProvider;
+use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
+use Fp\Psalm\Hooks\PartitionFunctionReturnTypeProvider;
+use Fp\Psalm\Hooks\PluckFunctionReturnTypeProvider;
+use Fp\Psalm\Hooks\ProveTrueExpressionAnalyser;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;

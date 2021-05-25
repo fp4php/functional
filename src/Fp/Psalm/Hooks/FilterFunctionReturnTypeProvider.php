@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\PluginHook;
+namespace Fp\Psalm\Hooks;
 
 use Psalm\Type;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
