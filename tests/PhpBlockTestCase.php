@@ -68,8 +68,7 @@ abstract class PhpBlockTestCase extends TestCase
 
         $mappedAst = Option::do(function () use ($ast) {
             $stmts = yield Option::of($ast);
-            $tuple = yield pop($stmts);
-            [$reversedHead, $reversedTail] = $tuple->toArray();
+            [$reversedHead, $reversedTail] = yield pop($stmts);
 
             $docComment = new Doc('/** @psalm-trace $result */', $reversedHead->getStartLine());
             $reversedHead->setDocComment($docComment);

@@ -9,6 +9,7 @@
 >
     <coverage processUncoveredFiles="true">
         <include>
+            <directory suffix=".php">src/Fp/Functional</directory>
             <directory suffix=".php">src/Fp/Functions</directory>
         </include>
     </coverage>

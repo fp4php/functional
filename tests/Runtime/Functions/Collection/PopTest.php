@@ -16,7 +16,7 @@ final class PopTest extends TestCase
 
         $this->assertEquals(
             [3, [1, 2]],
-            pop($c)->get()?->toArray()
+            pop($c)->get()
         );
     }
 }

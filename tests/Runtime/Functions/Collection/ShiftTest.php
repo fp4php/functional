@@ -16,7 +16,7 @@ final class ShiftTest extends TestCase
 
         $this->assertEquals(
             [1, [2, 3]],
-            shift($c)->get()?->toArray()
+            shift($c)->get()
         );
     }
 }

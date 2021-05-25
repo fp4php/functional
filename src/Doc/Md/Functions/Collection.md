@@ -239,10 +239,10 @@
 
 
 - #### pop
-  Pop last collection element and return Tuple2 containing this element and other collection elements. If there is no last element then returns None
+  Pop last collection element and return tuple containing this element and other collection elements. If there is no last element then returns None
 
   ```php
-  [$head, $tail] = pop([[1, 2, 3]])->toArray(); // [3, [1, 2]]   
+  [$head, $tail] = pop([[1, 2, 3]]); // [3, [1, 2]]   
   ```
 
 
@@ -282,10 +282,10 @@
 
 
 - #### shift
-  Shift first collection element and return Tuple2 containing this element and other collection elements. If there is no first element then returns None
+  Shift first collection element and return tuple containing this element and other collection elements. If there is no first element then returns None
 
   ```php
-  [$head, $tail] = shift([[1, 2, 3]])->toArray(); // [1, [2, 3]]   
+  [$head, $tail] = shift([[1, 2, 3]]); // [1, [2, 3]]   
   ```
 
 
