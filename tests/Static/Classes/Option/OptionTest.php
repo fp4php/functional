@@ -18,7 +18,7 @@ final class OptionTest extends PhpBlockTestCase
                 /** @var int|null $value */
                 $value = null;
                 
-                $result = Option::of($value);
+                $result = Option::fromNullable($value);
             ',
             strtr('Option<int>', ['Option' => Option::class])
         );
@@ -51,7 +51,7 @@ final class OptionTest extends PhpBlockTestCase
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 
-                $result = Option::of(1)
+                $result = Option::fromNullable(1)
                     ->map(fn(int $v) => (string) $v)
                     ->get();
             ',
@@ -65,8 +65,8 @@ final class OptionTest extends PhpBlockTestCase
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 
-                $result = Option::of(1)
-                    ->flatMap(fn(int $v) => Option::of((string) $v))
+                $result = Option::fromNullable(1)
+                    ->flatMap(fn(int $v) => Option::fromNullable((string) $v))
                     ->get();
             ',
             'null|numeric-string'

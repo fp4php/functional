@@ -28,5 +28,5 @@ function last(iterable $collection, ?callable $predicate = null): Option
         }
     }
 
-    return Option::of($last);
+    return Option::fromNullable($last);
 }

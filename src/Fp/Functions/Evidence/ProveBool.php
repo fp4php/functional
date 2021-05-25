@@ -17,7 +17,7 @@ use Fp\Functional\Option\Option;
  */
 function proveBool(mixed $subject): Option
 {
-    return Option::of(is_bool($subject) ? $subject : null);
+    return Option::fromNullable(is_bool($subject) ? $subject : null);
 }
 
 /**
@@ -32,7 +32,7 @@ function proveBool(mixed $subject): Option
  */
 function proveTrue(mixed $subject): Option
 {
-    return Option::of(is_bool($subject) && true === $subject ? $subject : null);
+    return Option::fromNullable(is_bool($subject) && true === $subject ? $subject : null);
 }
 
 /**
@@ -47,5 +47,5 @@ function proveTrue(mixed $subject): Option
  */
 function proveFalse(mixed $subject): Option
 {
-    return Option::of(is_bool($subject) && false === $subject ? $subject : null);
+    return Option::fromNullable(is_bool($subject) && false === $subject ? $subject : null);
 }

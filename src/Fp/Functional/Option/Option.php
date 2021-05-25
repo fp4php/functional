@@ -27,7 +27,7 @@ abstract class Option
 
     /**
      * @psalm-template B
-     * @param callable(A): (B|null) $callback
+     * @param callable(A): (B) $callback
      * @psalm-return Option<B>
      */
     public function map(callable $callback): Option
@@ -36,11 +36,7 @@ abstract class Option
             return new None();
         }
 
-        $value = $this->value;
-
-        $result = call_user_func($callback, $value);
-
-        return is_null($result) ? new None() : new Some($result);
+        return new Some(call_user_func($callback, $this->value));
     }
 
     /**
@@ -54,9 +50,7 @@ abstract class Option
             return new None();
         }
 
-        $value = $this->value;
-
-        return call_user_func($callback, $value);
+        return call_user_func($callback, $this->value);
     }
 
     /**
@@ -80,31 +74,33 @@ abstract class Option
 
         }
 
-        return Option::of($generator->getReturn());
+        return Option::some($generator->getReturn());
     }
 
     /**
      * @psalm-template B
-     * @param B|null $value
+     * @psalm-param B|null $value
      * @psalm-return Option<B>
      * @psalm-pure
      */
-    public static function of(mixed $value): Option
+    public static function fromNullable(mixed $value): Option
     {
-        return is_null($value) ? new None() : new Some($value);
+        return is_null($value)
+            ? new None()
+            : new Some($value);
     }
 
     /**
      * @psalm-template B
-     * @psalm-param (callable(): (B|null)) $callback
+     * @psalm-param (callable(): (B)) $callback
      * @psalm-return Option<B>
      */
     public static function try(callable $callback): Option
     {
         try {
-            return self::of(call_user_func($callback));
+            return self::some(call_user_func($callback));
         } catch (Throwable) {
-            return new None();
+            return self::none();
         }
     }
 
@@ -146,7 +142,7 @@ abstract class Option
      * @psalm-return Option<B>
      * @psalm-pure
      */
-    public static function some(int|float|bool|string|object|array $value): Option
+    public static function some(mixed $value): Option
     {
         return new Some($value);
     }

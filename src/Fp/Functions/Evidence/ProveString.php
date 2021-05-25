@@ -17,7 +17,7 @@ use Fp\Functional\Option\Option;
  */
 function proveString(mixed $potential): Option
 {
-    return Option::of(is_string($potential) ? $potential : null);
+    return Option::fromNullable(is_string($potential) ? $potential : null);
 }
 
 /**
@@ -27,7 +27,7 @@ function proveString(mixed $potential): Option
  */
 function proveClassString(string $potential): Option
 {
-    return Option::of(class_exists($potential) ? $potential : null);
+    return Option::fromNullable(class_exists($potential) ? $potential : null);
 }
 
 /**
@@ -49,7 +49,7 @@ function proveNonEmptyString(mixed $subject): Option
  */
 function proveCallableString(string $subject): Option
 {
-    return Option::of(is_callable($subject) ? $subject : null);
+    return Option::fromNullable(is_callable($subject) ? $subject : null);
 }
 
 

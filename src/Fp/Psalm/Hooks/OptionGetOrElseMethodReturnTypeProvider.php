@@ -39,7 +39,7 @@ class OptionGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProvide
     public static function getLowerBoundary(MethodReturnTypeProviderEvent $event): Option
     {
         return Option::do(function() use ($event) {
-            $template_type_parameters = yield Option::of($event->getTemplateTypeParameters());
+            $template_type_parameters = yield Option::fromNullable($event->getTemplateTypeParameters());
             return yield head($template_type_parameters);
         });
     }
@@ -60,6 +60,6 @@ class OptionGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProvide
      */
     private static function getArgType(Arg $arg, StatementsSource $source): Option
     {
-        return Option::of($source->getNodeTypeProvider()->getType($arg->value));
+        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

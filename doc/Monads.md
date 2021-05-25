@@ -20,7 +20,7 @@ function getUserById(int $id): Option {
    */
   $user = $db->getUser($id);
   
-  return Option::of($user);
+  return Option::fromNullable($user);
 }
 
 /** 
@@ -32,7 +32,7 @@ function getUserFirstOrder(User $user): Option {
    */
   $order = $user->getOrders()[0] ?? null;
   
-  return Option::of($order);
+  return Option::fromNullable($order);
 }
 
 
@@ -45,7 +45,7 @@ function getOrderTrackNumber(Order $order): Option {
    */
   $trackNumber = $order->getTracknumber();
   
-  return Option::of($trackNumber);
+  return Option::fromNullable($trackNumber);
 }
 
 /** 
@@ -57,7 +57,7 @@ function getTrackingStatus(TrackingNumber $trackingNumber): Option {
    */
   $status = $trackingNumber->getLastTrackingStatus();
   
-  return Option::of($status);
+  return Option::fromNullable($status);
 }
 
 /** @var string $status */
@@ -166,7 +166,7 @@ function getUserById(int $id): Option {
    */
   $user = $db->getUser($id);
   
-  return Option::of($user);
+  return Option::fromNullable($user);
 }
 
 /** 
@@ -178,7 +178,7 @@ function getUserFirstOrder(User $user): Option {
    */
   $order = $user->getOrders()[0] ?? null;
   
-  return Option::of($order);
+  return Option::fromNullable($order);
 }
 
 
@@ -191,7 +191,7 @@ function getOrderTrackNumber(Order $order): Option {
    */
   $trackNumber = $order->getTracknumber();
   
-  return Option::of($trackNumber);
+  return Option::fromNullable($trackNumber);
 }
 
 /** 
@@ -203,7 +203,7 @@ function getTrackingStatus(TrackingNumber $trackingNumber): Option {
    */
   $status = $trackingNumber->getLastTrackingStatus();
   
-  return Option::of($status);
+  return Option::fromNullable($status);
 }
 
 /** @var string $status */

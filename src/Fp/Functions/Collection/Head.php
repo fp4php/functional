@@ -25,5 +25,5 @@ function head(iterable $collection): Option
         break;
     }
 
-    return Option::of($head);
+    return Option::fromNullable($head);
 }

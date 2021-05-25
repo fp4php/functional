@@ -21,7 +21,7 @@ use function Fp\Collection\head;
  */
 function asNonEmptyList(iterable $collection): Option
 {
-    /** @var Option<non-empty-list<TV>> $list */
+    /** @psalm-var Option<non-empty-list<TV>> $list */
     $list = head($collection)->map(fn() => asList($collection));
 
     return $list;

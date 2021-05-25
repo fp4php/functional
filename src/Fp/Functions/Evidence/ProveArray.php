@@ -21,7 +21,7 @@ use function Fp\Collection\head;
  */
 function proveArray(iterable $collection): Option
 {
-    return Option::of(is_array($collection) ? $collection : null);
+    return Option::fromNullable(is_array($collection) ? $collection : null);
 }
 
 /**

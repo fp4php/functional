@@ -76,6 +76,6 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
      */
     private static function getArgType(Arg $arg, StatementsSource $source): Option
     {
-        return Option::of($source->getNodeTypeProvider()->getType($arg->value));
+        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

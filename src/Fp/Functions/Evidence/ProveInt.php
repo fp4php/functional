@@ -17,5 +17,5 @@ use Fp\Functional\Option\Option;
  */
 function proveInt(mixed $potential): Option
 {
-    return Option::of(is_int($potential) ? $potential : null);
+    return Option::fromNullable(is_int($potential) ? $potential : null);
 }

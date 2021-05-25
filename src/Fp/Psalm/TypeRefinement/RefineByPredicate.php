@@ -67,15 +67,15 @@ final class RefineByPredicate
     private static function getCollectionTypeParameters(Node\Arg $collection_arg, NodeTypeProvider $provider): Option
     {
         return Option::do(function() use ($collection_arg, $provider) {
-            $collection_type = yield Option::of($provider->getType($collection_arg->value));
+            $collection_type = yield Option::fromNullable($provider->getType($collection_arg->value));
 
             $atomics = asList($collection_type->getAtomicTypes());
             yield proveTrue(1 === count($atomics));
 
             return yield match (true) {
-                $atomics[0] instanceof Type\Atomic\TList => Option::of([Type::getInt(), $atomics[0]->type_param]),
-                $atomics[0] instanceof Type\Atomic\TArray => Option::of($atomics[0]->type_params),
-                $atomics[0] instanceof Type\Atomic\TIterable => Option::of($atomics[0]->type_params),
+                $atomics[0] instanceof Type\Atomic\TList => Option::fromNullable([Type::getInt(), $atomics[0]->type_param]),
+                $atomics[0] instanceof Type\Atomic\TArray => Option::fromNullable($atomics[0]->type_params),
+                $atomics[0] instanceof Type\Atomic\TIterable => Option::fromNullable($atomics[0]->type_params),
                 default => Option::none(),
             };
         });
@@ -128,7 +128,7 @@ final class RefineByPredicate
             yield proveTrue(1 === count($statements));
 
             return yield firstOf($statements, Node\Stmt\Return_::class)
-                ->flatMap(fn($return_statement) => Option::of($return_statement->expr));
+                ->flatMap(fn($return_statement) => Option::fromNullable($return_statement->expr));
         });
     }
 
@@ -191,7 +191,7 @@ final class RefineByPredicate
                 code_location: new CodeLocation($source, $return_expr)
             );
 
-            return yield Option::of($reconciled_types[self::COLLECTION_TYPE] ?? null);
+            return yield Option::fromNullable($reconciled_types[self::COLLECTION_TYPE] ?? null);
         });
     }
 }

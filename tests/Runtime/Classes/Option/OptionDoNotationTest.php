@@ -20,7 +20,7 @@ final class OptionDoNotationTest extends TestCase
 
             /** @psalm-suppress MixedAssignment */
             foreach ($items as $item) {
-                $mapped[] = yield Option::of($item);
+                $mapped[] = yield Option::fromNullable($item);
             }
 
             return $mapped;
@@ -33,7 +33,7 @@ final class OptionDoNotationTest extends TestCase
     {
         $mappedOption = Option::do(function() {
             $a = 1;
-            $b = yield Option::of(2);
+            $b = yield Option::fromNullable(2);
             $c = yield new Some(3);
             $d = yield Option::some(4);
             $e = 5;
@@ -48,7 +48,7 @@ final class OptionDoNotationTest extends TestCase
     {
         $mappedOption = Option::do(function() {
             $a = 1;
-            $b = yield Option::of(2);
+            $b = yield Option::fromNullable(2);
             $c = yield new Some(3);
             $d = yield Option::none();
             $e = 5;

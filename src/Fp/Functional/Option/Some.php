@@ -19,7 +19,7 @@ final class Some extends Option
     /**
      * @psalm-param A $value
      */
-    public function __construct(int|float|bool|string|object|array $value)
+    public function __construct(mixed $value)
     {
         $this->value = $value;
     }

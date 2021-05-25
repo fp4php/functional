@@ -22,16 +22,16 @@ use function JmesPath\search;
  */
 function jsonSearch(string $expr, array|string $data): Option
 {
-    $decoded = is_string($data)
+    $decodedEither = is_string($data)
         ? jsonDecode($data)
         : Right::of($data);
 
-    return $decoded
-        ->toOption()
-        ->map(function (array|int|float|string|bool $decoded) use ($expr) {
-            /** @var array|scalar|null $result */
-            $result = search($expr, $decoded);
+    return Option::do(function () use ($decodedEither, $expr) {
+        $decoded = yield $decodedEither->toOption();
 
-            return $result;
-        });
+        /** @psalm-var array|scalar|null $nullableResult */
+        $nullableResult = search($expr, $decoded);
+
+        return yield Option::fromNullable($nullableResult);
+    });
 }

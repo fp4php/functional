@@ -25,7 +25,7 @@ class DocLinker
         $headers = map($lines, function (string $line) {
             $uLine = u($line)->trim();
 
-            return Option::of(match (true) {
+            return Option::fromNullable(match (true) {
                 $uLine->containsAny(MdHeader4::prefix()) => MdHeader4::fromTitle($uLine->after(MdHeader4::prefix())),
                 $uLine->containsAny(MdHeader3::prefix()) => MdHeader3::fromTitle($uLine->after(MdHeader3::prefix())),
                 $uLine->containsAny(MdHeader2::prefix()) => MdHeader2::fromTitle($uLine->after(MdHeader2::prefix())),

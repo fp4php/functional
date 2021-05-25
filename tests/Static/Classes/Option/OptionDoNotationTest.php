@@ -20,7 +20,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
                 use function Fp\unit;
                 
                 $result = Option::do(function () {
-                    yield Option::of(false);
+                    yield Option::fromNullable(false);
                     return unit();
                 });
             ',
@@ -38,7 +38,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
                 use function Fp\unit;
                 
                 $result = Option::do(function () {
-                    yield Option::of(false);
+                    yield Option::fromNullable(false);
                     
                     if (rand(0, 1) === 1) {
                         return 1;

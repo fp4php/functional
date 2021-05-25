@@ -17,5 +17,5 @@ use Fp\Functional\Option\Option;
  */
 function proveFloat(mixed $potential): Option
 {
-    return Option::of(is_float($potential) ? $potential : null);
+    return Option::fromNullable(is_float($potential) ? $potential : null);
 }

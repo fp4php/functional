@@ -152,6 +152,6 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
      */
     private static function getArgType(Arg $arg, StatementsSource $source): Option
     {
-        return Option::of($source->getNodeTypeProvider()->getType($arg->value));
+        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

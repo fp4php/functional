@@ -26,7 +26,7 @@ use Fp\Functional\Option\Option;
 function at(iterable $collection, int|string $key): Option
 {
     if (is_array($collection) || $collection instanceof ArrayAccess) {
-        return Option::of($collection[$key] ?? null);
+        return Option::fromNullable($collection[$key] ?? null);
     } else {
         /** @psalm-suppress UnusedClosureParam */
         return first(

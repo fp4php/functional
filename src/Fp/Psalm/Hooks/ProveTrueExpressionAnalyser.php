@@ -82,6 +82,6 @@ final class ProveTrueExpressionAnalyser implements AfterExpressionAnalysisInterf
         $traverser->addVisitor($visitor);
         $traverser->traverse([$expr]);
 
-        return Option::of($visitor->proveTrueArgs);
+        return Option::fromNullable($visitor->proveTrueArgs);
     }
 }

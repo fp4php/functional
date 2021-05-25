@@ -21,6 +21,7 @@ use ReflectionNamedType;
 use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
 use function Fp\Collection\at;
+use function Fp\Collection\head;
 use function Fp\Collection\map;
 use function Fp\Collection\second;
 use function Fp\Evidence\proveClassString;
@@ -67,19 +68,24 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
      */
     private static function getClassName(FunctionReturnTypeProviderEvent $event): Option
     {
-        return first($event->getCallArgs())
-            ->flatMap(fn(Arg $arg): Option => self::getArgType($arg, $event->getStatementsSource()))
-            ->flatMap(fn(Union $collection_type) => at($collection_type->getAtomicTypes(), 'array'))
-            ->map(fn(Atomic $a) => match(true) {
+        return Option::do(function () use ($event) {
+            $arg = yield head($event->getCallArgs());
+            $collection_type = yield self::getArgType($arg, $event->getStatementsSource());
+            $a = yield at($collection_type->getAtomicTypes(), 'array');
+
+            $template_value_type = yield Option::fromNullable(match(true) {
                 ($a instanceof TArray) => $a->type_params[1],
                 ($a instanceof TKeyedArray) => $a->getGenericValueType(),
                 default => null
-            })
-            ->flatMap(fn(Union $template_value_type) => firstOf(
+            });
+
+            $named_object = yield firstOf(
                 $template_value_type->getAtomicTypes(),
                 TNamedObject::class
-            )
-            ->flatMap(fn(TNamedObject $named_object) => proveClassString($named_object->value)));
+            );
+
+            return yield proveClassString($named_object->value);
+        });
     }
 
     /**
@@ -98,6 +104,6 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
      */
     private static function getArgType(Arg $arg, StatementsSource $source): Option
     {
-        return Option::of($source->getNodeTypeProvider()->getType($arg->value));
+        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

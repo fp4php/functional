@@ -34,7 +34,7 @@ function first(iterable $collection, ?callable $predicate = null): Option
         }
     }
 
-    return Option::of($first);
+    return Option::fromNullable($first);
 }
 
 /**

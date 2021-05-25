@@ -87,7 +87,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
                 return true;
             }
 
-            $preserve_keys_type = yield Option::of(
+            $preserve_keys_type = yield Option::fromNullable(
                 $event
                     ->getStatementsSource()
                     ->getNodeTypeProvider()
