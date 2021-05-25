@@ -177,7 +177,7 @@ abstract class Either
      * @psalm-return Either<LI, empty>
      * @psalm-pure
      */
-    public static function left(int|float|bool|string|object|array $value): Either
+    public static function left(mixed $value): Either
     {
         return Left::of($value);
     }
@@ -188,7 +188,7 @@ abstract class Either
      * @psalm-return Either<empty, RI>
      * @psalm-pure
      */
-    public static function right(int|float|bool|string|object|array $value): Either
+    public static function right(mixed $value): Either
     {
         return Right::of($value);
     }
@@ -203,8 +203,8 @@ abstract class Either
      */
     public static function cond(
         bool $condition,
-        int|float|bool|string|object|array $right,
-        int|float|bool|string|object|array $left,
+        mixed $right,
+        mixed $left,
     ): Either
     {
         return $condition
@@ -215,5 +215,5 @@ abstract class Either
     /**
      * @psalm-return L|R
      */
-    abstract public function get(): int|float|bool|string|object|array;
+    abstract public function get(): mixed;
 }

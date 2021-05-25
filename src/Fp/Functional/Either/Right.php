@@ -14,7 +14,7 @@ final class Right extends Either
     /**
      * @psalm-param R $value
      */
-    public function __construct(protected int|float|bool|string|object|array $value) {}
+    public function __construct(protected mixed $value) {}
 
     /**
      * @template RI
@@ -22,7 +22,7 @@ final class Right extends Either
      * @psalm-return self<RI>
      * @psalm-pure
      */
-    public static function of(int|float|bool|string|object|array $value): self
+    public static function of(mixed $value): self
     {
         return new self($value);
     }
@@ -30,7 +30,7 @@ final class Right extends Either
     /**
      * @psalm-return R
      */
-    public function get(): int|float|bool|string|object|array
+    public function get(): mixed
     {
         return $this->value;
     }
