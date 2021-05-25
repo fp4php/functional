@@ -2,30 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm;
+namespace Fp\Psalm\PluginHook;
 
 use Fp\Functional\Option\Option;
 use Fp\Psalm\TypeCombiner\SumType\SumTypeCombiner;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
-use Psalm\Plugin\PluginEntryPointInterface;
-use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
 use Psalm\Type\Union;
-use SimpleXMLElement;
 
 use function Fp\Collection\head;
 use function Fp\Evidence\proveTrue;
 
 
-class OptionGetOrElseMethodReturnTypeProvider implements PluginEntryPointInterface, MethodReturnTypeProviderInterface
+class OptionGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
-    public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
-    {
-        $registration->registerHooksFromClass(self::class);
-    }
-
     public static function getClassLikeNames(): array
     {
         return [Option::class];

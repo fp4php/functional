@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm;
+namespace Fp\Psalm\PluginHook;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
-use Psalm\Plugin\PluginEntryPointInterface;
-use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
 use Psalm\Type;
 use Psalm\Type\Atomic;
@@ -19,7 +17,6 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 use ReflectionNamedType;
-use SimpleXMLElement;
 
 use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
@@ -30,13 +27,8 @@ use function Fp\Evidence\proveClassString;
 use function Fp\Reflection\getNamedTypes;
 use function Fp\Reflection\getReflectionProperty;
 
-class PluckFunctionReturnTypeProvider implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
+class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
-    {
-        $registration->registerHooksFromClass(self::class);
-    }
-
     /**
      * @inheritDoc
      */

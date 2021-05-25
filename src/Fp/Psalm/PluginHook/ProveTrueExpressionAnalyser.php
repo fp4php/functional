@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm;
+namespace Fp\Psalm\PluginHook;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node;
@@ -18,22 +18,14 @@ use Psalm\Internal\Analyzer\Statements\Expression\Call\FunctionCallAnalyzer;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
-use Psalm\Plugin\PluginEntryPointInterface;
-use Psalm\Plugin\RegistrationInterface;
-use SimpleXMLElement;
 
 use function Fp\Evidence\proveOf;
 
-final class ProveTrueExpressionAnalysis implements AfterExpressionAnalysisInterface, PluginEntryPointInterface
+final class ProveTrueExpressionAnalyser implements AfterExpressionAnalysisInterface
 {
     public static function getFunctionIds(): array
     {
         return ['fp\evidence\provetrue'];
-    }
-
-    public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
-    {
-        $registration->registerHooksFromClass(self::class);
     }
 
     /**

@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm;
+namespace Fp\Psalm\PluginHook;
 
 use Psalm\Type;
-use Psalm\Plugin\PluginEntryPointInterface;
-use Psalm\Plugin\RegistrationInterface;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
@@ -14,19 +12,14 @@ use Fp\Psalm\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\TypeRefinement\RefinementContext;
 use Fp\Psalm\TypeRefinement\RefinementResult;
 use Fp\Functional\Option\Option;
-use SimpleXMLElement;
+
 use function Fp\Cast\asList;
 use function Fp\Collection\firstOf;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
-final class FilterFunctionReturnTypeProvider implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
+final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
-    {
-        $registration->registerHooksFromClass(self::class);
-    }
-
     public static function getFunctionIds(): array
     {
         return ['fp\collection\filter'];
@@ -82,7 +75,7 @@ final class FilterFunctionReturnTypeProvider implements PluginEntryPointInterfac
     }
 
     /**
-     * @return Option<bool>
+     * @psalm-return Option<bool>
      */
     private static function preserveKeys(FunctionReturnTypeProviderEvent $event): Option
     {

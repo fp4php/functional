@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm;
+namespace Fp\Psalm\PluginHook;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
@@ -12,15 +12,12 @@ use Psalm\Issue\InvalidArgument;
 use Psalm\IssueBuffer;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
-use Psalm\Plugin\PluginEntryPointInterface;
-use Psalm\Plugin\RegistrationInterface;
 use Psalm\StatementsSource;
 use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
-use SimpleXMLElement;
 
 use function Fp\Collection\filterNotNull;
 use function Fp\Collection\head;
@@ -28,13 +25,8 @@ use function Fp\Collection\map;
 use function Fp\Collection\tail;
 use function Symfony\Component\String\u;
 
-class PartialFunctionReturnTypeProvider implements PluginEntryPointInterface, FunctionReturnTypeProviderInterface
+class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
-    {
-        $registration->registerHooksFromClass(self::class);
-    }
-
     /**
      * @inheritDoc
      */
