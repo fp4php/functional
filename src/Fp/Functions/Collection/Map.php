@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 /**
- * Map collection values into new collection
+ * Produces a new array of elements by mapping each element in collection
+ * through a transformation function (callback).
+ *
  * Keys are preserved
  *
  * @psalm-template TK of array-key
@@ -15,7 +17,12 @@ namespace Fp\Collection;
  * @psalm-param iterable<TK, TVI> $collection
  * @psalm-param callable(TVI, TK): TVO $callback
  *
- * @psalm-return array<TK, TVO>
+ * @psalm-return (
+ *    $collection is non-empty-list  ? non-empty-list<TVO>        : (
+ *    $collection is list            ? list<TVO>                  : (
+ *    $collection is non-empty-array ? non-empty-array<TK, TVO> : (
+ *    array<TK, TVO>
+ * ))))
  */
 function map(iterable $collection, callable $callback): array
 {

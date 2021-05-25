@@ -16,7 +16,6 @@
   - [any](#any)
   - [anyOf](#anyOf)
   - [at](#at)
-  - [copyCollection](#copyCollection)
   - [every](#every)
   - [everyOf](#everyOf)
   - [filter](#filter)
@@ -221,18 +220,6 @@
     ``` php
     /** @var Option<Foo|int> $result */
     $result = at([new Foo(), 2, 3], 1);
-    ```
-
-  - #### copyCollection
-    
-    Copy any iterable collection into php array
-    
-    ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
-    
-    /** @var array<string, int> $result */
-    $result = copyCollection(getCollection);
     ```
 
   - #### every

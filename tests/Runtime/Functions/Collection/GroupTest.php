@@ -5,28 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Foo;
-
-use function Fp\Collection\at;
-use function Fp\Collection\copyCollection;
-use function Fp\Collection\every;
-use function Fp\Collection\filter;
-use function Fp\Collection\first;
-use function Fp\Collection\flatMap;
-use function Fp\Collection\fold;
 use function Fp\Collection\group;
-use function Fp\Collection\head;
-use function Fp\Collection\last;
-use function Fp\Collection\map;
-use function Fp\Collection\partition;
-use function Fp\Collection\pluck;
-use function Fp\Collection\pop;
-use function Fp\Collection\reduce;
-use function Fp\Collection\reverse;
-use function Fp\Collection\second;
-use function Fp\Collection\shift;
-use function Fp\Collection\any;
-use function Fp\Collection\tail;
 
 final class GroupTest extends TestCase
 {

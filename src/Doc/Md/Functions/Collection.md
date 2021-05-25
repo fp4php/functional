@@ -29,19 +29,6 @@
   $result = at([new Foo(), 2, 3], 1);
   ```
 
-
-- #### copyCollection
-  Copy any iterable collection into php array
-
-  ```php
-  /** @psalm-return iterable<string, int> */
-  function getCollection(): array { return []; }
-  
-  /** @var array<string, int> $result */
-  $result = copyCollection(getCollection);
-  ```
-
-
 - #### every
   Returns true if every collection element satisfies the condition and false otherwise
 
