@@ -28,29 +28,29 @@ abstract class Either
 
     /**
      * @psalm-template TO
-     * @psalm-param \Closure(R): TO $ifRight
-     * @psalm-param \Closure(L): TO $ifLeft
+     * @psalm-param callable(R): TO $ifRight
+     * @psalm-param callable(L): TO $ifLeft
      * @psalm-return TO
      */
-    public function fold(\Closure $ifRight, \Closure $ifLeft): mixed
+    public function fold(callable $ifRight, callable $ifLeft): mixed
     {
         if ($this->isRight()) {
-            return $ifRight($this->value);
+            return call_user_func($ifRight, $this->value);
         } else {
             /**
              * @var Left<L, R> $this
              */
 
-            return $ifLeft($this->value);
+            return call_user_func($ifLeft, $this->value);
         }
     }
 
     /**
      * @psalm-template RO
-     * @psalm-param \Closure(R): RO $closure
+     * @psalm-param callable(R): RO $callback
      * @psalm-return Either<L, RO>
      */
-    public function map(\Closure $closure): Either
+    public function map(callable $callback): Either
     {
         if ($this->isLeft()) {
             return new Left($this->value);
@@ -60,29 +60,29 @@ abstract class Either
          * @var Right<R> $this
          */
 
-        return new Right($closure($this->value));
+        return new Right(call_user_func($callback, $this->value));
     }
 
     /**
      * @psalm-template LO
-     * @psalm-param \Closure(L): LO $closure
+     * @psalm-param callable(L): LO $callback
      * @psalm-return Either<LO, R>
      */
-    public function mapLeft(\Closure $closure): Either
+    public function mapLeft(callable $callback): Either
     {
         /** @psalm-suppress InvalidArgument */
         return $this
             ->swap()
-            ->map($closure)
+            ->map($callback)
             ->swap();
     }
 
     /**
      * @psalm-template RO
-     * @psalm-param \Closure(R): Either<L, RO> $closure
+     * @psalm-param callable(R): Either<L, RO> $callback
      * @psalm-return Either<L, RO>
      */
-    public function flatMap(\Closure $closure): Either
+    public function flatMap(callable $callback): Either
     {
         if ($this->isLeft()) {
             return new Left($this->value);
@@ -92,7 +92,7 @@ abstract class Either
          * @var Right<R> $this
          */
 
-        return $closure($this->value);
+        return call_user_func($callback, $this->value);
     }
 
     /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Option;
 
-use Closure;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
@@ -28,10 +27,10 @@ abstract class Option
 
     /**
      * @psalm-template B
-     * @param Closure(A): (B|null) $closure
+     * @param callable(A): (B|null) $callback
      * @psalm-return Option<B>
      */
-    public function map(Closure $closure): Option
+    public function map(callable $callback): Option
     {
         if ($this->isEmpty()) {
             return new None();
@@ -39,17 +38,17 @@ abstract class Option
 
         $value = $this->value;
 
-        $result = $closure($value);
+        $result = call_user_func($callback, $value);
 
         return is_null($result) ? new None() : new Some($result);
     }
 
     /**
      * @psalm-template B
-     * @param Closure(A): Option<B> $closure
+     * @param callable(A): Option<B> $callback
      * @psalm-return Option<B>
      */
-    public function flatMap(Closure $closure): Option
+    public function flatMap(callable $callback): Option
     {
         if ($this->isEmpty()) {
             return new None();
@@ -57,7 +56,7 @@ abstract class Option
 
         $value = $this->value;
 
-        return $closure($value);
+        return call_user_func($callback, $value);
     }
 
     /**
@@ -111,14 +110,14 @@ abstract class Option
 
     /**
      * @psalm-template B
-     * @psalm-param \Closure(A): B $ifSome
-     * @psalm-param \Closure(): B $ifNone
+     * @psalm-param callable(A): B $ifSome
+     * @psalm-param callable(): B $ifNone
      * @psalm-return B
      */
-    public function fold(\Closure $ifSome, \Closure $ifNone): mixed
+    public function fold(callable $ifSome, callable $ifNone): mixed
     {
         return !$this->isEmpty()
-            ? $ifSome($this->value)
+            ? call_user_func($ifSome, $this->value)
             : $ifNone();
     }
 
