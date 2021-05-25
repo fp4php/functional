@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Psalm\PartitionFunctionReturnTypeProvider;
+use Fp\Psalm\Hooks\PartitionFunctionReturnTypeProvider;
 
-use Tests\Runtime\Collection\PartitionTest;
+use Tests\Runtime\Functions\Collection\PartitionTest;
 
 use function Fp\of;
 
@@ -22,8 +22,6 @@ use function Fp\of;
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TK): bool ...$predicates
  *
- * @psalm-return array<array-key, array<TK, TV>>
- *
  * @see PartitionFunctionReturnTypeProvider
  */
 function partition(iterable $collection, callable ...$predicates): array
@@ -34,12 +32,12 @@ function partition(iterable $collection, callable ...$predicates): array
     foreach ($collection as $index => $element) {
         foreach ($predicates as $partition => $callback) {
             if (call_user_func($callback, $element, $index)) {
-                $partitions[$partition][$index] = $element;
+                $partitions[$partition][] = $element;
                 continue 2;
             }
         }
 
-        $partitions[$predicateCount][$index] = $element;
+        $partitions[$predicateCount][] = $element;
     }
 
     return $partitions;

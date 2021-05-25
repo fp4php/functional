@@ -21,7 +21,8 @@ final class FilterTest extends PhpBlockTestCase
 
             $result = filter(
                 getCollection(),
-                fn(int $v, string $k) => true
+                fn(int $v, string $k) => true,
+                true
             );
         ';
 

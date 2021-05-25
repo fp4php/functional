@@ -20,7 +20,7 @@ use function Fp\of;
  *
  * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
  */
-function filter(iterable $collection, callable $predicate, bool $preserveKeys = true): array
+function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
     $aggregation = [];
 
@@ -50,7 +50,7 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  *
  * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
  */
-function filterNotNull(iterable $collection, bool $preserveKeys = true): array
+function filterNotNull(iterable $collection, bool $preserveKeys = false): array
 {
     return filter(
         $collection,
@@ -75,7 +75,7 @@ function filterNotNull(iterable $collection, bool $preserveKeys = true): array
  *
  * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
  */
-function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = true, bool $invariant = false): array
+function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false, bool $invariant = false): array
 {
     /** @var array<TK, TVO> $instances */
     $instances = filter(

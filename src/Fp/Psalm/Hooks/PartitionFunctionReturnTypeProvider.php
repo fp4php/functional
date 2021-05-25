@@ -48,8 +48,9 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
                 $atomic_types = map(
                     $head_arg_type->getAtomicTypes(),
                     fn(Atomic $a) => match (true) {
-                        ($a instanceof TKeyedArray) => new TArray([$a->getGenericKeyType(), $a->getGenericValueType()]),
-                        ($a instanceof TList) => new TArray([Type::getArrayKey(), $a->type_param]),
+                        ($a instanceof TArray) => new TList($a->type_params[1]),
+                        ($a instanceof TKeyedArray) => new TList($a->getGenericValueType()),
+                        ($a instanceof TList) => new TList($a->type_param),
                         default => $a
                     }
                 );

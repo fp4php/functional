@@ -48,12 +48,12 @@ final class FilterTest extends TestCase
 
         $this->assertEquals(
             [2 => $bar],
-            filterOf([1, $foo, $bar, 4], Bar::class)
+            filterOf([1, $foo, $bar, 4], Bar::class, true)
         );
 
         $this->assertEquals(
             ['2' => $bar],
-            filterOf([1, $foo, $bar, 4], Bar::class)
+            filterOf([1, $foo, $bar, 4], Bar::class, true)
         );
 
         $this->assertEquals(
@@ -63,7 +63,7 @@ final class FilterTest extends TestCase
 
         $this->assertEquals(
             [2 => $bar],
-            filterOf([1, $subBar, $bar, 4], Bar::class, invariant: true)
+            filterOf([1, $subBar, $bar, 4], Bar::class, true, true)
         );
     }
 }

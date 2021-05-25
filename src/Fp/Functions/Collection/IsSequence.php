@@ -67,5 +67,4 @@ function isNonEmptySequence(iterable $collection, int $from = 0, string $directi
     return $isSequence && !$empty;
 }
 
-;
 

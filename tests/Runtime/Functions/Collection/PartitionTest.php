@@ -19,7 +19,7 @@ final class PartitionTest extends TestCase
         $c = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
 
         $this->assertEquals(
-            [['b' => 2, 'd' => 4], ['a' => 1, 'c' => 3]],
+            [[2, 4], [1, 3]],
             partition(
                 $c,
                 fn(int $v) => $v % 2 === 0
@@ -27,7 +27,7 @@ final class PartitionTest extends TestCase
         );
 
         $this->assertEquals(
-            [['a' => 1], ['b' => 2], ['c' => 3], ['d' => 4], []],
+            [[1], [2], [3], [4], []],
             partition(
                 $c,
                 fn(int $v) => $v === 1,
