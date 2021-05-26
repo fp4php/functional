@@ -23,11 +23,6 @@ jobs:
           ${{ runner.os }}-php-
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v2
-      with:
-       name: vendor
-       path: vendor
 
   psalm:
     runs-on: ubuntu-latest
@@ -35,10 +30,14 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v2
-      - name: Download vendor artifact
-        uses: actions/download-artifact@v2
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
         with:
-          name: vendor
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
       - name: Run psalm validation
         run: composer run-script psalm
 
@@ -49,9 +48,13 @@ jobs:
       - psalm
     steps:
       - uses: actions/checkout@v2
-      - name: Download vendor artifact
-        uses: actions/download-artifact@v2
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
         with:
-          name: vendor
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
       - name: Run test suite
         run: composer run-script test
