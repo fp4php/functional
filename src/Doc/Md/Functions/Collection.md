@@ -37,6 +37,14 @@
   ```
 
 
+- #### exists
+  Find if there is element which satisfies the condition
+
+  ```php
+  exists([1, 2], fn(int $v): bool => $v === 1); // true
+  ```
+
+
 - #### everyOf
   Returns true if every collection element is of given class false otherwise
 
@@ -308,6 +316,5 @@
   ```php
   zip([1, 2, 3], ['a', 'b']); // [[1, 'a'], [2, 'b']]
   ```
-
 
 

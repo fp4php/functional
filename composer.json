@@ -40,6 +40,7 @@
             "src/Fp/Functions/Cast/AsNonEmptyList.php",
             "src/Fp/Functions/Collection/At.php",
             "src/Fp/Functions/Collection/Every.php",
+            "src/Fp/Functions/Collection/Exists.php",
             "src/Fp/Functions/Collection/Filter.php",
             "src/Fp/Functions/Collection/First.php",
             "src/Fp/Functions/Collection/FlatMap.php",
