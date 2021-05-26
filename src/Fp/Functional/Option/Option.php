@@ -26,6 +26,30 @@ abstract class Option
     }
 
     /**
+     * @psalm-assert-if-false None<empty> $this
+     */
+    public function isNonEmpty(): bool
+    {
+        return $this instanceof Some;
+    }
+
+    /**
+     * @psalm-assert-if-true Some<A> $this
+     */
+    public function isSome(): bool
+    {
+        return $this instanceof Some;
+    }
+
+    /**
+     * @psalm-assert-if-true None<empty> $this
+     */
+    public function isNone(): bool
+    {
+        return $this instanceof None;
+    }
+
+    /**
      * @psalm-template B
      * @param callable(A): (B) $callback
      * @psalm-return Option<B>
