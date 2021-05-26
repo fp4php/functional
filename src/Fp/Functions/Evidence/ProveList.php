@@ -14,6 +14,13 @@ use function Fp\Collection\keys;
 /**
  * Prove that given collection is of list type
  *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveList($collection);
+ * => Option<list<int>>
+ *
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -34,6 +41,13 @@ function proveList(iterable $collection): Option
 
 /**
  * Prove that given collection is of non-empty-list type
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveNonEmptyList($collection);
+ * => Option<non-empty-list<int>>
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -56,6 +70,13 @@ function proveNonEmptyList(iterable $collection): Option
 /**
  * Prove that collection is of list type
  * and every element is of given class
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveListOf($collection, Foo::class);
+ * => Option<list<Foo>>
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -81,6 +102,13 @@ function proveListOf(iterable $collection, string $fqcn, bool $invariant = false
 /**
  * Prove that collection is of non-empty-list type
  * and every element is of given class
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveNonEmptyListOf(getCollection(), Foo::class);
+ * => Option<non-empty-list<Foo>>
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

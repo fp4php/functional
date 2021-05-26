@@ -10,6 +10,11 @@ use Fp\Functional\Option\Option;
  * Try cast boolean like value
  * Returns None if cast is not possible
  *
+ * REPL:
+ * >>> asBool('yes');
+ * => Option<bool>
+ *
+ *
  * @psalm-template T
  *
  * @psalm-param T $subject

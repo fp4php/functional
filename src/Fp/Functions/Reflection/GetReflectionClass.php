@@ -11,6 +11,11 @@ use ReflectionException;
 /**
  * Returns class reflection or Left on exception
  *
+ * REPL:
+ * >>> getReflectionClass(Foo::class);
+ * => Either<ReflectionException, ReflectionClass>
+ *
+ *
  * @template T of object
  *
  * @psalm-param T|class-string<T> $objectOrClass

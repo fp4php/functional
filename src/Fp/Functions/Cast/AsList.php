@@ -7,8 +7,10 @@ namespace Fp\Cast;
 /**
  * Copy one or multiple collections as list
  *
- * Given [1], ['prop' => 2], [3, 4]
- * Returns [1, 2, 3, 4]
+ * REPL:
+ * >>> asList([1], ['prop' => 2], [3, 4]);
+ * => [1, 2, 3, 4]
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

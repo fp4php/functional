@@ -10,6 +10,11 @@ use Fp\Functional\Option\Option;
  * Try cast integer like value
  * Returns None if cast is not possible
  *
+ * REPL:
+ * >>> asInt('1');
+ * => Option<int>
+ *
+ *
  * @psalm-template T
  *
  * @psalm-param T $subject

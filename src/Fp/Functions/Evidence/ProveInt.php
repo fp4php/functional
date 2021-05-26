@@ -9,6 +9,13 @@ use Fp\Functional\Option\Option;
 /**
  * Prove that subject is of integer type
  *
+ * REPL:
+ * >>> proveInt(1.1);
+ * => None
+ * >>> proveInt(1);
+ * => Some<int>
+ *
+ *
  * @psalm-template T
  *
  * @psalm-param T $potential

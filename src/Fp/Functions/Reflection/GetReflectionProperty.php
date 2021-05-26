@@ -11,6 +11,11 @@ use ReflectionProperty;
 /**
  * Returns property reflection or Left on exception
  *
+ * REPL:
+ * >>> getReflectionProperty(Foo::class, 'a');
+ * => Either<ReflectionException, ReflectionProperty>
+ *
+ *
  * @template T of object
  *
  * @psalm-param T|class-string<T> $class

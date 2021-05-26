@@ -13,6 +13,13 @@ use function JmesPath\search;
  * Search by JsonPath expression
  * Returns None if there is no data by given expression
  *
+ * REPL:
+ * >>> jsonSearch('a[0].b', ['a' => [['b' => true]]]);
+ * => true
+ * >>> jsonSearch('a[0].b', '{"a": [{"b": true}]}');
+ * => true
+ *
+ *
  * @psalm-param string $expr json path expression
  * @psalm-param array|string $data json-string or decoded into associative array json
  *

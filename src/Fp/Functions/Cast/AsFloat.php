@@ -10,6 +10,11 @@ use Fp\Functional\Option\Option;
  * Try cast float like value
  * Returns None if cast is not possible
  *
+ * REPL:
+ * >>> asFloat('1.1');
+ * => Option<float>
+ *
+ *
  * @psalm-template T
  *
  * @psalm-param T $subject

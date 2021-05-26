@@ -11,6 +11,12 @@ use ReflectionUnionType;
 /**
  * Returns property types by property reflection
  *
+ * REPL:
+ * >>> $fooProp = new ReflectionProperty(Foo::class, 'a');
+ * >>> getNamedTypes($fooProp);
+ * => list<ReflectionNamedType>
+ *
+ *
  * @param ReflectionProperty $property
  *
  * @return list<ReflectionNamedType>

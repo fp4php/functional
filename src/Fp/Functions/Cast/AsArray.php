@@ -7,6 +7,13 @@ namespace Fp\Cast;
 /**
  * Copy collection as array
  *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> asArray($collection);
+ * => array<string, int>
+ *
+ *
  * @psalm-template TP of bool
  * @psalm-template TK of array-key
  * @psalm-template TV

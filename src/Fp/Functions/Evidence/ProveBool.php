@@ -9,6 +9,11 @@ use Fp\Functional\Option\Option;
 /**
  * Prove that subject is of boolean type
  *
+ * REPL:
+ * >>> proveBool(true);
+ * => Some<true>
+ *
+ *
  * @psalm-template T
  *
  * @psalm-param T $subject
@@ -24,6 +29,11 @@ function proveBool(mixed $subject): Option
  * Prove that subject is of boolean type
  * and it's value is true
  *
+ * REPL:
+ * >>> proveTrue(1);
+ * => None
+ *
+ *
  * @psalm-template T
  *
  * @psalm-param T $subject
@@ -38,6 +48,11 @@ function proveTrue(mixed $subject): Option
 /**
  * Prove that subject is of boolean type
  * and it's value is false
+ *
+ * REPL:
+ * >>> proveFalse(false);
+ * => Some<false>
+ *
  *
  * @psalm-template T
  *

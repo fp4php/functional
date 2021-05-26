@@ -11,6 +11,13 @@ use function Fp\of;
 /**
  * Prove that subject is of given class
  *
+ * REPL:
+ * >>> proveOf(new Foo(1), Foo::class);
+ * => Some<Foo>
+ * >>> proveOf(new Bar(2), Foo::class);
+ * => None
+ *
+ *
  * @psalm-template TV
  * @psalm-template TVO
  *

@@ -9,6 +9,11 @@ const id = '\Fp\id';
 /**
  * Identity function
  *
+ * REPL:
+ * >>> id(1);
+ * => 1
+ *
+ *
  * @psalm-template T
  *
  * @psalm-param T $value

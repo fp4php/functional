@@ -12,6 +12,13 @@ use function Fp\Collection\head;
 /**
  * Prove that given collection is of array type
  *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveArray($collection);
+ * => Option<array<string, int>>
+ *
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -26,6 +33,13 @@ function proveArray(iterable $collection): Option
 
 /**
  * Prove that given collection is of non-empty-array type
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveNonEmptyArray($collection);
+ * => Option<non-empty-array<string, int>>
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -48,6 +62,13 @@ function proveNonEmptyArray(iterable $collection): Option
 /**
  * Prove that collection is of array type
  * and every element is of given class
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveArrayOf($collection, Foo::class);
+ * => Option<array<string, Foo>>
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -73,6 +94,13 @@ function proveArrayOf(iterable $collection, string $fqcn, bool $invariant = fals
 /**
  * Prove that collection is of non-empty-array type
  * and every element is of given class
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int>
+ * >>> proveNonEmptyArrayOf(getCollection(), Foo::class);
+ * => Option<non-empty-array<string, Foo>>
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
