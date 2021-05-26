@@ -26,6 +26,8 @@ jobs:
 
   psalm:
     runs-on: ubuntu-latest
+    needs:
+      - build
     steps:
       - uses: actions/checkout@v2
       - name: Run psalm validation
@@ -33,6 +35,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    needs:
+      - build
+      - psalm
     steps:
       - uses: actions/checkout@v2
       - name: Run test suite
