@@ -10,7 +10,8 @@
     ],
     "license": "MIT",
     "scripts": {
-        "test": "vendor/bin/phpunit"
+        "test": "vendor/bin/phpunit",
+        "psalm": "vendor/bin/psalm"
     },
     "require": {
         "php": "^8.0",
