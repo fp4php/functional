@@ -17,6 +17,7 @@
   - [anyOf](#anyOf)
   - [at](#at)
   - [every](#every)
+  - [exists](#exists)
   - [everyOf](#everyOf)
   - [filter](#filter)
   - [filterNotNull](#filterNotNull)
@@ -229,6 +230,14 @@
     
     ``` php
     every([1, 2], fn(int $v): bool => $v === 1); // false
+    ```
+
+  - #### exists
+    
+    Find if there is element which satisfies the condition
+    
+    ``` php
+    exists([1, 2], fn(int $v): bool => $v === 1); // true
     ```
 
   - #### everyOf
