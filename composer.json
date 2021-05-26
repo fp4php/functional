@@ -11,7 +11,7 @@
     "license": "MIT",
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "psalm": "vendor/bin/psalm"
+        "psalm": "vendor/bin/psalm --output-format=github"
     },
     "require": {
         "php": "^8.0",
