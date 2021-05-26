@@ -7,8 +7,13 @@ namespace Fp\Collection;
 /**
  * Group collection elements by key returned by function
  *
- * Given [1, 2, 3] and id function
- * Returns [1 => [1], 2 => [2], 3 => [3]]
+ * REPL:
+ * >>> group(
+ *     [1, 2, 3],
+ *     fn(int $v): int => $v
+ * );
+ * => [1 => [1], 2 => [2], 3 => [3]]
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

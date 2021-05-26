@@ -12,6 +12,14 @@ use function Fp\Cast\asNonEmptyList;
  * Reduce multiple elements into one
  * Returns None for empty collection
  *
+ * REPL:
+ * >>> reduce(
+ *     ['a', 'b', 'c'],
+ *     fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
+ * )->get();
+ * => 'abc'
+ *
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -31,6 +39,14 @@ function reduce(iterable $collection, callable $callback): Option
 /**
  * Reduce non-empty-list into one value
  *
+ * REPL:
+ * >>> reduceNel(
+ *     ['a', 'b', 'c'],
+ *     fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
+ * );
+ * => 'abc'
+ *
+ *
  * @psalm-template TV
  *
  * @psalm-param non-empty-list<TV> $collection
@@ -45,6 +61,14 @@ function reduceNel(array $collection, callable $callback): mixed
 
 /**
  * Reduce non-empty-array into one value
+ *
+ * REPL:
+ * >>> reduceNer(
+ *     ['x' => 'a', 'b', 'c'],
+ *     fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
+ * );
+ * => 'abc'
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

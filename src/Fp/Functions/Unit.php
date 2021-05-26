@@ -11,12 +11,13 @@ const unit = '\Fp\unit';
 /**
  * Represents no return value for do-notation
  *
- * $option = Option::do(function () use ($x) {
+ * REPL:
+ * >>> Option::do(function () use ($x) {
  *     yield proveTrue($x);
  *     return unit();
  * })
+ * => Option<Unit>
  *
- * $option type is Option<Unit>
  */
 function unit(): Unit
 {

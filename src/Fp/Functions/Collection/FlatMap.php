@@ -12,6 +12,10 @@ namespace Fp\Collection;
  * 1) map [1, 4] to [[0, 1, 2], [3, 4, 5]]
  * 2) flatten [[0, 1, 2], [3, 4, 5]] to [0, 1, 2, 3, 4, 5]
  *
+ * REPL:
+ * >>> flatMap([1, 4], fn(int $x) => [$x - 1, $x, $x + 1]);
+ * => [0, 1, 2, 3, 4, 5]
+ *
  * @psalm-template TK of array-key
  * @psalm-template TVI
  * @psalm-template TVO

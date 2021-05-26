@@ -7,11 +7,17 @@ namespace Fp\Callable;
 use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
 
 /**
- * Partial application from first function argument
+ * Partial application from first function argument.
  *
- * Given callable(int, bool, string): bool
- * And 1, true as arguments
- * Will return callable(string): bool
+ * Pass callback and N callback arguments.
+ * These N arguments will be locked at corresponding places (callback parameters)
+ * from left-side and new callback will be returned with fewer arguments.
+ *
+ * REPL:
+ * >>> $callback = fn(int $a, string $b, bool $c): bool => true;
+ * => callable(int, string, bool): bool
+ * >>> partial($callback, 1, "string");
+ * => callable(bool): bool
  *
  * Alias for {@see partialLeft}
  *

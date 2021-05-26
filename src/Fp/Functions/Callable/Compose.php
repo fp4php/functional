@@ -16,6 +16,13 @@ use const Fp\id;
  * Given callable(int): bool and callable(bool): string
  * Returns callable(int): string
  *
+ * REPL:
+ * >>> $aToB = fn(int $a): bool => true;
+ * >>> $bToC = fn(bool $b): string => (string) $b;
+ * >>> $cTod = fn(string $c): float => (float) $c;
+ * >>> compose($aToB, $bToC, $cTod);
+ * => callable(int): float
+ *
  * @psalm-template A
  * @psalm-template B
  * @psalm-template C

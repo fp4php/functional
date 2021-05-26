@@ -7,6 +7,11 @@ namespace Fp;
 /**
  * Check if subject is of given class
  *
+ * REPL:
+ * >>> of(new Foo(), Foo::class);
+ * => true
+ *
+ *
  * @psalm-template T
  * @psalm-template TO
 

@@ -7,6 +7,15 @@ namespace Fp\Collection;
 /**
  * Returns collection unique elements
  *
+ * REPL:
+ * >>> unique([1, 2, 2, 3, 3, 3, 3]);
+ * => [1, 2, 3]
+ * >>> unique(
+ *     $users,
+ *     fn(User $user) => $user->getIdAsString()
+ * );
+ *
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV of (object|scalar)
  *

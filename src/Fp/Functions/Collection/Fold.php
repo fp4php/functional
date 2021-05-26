@@ -7,6 +7,14 @@ namespace Fp\Collection;
 /**
  * Fold many elements into one
  *
+ * REPL:
+ * >>> fold(
+ *     '',
+ *     ['a', 'b', 'c'],
+ *     fn(string $accumulator, $currentValue) => $accumulator . $currentValue
+ * )
+ * => 'abc'
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TA of TV

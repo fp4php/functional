@@ -8,6 +8,10 @@ namespace Fp\Collection;
  * Returns true if there is collection element which satisfies the condition
  * false otherwise
  *
+ * REPL:
+ * >>> any([1, 2, 3], fn(int $value) => $value === 2);
+ * => true
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -24,6 +28,10 @@ function any(iterable $collection, callable $predicate): bool
 /**
  * Returns true if there is collection element of given class
  * False otherwise
+ *
+ * REPL:
+ * >>> anyOf([new Foo(), 2, 3], Foo::class);
+ * => true
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

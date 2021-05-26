@@ -13,6 +13,11 @@ use function Fp\Cast\asList;
  * If one of the two collections is longer than the other,
  * its remaining elements are ignored.
  *
+ * REPL:
+ * >>> zip([1, 2, 3], ['a', 'b']);
+ * => [[1, 'a'], [2, 'b']]
+ *
+ *
  * @psalm-template TKL of array-key
  * @psalm-template TVL
  * @psalm-template TKR of array-key

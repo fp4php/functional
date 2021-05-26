@@ -13,8 +13,14 @@ use function Fp\of;
 /**
  * Divide collection by given conditions
  *
- * Given ['a' => 1, 'b' => 2] and condition fn(int $x) => $x % 2 === 0
- * Returns [['b' => 2], ['a' => 1]]
+ *
+ * REPL:
+ * >>> partition(
+ *     ['a' => 1, 'b' => 2],
+ *     fn(int $x) => $x % 2 === 0
+ * );
+ * => [[2], [1]]
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -46,7 +52,14 @@ function partition(iterable $collection, callable ...$predicates): array
 /**
  * Divide collection by given classes
  *
- * @see PartitionTest::testPartitionOf for usage example
+ * REPL:
+ * >>> partitionOf(
+ *    [new Foo(), new Bar()],
+ *    Foo::class,
+ *    Bar::class
+ * );
+ * => array{list<Foo>, list<Bar>, list<Foo|Bar>}
+ *
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

@@ -8,6 +8,14 @@ namespace Fp\Collection;
  * Check if collection is ascending or descending integer sequence
  * from given start value
  *
+ * REPL:
+ * >>> isSequence([1, 2, 3])
+ * => false
+ * >>> isSequence([0, 1, 2, 3]);
+ * => true
+ * >>> isSequence([]);
+ * => true
+ *
  * @psalm-template TK
  *
  * @psalm-param iterable<TK, int|string> $collection
@@ -37,6 +45,14 @@ function isSequence(iterable $collection, int $from = 0, string $direction = 'AS
 /**
  * Check if collection is non empty ascending or descending integer sequence
  * from given start value
+ *
+ * REPL:
+ * >>> isSequence([1, 2, 3])
+ * => false
+ * >>> isSequence([0, 1, 2, 3]);
+ * => true
+ * >>> isSequence([]);
+ * => false
  *
  * @psalm-template TK
  *

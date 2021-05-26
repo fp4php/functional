@@ -7,6 +7,12 @@ namespace Fp\Collection;
 /**
  * Find if there is element which satisfies the condition
  *
+ * REPL:
+ * >>> exists([1, 2], fn(int $v): bool => $v === 1);
+ * => true
+ * >>> exists([1, 2], 1);
+ * => true
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV of (object|scalar|null)
  *

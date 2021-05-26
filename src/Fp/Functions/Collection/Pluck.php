@@ -9,13 +9,13 @@ use Fp\Psalm\Hooks\PluckFunctionReturnTypeProvider;
 /**
  * Map every collection element into given property/key value
  *
- * Given [['a' => 1], ['a' => 2]] and 'a' as key
- * Returns [1, 2]
+ * REPL:
+ * >>> pluck([['a' => 1], ['a' => 2]], 'a');
+ * => [1, 2]
+ *
  *
  * @psalm-param iterable<array-key, object|array> $collection
- *
  * @psalm-return array
- *
  * @psalm-suppress MixedAssignment
  *
  * @see PluckFunctionReturnTypeProvider

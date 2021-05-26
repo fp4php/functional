@@ -8,7 +8,11 @@ use function Fp\of;
 
 /**
  * Filter collection by condition
- * Preserves keys by default
+ * Do not preserve keys by default
+ *
+ * REPL:
+ * >>> filter([1, 2], fn(int $v): bool => $v === 2);
+ * => [2]
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -39,7 +43,11 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
 
 /**
  * Filter not null elements
- * Preserves keys by default
+ * Do not preserve keys by default
+ *
+ * REPL:
+ * >>> filterNotNull([1, null, 2]);
+ * => [1, 2]
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -61,7 +69,11 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
 
 /**
  * Filter elements of given class
- * Preserves keys by default
+ * Do not preserve keys by default
+ *
+ * REPL:
+ * >>> filterOf([1, new Foo(), 2], Foo::class);
+ * => list<Foo>
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

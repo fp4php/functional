@@ -13,6 +13,12 @@ use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
  * And 1, true as arguments
  * Will return callable(string): bool
  *
+ * REPL:
+ * >>> $callback = fn(int $a, string $b, bool $c): bool => true;
+ * => callable(int, string, bool): bool
+ * >>> partialLeft($callback, 1, "string");
+ * => callable(bool): bool
+ *
  * @see PartialFunctionReturnTypeProvider
  */
 function partialLeft(callable $callback, mixed ...$args): callable

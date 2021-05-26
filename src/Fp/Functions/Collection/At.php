@@ -15,6 +15,10 @@ use Fp\Functional\Option\Option;
  *
  * Returns None if there is no such collection element
  *
+ * REPL:
+ * >>> at([new Foo(), 2, 3], 1)->get()
+ * => Foo|int|null
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
