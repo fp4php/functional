@@ -26,7 +26,7 @@ abstract class Option
     }
 
     /**
-     * @psalm-assert-if-false None<empty> $this
+     * @psalm-assert-if-false None $this
      */
     public function isNonEmpty(): bool
     {
@@ -42,7 +42,7 @@ abstract class Option
     }
 
     /**
-     * @psalm-assert-if-true None<empty> $this
+     * @psalm-assert-if-true None $this
      */
     public function isNone(): bool
     {
