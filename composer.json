@@ -8,6 +8,7 @@
             "email": "whsv26@gmail.com"
         }
     ],
+    "license": "MIT",
     "scripts": {
         "test": "vendor/bin/phpunit"
     },
