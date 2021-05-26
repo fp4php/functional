@@ -14,53 +14,27 @@ amount of code. Do-notation is just syntax-sugar.
 /** 
  * @return Option<User> 
  */
-function getUserById(int $id): Option {
-  /** 
-   * @var User|null $user 
-   */
-  $user = $db->getUser($id);
-  
-  return Option::fromNullable($user);
-}
+function getUserById(int $id): Option {}
 
 /** 
  * @return Option<Order> 
  */
-function getUserFirstOrder(User $user): Option {
-  /** 
-   * @var Order|null $order 
-   */
-  $order = $user->getOrders()[0] ?? null;
-  
-  return Option::fromNullable($order);
-}
+function getUserFirstOrder(User $user): Option {}
 
 
 /** 
  * @return Option<TrackNumber> 
  */
-function getOrderTrackNumber(Order $order): Option {
-  /** 
-   * @var TrackNumber|null $order 
-   */
-  $trackNumber = $order->getTracknumber();
-  
-  return Option::fromNullable($trackNumber);
-}
+function getOrderTrackNumber(Order $order): Option {}
 
 /** 
  * @return Option<string> 
  */
-function getTrackingStatus(TrackingNumber $trackingNumber): Option {
-  /** 
-   * @var string|null $order 
-   */
-  $status = $trackingNumber->getLastTrackingStatus();
-  
-  return Option::fromNullable($status);
-}
+function getTrackingStatus(TrackingNumber $trackingNumber): Option {}
 
-/** @var string $status */
+/** 
+ * @var string $status 
+ */
 $status = Option::do(function () {
     $user = yield getUserById(654);
     $order = yield getUserFirstOrder($user);
@@ -91,8 +65,8 @@ function getUserById(int $id): Either {
   $user = $db->getUser($id);
   
   return isset($user)
-    ? Right::of($user)
-    : Left::of('User not found!');
+    ? Either::right($user)
+    : Either::left('User not found!');
 }
 
 /** 
@@ -105,8 +79,8 @@ function getUserFirstOrder(User $user): Either {
   $order = $user->getOrders()[0] ?? null;
   
   return isset($order)
-    ? Right::of($order)
-    : Left::of('Order not found!');
+    ? Either::right($order)
+    : Either::left('Order not found!');
 }
 
 
@@ -120,8 +94,8 @@ function getOrderTrackNumber(Order $order): Either {
   $trackNumber = $order->getTracknumber();
   
   return isset($trackNumber)
-    ? Right::of($trackNumber)
-    : Left::of('No track number yet. But will be after 30 seconds');
+    ? Either::right($trackNumber)
+    : Either::left('No track number yet. But will be after 30 seconds');
 }
 
 /** 
@@ -134,8 +108,8 @@ function getTrackingStatus(TrackingNumber $trackingNumber): Either {
   $status = $trackingNumber->getLastTrackingStatus();
   
   return isset($status)
-    ? Right::of($status)
-    : Left::of('Unable to parse track current status');
+    ? Either::right($status)
+    : Either::left('Unable to parse track current status');
 }
 
 /** @var string $statusOrErrorMessage */

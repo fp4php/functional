@@ -18,8 +18,8 @@ function getUserById(int $id): Either {
   $user = $db->getUser($id);
   
   return isset($user)
-    ? Right::of($user)
-    : Left::of('User not found!');
+    ? Either::right($user)
+    : Either::left('User not found!');
 }
 
 /** 
@@ -32,8 +32,8 @@ function getUserFirstOrder(User $user): Either {
   $order = $user->getOrders()[0] ?? null;
   
   return isset($order)
-    ? Right::of($order)
-    : Left::of('Order not found!');
+    ? Either::right($order)
+    : Either::left('Order not found!');
 }
 
 
@@ -47,8 +47,8 @@ function getOrderTrackNumber(Order $order): Either {
   $trackNumber = $order->getTracknumber();
   
   return isset($trackNumber)
-    ? Right::of($trackNumber)
-    : Left::of('No track number yet. But will be after 30 seconds');
+    ? Either::right($trackNumber)
+    : Either::left('No track number yet. But will be after 30 seconds');
 }
 
 /** 
@@ -61,8 +61,8 @@ function getTrackingStatus(TrackingNumber $trackingNumber): Either {
   $status = $trackingNumber->getLastTrackingStatus();
   
   return isset($status)
-    ? Right::of($status)
-    : Left::of('Unable to parse track current status');
+    ? Either::right($status)
+    : Either::left('Unable to parse track current status');
 }
 
 /** @var string $statusOrErrorMessage */

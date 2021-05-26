@@ -8,53 +8,27 @@ Do-notation is just syntax-sugar.
 /** 
  * @return Option<User> 
  */
-function getUserById(int $id): Option {
-  /** 
-   * @var User|null $user 
-   */
-  $user = $db->getUser($id);
-  
-  return Option::fromNullable($user);
-}
+function getUserById(int $id): Option {}
 
 /** 
  * @return Option<Order> 
  */
-function getUserFirstOrder(User $user): Option {
-  /** 
-   * @var Order|null $order 
-   */
-  $order = $user->getOrders()[0] ?? null;
-  
-  return Option::fromNullable($order);
-}
+function getUserFirstOrder(User $user): Option {}
 
 
 /** 
  * @return Option<TrackNumber> 
  */
-function getOrderTrackNumber(Order $order): Option {
-  /** 
-   * @var TrackNumber|null $order 
-   */
-  $trackNumber = $order->getTracknumber();
-  
-  return Option::fromNullable($trackNumber);
-}
+function getOrderTrackNumber(Order $order): Option {}
 
 /** 
  * @return Option<string> 
  */
-function getTrackingStatus(TrackingNumber $trackingNumber): Option {
-  /** 
-   * @var string|null $order 
-   */
-  $status = $trackingNumber->getLastTrackingStatus();
-  
-  return Option::fromNullable($status);
-}
+function getTrackingStatus(TrackingNumber $trackingNumber): Option {}
 
-/** @var string $status */
+/** 
+ * @var string $status 
+ */
 $status = Option::do(function () {
     $user = yield getUserById(654);
     $order = yield getUserFirstOrder($user);

@@ -42,7 +42,7 @@
   ```
 
 - #### asNonEmptyArray
-  Try copy and cast collection to non-empty-array. Returns None if there is no first collection element
+  Try cast collection to new non-empty-array. Returns None if there is no first collection element
 
   ```php
   /** @psalm-return iterable<string, int> */
@@ -53,7 +53,7 @@
   ```
 
 - #### asNonEmptyList
-  Try copy and cast collection to non-empty-list. Returns None if there is no first collection element
+  Try cast collection to new non-empty-list. Returns None if there is no first collection element
 
   ```php
   /** @psalm-return iterable<string, int> */

@@ -77,7 +77,7 @@
   - #### compose
     
     Compose functions. Output of one function will be passed as input to
-    another function
+    another function.
     
     ``` php
     $aToB = fn(int $a): bool => true;
@@ -90,7 +90,10 @@
 
   - #### partial and partialLeft
     
-    Partial application from first function argument
+    Partial application from first function argument. Pass callback and
+    N callback arguments. These N arguments will be locked at
+    corresponding places (callback parameters) from left-side and new
+    callback will be returned with fewer arguments.
     
     ``` php
     $callback = fn(int $a, string $b, bool $c): bool => true;
@@ -104,7 +107,10 @@
 
   - #### partialRight
     
-    Partial application from last function argument
+    Partial application from last function argument Pass callback and N
+    callback arguments. These N arguments will be locked at
+    corresponding places (callback parameters) from right-side and new
+    callback will be returned with fewer arguments.
     
     ``` php
     $callback = fn(int $a, string $b, bool $c): bool => true;
@@ -164,8 +170,8 @@
 
   - #### asNonEmptyArray
     
-    Try copy and cast collection to non-empty-array. Returns None if
-    there is no first collection element
+    Try cast collection to new non-empty-array. Returns None if there is
+    no first collection element
     
     ``` php
     /** @psalm-return iterable<string, int> */
@@ -177,8 +183,8 @@
 
   - #### asNonEmptyList
     
-    Try copy and cast collection to non-empty-list. Returns None if
-    there is no first collection element
+    Try cast collection to new non-empty-list. Returns None if there is
+    no first collection element
     
     ``` php
     /** @psalm-return iterable<string, int> */
@@ -196,10 +202,7 @@
     condition and false otherwise
     
     ``` php
-    any(
-      [1, 2, 3],
-      fn(int $value): bool => $value === 2 
-    ); // true
+    any([1, 2, 3], fn(int $value) => $value === 2); // true
     ```
 
   - #### anyOf
@@ -229,20 +232,25 @@
     false otherwise
     
     ``` php
-    every([1, 2], fn(int $v): bool => $v === 1); // false
+    every([1, 2], fn(int $v) => $v === 1); // false
     ```
 
   - #### exists
     
-    Find if there is element which satisfies the condition
+    Find if there is collection element which satisfies the condition.
+    The condition can be an element value or predicate
     
     ``` php
     exists([1, 2], fn(int $v): bool => $v === 1); // true
     ```
+    
+    ``` php
+    exists([1, 2], 1); // true
+    ```
 
   - #### everyOf
     
-    Returns true if every collection element is of given class false
+    Returns true if every collection element is of given class and false
     otherwise
     
     ``` php
@@ -381,7 +389,8 @@
 
   - #### map
     
-    Map collection values into new collection. Keys are preserved
+    Produces a new array of elements by mapping each element in
+    collection through a transformation function (callback).
     
     ``` php
     map([1, 2, 3], fn(int $v) => (string) $v); // ['1', '2', '3']
@@ -417,7 +426,7 @@
 
   - #### pluck
     
-    Map every collection element into given property/key value
+    Transform every collection element into given property or key value
     
     ``` php
     pluck([['a' => 1], ['a' => 2]], 'a'); // [1, 2]   
@@ -430,7 +439,14 @@
     returns None
     
     ``` php
-    [$head, $tail] = pop([[1, 2, 3]]); // [3, [1, 2]]   
+    [$head, $tail] = pop([1, 2, 3])->get(); // [3, [1, 2]]
+    ```
+    
+    ``` php
+    Option::do(function () use ($collection) {
+      [$head, $tail] = yield pop($collection);
+      return doSomethingWithHeadAndTail($head, $tail);
+    })   
     ```
 
   - #### reduce
@@ -452,7 +468,7 @@
     Copy collection in reversed order
     
     ``` php
-    reverse([[1, 2, 3]]); // [3, 2, 1]   
+    reverse([1, 2, 3]); // [3, 2, 1]   
     ```
 
   - #### second
@@ -461,7 +477,7 @@
     collection element
     
     ``` php
-    second([[1, 2, 3]])->get(); // 2   
+    second([1, 2, 3])->get(); // 2   
     ```
 
   - #### shift
@@ -471,7 +487,14 @@
     then returns None
     
     ``` php
-    [$head, $tail] = shift([[1, 2, 3]]); // [1, [2, 3]]   
+    [$head, $tail] = shift([1, 2, 3])->get(); // [1, [2, 3]]   
+    ```
+    
+    ``` php
+    Option::do(function () use ($collection) {
+      [$head, $tail] = yield shift($collection);
+      return doSomethingWithHeadAndTail($head, $tail);
+    })   
     ```
 
   - #### tail
@@ -479,7 +502,7 @@
     Returns every collection element except first
     
     ``` php
-    tail([[1, 2, 3]]); // [2, 3]   
+    tail([1, 2, 3]); // [2, 3]   
     ```
 
   - #### unique
@@ -487,7 +510,11 @@
     Returns unique collection elements
     
     ``` php
-    unique([[1, 2, 2, 3, 3, 3, 3]]); // [1, 2, 3]   
+    unique([1, 2, 2, 3, 3, 3, 3]); // [1, 2, 3]   
+    ```
+    
+    ``` php
+    unique($users, fn(User $user) => $user->getIdAsString());   
     ```
 
   - #### reindex
