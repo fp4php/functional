@@ -25,7 +25,8 @@
         "nikic/php-parser": "^4.10",
         "phpunit/phpunit": "^9",
         "symfony/process": "^5.2",
-        "rregeer/phpunit-coverage-check": "^0.3.1"
+        "rregeer/phpunit-coverage-check": "^0.3.1",
+        "php-coveralls/php-coveralls": "^2.4"
     },
     "autoload": {
         "psr-4": {
