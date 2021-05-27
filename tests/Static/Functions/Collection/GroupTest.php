@@ -15,13 +15,99 @@ final class GroupTest extends PhpBlockTestCase
              * @psalm-return array<string, int> 
              */
             function getCollection(): array { return []; }
-            
+
             $result = \Fp\Collection\group(
                 getCollection(),
-                fn(int $v, string $k) => $k . "10"
+                fn(int $v, string $k) => /** @var array-key */ $k . "10"
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<array-key, array<string, int>>');
+        $this->assertBlockType($phpBlock, 'array<non-empty-string, array<string, int>>');
+    }
+
+    public function testWithNonEmptyArray(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return non-empty-array<string, int> 
+             */
+            function getCollection(): array { return [\'1\' => 1]; }
+
+            $result = \Fp\Collection\group(
+                getCollection(),
+                fn(int $v, string $k) => /** @var array-key */ $k . "10"
+            );
+        ';
+
+        $this->assertBlockType($phpBlock, 'non-empty-array<non-empty-string, array<string, int>>');
+    }
+
+    public function testWithNonEmptyList(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return non-empty-list<int> 
+             */
+            function getCollection(): array { return [1]; }
+
+            $result = \Fp\Collection\group(
+                getCollection(),
+                fn(int $v, string $k) => /** @var array-key */ $k . "10"
+            );
+        ';
+
+        $this->assertBlockType($phpBlock, 'non-empty-array<non-empty-string, array<int, int>>');
+    }
+
+    public function testWithListInferGroupKey(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return list<string> 
+             */
+            function getCollection(): array { return []; }
+            
+            $result = \Fp\Collection\group(
+                getCollection(),
+                fn(string $value) => $value . "10"
+            );
+        ';
+
+        $this->assertBlockType($phpBlock, 'array<non-empty-string, array<int, string>>');
+    }
+
+    public function testWithArrayInferGroupKey(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return array<non-empty-string, string>
+             */
+            function getCollection(): array { return []; }
+            
+            $result = \Fp\Collection\group(
+                getCollection(),
+                fn(string $value) => $value . "10"
+            );
+        ';
+
+        $this->assertBlockType($phpBlock, 'array<non-empty-string, array<non-empty-string, string>>');
+    }
+
+    public function testWithArrayAndGroupKeyAsTypeAlias()
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-type Alias = string
+             * @psalm-return array<Alias, int>
+             */
+            function getCollection(): array { return []; }
+            
+            $result = \Fp\Collection\group(
+                getCollection(),
+                fn(string $value) => $value
+            );
+        ';
+
+        $this->assertBlockType($phpBlock, 'array<string, array<string, int>>');
     }
 }
