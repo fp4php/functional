@@ -48,6 +48,10 @@ jobs:
       - psalm
     steps:
       - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          coverage: xdebug
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v2
@@ -57,13 +61,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
       - name: Run test suite
-        run: composer run-script test
+        run: php vendor/bin/phpunit
       - name: Generate coverage badge
         uses: timkrase/phpunit-coverage-badge@v1.2.0
         with:
-          report: clover.xml
+          report: ./clover.xml
           report_type: clover
           coverage_badge_path: phpunit-coverage.svg
           push_badge: true
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-
+          commit_message: "[skip ci]"
