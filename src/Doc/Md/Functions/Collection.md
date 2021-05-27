@@ -24,6 +24,13 @@
   $result = at([new Foo(), 2, 3], 1);
   ```
 
+- #### butLast
+  Returns every collection elements except last one
+
+  ```php
+  butLast(['a' => 1, 2, 3]); // ['a' => 1, 2]
+  ```
+
 - #### every
   Returns true if every collection element satisfies the condition and false otherwise
 

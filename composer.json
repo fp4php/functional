@@ -46,6 +46,7 @@
             "src/Fp/Functions/Cast/AsNonEmptyArray.php",
             "src/Fp/Functions/Cast/AsNonEmptyList.php",
             "src/Fp/Functions/Collection/At.php",
+            "src/Fp/Functions/Collection/ButLast.php",
             "src/Fp/Functions/Collection/Every.php",
             "src/Fp/Functions/Collection/Exists.php",
             "src/Fp/Functions/Collection/Filter.php",
