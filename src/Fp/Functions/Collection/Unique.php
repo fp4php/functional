@@ -11,9 +11,10 @@ namespace Fp\Collection;
  * >>> unique([1, 2, 2, 3, 3, 3, 3]);
  * => [1, 2, 3]
  * >>> unique(
- *     $users,
- *     fn(User $user) => $user->getIdAsString()
+ *     [new User(id: 1), new User(id: 1), new User(id: 2)],
+ *     fn(User $user) => $user->getId()
  * );
+ * => [User(1), User(2)]
  *
  *
  * @psalm-template TK of array-key

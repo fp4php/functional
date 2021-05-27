@@ -34,7 +34,7 @@ final class OptionDoNotationTest extends TestCase
         $mappedOption = Option::do(function() {
             $a = 1;
             $b = yield Option::fromNullable(2);
-            $c = yield new Some(3);
+            $c = yield Option::some(3);
             $d = yield Option::some(4);
             $e = 5;
 
@@ -42,6 +42,7 @@ final class OptionDoNotationTest extends TestCase
         });
 
         $this->assertEquals([1, 2, 3, 4, 5], $mappedOption->get());
+        $this->assertInstanceOf(Some::class, $mappedOption);
     }
 
     public function testShortCircuit(): void
@@ -49,7 +50,7 @@ final class OptionDoNotationTest extends TestCase
         $mappedOption = Option::do(function() {
             $a = 1;
             $b = yield Option::fromNullable(2);
-            $c = yield new Some(3);
+            $c = yield Option::some(3);
             $d = yield Option::none();
             $e = 5;
 
