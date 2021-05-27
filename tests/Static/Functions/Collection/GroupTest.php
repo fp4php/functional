@@ -25,6 +25,40 @@ final class GroupTest extends PhpBlockTestCase
         $this->assertBlockType($phpBlock, 'array<non-empty-string, array<string, int>>');
     }
 
+    public function testWithNonEmptyArray(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return non-empty-array<string, int> 
+             */
+            function getCollection(): array { return [\'1\' => 1]; }
+
+            $result = \Fp\Collection\group(
+                getCollection(),
+                fn(int $v, string $k) => /** @var array-key */ $k . "10"
+            );
+        ';
+
+        $this->assertBlockType($phpBlock, 'non-empty-array<non-empty-string, array<string, int>>');
+    }
+
+    public function testWithNonEmptyList(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return non-empty-list<int> 
+             */
+            function getCollection(): array { return [1]; }
+
+            $result = \Fp\Collection\group(
+                getCollection(),
+                fn(int $v, string $k) => /** @var array-key */ $k . "10"
+            );
+        ';
+
+        $this->assertBlockType($phpBlock, 'non-empty-array<non-empty-string, array<int, int>>');
+    }
+
     public function testWithListInferGroupKey(): void
     {
         $phpBlock = /** @lang InjectablePHP */ '

@@ -22,7 +22,11 @@ namespace Fp\Collection;
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TK): TGroupKey $callback
  *
- * @psalm-return array<TGroupKey, array<TK, TV>>
+ * @psalm-return (
+ *		$collection is non-empty-array ? non-empty-array<TGroupKey, array<TK, TV>> : (
+ *	  	$collection is non-empty-list ? non-empty-array<TGroupKey, array<TK, TV>> : (
+ *		array<TGroupKey, array<TK, TV>>
+ * )))
  */
 function group(iterable $collection, callable $callback): array
 {
