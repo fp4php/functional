@@ -13,7 +13,7 @@
             <directory suffix=".php">src/Fp/Functions</directory>
         </include>
         <report>
-            <clover outputFile="clover.xml" />
+            <clover outputFile="build/logs/clover.xml"/>
         </report>
     </coverage>
     <testsuites>
