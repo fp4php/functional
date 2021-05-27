@@ -148,14 +148,21 @@ abstract class Option
 
     /**
      * @psalm-template B
-     * @psalm-param B $fallback
+     * @psalm-param B|(pure-callable(): B) $fallback
      * @psalm-return A|B
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        return !$this->isEmpty()
-            ? $this->value
+        if (!$this->isEmpty()) {
+            return $this->value;
+        }
+
+        /** @psalm-var B $default */
+        $default = is_callable($fallback)
+            ? call_user_func($fallback)
             : $fallback;
+
+        return $default;
     }
 
     /**

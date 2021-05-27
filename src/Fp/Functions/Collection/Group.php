@@ -15,17 +15,17 @@ namespace Fp\Collection;
  * => [1 => [1], 2 => [2], 3 => [3]]
  *
  *
- * @psalm-template TGroupKey of array-key
+ * @psalm-template TKG of array-key
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): TGroupKey $callback
+ * @psalm-param callable(TV, TK): TKG $callback
  *
  * @psalm-return (
- *		$collection is non-empty-array ? non-empty-array<TGroupKey, array<TK, TV>> : (
- *	  	$collection is non-empty-list ? non-empty-array<TGroupKey, array<TK, TV>> : (
- *		array<TGroupKey, array<TK, TV>>
+ *		$collection is non-empty-array ? non-empty-array<TKG, array<TK, TV>> : (
+ *	  	$collection is non-empty-list ? non-empty-array<TKG, array<TK, TV>> : (
+ *		array<TKG, array<TK, TV>>
  * )))
  */
 function group(iterable $collection, callable $callback): array

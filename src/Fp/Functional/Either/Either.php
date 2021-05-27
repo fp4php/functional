@@ -18,12 +18,21 @@ abstract class Either
 {
     /**
      * @psalm-template F
-     * @psalm-param F $fallback
+     * @psalm-param F|(pure-callable(): F) $fallback
      * @psalm-return R|F
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        return $this->isRight() ? $this->value : $fallback;
+        if ($this->isRight()) {
+            return $this->value;
+        }
+
+        /** @psalm-var F $default */
+        $default = is_callable($fallback)
+            ? call_user_func($fallback)
+            : $fallback;
+
+        return $default;
     }
 
     /**

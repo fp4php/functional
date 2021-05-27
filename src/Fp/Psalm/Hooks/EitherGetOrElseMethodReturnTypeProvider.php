@@ -11,8 +11,11 @@ use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\StatementsSource;
+use Psalm\Type\Atomic\TCallable;
+use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
 
+use function Fp\Cast\asList;
 use function Fp\Collection\head;
 use function Fp\Collection\last;
 use function Fp\Evidence\proveTrue;
@@ -51,10 +54,21 @@ class EitherGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProvide
      */
     public static function getUpperBoundary(MethodReturnTypeProviderEvent $event): Option
     {
-        return Option::do(function () use ($event) {
+        $arg_type = Option::do(function () use ($event) {
             $arg = yield head($event->getCallArgs());
             return yield self::getArgType($arg, $event->getSource());
         });
+
+        return $arg_type
+            ->flatMap(fn(Union $union) => head(asList(
+                $union->getClosureTypes(),
+                $union->getCallableTypes()
+            )))
+            ->flatMap(fn(TCallable|TClosure $union) => Option::fromNullable($union->return_type))
+            ->fold(
+                fn($return_type) => Option::some($return_type),
+                fn() => $arg_type,
+            );
     }
 
     /**

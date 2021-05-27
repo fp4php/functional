@@ -220,5 +220,14 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             ',
             'non-empty-array<int|string, "x"|bool|int>'
         );
+
+        $this->assertBlockType(
+        /** @lang InjectablePHP */ '
+                /** @var non-empty-list<bool>|non-empty-array<string, int>|null $input */
+                $input = null;
+                $result = Fp\Functional\Option\Option::fromNullable($input)->getOrElse(fn() => ["x"]);
+            ',
+            'non-empty-array<int|string, "x"|bool|int>'
+        );
     }
 }
