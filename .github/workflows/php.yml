@@ -58,3 +58,12 @@ jobs:
             ${{ runner.os }}-php-
       - name: Run test suite
         run: composer run-script test
+      - name: Generate coverage badge
+        uses: timkrase/phpunit-coverage-badge@v1.2.0
+        with:
+          report: clover.xml
+          report_type: clover
+          coverage_badge_path: phpunit-coverage.svg
+          push_badge: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+

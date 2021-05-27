@@ -12,6 +12,9 @@
             <directory suffix=".php">src/Fp/Functional</directory>
             <directory suffix=".php">src/Fp/Functions</directory>
         </include>
+        <report>
+            <clover outputFile="clover.xml" />
+        </report>
     </coverage>
     <testsuites>
         <testsuite name="Tests">
