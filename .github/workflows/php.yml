@@ -66,6 +66,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
+      - name: Composer dump autoload
+        run: composer dump-autoload
+
       - name: Run test suite
         run: php vendor/bin/phpunit
 
