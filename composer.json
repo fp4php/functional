@@ -24,7 +24,8 @@
         "klimick/psalm-show-type": "^1.0",
         "nikic/php-parser": "^4.10",
         "phpunit/phpunit": "^9",
-        "symfony/process": "^5.2"
+        "symfony/process": "^5.2",
+        "rregeer/phpunit-coverage-check": "^0.3.1"
     },
     "autoload": {
         "psr-4": {

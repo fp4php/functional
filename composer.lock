@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f35aa55426ec5e84714eb1189ded216b",
+    "content-hash": "15a7b9ff4f7fd4358a6ee65e30d0268d",
     "packages": [
         {
             "name": "mtdowling/jmespath.php",
@@ -742,16 +742,16 @@
         },
         {
             "name": "klimick/psalm-show-type",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/klimick/psalm-show-type.git",
-                "reference": "431f531af7f35744ea4fee57e28bfc6ba861b9d4"
+                "reference": "d11a4f73bc34bcc074f0ed2c79cb43423d9fd67a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/klimick/psalm-show-type/zipball/431f531af7f35744ea4fee57e28bfc6ba861b9d4",
-                "reference": "431f531af7f35744ea4fee57e28bfc6ba861b9d4",
+                "url": "https://api.github.com/repos/klimick/psalm-show-type/zipball/d11a4f73bc34bcc074f0ed2c79cb43423d9fd67a",
+                "reference": "d11a4f73bc34bcc074f0ed2c79cb43423d9fd67a",
                 "shasum": ""
             },
             "require": {
@@ -779,9 +779,9 @@
             "description": "Analog for psalm-trace but with pretty print",
             "support": {
                 "issues": "https://github.com/klimick/psalm-show-type/issues",
-                "source": "https://github.com/klimick/psalm-show-type/tree/v1.0.1"
+                "source": "https://github.com/klimick/psalm-show-type/tree/v1.0.2"
             },
-            "time": "2021-04-19T20:08:20+00:00"
+            "time": "2021-05-17T19:32:53+00:00"
         },
         {
             "name": "lstrojny/functional-php",
@@ -2009,6 +2009,52 @@
                 "source": "https://github.com/php-fig/log/tree/1.1.3"
             },
             "time": "2020-03-23T09:12:05+00:00"
+        },
+        {
+            "name": "rregeer/phpunit-coverage-check",
+            "version": "0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/richardregeer/phpunit-coverage-check.git",
+                "reference": "9618fa74477fbc448c1b0599bef5153d170094bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/richardregeer/phpunit-coverage-check/zipball/9618fa74477fbc448c1b0599bef5153d170094bd",
+                "reference": "9618fa74477fbc448c1b0599bef5153d170094bd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "bin": [
+                "bin/coverage-check"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Richard Regeer",
+                    "email": "rich2309@gmail.com"
+                }
+            ],
+            "description": "Check the code coverage using the clover report of phpunit",
+            "keywords": [
+                "ci",
+                "code coverage",
+                "php",
+                "phpunit",
+                "testing",
+                "unittest"
+            ],
+            "support": {
+                "issues": "https://github.com/richardregeer/phpunit-coverage-check/issues",
+                "source": "https://github.com/richardregeer/phpunit-coverage-check/tree/0.3.1"
+            },
+            "time": "2019-10-14T07:04:13+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -3753,16 +3799,16 @@
         },
         {
             "name": "vimeo/psalm",
-            "version": "4.7.1",
+            "version": "4.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "cd53e047a58f71f646dd6bf45476076ab07b5d44"
+                "reference": "38c452ae584467e939d55377aaf83b5a26f19dd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/cd53e047a58f71f646dd6bf45476076ab07b5d44",
-                "reference": "cd53e047a58f71f646dd6bf45476076ab07b5d44",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/38c452ae584467e939d55377aaf83b5a26f19dd1",
+                "reference": "38c452ae584467e939d55377aaf83b5a26f19dd1",
                 "shasum": ""
             },
             "require": {
@@ -3781,7 +3827,7 @@
                 "felixfbecker/advanced-json-rpc": "^3.0.3",
                 "felixfbecker/language-server-protocol": "^1.5",
                 "netresearch/jsonmapper": "^1.0 || ^2.0 || ^3.0 || ^4.0",
-                "nikic/php-parser": "^4.10.1",
+                "nikic/php-parser": "^4.10.5",
                 "openlss/lib-array2xml": "^1.0",
                 "php": "^7.1|^8",
                 "sebastian/diff": "^3.0 || ^4.0",
@@ -3801,7 +3847,7 @@
                 "phpspec/prophecy": ">=1.9.0",
                 "phpunit/phpunit": "^9.0",
                 "psalm/plugin-phpunit": "^0.13",
-                "slevomat/coding-standard": "^6.3.11",
+                "slevomat/coding-standard": "^7.0",
                 "squizlabs/php_codesniffer": "^3.5",
                 "symfony/process": "^4.3",
                 "weirdan/phpunit-appveyor-reporter": "^1.0.0",
@@ -3852,9 +3898,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vimeo/psalm/issues",
-                "source": "https://github.com/vimeo/psalm/tree/4.7.1"
+                "source": "https://github.com/vimeo/psalm/tree/4.7.3"
             },
-            "time": "2021-04-25T21:26:25+00:00"
+            "time": "2021-05-24T04:09:51+00:00"
         },
         {
             "name": "webmozart/assert",

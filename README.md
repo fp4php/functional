@@ -3,7 +3,6 @@ PHP Functional Programming library. Monads and common use functions.
 
 ![badges](https://shepherd.dev/github/whsv26/functional/coverage.svg)
 ![badges](https://shepherd.dev/github/whsv26/functional/level.svg)
-![badges](phpunit-coverage.svg)
 
 ## Documentation
 - ### [Functions](doc/Functions.md)
