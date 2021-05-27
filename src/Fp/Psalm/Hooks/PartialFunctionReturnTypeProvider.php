@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hooks;
 
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Psalm;
 use PhpParser\Node\Arg;
 use Psalm\CodeLocation;
 use Psalm\Internal\Type\Comparator\CallableTypeComparator;
@@ -46,7 +47,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return head($event->getCallArgs())
-            ->flatMap(fn(Arg $head_arg) => self::getArgType($head_arg, $event->getStatementsSource()))
+            ->flatMap(fn(Arg $head_arg) => Psalm::getArgType($head_arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $head_arg_type) => head(array_merge(
                 $head_arg_type->getClosureTypes(),
                 $head_arg_type->getCallableTypes(),
@@ -115,7 +116,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
             }
 
             $param_type = $param->type ?? Type::getMixed();
-            $arg_type = self::getArgType($arg, $event->getStatementsSource());
+            $arg_type = Psalm::getArgType($arg, $event->getStatementsSource());
 
             if ($arg_type->isEmpty()) {
                 continue;
@@ -145,13 +146,5 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
         );
 
         IssueBuffer::accepts($issue);
-    }
-
-    /**
-     * @psalm-return Option<Union>
-     */
-    private static function getArgType(Arg $arg, StatementsSource $source): Option
-    {
-        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

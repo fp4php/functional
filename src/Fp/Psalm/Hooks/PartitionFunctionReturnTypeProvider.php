@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hooks;
 
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Psalm;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -43,7 +44,7 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
         $partition_count = count(tail($args));
 
         return head($args)
-            ->flatMap(fn(Arg $head_arg) => self::getArgType($head_arg, $source))
+            ->flatMap(fn(Arg $head_arg) => Psalm::getArgType($head_arg, $source))
             ->map(function(Union $head_arg_type) use ($partition_count) {
                 $atomic_types = map(
                     $head_arg_type->getAtomicTypes(),
@@ -70,13 +71,5 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
             ->flatMap(fn(array $partitions) => asNonEmptyArray($partitions))
             ->map(fn(array $non_empty_partitions) => new Union([new TKeyedArray($non_empty_partitions)]))
             ->get();
-    }
-
-    /**
-     * @psalm-return Option<Union>
-     */
-    private static function getArgType(Arg $arg, StatementsSource $source): Option
-    {
-        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

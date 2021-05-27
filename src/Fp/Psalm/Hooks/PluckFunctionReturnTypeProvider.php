@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hooks;
 
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Psalm;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -70,7 +71,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     {
         return Option::do(function () use ($event) {
             $arg = yield head($event->getCallArgs());
-            $collection_type = yield self::getArgType($arg, $event->getStatementsSource());
+            $collection_type = yield Psalm::getArgType($arg, $event->getStatementsSource());
             $a = yield at($collection_type->getAtomicTypes(), 'array');
 
             $template_value_type = yield Option::fromNullable(match(true) {
@@ -94,16 +95,8 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     private static function getKey(FunctionReturnTypeProviderEvent $event): Option
     {
         return second($event->getCallArgs())
-            ->flatMap(fn(Arg $arg): Option => self::getArgType($arg, $event->getStatementsSource()))
+            ->flatMap(fn(Arg $arg): Option => Psalm::getArgType($arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $key) => firstOf($key->getAtomicTypes(), TLiteralString::class))
             ->map(fn(TLiteralString $literal) => $literal->value);
-    }
-
-    /**
-     * @psalm-return Option<Union>
-     */
-    private static function getArgType(Arg $arg, StatementsSource $source): Option
-    {
-        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }

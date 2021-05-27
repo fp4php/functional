@@ -6,11 +6,10 @@ namespace Fp\Psalm\Hooks;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Psalm;
 use Fp\Psalm\TypeCombiner\SumType\SumTypeCombiner;
-use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
-use Psalm\StatementsSource;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
@@ -56,7 +55,7 @@ class EitherGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProvide
     {
         $arg_type = Option::do(function () use ($event) {
             $arg = yield head($event->getCallArgs());
-            return yield self::getArgType($arg, $event->getSource());
+            return yield Psalm::getArgType($arg, $event->getSource());
         });
 
         return $arg_type
@@ -69,13 +68,5 @@ class EitherGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProvide
                 fn($return_type) => Option::some($return_type),
                 fn() => $arg_type,
             );
-    }
-
-    /**
-     * @psalm-return Option<Union>
-     */
-    private static function getArgType(Arg $arg, StatementsSource $source): Option
-    {
-        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
     }
 }
