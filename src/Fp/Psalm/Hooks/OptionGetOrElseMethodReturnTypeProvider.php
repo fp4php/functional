@@ -51,20 +51,11 @@ class OptionGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProvide
      */
     public static function getUpperBoundary(MethodReturnTypeProviderEvent $event): Option
     {
-        $arg_type = Option::do(function () use ($event) {
-            $arg = yield head($event->getCallArgs());
-            return yield Psalm::getArgType($arg, $event->getSource());
-        });
-
-        return $arg_type
-            ->flatMap(fn(Union $union) => head(asList(
-                $union->getClosureTypes(),
-                $union->getCallableTypes()
-            )))
+        return Psalm::getFirstArgCallableType($event)
             ->flatMap(fn(TCallable|TClosure $union) => Option::fromNullable($union->return_type))
             ->fold(
                 fn($return_type) => Option::some($return_type),
-                fn() => $arg_type,
+                fn() => Psalm::getFirstArgType($event),
             );
     }
 }
