@@ -1,3 +1,5 @@
+-include Makefile.local
+
 PHP=php
 PSALM=vendor/bin/psalm
 PHPUNIT=vendor/bin/phpunit
