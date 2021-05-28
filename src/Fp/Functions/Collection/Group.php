@@ -23,10 +23,10 @@ namespace Fp\Collection;
  * @psalm-param callable(TV, TK): TKG $callback
  *
  * @psalm-return (
- *		$collection is non-empty-array ? non-empty-array<TKG, array<TK, TV>> : (
- *	  	$collection is non-empty-list ? non-empty-array<TKG, array<TK, TV>> : (
- *		array<TKG, array<TK, TV>>
- * )))
+ *		$collection is non-empty-array
+ *          ? non-empty-array<TKG, array<TK, TV>>
+ *          : array<TKG, array<TK, TV>>
+ * )
  */
 function group(iterable $collection, callable $callback): array
 {

@@ -18,10 +18,8 @@ namespace Fp\Collection;
  * @psalm-param iterable<TK, TV> $collection
  *
  * @psalm-return (
- *     $collection is non-empty-list ? list<TV> : (
- *     $collection is list ? list<TV> : (
- *     array<TK, TV>
- * )))
+ *     $collection is list ? list<TV> : array<TK, TV>
+ * )
  */
 function butLast(iterable $collection): array
 {
