@@ -16,9 +16,37 @@ final class AsListTest extends PhpBlockTestCase
              */
             function getCollection(): array { return []; }
             
-            $result = \Fp\Cast\asList(getCollection());
+            $result = Fp\Cast\asList(getCollection());
         ';
 
         $this->assertBlockType($phpBlock, 'list<int>');
+    }
+
+    public function testWithNonEmptyArray(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return non-empty-array<string, int> 
+             */
+            function getCollection(): array { return []; }
+            
+            $result = Fp\Cast\asList(getCollection());
+        ';
+
+        $this->assertBlockType($phpBlock, 'non-empty-list<int>');
+    }
+
+    public function testWithNonEmptyList(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */ '
+            /** 
+             * @psalm-return non-empty-list<int> 
+             */
+            function getCollection(): array { return []; }
+            
+            $result = Fp\Cast\asList(getCollection());
+        ';
+
+        $this->assertBlockType($phpBlock, 'non-empty-list<int>');
     }
 }

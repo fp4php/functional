@@ -17,7 +17,11 @@ namespace Fp\Cast;
  *
  * @psalm-param iterable<TK, TV> ...$collections
  *
- * @psalm-return list<TV>
+ * @psalm-return (
+ *     $collections is non-empty-array
+ *         ? non-empty-list<TV>
+ *         : list<TV>
+ * )
  */
 function asList(iterable ...$collections): array
 {
