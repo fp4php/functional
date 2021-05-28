@@ -14,8 +14,6 @@ use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
 
-use function Fp\Cast\asList;
-use function Fp\Collection\head;
 use function Fp\Collection\last;
 use function Fp\Evidence\proveTrue;
 
@@ -53,11 +51,9 @@ class EitherGetOrElseMethodReturnTypeProvider implements MethodReturnTypeProvide
      */
     public static function getUpperBoundary(MethodReturnTypeProviderEvent $event): Option
     {
-        return Psalm::getFirstArgCallableType($event)
-            ->flatMap(fn(TCallable|TClosure $union) => Option::fromNullable($union->return_type))
-            ->fold(
-                fn($return_type) => Option::some($return_type),
-                fn() => Psalm::getFirstArgType($event),
-            );
+        return ($first_arg_type = Psalm::getFirstArgType($event))
+            ->flatMap(fn(Union $arg_type) => Psalm::getFirstCallableType($arg_type))
+            ->flatMap(fn(TCallable|TClosure $f) => Option::fromNullable($f->return_type))
+            ->orElse(fn() => $first_arg_type);
     }
 }

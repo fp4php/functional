@@ -9,12 +9,8 @@ use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
-use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
-use Psalm\Type\Atomic\TList;
-use Psalm\Type\Atomic\TNonEmptyArray;
-use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 
 use function Fp\Cast\asList;
@@ -25,16 +21,6 @@ use function Fp\Collection\head;
  */
 class Psalm
 {
-    public static function nonEmptyListToList(TNonEmptyList $list): TList
-    {
-        return new TList($list->type_param);
-    }
-
-    public static function nonEmptyArrayToArray(TNonEmptyArray $array): TArray
-    {
-        return new TArray($array->type_params);
-    }
-
     /**
      * @psalm-return Option<Union>
      */
@@ -60,13 +46,12 @@ class Psalm
     /**
      * @psalm-return Option<TClosure|TCallable>
      */
-    public static function getFirstArgCallableType(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $event): Option
+    public static function getFirstCallableType(Union $union): Option
     {
-        return Option::do(function () use ($event) {
-            $arg_type = yield self::getFirstArgType($event);
+        return Option::do(function () use ($union) {
             return yield head(asList(
-                $arg_type->getClosureTypes(),
-                $arg_type->getCallableTypes()
+                $union->getClosureTypes(),
+                $union->getCallableTypes()
             ));
         });
     }

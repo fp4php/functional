@@ -148,6 +148,19 @@ abstract class Option
 
     /**
      * @psalm-template B
+     * @psalm-param (callable(): Option<B>) $fallback
+     * @psalm-return Option<A|B>
+     */
+    public function orElse(callable $fallback): Option
+    {
+        return !$this->isEmpty()
+            ? $this
+            : call_user_func($fallback);
+    }
+
+
+    /**
+     * @psalm-template B
      * @psalm-param B|(pure-callable(): B) $fallback
      * @psalm-return A|B
      */
