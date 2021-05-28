@@ -148,7 +148,7 @@ abstract class Option
 
     /**
      * @psalm-template B
-     * @psalm-param (callable(): Option<B>) $fallback
+     * @psalm-param callable(): Option<B> $fallback
      * @psalm-return Option<A|B>
      */
     public function orElse(callable $fallback): Option
@@ -157,7 +157,6 @@ abstract class Option
             ? $this
             : call_user_func($fallback);
     }
-
 
     /**
      * @psalm-template B

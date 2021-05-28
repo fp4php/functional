@@ -36,6 +36,19 @@ abstract class Either
     }
 
     /**
+     * @psalm-template LL
+     * @psalm-template RR
+     * @psalm-param callable(): Either<LL, RR> $fallback
+     * @psalm-return Either<L|LL, R|RR>
+     */
+    public function orElse(callable $fallback): Either
+    {
+        return $this->isRight()
+            ? $this
+            : call_user_func($fallback);
+    }
+
+    /**
      * @psalm-template TO
      * @psalm-param callable(R): TO $ifRight
      * @psalm-param callable(L): TO $ifLeft
