@@ -2,3 +2,4 @@ vendor
 build
 .idea
 .phpunit.result.cache
+Makefile.local
