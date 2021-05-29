@@ -134,5 +134,32 @@ final class EitherTest extends TestCase
     {
         $this->assertEquals(1, Either::right(1)->getOrElse(0));
         $this->assertEquals(0, Either::left('err')->getOrElse(0));
+        $this->assertEquals(0, Either::left('err')->getOrElse(fn() => 0));
+    }
+
+    public function testOrElse(): void
+    {
+        $this->assertEquals(
+            1,
+            Either::right(1)->orElse(fn() => Either::right(2))->get()
+        );
+
+        $this->assertEquals(
+            2,
+            Either::left('err')->orElse(fn() => Either::right(2))->get()
+        );
+    }
+
+    public function testCond(): void
+    {
+        $this->assertEquals(
+            1,
+            Either::cond(true, 1, 'err')->get()
+        );
+
+        $this->assertEquals(
+            'err',
+            Either::cond(false, 1, 'err')->get()
+        );
     }
 }
