@@ -149,6 +149,11 @@ abstract class Option
      *
      * Syntax sugar for sequential {@see Option::flatMap()} calls
      *
+     * Syntax "$unwrappedValue = yield $box" mean:
+     * 1) unwrap the $box
+     * 2) if there is nothing in the box then short-circuit (stop) the computation
+     * 3) place contained in $box value into $unwrappedValue variable
+     *
      * REPL:
      * >>> $res1 = Option::do(function() {
      *     $a = 1;
