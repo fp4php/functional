@@ -17,6 +17,16 @@ use Throwable;
 abstract class Either
 {
     /**
+     * Unwrap "the box" and get contained success value
+     * or given fallback for case when
+     * there is error value in the box.
+     *
+     * REPL:
+     * >>> Either::right(1)->getOrElse(0)
+     * => 1
+     * >>> Either::left('error')->getOrElse(0)
+     * => 0
+     *
      * @psalm-template F
      * @psalm-param F|(pure-callable(): F) $fallback
      * @psalm-return R|F
@@ -36,6 +46,14 @@ abstract class Either
     }
 
     /**
+     * Combine two Either into one
+     *
+     * REPL:
+     * >>> Either::right(1)->orElse(fn() => Either::right(2))
+     * => Right(1)
+     * >>> Either::left(1)->orElse(fn() => Either::right(2))
+     * => Right(2)
+     *
      * @psalm-template LL
      * @psalm-template RR
      * @psalm-param callable(): Either<LL, RR> $fallback
@@ -49,6 +67,20 @@ abstract class Either
     }
 
     /**
+     * Fold possible outcomes
+     *
+     * REPL:
+     * >>> Either::right(1)->fold(
+     *     ifRight: fn(int $right) => $right + 1,
+     *     ifLeft: fn(string $left) => $left . '!',
+     * );
+     * => 2
+     * >>> Either::left('error')->fold(
+     *     ifRight: fn(int $right) => $right + 1,
+     *     ifLeft: fn(string $left) => $left . '!',
+     * );
+     * => 'error!'
+     *
      * @psalm-template TO
      * @psalm-param callable(R): TO $ifRight
      * @psalm-param callable(L): TO $ifLeft
@@ -68,6 +100,19 @@ abstract class Either
     }
 
     /**
+     * 1) Unwrap the box
+     * 2) If the box contains error value then do nothing
+     * 3) Pass unwrapped success value to callback
+     * 4) Place callback result value into the new success-box
+     *
+     * REPL:
+     * >>> $res1 = Either::right(1);
+     * => Right(1)
+     * >>> $res2 = $res1->map(fn(int $i) => $i + 1);
+     * => Right(2)
+     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
+     * => Right('2')
+     *
      * @psalm-template RO
      * @psalm-param callable(R): RO $callback
      * @psalm-return Either<L, RO>
@@ -86,6 +131,20 @@ abstract class Either
     }
 
     /**
+     * 1) Unwrap the box
+     * 2) If the box contains success value then do nothing
+     * 3) Pass unwrapped error value to callback
+     * 4) Place callback result value into the new error-box
+     *
+     * REPL:
+     * >>> $res1 = Either::left(0);
+     * => Left(0)
+     * >>> $res2 = $res1->mapLeft(fn(int $i) => match ($i) {
+     *     0 => 'error',
+     *     default => 'warning'
+     * });
+     * => Left('error')
+     *
      * @psalm-template LO
      * @psalm-param callable(L): LO $callback
      * @psalm-return Either<LO, R>
@@ -100,6 +159,19 @@ abstract class Either
     }
 
     /**
+     * 1) Unwrap the box
+     * 2) If the box contains error value then do nothing
+     * 3) Pass unwrapped success value to callback
+     * 4) Replace old box with new one returned by callback
+     *
+     * REPL:
+     * >>> $res1 = Either::right(1);
+     * => Right(1)
+     * >>> $res2 = $res1->flatMap(fn(int $i) => Either::right($i + 1));
+     * => Right(2)
+     * >>> $res3 = $res2->flatMap(fn(int $i) => Either::left('error'));
+     * => Left('error')
+     *
      * @psalm-template RO
      * @psalm-param callable(R): Either<L, RO> $callback
      * @psalm-return Either<L, RO>
@@ -118,6 +190,26 @@ abstract class Either
     }
 
     /**
+     * Do-notation a.k.a for-comprehension.
+     *
+     * Syntax sugar for sequential {@see Either::flatMap()} calls
+     *
+     * Syntax "$unwrappedValue = yield $box" mean:
+     * 1) unwrap the $box
+     * 2) if there is error in the box then short-circuit (stop) the computation
+     * 3) place contained in $box value into $unwrappedValue variable
+     *
+     * REPL:
+     * >>> Either::do(function() {
+     *     $a = 1;
+     *     $b = yield Either::right(2);
+     *     $c = yield new Right(3);
+     *     $d = yield Either::left('error!'); // short circuit here
+     *     $e = 5;                            // not executed
+     *     return [$a, $b, $c, $d, $e];       // not executed
+     * });
+     * => Left('error!')
+     *
      * @template TL
      * @template TR
      * @template TO
@@ -143,6 +235,16 @@ abstract class Either
     }
 
     /**
+     * Fabric method which creates Either.
+     *
+     * Try/catch replacement.
+     *
+     * REPL:
+     * >>> Either::try(fn() => 1);
+     * => Right(1)
+     * >>> Either::try(fn() => throw new Exception('handled and converted to Left'));
+     * => Left(Exception('handled and converted to Left'))
+     *
      * @psalm-template TLI of Throwable
      * @psalm-template TRI
      * @psalm-param callable(): TRI $callback
@@ -159,6 +261,14 @@ abstract class Either
     }
 
     /**
+     * Convert Either to Option
+     *
+     * REPL:
+     * >>> Either::right(1)->toOption()
+     * => Some(1)
+     * >>> Either::left('error')->toOption()
+     * => None
+     *
      * @psalm-return Option<R>
      */
     public function toOption(): Option
@@ -167,6 +277,14 @@ abstract class Either
     }
 
     /**
+     * Check if there is error value contained in the box
+     *
+     * REPL:
+     * >>> Either::some(1)->isLeft()
+     * => false
+     * >>> Either::left('error')->isLeft()
+     * => true
+     *
      * @psalm-assert-if-true Left<L> $this
      */
     public function isLeft(): bool
@@ -175,6 +293,14 @@ abstract class Either
     }
 
     /**
+     * Check if there is success value contained in the box
+     *
+     * REPL:
+     * >>> Either::some(1)->isRight()
+     * => true
+     * >>> Either::left('error')->isRight()
+     * => false
+     *
      * @psalm-assert-if-true Right<R> $this
      */
     public function isRight(): bool
@@ -183,6 +309,14 @@ abstract class Either
     }
 
     /**
+     * Swap error outcome with success outcome (Left with Right)
+     *
+     * REPL:
+     * >>> Either::some(1)->swap()
+     * => Left(1)
+     * >>> Either::left(1)->swap()
+     * => Right(1)
+     *
      * @psalm-return Either<R, L>
      */
     public function swap(): Either
@@ -194,6 +328,14 @@ abstract class Either
     }
 
     /**
+     * Fabric method.
+     *
+     * Create {@see Left} from value
+     *
+     * REPL:
+     * >>> Either::left('error')
+     * => Left('error')
+     *
      * @psalm-template LI
      * @psalm-param LI $value
      * @psalm-return Either<LI, empty>
@@ -205,6 +347,14 @@ abstract class Either
     }
 
     /**
+     * Fabric method.
+     *
+     * Create {@see Right} from value
+     *
+     * REPL:
+     * >>> Either::right(1)
+     * => Right(1)
+     *
      * @psalm-template RI
      * @psalm-param RI $value
      * @psalm-return Either<empty, RI>
@@ -216,6 +366,17 @@ abstract class Either
     }
 
     /**
+     * Fabric method.
+     *
+     * REPL:
+     * >>> Either::cond(true, 1, 'error')
+     * => Right(1)
+     * >>> Either::cond(false, 1, 'error')
+     * => Left('error')
+     *
+     * Create {@see Right} from value if given condition is true
+     * Create {@see Left} from value if given condition is false
+     *
      * @psalm-template LI
      * @psalm-template RI
      * @psalm-param LI $left
@@ -235,6 +396,12 @@ abstract class Either
     }
 
     /**
+     * Unwrap the box value
+     *
+     * REPL:
+     * >>> Either::some(1)->get()
+     * => 1
+     *
      * @psalm-return L|R
      */
     abstract public function get(): mixed;

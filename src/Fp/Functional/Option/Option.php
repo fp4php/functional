@@ -155,7 +155,7 @@ abstract class Option
      * 3) place contained in $box value into $unwrappedValue variable
      *
      * REPL:
-     * >>> $res1 = Option::do(function() {
+     * >>> Option::do(function() {
      *     $a = 1;
      *     $b = yield Option::fromNullable(2);
      *     $c = yield Option::some(3);
