@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\Either;
 
+use Exception;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
@@ -11,6 +12,14 @@ use PHPUnit\Framework\TestCase;
 
 final class EitherTest extends TestCase
 {
+    public function testCreation(): void
+    {
+        $this->assertInstanceOf(Right::class, Either::right(1));
+        $this->assertEquals(1, Either::right(1)->get());
+        $this->assertInstanceOf(Left::class, Either::left('err'));
+        $this->assertEquals('err', Either::left('err')->get());
+    }
+
     public function testMap(): void
     {
         $right = Right::of(1)
@@ -88,5 +97,42 @@ final class EitherTest extends TestCase
 
         $this->assertEquals(3, $right->get());
         $this->assertEquals(10, $left->get());
+    }
+
+    public function testIsMethods(): void
+    {
+        $this->assertFalse(Either::right(1)->isLeft());
+        $this->assertTrue(Either::right(1)->isRight());
+    }
+
+    public function testTry(): void
+    {
+        $this->assertInstanceOf(Right::class, Either::try(fn() => 1));
+        $this->assertEquals(1, Either::try(fn() => 1)->get());
+
+        $this->assertInstanceOf(Left::class, Either::try(fn() => throw new Exception()));
+        $this->assertInstanceOf(Exception::class, Either::try(fn() => throw new Exception())->get());
+    }
+
+    public function testFold(): void
+    {
+        $foldRight = Either::right(1)->fold(
+            fn(int $some) => $some + 1,
+            fn() => 0,
+        );
+
+        $foldLeft = Either::left('err')->fold(
+            fn(int $some) => $some + 1,
+            fn() => 0,
+        );
+
+        $this->assertEquals(2, $foldRight);
+        $this->assertEquals(0, $foldLeft);
+    }
+
+    public function testGetOrElse(): void
+    {
+        $this->assertEquals(1, Either::right(1)->getOrElse(0));
+        $this->assertEquals(0, Either::left('err')->getOrElse(0));
     }
 }
