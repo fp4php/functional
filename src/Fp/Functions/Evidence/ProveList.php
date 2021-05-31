@@ -130,3 +130,50 @@ function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant
         return $list;
     });
 }
+
+/**
+ * Prove that collection is of list type
+ * and every element is of given scalar type
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int|string>
+ * >>> proveListOfScalar($collection, 'int');
+ * => Option<list<int>>
+ *
+ *
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ * @psalm-template TVO
+ *
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param 'string'|'non-empty-string'|'int'|'float'|'bool' $type
+ *
+ * @psalm-return (
+ *     $type is 'string'           ? Option<list<string>> : (
+ *     $type is 'non-empty-string' ? Option<list<non-empty-string>> : (
+ *     $type is 'int'              ? Option<list<int>> : (
+ *     $type is 'float'            ? Option<list<float>> : (
+ *                                   Option<list<bool>>
+ * )))))
+ */
+function proveListOfScalar(iterable $collection, string $type): Option
+{
+    return Option::do(function () use ($collection, $type) {
+        $list = yield proveList($collection);
+
+        $provenListOf = [];
+
+        foreach ($list as $element) {
+            $provenListOf[] = yield match($type) {
+                'string' => proveString($element),
+                'non-empty-string' => proveNonEmptyString($element),
+                'int' => proveInt($element),
+                'float' => proveFloat($element),
+                'bool' => proveBool($element),
+            };
+        }
+
+        return $provenListOf;
+    });
+}

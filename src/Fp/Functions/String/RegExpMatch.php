@@ -15,8 +15,8 @@ use function Symfony\Component\String\u;
  * Returns None if not matched
  *
  * REPL:
- * >>> regExpMatch('/[a-z]+/', 'abc');
- * => Some('abc')
+ * >>> regExpMatch('/[a-z]+(c)/', 'abc', 1);
+ * => Some('c')
  *
  * @psalm-param positive-int|0 $capturingGroup
  * @psalm-return Option<string>
