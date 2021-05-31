@@ -6,29 +6,35 @@ namespace Tests;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Comment\Doc;
+use PhpParser\Node;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
-use function Fp\Collection\pop;
+use function Fp\Collection\last;
+use function Fp\Collection\map;
 use function Fp\Collection\reduce;
+use function Fp\Evidence\proveListOfScalar;
+use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
+use function Fp\Evidence\proveTrue;
 use function Fp\Json\jsonSearch;
 use function Symfony\Component\String\u;
 
 /**
  * @psalm-type PhpBlock = string
  * @psalm-type BlockType = string
+ * @psalm-type TracedVar = string
  */
 abstract class PhpBlockTestCase extends TestCase
 {
     /**
-     * Extracts php block last expression type
+     * Extracts php block traced types
      *
      * @psalm-param PhpBlock $block
-     * @psalm-return Option<BlockType>
+     * @psalm-return list<BlockType>
      */
-    protected function analyzeBlock(string $block): Option
+    protected function analyzeBlock(string $block): array
     {
         $preparedBlock = $this->prepareBlock($block);
 
@@ -47,7 +53,7 @@ abstract class PhpBlockTestCase extends TestCase
         /** @var list<string> $outputLines */
         $outputLines = $output;
 
-        return $this->parseTraceResult($outputLines);
+        return $this->parseTraceResult($outputLines)->getOrElse([]);
     }
 
     /**
@@ -56,7 +62,7 @@ abstract class PhpBlockTestCase extends TestCase
      * @psalm-param PhpBlock $block
      * @psalm-return PhpBlock
      */
-    private function prepareBlock(string $block): string
+    public function prepareBlock(string $block): string
     {
         $phpBlock = u($block)
             ->prepend('<?php' . ' ')
@@ -66,31 +72,42 @@ abstract class PhpBlockTestCase extends TestCase
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($phpBlock);
 
-        $mappedAst = Option::do(function () use ($ast) {
-            $stmts = yield Option::fromNullable($ast);
-            [$reversedHead, $reversedTail] = yield pop($stmts);
+        Option::do(function () use ($ast) {
+            $stmts      = yield Option::fromNullable($ast);
+            $last       = yield last($stmts);
+            $expr       = yield proveOf($last, Node\Stmt\Expression::class);
+            $assignExpr = yield proveOf($expr->expr, Node\Expr\Assign::class);
+            $varExpr    = yield proveOf($assignExpr->var, Node\Expr\Variable::class);
+            $varName    = yield proveString($varExpr->name);
 
-            $docComment = new Doc('/** @psalm-trace $result */', $reversedHead->getStartLine());
-            $reversedHead->setDocComment($docComment);
-
-            return [...$reversedTail, $reversedHead];
+            $last->setDocComment(new Doc(
+                sprintf('/** @psalm-trace $%s */', $varName),
+                $last->getStartLine()
+            ));
         });
 
-        $prettyPrinter = new Standard();
-        return $prettyPrinter->prettyPrintFile($mappedAst->get() ?? []);
+        return (new Standard())->prettyPrintFile($ast ?? []);
     }
 
     /**
      * Extracts psalm trace result
      * @psalm-param list<string> $lines
-     * @psalm-return Option<string>
+     * @psalm-param list<TracedVar> $tracedVars
+     * @psalm-return Option<list<BlockType>>
      */
     private function parseTraceResult(array $lines): Option
     {
-        return reduce($lines, fn(string $acc, string $line) => $acc . $line)
-            ->flatMap(fn(string $json) => jsonSearch("[?type=='Trace'].message|[0]", $json))
-            ->flatMap(fn($message) => proveString($message))
-            ->map(fn(string $message) => u($message)->after('$result: ')->toString());
+        return Option::do(function () use ($lines) {
+            $json           = yield reduce($lines, fn(string $acc, string $line) => $acc . $line);
+            $messages       = yield jsonSearch("[?type=='Trace'].message", $json);
+                              yield proveTrue(is_array($messages));
+            $stringMessages = yield proveListOfScalar($messages, 'string');
+
+            return map(
+                $stringMessages,
+                fn(string $msg) => u($msg)->after(': ')->toString()
+            );
+        });
     }
 
     /**
@@ -99,13 +116,13 @@ abstract class PhpBlockTestCase extends TestCase
      * @psalm-param PhpBlock $block
      * @psalm-param BlockType $type
      */
-    protected function assertBlockType(string $block, string $type): void
+    protected function assertBlockType(string $block, string ...$types): void
     {
         $trim = fn(string $s): string => u($s)->replace(' ', '')->toString();
 
-        $expectedType = $trim($type);
-        $actualType = $trim($this->analyzeBlock($block)->getOrElse(''));
+        $actualTypes = map($this->analyzeBlock($block), fn(string $t) => $trim($t));
+        $expectedTypes = map($types, fn(string $t) => $trim($t));
 
-        $this->assertEquals($expectedType, $actualType);
+        $this->assertEquals($actualTypes, $expectedTypes);
     }
 }
