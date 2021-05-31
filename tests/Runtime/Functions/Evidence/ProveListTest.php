@@ -14,6 +14,7 @@ use Tests\Mock\FooIterable;
 
 use function Fp\Evidence\proveList;
 use function Fp\Evidence\proveListOf;
+use function Fp\Evidence\proveListOfScalar;
 use function Fp\Evidence\proveNonEmptyList;
 use function Fp\Evidence\proveNonEmptyListOf;
 
@@ -54,5 +55,20 @@ final class ProveListTest extends TestCase
         $this->assertInstanceOf(None::class, proveNonEmptyListOf([1, new Foo(1)], Foo::class));
         $this->assertInstanceOf(None::class, proveNonEmptyListOf([1 => new Foo(1)], Foo::class));
         $this->assertInstanceOf(Some::class, proveNonEmptyListOf([new Foo(1)], Foo::class));
+    }
+
+    public function testProveListOfScalar(): void
+    {
+        $this->assertEquals(['1', ''], proveListOfScalar(['1', ''], 'string')->get());
+        $this->assertEquals(['1', '2'], proveListOfScalar(['1', '2'], 'non-empty-string')->get());
+        $this->assertEquals([1, 2], proveListOfScalar([1, 2], 'int')->get());
+        $this->assertEquals([1.1, 2.2], proveListOfScalar([1.1, 2.2], 'float')->get());
+        $this->assertEquals([true, false], proveListOfScalar([true, false], 'bool')->get());
+
+        $this->assertNull(proveListOfScalar(['1', 1], 'string')->get());
+        $this->assertNull(proveListOfScalar(['1', ''], 'non-empty-string')->get());
+        $this->assertNull(proveListOfScalar([1, 2.2], 'int')->get());
+        $this->assertNull(proveListOfScalar([1.1, 2], 'float')->get());
+        $this->assertNull(proveListOfScalar([true, 1], 'bool')->get());
     }
 }

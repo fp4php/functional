@@ -123,6 +123,6 @@ abstract class PhpBlockTestCase extends TestCase
         $actualTypes = map($this->analyzeBlock($block), fn(string $t) => $trim($t));
         $expectedTypes = map($types, fn(string $t) => $trim($t));
 
-        $this->assertEquals($actualTypes, $expectedTypes);
+        $this->assertEquals($expectedTypes, $actualTypes);
     }
 }
