@@ -19,7 +19,7 @@ final class AsListTest extends PhpBlockTestCase
             $result = Fp\Cast\asList(getCollection());
         ';
 
-        $this->assertBlockType($phpBlock, 'list<int>');
+        $this->assertBlockTypes($phpBlock, 'list<int>');
     }
 
     public function testWithNonEmptyArray(): void
@@ -33,7 +33,7 @@ final class AsListTest extends PhpBlockTestCase
             $result = Fp\Cast\asList(getCollection());
         ';
 
-        $this->assertBlockType($phpBlock, 'non-empty-list<int>');
+        $this->assertBlockTypes($phpBlock, 'non-empty-list<int>');
     }
 
     public function testWithNonEmptyList(): void
@@ -47,6 +47,6 @@ final class AsListTest extends PhpBlockTestCase
             $result = Fp\Cast\asList(getCollection());
         ';
 
-        $this->assertBlockType($phpBlock, 'non-empty-list<int>');
+        $this->assertBlockTypes($phpBlock, 'non-empty-list<int>');
     }
 }

@@ -11,7 +11,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
 {
     public function testGetOrElseWithInt(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
             /** @lang InjectablePHP */ '
                 /** @var int|null $input */
                 $input = null;
@@ -20,7 +20,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'int'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var 1|null $input */
                 $input = null;
@@ -32,7 +32,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
 
     public function testGetOrElseWithBool(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var bool|null $input */
                 $input = null;
@@ -41,7 +41,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'bool'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var true|null $input */
                 $input = null;
@@ -53,7 +53,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
 
     public function testGetOrElseWithFloat(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var float|null $input */
                 $input = null;
@@ -62,7 +62,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'float'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var 1.1|null $input */
                 $input = null;
@@ -74,7 +74,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
 
     public function testGetOrElseWithString(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var string|null $input */
                 $input = null;
@@ -83,7 +83,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'string'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var string|null $input */
                 $input = null;
@@ -92,7 +92,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'string'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var class-string<\Tests\Mock\Foo>|null $input */
                 $input = null;
@@ -107,7 +107,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
 
     public function testGetOrElseWithList(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var list<int>|null $input */
                 $input = null;
@@ -116,7 +116,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'list<int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var list<int>|null $input */
                 $input = null;
@@ -125,7 +125,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'list<int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-list<int>|null $input */
                 $input = null;
@@ -134,7 +134,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'list<int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-list<int>|null $input */
                 $input = null;
@@ -146,7 +146,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
 
     public function testGetOrElseWithArray(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var array<string, int>|null $input */
                 $input = null;
@@ -155,7 +155,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'array<string, int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var array<string, int>|null $input */
                 $input = null;
@@ -164,7 +164,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'array<0|string, int|true>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-array<string, int>|null $input */
                 $input = null;
@@ -173,7 +173,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'array<string, int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-array<string, int>|null $input */
                 $input = null;
@@ -185,7 +185,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
 
     public function testGetOrElseWithArrayOrList(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var list<bool>|array<string, int>|null $input */
                 $input = null;
@@ -194,7 +194,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'array<int|string, bool|int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-list<bool>|array<string, int>|null $input */
                 $input = null;
@@ -203,7 +203,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'array<int|string, bool|int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-list<bool>|non-empty-array<string, int>|null $input */
                 $input = null;
@@ -212,7 +212,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'array<int|string, bool|int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-list<bool>|non-empty-array<string, int>|null $input */
                 $input = null;
@@ -221,7 +221,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
             'non-empty-array<int|string, "x"|bool|int>'
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var non-empty-list<bool>|non-empty-array<string, int>|null $input */
                 $input = null;

@@ -22,7 +22,7 @@ final class GroupTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<non-empty-string, array<string, int>>');
+        $this->assertBlockTypes($phpBlock, 'array<non-empty-string, array<string, int>>');
     }
 
     public function testWithNonEmptyArray(): void
@@ -39,7 +39,7 @@ final class GroupTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'non-empty-array<non-empty-string, array<string, int>>');
+        $this->assertBlockTypes($phpBlock, 'non-empty-array<non-empty-string, array<string, int>>');
     }
 
     public function testWithNonEmptyList(): void
@@ -56,7 +56,7 @@ final class GroupTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'non-empty-array<non-empty-string, array<int, int>>');
+        $this->assertBlockTypes($phpBlock, 'non-empty-array<non-empty-string, array<int, int>>');
     }
 
     public function testWithListInferGroupKey(): void
@@ -73,7 +73,7 @@ final class GroupTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<non-empty-string, array<int, string>>');
+        $this->assertBlockTypes($phpBlock, 'array<non-empty-string, array<int, string>>');
     }
 
     public function testWithArrayInferGroupKey(): void
@@ -90,7 +90,7 @@ final class GroupTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<non-empty-string, array<non-empty-string, string>>');
+        $this->assertBlockTypes($phpBlock, 'array<non-empty-string, array<non-empty-string, string>>');
     }
 
     public function testWithArrayAndGroupKeyAsTypeAlias()
@@ -108,6 +108,6 @@ final class GroupTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, array<string, int>>');
+        $this->assertBlockTypes($phpBlock, 'array<string, array<string, int>>');
     }
 }

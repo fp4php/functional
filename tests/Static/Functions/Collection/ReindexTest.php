@@ -22,6 +22,6 @@ final class ReindexTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<int, int>');
+        $this->assertBlockTypes($phpBlock, 'array<int, int>');
     }
 }

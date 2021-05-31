@@ -17,6 +17,6 @@ final class PluckTest extends PhpBlockTestCase
             $result = pluck([new Foo(1), new Foo(2)], "a");
         ';
 
-        $this->assertBlockType($phpBlock, 'array<array-key, int>');
+        $this->assertBlockTypes($phpBlock, 'array<array-key, int>');
     }
 }

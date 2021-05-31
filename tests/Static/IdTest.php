@@ -21,6 +21,6 @@ final class IdTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, int>');
+        $this->assertBlockTypes($phpBlock, 'array<string, int>');
     }
 }

@@ -116,7 +116,7 @@ abstract class PhpBlockTestCase extends TestCase
      * @psalm-param PhpBlock $block
      * @psalm-param BlockType $type
      */
-    protected function assertBlockType(string $block, string ...$types): void
+    protected function assertBlockTypes(string $block, string ...$types): void
     {
         $trim = fn(string $s): string => u($s)->replace(' ', '')->toString();
 

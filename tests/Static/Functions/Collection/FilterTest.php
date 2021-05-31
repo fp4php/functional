@@ -26,7 +26,7 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, int>');
+        $this->assertBlockTypes($phpBlock, 'array<string, int>');
     }
 
     public function testReconciliationWithArray(): void
@@ -46,7 +46,7 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, int>');
+        $this->assertBlockTypes($phpBlock, 'array<string, int>');
     }
 
     public function testReconciliationWithoutPreservingKeys(): void
@@ -67,7 +67,7 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'list<int>');
+        $this->assertBlockTypes($phpBlock, 'list<int>');
     }
 
     public function testReconciliationWithShapes(): void
@@ -91,7 +91,7 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, array{name: string, postcode: int}>');
+        $this->assertBlockTypes($phpBlock, 'array<string, array{name: string, postcode: int}>');
     }
 
     public function testReconciliationWithPsalmAssert(): void
@@ -122,6 +122,6 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, array{name: string, postcode: int}>');
+        $this->assertBlockTypes($phpBlock, 'array<string, array{name: string, postcode: int}>');
     }
 }

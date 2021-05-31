@@ -22,7 +22,7 @@ final class ShiftTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, strtr(
+        $this->assertBlockTypes($phpBlock, strtr(
             'Option<array{int, list<int>}>',
             [
                 'Option' => Option::class,

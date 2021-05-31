@@ -21,6 +21,6 @@ final class UniqueTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'list<int>');
+        $this->assertBlockTypes($phpBlock, 'list<int>');
     }
 }

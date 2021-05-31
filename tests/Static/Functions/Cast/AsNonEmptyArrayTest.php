@@ -20,6 +20,6 @@ final class AsNonEmptyArrayTest extends PhpBlockTestCase
             $result = \Fp\Cast\asNonEmptyArray(getCollection());
         ';
 
-        $this->assertBlockType($phpBlock, Option::class . '<non-empty-array<string, int>>');
+        $this->assertBlockTypes($phpBlock, Option::class . '<non-empty-array<string, int>>');
     }
 }

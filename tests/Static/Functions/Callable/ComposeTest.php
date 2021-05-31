@@ -16,7 +16,7 @@ final class ComposeTest extends PhpBlockTestCase
             $result = \Fp\Callable\compose($aToB, $bToC);
         ';
 
-        $this->assertBlockType($phpBlock, 'callable(int): string');
+        $this->assertBlockTypes($phpBlock, 'callable(int): string');
     }
 
     public function testCompose3(): void
@@ -28,6 +28,6 @@ final class ComposeTest extends PhpBlockTestCase
             $result = \Fp\Callable\compose($aToB, $bToC, $cTod);
         ';
 
-        $this->assertBlockType($phpBlock, 'callable(int): float');
+        $this->assertBlockTypes($phpBlock, 'callable(int): float');
     }
 }
