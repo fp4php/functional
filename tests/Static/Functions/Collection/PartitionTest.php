@@ -20,7 +20,7 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array{0: list<2|3|4|5>, 1: list<2|3|4|5>}');
+        $this->assertBlockTypes($phpBlock, 'array{0: list<2|3|4|5>, 1: list<2|3|4|5>}');
     }
 
     public function testPartitionWithTwoPredicates(): void
@@ -34,7 +34,7 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array{0: list<1>, 1: list<1>, 2: list<1>}');
+        $this->assertBlockTypes($phpBlock, 'array{0: list<1>, 1: list<1>, 2: list<1>}');
     }
 
     public function testPartitionOfWithOneClass(): void
@@ -51,7 +51,7 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, strtr(
+        $this->assertBlockTypes($phpBlock, strtr(
             'array{list<Foo>, list<Bar|Foo>}',
             [
                 'Foo' => Foo::class,
@@ -77,7 +77,7 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, strtr(
+        $this->assertBlockTypes($phpBlock, strtr(
             'array{list<Foo>, list<Bar>, list<Foo>, list<Bar|Foo>}',
             [
                 'Foo' => Foo::class,
@@ -110,7 +110,7 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, strtr(
+        $this->assertBlockTypes($phpBlock, strtr(
             'array{list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Bar|Foo>}',
             [
                 'Foo' => Foo::class,

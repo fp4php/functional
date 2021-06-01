@@ -12,7 +12,7 @@ final class ProveTest extends PhpBlockTestCase
 {
     public function testProveOf(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
             /** @lang InjectablePHP */ '
                 $result = \Fp\Evidence\proveOf(new \Tests\Mock\Foo(1), \Tests\Mock\Foo::class);
             ',
@@ -22,7 +22,7 @@ final class ProveTest extends PhpBlockTestCase
             ])
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 $result = \Fp\Evidence\proveOf(new \Tests\Mock\Bar(true), \Tests\Mock\Foo::class);
             ',

@@ -10,7 +10,7 @@ final class ProveStringTest extends PhpBlockTestCase
 {
     public function testProveNonEmptyString(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 $result = \Fp\Evidence\proveNonEmptyString("")->get();
             ',

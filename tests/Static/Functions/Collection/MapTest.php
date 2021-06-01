@@ -21,7 +21,7 @@ final class MapTest extends PhpBlockTestCase
             $result = map(getCollection(), fn(int $value, int $key) => (string) $value);
         ';
 
-        $this->assertBlockType($phpBlock, 'list<numeric-string>');
+        $this->assertBlockTypes($phpBlock, 'list<numeric-string>');
     }
 
     public function testArrayOfInt(): void
@@ -37,6 +37,6 @@ final class MapTest extends PhpBlockTestCase
             $result = map(getCollection(), fn(int $value, int $key) => (string) $value);
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, numeric-string>');
+        $this->assertBlockTypes($phpBlock, 'array<string, numeric-string>');
     }
 }

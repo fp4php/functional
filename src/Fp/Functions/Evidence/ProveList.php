@@ -130,3 +130,55 @@ function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant
         return $list;
     });
 }
+
+/**
+ * Prove that collection is of list type
+ * and every element is of given scalar type
+ *
+ * REPL:
+ * >>> $collection;
+ * => iterable<string, int|string>
+ * >>> proveListOfScalar($collection, 'int');
+ * => Option<list<int>>
+ *
+ *
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ * @psalm-template TVO
+ *
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param 'string'|'non-empty-string'|'int'|'float'|'bool' $type
+ *
+ * @psalm-return (
+ *     $type is 'string'           ? Option<list<string>> : (
+ *     $type is 'non-empty-string' ? Option<list<non-empty-string>> : (
+ *     $type is 'int'              ? Option<list<int>> : (
+ *     $type is 'float'            ? Option<list<float>> : (
+ *                                   Option<list<bool>>
+ * )))))
+ */
+function proveListOfScalar(mixed $subject, string $type): Option
+{
+    if (!is_array($subject)) {
+        return Option::none();
+    }
+
+    return Option::do(function () use ($subject, $type) {
+        $list = yield proveList($subject);
+
+        $provenListOf = [];
+
+        /** @psalm-var mixed $element */
+        foreach ($list as $element) {
+            $provenListOf[] = yield match($type) {
+                'string' => proveString($element),
+                'non-empty-string' => proveNonEmptyString($element),
+                'int' => proveInt($element),
+                'float' => proveFloat($element),
+                'bool' => proveBool($element),
+            };
+        }
+
+        return $provenListOf;
+    });
+}

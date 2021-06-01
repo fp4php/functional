@@ -15,7 +15,7 @@ final class PartialTest extends PhpBlockTestCase
             $result = \Fp\Callable\partialLeft($callback, 1);
         ';
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(string, bool): true');
+        $this->assertBlockTypes($phpBlock, 'pure-Closure(string, bool): true');
     }
 
     public function testPartialLeftForClosure2(): void
@@ -25,7 +25,7 @@ final class PartialTest extends PhpBlockTestCase
             $result = \Fp\Callable\partialLeft($callback, 1);
         ';
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(string): true');
+        $this->assertBlockTypes($phpBlock, 'pure-Closure(string): true');
     }
 
     public function testPartialLeftForClosure1(): void
@@ -35,7 +35,7 @@ final class PartialTest extends PhpBlockTestCase
             $result = \Fp\Callable\partialLeft($callback, 1);
         ';
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(): true');
+        $this->assertBlockTypes($phpBlock, 'pure-Closure(): true');
     }
 
     public function testPartialRightForClosure3(): void
@@ -45,7 +45,7 @@ final class PartialTest extends PhpBlockTestCase
             $result = \Fp\Callable\partialRight($callback, true);
         ';
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(int, string): true');
+        $this->assertBlockTypes($phpBlock, 'pure-Closure(int, string): true');
     }
 
     public function testPartialRightForClosure2(): void
@@ -55,7 +55,7 @@ final class PartialTest extends PhpBlockTestCase
             $result = \Fp\Callable\partialRight($callback, "");
         ';
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(int): true');
+        $this->assertBlockTypes($phpBlock, 'pure-Closure(int): true');
     }
 
     public function testPartialRightForClosure1(): void
@@ -65,6 +65,6 @@ final class PartialTest extends PhpBlockTestCase
             $result = \Fp\Callable\partialRight($callback, 1);
         ';
 
-        $this->assertBlockType($phpBlock, 'pure-Closure(): true');
+        $this->assertBlockTypes($phpBlock, 'pure-Closure(): true');
     }
 }

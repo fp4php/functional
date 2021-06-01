@@ -21,7 +21,7 @@ final class ButLastTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, int>');
+        $this->assertBlockTypes($phpBlock, 'array<string, int>');
     }
 
     public function testWithNonEmptyList(): void
@@ -37,6 +37,6 @@ final class ButLastTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'list<int>');
+        $this->assertBlockTypes($phpBlock, 'list<int>');
     }
 }

@@ -22,6 +22,6 @@ final class SecondTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, Option::class . '<int>');
+        $this->assertBlockTypes($phpBlock, Option::class . '<int>');
     }
 }

@@ -12,7 +12,7 @@ final class ProveTrueTest extends PhpBlockTestCase
 {
     public function testProveTrueOf(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var null|int $number */
                 $number = 0;
@@ -28,7 +28,7 @@ final class ProveTrueTest extends PhpBlockTestCase
             ])
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var array{name?: string} $hasName */
                 $hasName = [];
@@ -44,7 +44,7 @@ final class ProveTrueTest extends PhpBlockTestCase
             ])
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var null|int $number */
                 $number = 0;
@@ -60,7 +60,7 @@ final class ProveTrueTest extends PhpBlockTestCase
             ])
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 /** @var array{name?: string} $hasName */
                 $hasName = [];

@@ -11,7 +11,7 @@ final class EitherDoNotationTest extends PhpBlockTestCase
 {
     public function testWithFilter(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;
 

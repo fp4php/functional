@@ -27,6 +27,6 @@ final class ZipTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'list<array{int, bool}>');
+        $this->assertBlockTypes($phpBlock, 'list<array{int, bool}>');
     }
 }

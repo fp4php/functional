@@ -23,6 +23,6 @@ final class FoldTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockType($phpBlock, 'int');
+        $this->assertBlockTypes($phpBlock, 'int');
     }
 }

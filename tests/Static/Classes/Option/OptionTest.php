@@ -11,7 +11,7 @@ final class OptionTest extends PhpBlockTestCase
 {
     public function testCreation(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 
@@ -26,7 +26,7 @@ final class OptionTest extends PhpBlockTestCase
 
     public function testGet(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
             /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 
@@ -47,7 +47,7 @@ final class OptionTest extends PhpBlockTestCase
 
     public function testMap(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 
@@ -61,7 +61,7 @@ final class OptionTest extends PhpBlockTestCase
 
     public function testFlatMap(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 

@@ -12,7 +12,7 @@ final class EitherTest extends PhpBlockTestCase
 
     public function testCreation(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;
                 
@@ -21,7 +21,7 @@ final class EitherTest extends PhpBlockTestCase
             strtr('Either<empty, 1>', ['Either' => Either::class])
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;
                 
@@ -33,7 +33,7 @@ final class EitherTest extends PhpBlockTestCase
 
     public function testGet(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
             /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;
                 
@@ -54,7 +54,7 @@ final class EitherTest extends PhpBlockTestCase
 
     public function testMap(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;
                                 
@@ -68,7 +68,7 @@ final class EitherTest extends PhpBlockTestCase
 
     public function testFlatMap(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;                
 
@@ -82,7 +82,7 @@ final class EitherTest extends PhpBlockTestCase
 
     public function testSwap(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;
                 
@@ -105,7 +105,7 @@ final class EitherTest extends PhpBlockTestCase
 
     public function testMapLeft(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Either\Either;
                 

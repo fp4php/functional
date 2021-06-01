@@ -14,7 +14,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
 {
     public function testUnitReturn(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 use function Fp\unit;
@@ -32,7 +32,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
                 ])
         );
 
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
                 use function Fp\unit;
@@ -58,7 +58,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
 
     public function testWithFilter(): void
     {
-        $this->assertBlockType(
+        $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 use Fp\Functional\Option\Option;
 

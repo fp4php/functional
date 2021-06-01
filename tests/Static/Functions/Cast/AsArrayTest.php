@@ -19,6 +19,6 @@ final class AsArrayTest extends PhpBlockTestCase
             $result = \Fp\Cast\asArray(getCollection());
         ';
 
-        $this->assertBlockType($phpBlock, 'array<string, int>');
+        $this->assertBlockTypes($phpBlock, 'array<string, int>');
     }
 }
