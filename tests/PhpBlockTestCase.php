@@ -91,8 +91,8 @@ abstract class PhpBlockTestCase extends TestCase
 
     /**
      * Extracts psalm trace result
+     *
      * @psalm-param list<string> $lines
-     * @psalm-param list<TracedVar> $tracedVars
      * @psalm-return Option<list<BlockType>>
      */
     private function parseTraceResult(array $lines): Option
@@ -100,7 +100,6 @@ abstract class PhpBlockTestCase extends TestCase
         return Option::do(function () use ($lines) {
             $json           = yield reduce($lines, fn(string $acc, string $line) => $acc . $line);
             $messages       = yield jsonSearch("[?type=='Trace'].message", $json);
-                              yield proveTrue(is_array($messages));
             $stringMessages = yield proveListOfScalar($messages, 'string');
 
             return map(

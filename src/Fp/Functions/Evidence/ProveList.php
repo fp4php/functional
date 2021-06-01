@@ -157,13 +157,18 @@ function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant
  *                                   Option<list<bool>>
  * )))))
  */
-function proveListOfScalar(iterable $collection, string $type): Option
+function proveListOfScalar(mixed $subject, string $type): Option
 {
-    return Option::do(function () use ($collection, $type) {
-        $list = yield proveList($collection);
+    if (!is_array($subject)) {
+        return Option::none();
+    }
+
+    return Option::do(function () use ($subject, $type) {
+        $list = yield proveList($subject);
 
         $provenListOf = [];
 
+        /** @psalm-var mixed $element */
         foreach ($list as $element) {
             $provenListOf[] = yield match($type) {
                 'string' => proveString($element),
