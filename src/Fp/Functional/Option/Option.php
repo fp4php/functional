@@ -53,7 +53,7 @@ abstract class Option
      * >>> Option::fromNullable(null)->isNonEmpty();
      * => false
      *
-     * @psalm-assert-if-false None $this
+     * @psalm-assert-if-true Some<A> $this
      */
     public function isNonEmpty(): bool
     {
@@ -83,7 +83,7 @@ abstract class Option
      * >>> Option::fromNullable(null)->isNone();
      * => true
      *
-     * @psalm-assert-if-true None $this
+     * @psalm-assert-if-false Some<A> $this
      */
     public function isNone(): bool
     {
@@ -110,11 +110,9 @@ abstract class Option
      */
     public function map(callable $callback): Option
     {
-        if ($this->isEmpty()) {
-            return new None();
-        }
-
-        return new Some(call_user_func($callback, $this->value));
+        return $this->isSome()
+            ? self::some(call_user_func($callback, $this->value))
+            : self::none();
     }
 
     /**
@@ -137,11 +135,9 @@ abstract class Option
      */
     public function flatMap(callable $callback): Option
     {
-        if ($this->isEmpty()) {
-            return new None();
-        }
-
-        return call_user_func($callback, $this->value);
+        return $this->isSome()
+            ? call_user_func($callback, $this->value)
+            : self::none();
     }
 
     /**
@@ -176,7 +172,7 @@ abstract class Option
         while ($generator->valid()) {
             $currentStep = $generator->current();
 
-            if (!$currentStep->isEmpty()) {
+            if ($currentStep->isSome()) {
                 $generator->send($currentStep->get());
             } else {
                 /** @var Option<TO> $currentStep */
@@ -209,9 +205,9 @@ abstract class Option
      */
     public static function fromNullable(mixed $value): Option
     {
-        return is_null($value)
-            ? new None()
-            : new Some($value);
+        return !is_null($value)
+            ? self::some($value)
+            : self::none();
     }
 
     /**
@@ -260,7 +256,7 @@ abstract class Option
      */
     public function fold(callable $ifSome, callable $ifNone): mixed
     {
-        return !$this->isEmpty()
+        return $this->isSome()
             ? call_user_func($ifSome, $this->value)
             : $ifNone();
     }
@@ -295,16 +291,14 @@ abstract class Option
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        if (!$this->isEmpty()) {
+        if ($this->isSome()) {
             return $this->value;
         }
 
-        /** @psalm-var B $default */
-        $default = is_callable($fallback)
+        /** @psalm-var B */
+        return is_callable($fallback)
             ? call_user_func($fallback)
             : $fallback;
-
-        return $default;
     }
 
     /**
@@ -322,7 +316,7 @@ abstract class Option
      */
     public function orElse(callable $fallback): Option
     {
-        return !$this->isEmpty()
+        return $this->isSome()
             ? $this
             : call_user_func($fallback);
     }
@@ -377,9 +371,9 @@ abstract class Option
      */
     public function toLeft(callable $right): Either
     {
-        return !$this->isEmpty()
-            ? new Left($this->value)
-            : new Right(call_user_func($right));
+        return $this->isSome()
+            ? Either::left($this->value)
+            : Either::right(call_user_func($right));
     }
 
     /**
@@ -400,8 +394,8 @@ abstract class Option
      */
     public function toRight(callable $left): Either
     {
-        return !$this->isEmpty()
-            ? new Right($this->value)
-            : new Left(call_user_func($left));
+        return $this->isSome()
+            ? Either::right($this->value)
+            : Either::left(call_user_func($left));
     }
 }

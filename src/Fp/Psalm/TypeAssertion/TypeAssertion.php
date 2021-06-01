@@ -18,7 +18,7 @@ final class TypeAssertion
      * For example Either<L, R> to Left<L> | Right<R>
      * or Option<T> to None | Some<T>.
      *
-     * @param non-empty-array<string> $assertion_methods
+     * @psalm-param non-empty-array<string> $assertion_methods
      */
     public static function changeTypeAfterAssertionCall(
         AfterMethodCallAnalysisEvent $event,
@@ -42,8 +42,8 @@ final class TypeAssertion
     }
 
     /**
-     * @param non-empty-array<string> $assertion_methods
-     * @return Option<Node\Expr\MethodCall>
+     * @psalm-param non-empty-array<string> $assertion_methods
+     * @psalm-return Option<Node\Expr\MethodCall>
      */
     private static function getAssertionMethodCall(Node\Expr $expr, array $assertion_methods): Option
     {
@@ -60,7 +60,7 @@ final class TypeAssertion
     }
 
     /**
-     * @return Option<string>
+     * @psalm-return Option<string>
      */
     private static function getVariableName(Node\Expr\MethodCall $method_call): Option
     {

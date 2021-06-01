@@ -34,7 +34,7 @@ final class EitherToUnion implements PseudoAdtToUnion
     }
 
     /**
-     * @return Option<EitherTypeParams>
+     * @psalm-return Option<EitherTypeParams>
      */
     private static function getEitherTypeParams(Type\Atomic\TGenericObject $generic_object): Option
     {

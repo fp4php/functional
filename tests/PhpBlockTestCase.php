@@ -17,7 +17,6 @@ use function Fp\Collection\reduce;
 use function Fp\Evidence\proveListOfScalar;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
-use function Fp\Evidence\proveTrue;
 use function Fp\Json\jsonSearch;
 use function Symfony\Component\String\u;
 

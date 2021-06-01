@@ -54,7 +54,7 @@ final class ProveTrueExpressionAnalyser implements AfterExpressionAnalysisInterf
     }
 
     /**
-     * @return Option<array<array-key, Node\Arg>>
+     * @psalm-return Option<array<array-key, Node\Arg>>
      */
     private static function getProveTrueArgsFromYield(Node\Expr $expr): Option
     {

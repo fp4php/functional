@@ -12,7 +12,7 @@ use Fp\Functional\Option\Option;
 interface PseudoAdtToUnion
 {
     /**
-     * @return Option<Type\Union>
+     * @psalm-return Option<Type\Union>
      */
     public function getUnion(NodeTypeProvider $type_provider, Node\Expr\MethodCall $from_assertion_method): Option;
 }

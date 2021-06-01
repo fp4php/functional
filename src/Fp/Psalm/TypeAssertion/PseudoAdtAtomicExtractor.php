@@ -21,8 +21,8 @@ use function Fp\Evidence\proveTrue;
 final class PseudoAdtAtomicExtractor
 {
     /**
-     * @param NodeWithType $node
-     * @return Option<Type\Atomic\TGenericObject>
+     * @psalm-param NodeWithType $node
+     * @psalm-return Option<Type\Atomic\TGenericObject>
      */
     public static function extract(Node $node, NodeTypeProvider $provider, string $adtClass): Option
     {
