@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
+use Fp\Psalm\Hooks\EitherAssertionAnalysis;
 use Fp\Psalm\Hooks\EitherGetOrElseMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\OptionGetOrElseMethodReturnTypeProvider;
+use Fp\Psalm\Hooks\OptionAssertionAnalysis;
 use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\PartitionFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\PluckFunctionReturnTypeProvider;
@@ -30,7 +32,9 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(PluckFunctionReturnTypeProvider::class);
 
         $register(OptionGetOrElseMethodReturnTypeProvider::class);
+        $register(OptionAssertionAnalysis::class);
         $register(EitherGetOrElseMethodReturnTypeProvider::class);
+        $register(EitherAssertionAnalysis::class);
 
         $register(ProveTrueExpressionAnalyser::class);
     }
