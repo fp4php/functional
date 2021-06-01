@@ -59,6 +59,7 @@ final class ProveListTest extends TestCase
 
     public function testProveListOfScalar(): void
     {
+        $this->assertNull(proveListOfScalar('', 'string')->get());
         $this->assertEquals(['1', ''], proveListOfScalar(['1', ''], 'string')->get());
         $this->assertEquals(['1', '2'], proveListOfScalar(['1', '2'], 'non-empty-string')->get());
         $this->assertEquals([1, 2], proveListOfScalar([1, 2], 'int')->get());

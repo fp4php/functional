@@ -37,12 +37,10 @@ abstract class Either
             return $this->value;
         }
 
-        /** @psalm-var F $default */
-        $default = is_callable($fallback)
+        /** @psalm-var F */
+        return is_callable($fallback)
             ? call_user_func($fallback)
             : $fallback;
-
-        return $default;
     }
 
     /**
@@ -91,10 +89,7 @@ abstract class Either
         if ($this->isRight()) {
             return call_user_func($ifRight, $this->value);
         } else {
-            /**
-             * @var Left<L, R> $this
-             */
-
+            /** @var Left<L, R> $this */
             return call_user_func($ifLeft, $this->value);
         }
     }
