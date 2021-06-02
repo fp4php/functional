@@ -82,9 +82,9 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         return Option::do(function() use ($event) {
             $call_args = $event->getCallArgs();
 
-            // $preserveKeys true by default
+            // $preserveKeys false by default
             if (3 !== count($call_args)) {
-                return true;
+                return false;
             }
 
             $preserve_keys_type = yield Option::fromNullable(

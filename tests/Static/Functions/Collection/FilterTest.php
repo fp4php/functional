@@ -22,7 +22,7 @@ final class FilterTest extends PhpBlockTestCase
             $result = filter(
                 getCollection(),
                 fn(int $v, string $k) => true,
-                true
+                preserveKeys: true
             );
         ';
 
@@ -46,7 +46,7 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, 'array<string, int>');
+        $this->assertBlockTypes($phpBlock, 'list<int>');
     }
 
     public function testReconciliationWithoutPreservingKeys(): void
@@ -91,7 +91,7 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, 'array<string, array{name: string, postcode: int}>');
+        $this->assertBlockTypes($phpBlock, 'list<array{name: string, postcode: int}>');
     }
 
     public function testReconciliationWithPsalmAssert(): void
@@ -122,6 +122,6 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, 'array<string, array{name: string, postcode: int}>');
+        $this->assertBlockTypes($phpBlock, 'list<array{name: string, postcode: int}>');
     }
 }
