@@ -89,7 +89,7 @@ abstract class Either
         if ($this->isRight()) {
             return call_user_func($ifRight, $this->value);
         } else {
-            /** @var Left<L, R> $this */
+            /** @var Left<L> $this */
             return call_user_func($ifLeft, $this->value);
         }
     }
