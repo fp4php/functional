@@ -69,6 +69,9 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         ]);
     }
 
+    /**
+     * @psalm-return Option<Type\Union>
+     */
     private static function getReturnType(FunctionReturnTypeProviderEvent $event, RefinementResult $result): Option
     {
         $call_args = $event->getCallArgs();
