@@ -8,7 +8,7 @@ use Tests\PhpBlockTestCase;
 
 final class FilterTest extends PhpBlockTestCase
 {
-    public function testWithArray(): void
+    public function testPreserveKeysTrue(): void
     {
         $phpBlock = /** @lang InjectablePHP */
             '
@@ -22,14 +22,76 @@ final class FilterTest extends PhpBlockTestCase
             $result = filter(
                 getCollection(),
                 fn(int $v, string $k) => true,
-                true
+                preserveKeys: true
             );
         ';
 
         $this->assertBlockTypes($phpBlock, 'array<string, int>');
     }
 
-    public function testReconciliationWithArray(): void
+    public function testPreserveKeysExplicitFalse(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */
+            '
+            use function Fp\Collection\filter;
+
+            /** 
+             * @psalm-return array<string, int> 
+             */
+            function getCollection(): array { return []; }
+
+            $result = filter(
+                getCollection(),
+                fn(int $v, string $k) => true,
+                preserveKeys: false
+            );
+        ';
+
+        $this->assertBlockTypes($phpBlock, 'list<int>');
+    }
+
+    public function testPreserveKeysImplicitFalse(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */
+            '
+            use function Fp\Collection\filter;
+
+            /** 
+             * @psalm-return array<string, int> 
+             */
+            function getCollection(): array { return []; }
+
+            $result = filter(
+                getCollection(),
+                fn(int $v, string $k) => true,
+            );
+        ';
+
+        $this->assertBlockTypes($phpBlock, 'list<int>');
+    }
+
+    public function testPreserveKeysIsNonLiteralBool(): void
+    {
+        $phpBlock = /** @lang InjectablePHP */
+            '
+            use function Fp\Collection\filter;
+
+            /** 
+             * @psalm-return array<string, int> 
+             */
+            function getCollection(): array { return []; }
+
+            $result = filter(
+                getCollection(),
+                fn(int $v, string $k) => true,
+                preserveKeys: (bool) rand(0, 1)
+            );
+        ';
+
+        $this->assertBlockTypes($phpBlock, 'array<string, int>');
+    }
+
+    public function testRefineNotNull(): void
     {
         $phpBlock = /** @lang InjectablePHP */
             '
@@ -46,31 +108,10 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, 'array<string, int>');
-    }
-
-    public function testReconciliationWithoutPreservingKeys(): void
-    {
-        $phpBlock = /** @lang InjectablePHP */
-            '
-            use function Fp\Collection\filter;
-
-            /** 
-             * @psalm-return array<string, null|int> 
-             */
-            function getCollection(): array { return []; }
-
-            $result = filter(
-                getCollection(),
-                fn(null|int $v) => null !== $v,
-                preserveKeys: false,
-            );
-        ';
-
         $this->assertBlockTypes($phpBlock, 'list<int>');
     }
 
-    public function testReconciliationWithShapes(): void
+    public function testRefineShapeType(): void
     {
         $phpBlock = /** @lang InjectablePHP */
             '
@@ -91,10 +132,10 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, 'array<string, array{name: string, postcode: int}>');
+        $this->assertBlockTypes($phpBlock, 'list<array{name: string, postcode: int}>');
     }
 
-    public function testReconciliationWithPsalmAssert(): void
+    public function testRefineShapeWithPsalmAssert(): void
     {
         $phpBlock = /** @lang InjectablePHP */
             '
@@ -122,6 +163,6 @@ final class FilterTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, 'array<string, array{name: string, postcode: int}>');
+        $this->assertBlockTypes($phpBlock, 'list<array{name: string, postcode: int}>');
     }
 }

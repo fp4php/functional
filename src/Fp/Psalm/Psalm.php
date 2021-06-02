@@ -9,12 +9,14 @@ use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
+use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
 
 use function Fp\Cast\asList;
 use function Fp\Collection\head;
+use function Fp\Evidence\proveTrue;
 
 /**
  * @internal
@@ -27,6 +29,19 @@ class Psalm
     public static function getArgType(Arg $arg, StatementsSource $source): Option
     {
         return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
+    }
+
+    /**
+     * @psalm-return Option<Atomic>
+     */
+    public static function getSingeAtomic(Union $union): Option
+    {
+        return Option::do(function() use ($union) {
+            $atomics = asList($union->getAtomicTypes());
+            yield proveTrue(1 === count($atomics));
+
+            return $atomics[0];
+        });
     }
 
     /**
