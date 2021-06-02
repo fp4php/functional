@@ -48,14 +48,14 @@ final class RefineByPredicate
                 predicate_arg_name: $predicate_arg_name,
             );
 
-            $refined_val_type = yield self::refine(
+            $refined_val_type = self::refine(
                 source: $context->source,
                 assertions: $assertions,
                 collection_type_param: $collection_val_type,
                 return_expr: $predicate_return_expr,
             );
 
-            return new RefinementResult($collection_key_type, $refined_val_type);
+            return new RefinementResult($collection_key_type, $refined_val_type->getOrElse($collection_val_type));
         });
     }
 

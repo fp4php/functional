@@ -47,11 +47,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
                 )
             );
 
-            return yield self::preserveKeys($event)
-                ->map(fn($preserve_keys) => match ($preserve_keys) {
-                    true => self::arrayType($result),
-                    false => self::listType($result),
-                });
+            return yield self::getReturnType($event, $result);
         });
 
         return $reconciled->get();
@@ -74,17 +70,14 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         ]);
     }
 
-    /**
-     * @psalm-return Option<bool>
-     */
-    private static function preserveKeys(FunctionReturnTypeProviderEvent $event): Option
+    private static function getReturnType(FunctionReturnTypeProviderEvent $event, RefinementResult $result): Option
     {
-        return Option::do(function() use ($event) {
+        return Option::do(function() use ($event, $result) {
             $call_args = $event->getCallArgs();
 
-            // $preserveKeys false by default
+            // $preserveKeys true by default
             if (3 !== count($call_args)) {
-                return false;
+                return self::listType($result);
             }
 
             $preserve_keys_type = yield Option::fromNullable(
@@ -98,11 +91,9 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
             yield proveTrue(1 === count($atomics));
 
             return yield firstOf($atomics, Type\Atomic\TBool::class)
-                ->flatMap(fn($bool) => match ($bool::class) {
-                    Type\Atomic\TTrue::class => Option::some(true),
-                    Type\Atomic\TFalse::class => Option::some(false),
-                    default => Option::none(), // non literal bool
-                });
+                ->map(fn($preserve_keys) => $preserve_keys::class === Type\Atomic\TFalse::class
+                    ? self::listType($result)
+                    : self::arrayType($result));
         });
     }
 }
