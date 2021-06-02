@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hooks;
 
+use Fp\Psalm\Psalm;
 use Psalm\Type;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -13,8 +14,6 @@ use Fp\Psalm\TypeRefinement\RefinementContext;
 use Fp\Psalm\TypeRefinement\RefinementResult;
 use Fp\Functional\Option\Option;
 
-use function Fp\Cast\asList;
-use function Fp\Collection\firstOf;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
@@ -47,11 +46,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
                 )
             );
 
-            return yield self::preserveKeys($event)
-                ->map(fn($preserve_keys) => match ($preserve_keys) {
-                    true => self::arrayType($result),
-                    false => self::listType($result),
-                });
+            return yield self::getReturnType($event, $result);
         });
 
         return $reconciled->get();
@@ -75,34 +70,21 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
     }
 
     /**
-     * @psalm-return Option<bool>
+     * @psalm-return Option<Type\Union>
      */
-    private static function preserveKeys(FunctionReturnTypeProviderEvent $event): Option
+    private static function getReturnType(FunctionReturnTypeProviderEvent $event, RefinementResult $result): Option
     {
-        return Option::do(function() use ($event) {
-            $call_args = $event->getCallArgs();
+        $call_args = $event->getCallArgs();
 
-            // $preserveKeys true by default
-            if (3 !== count($call_args)) {
-                return true;
-            }
+        // $preserveKeys true by default
+        if (3 !== count($call_args)) {
+            return Option::some(self::listType($result));
+        }
 
-            $preserve_keys_type = yield Option::fromNullable(
-                $event
-                    ->getStatementsSource()
-                    ->getNodeTypeProvider()
-                    ->getType($call_args[2]->value)
-            );
-
-            $atomics = asList($preserve_keys_type->getAtomicTypes());
-            yield proveTrue(1 === count($atomics));
-
-            return yield firstOf($atomics, Type\Atomic\TBool::class)
-                ->flatMap(fn($bool) => match ($bool::class) {
-                    Type\Atomic\TTrue::class => Option::some(true),
-                    Type\Atomic\TFalse::class => Option::some(false),
-                    default => Option::none(), // non literal bool
-                });
-        });
+        return Psalm::getArgType($call_args[2], $event->getStatementsSource())
+            ->flatMap(fn($type) => Psalm::getSingeAtomic($type))
+            ->map(fn($preserve_keys) => $preserve_keys::class === Type\Atomic\TFalse::class
+                ? self::listType($result)
+                : self::arrayType($result));
     }
 }
