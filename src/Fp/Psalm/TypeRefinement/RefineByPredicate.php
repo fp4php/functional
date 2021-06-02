@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeRefinement;
 
+use Fp\Psalm\Psalm;
 use PhpParser\Node;
 use Psalm\Type;
 use Fp\Functional\Option\Option;
@@ -13,7 +14,7 @@ use Psalm\Internal\Algebra\FormulaGenerator;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\NodeTypeProvider;
 use Psalm\Type\Reconciler;
-use function Fp\Cast\asList;
+
 use function Fp\Collection\firstOf;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
@@ -28,7 +29,7 @@ final class RefineByPredicate
     private const COLLECTION_TYPE = '$collection_type';
 
     /**
-     * @return Option<RefinementResult>
+     * @psalm-return Option<RefinementResult>
      */
     public static function for(RefinementContext $context): Option
     {
@@ -62,29 +63,24 @@ final class RefineByPredicate
     /**
      * Extracts collection type parameter that going to be refined.
      *
-     * @return Option<CollectionTypeParameters>
+     * @psalm-return Option<CollectionTypeParameters>
      */
     private static function getCollectionTypeParameters(Node\Arg $collection_arg, NodeTypeProvider $provider): Option
     {
-        return Option::do(function() use ($collection_arg, $provider) {
-            $collection_type = yield Option::fromNullable($provider->getType($collection_arg->value));
-
-            $atomics = asList($collection_type->getAtomicTypes());
-            yield proveTrue(1 === count($atomics));
-
-            return yield match (true) {
-                $atomics[0] instanceof Type\Atomic\TList => Option::fromNullable([Type::getInt(), $atomics[0]->type_param]),
-                $atomics[0] instanceof Type\Atomic\TArray => Option::fromNullable($atomics[0]->type_params),
-                $atomics[0] instanceof Type\Atomic\TIterable => Option::fromNullable($atomics[0]->type_params),
+        return Option::fromNullable($provider->getType($collection_arg->value))
+            ->flatMap(fn($type) => Psalm::getSingeAtomic($type))
+            ->flatMap(fn($atomic) => match (true) {
+                $atomic instanceof Type\Atomic\TList => Option::some([Type::getInt(), $atomic->type_param]),
+                $atomic instanceof Type\Atomic\TArray => Option::some($atomic->type_params),
+                $atomic instanceof Type\Atomic\TIterable => Option::some($atomic->type_params),
                 default => Option::none(),
-            };
-        });
+            });
     }
 
     /**
      * Returns function if argument is Closure or ArrowFunction.
      *
-     * @return Option<Node\Expr\Closure | Node\Expr\ArrowFunction>
+     * @psalm-return Option<Node\Expr\Closure | Node\Expr\ArrowFunction>
      */
     private static function getPredicateFunction(Node\Arg $predicate_arg): Option
     {
@@ -101,7 +97,7 @@ final class RefineByPredicate
     /**
      * Returns argument name of $predicate that going to be refined.
      *
-     * @return Option<non-empty-string>
+     * @psalm-return Option<non-empty-string>
      */
     private static function getPredicateArgumentName(Node\Expr\Closure|Node\Expr\ArrowFunction $predicate): Option
     {
@@ -119,7 +115,7 @@ final class RefineByPredicate
      * Returns single return expression of $predicate if present.
      * Collection type parameter can be refined only for function with single return.
      *
-     * @return Option<Node\Expr>
+     * @psalm-return Option<Node\Expr>
      */
     private static function getPredicateSingleReturn(Node\Expr\Closure|Node\Expr\ArrowFunction $predicate): Option
     {
@@ -135,7 +131,7 @@ final class RefineByPredicate
     /**
      * Collects assertion for $predicate_arg_name from $return_expr.
      *
-     * @return PsalmAssertions
+     * @psalm-return PsalmAssertions
      */
     private static function collectAssertions(RefinementContext $context, Node\Expr $return_expr, string $predicate_arg_name): array
     {
@@ -166,8 +162,8 @@ final class RefineByPredicate
     /**
      * Reconciles $collection_type_param with $assertions using internal Psalm api.
      *
-     * @param PsalmAssertions $assertions
-     * @return Option<Type\Union>
+     * @psalm-param PsalmAssertions $assertions
+     * @psalm-return Option<Type\Union>
      *
      * @psalm-suppress InternalMethod
      */
