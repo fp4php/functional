@@ -15,14 +15,12 @@ use Fp\Functional\Semigroup\Semigroup;
 /**
  * @template-covariant E
  * @template-covariant A
- * @implements Semigroup<Validated<E, A>>
  * @psalm-immutable
  */
-abstract class Validated implements Semigroup
+abstract class Validated
 {
     /**
      * @psalm-template EE
-     * @psalm-template AA
      *
      * @psalm-param EE $value
      *
@@ -31,11 +29,10 @@ abstract class Validated implements Semigroup
      */
     public static function invalid(mixed $value): Invalid
     {
-        return new Invalid([$value]);
+        return new Invalid($value);
     }
 
     /**
-     * @psalm-template EE
      * @psalm-template AA
      *
      * @psalm-param Semigroup<AA> $semi
@@ -43,23 +40,15 @@ abstract class Validated implements Semigroup
      * @psalm-return Valid<AA>
      * @psalm-pure
      */
-    public static function valid(Semigroup $semi): Valid
+    public static function valid(mixed $value): Valid
     {
-        return new Valid($semi);
+        return new Valid($value);
     }
 
     /**
-     * @psalm-return non-empty-list<E>|A
+     * @psalm-return E|A
      */
     abstract public function get(): mixed;
-
-    /**
-     * @return Validated<E, A>
-     */
-    public function extract(): Validated
-    {
-        return $this;
-    }
 
     /**
      * @psalm-assert-if-true Valid<A> $this
@@ -78,35 +67,9 @@ abstract class Validated implements Semigroup
     }
 
     /**
-     * @psalm-param Validated<E, A> $rhs
-     * @psalm-return Validated<E, A>
-     */
-    public function combineOne(mixed $rhs): Validated
-    {
-        if ($this->isValid() && $rhs->isValid()) {
-            /**
-             * @var Valid<A> $this
-             */
-            return new Valid($this->combineOneSemi());
-            return new Valid($rhs->semi, $this->semi->combineOne($rhs->value));
-        }
-
-        if ($this->isInvalid() && $rhs->isInvalid()) {
-            /**
-             * @var Invalid<E> $this
-             */
-            return new Invalid($this->semi->combineOne($rhs->value));
-        }
-
-        return $rhs->isInvalid() ? $rhs : $this;
-    }
-
-
-    /**
      * @psalm-template EE
      * @psalm-template AA
      *
-     * @psalm-param Semigroup<AA> $semi
      * @psalm-param EE $left
      * @psalm-param AA $right
      *
@@ -115,14 +78,13 @@ abstract class Validated implements Semigroup
      * @psalm-pure
      */
     public static function cond(
-        Semigroup $semi,
         bool $condition,
         mixed $valid,
         mixed $invalid,
     ): Validated
     {
         return $condition
-            ? self::valid($semi, $valid)
+            ? self::valid($valid)
             : self::invalid($invalid);
     }
 
@@ -130,10 +92,10 @@ abstract class Validated implements Semigroup
     /**
      * @psalm-template B
      *
-     * @param callable(A): B $ifValid
-     * @param callable(non-empty-list<E>): B $ifInvalid
+     * @psalm-param callable(A): B $ifValid
+     * @psalm-param callable(E): B $ifInvalid
      *
-     * @return B
+     * @psalm-return B
      */
     public function fold(callable $ifValid, callable $ifInvalid): mixed
     {
@@ -142,14 +104,14 @@ abstract class Validated implements Semigroup
         }
 
         /**
-         * @var Invalid<E, A> $this
+         * @var Invalid<E> $this
          */
 
         return call_user_func($ifInvalid, $this->value);
     }
 
     /**
-     * @psalm-return Either<non-empty-list<E>, A>
+     * @psalm-return Either<E, A>
      */
     public function toEither(): Either
     {

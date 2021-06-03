@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Validated;
 
-use Fp\Functional\Semigroup\Semigroup;
-
 /**
  * @template A
  * @psalm-immutable
@@ -15,9 +13,8 @@ final class Valid extends Validated
 {
     /**
      * @psalm-param A $value
-     * @psalm-param Semigroup<A> $semi
      */
-    public function __construct(protected Semigroup $semi)
+    public function __construct(protected mixed $value)
     {
     }
 
@@ -26,6 +23,6 @@ final class Valid extends Validated
      */
     public function get(): mixed
     {
-        return $this->semi->get();
+        return $this->value;
     }
 }
