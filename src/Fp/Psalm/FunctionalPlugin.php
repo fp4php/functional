@@ -13,6 +13,7 @@ use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\PartitionFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\PluckFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\ProveTrueExpressionAnalyser;
+use Fp\Psalm\Hooks\ValidatedAssertionAnalysis;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
@@ -32,9 +33,11 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(PluckFunctionReturnTypeProvider::class);
 
         $register(OptionGetOrElseMethodReturnTypeProvider::class);
-        $register(OptionAssertionAnalysis::class);
         $register(EitherGetOrElseMethodReturnTypeProvider::class);
+
+        $register(OptionAssertionAnalysis::class);
         $register(EitherAssertionAnalysis::class);
+        $register(ValidatedAssertionAnalysis::class);
 
         $register(ProveTrueExpressionAnalyser::class);
     }
