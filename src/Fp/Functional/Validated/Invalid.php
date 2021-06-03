@@ -21,7 +21,7 @@ final class Invalid extends Validated
     /**
      * @psalm-return E
      */
-    public function get(): array
+    public function get(): mixed
     {
         return $this->value;
     }

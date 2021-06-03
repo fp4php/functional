@@ -20,7 +20,7 @@ class LhsSemigroup extends Semigroup
      *
      * @psalm-return T
      */
-    public function combine(mixed $lhs, mixed $rhs): array
+    public function combine(mixed $lhs, mixed $rhs): mixed
     {
         return $lhs;
     }

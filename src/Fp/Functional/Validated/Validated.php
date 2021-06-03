@@ -124,9 +124,7 @@ abstract class Validated
          * @var Invalid<E> $this
          */
 
-        $value = $this->value;
-
-        return new Left($value);
+        return new Left($this->value);
     }
 
     /**

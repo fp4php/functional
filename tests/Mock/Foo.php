@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Mock;
 
+/**
+ * @internal
+ */
 class Foo {
     public function __construct(public int $a)
     {

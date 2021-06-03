@@ -76,6 +76,44 @@ abstract class Semigroup
     }
 
     /**
+     * @template T
+     *
+     * @psalm-param 'float'|'int'|'string'|'bool'|'scalar'|class-string<T> $of
+     * @psalm-return (
+     *     $of is 'float'      ? Semigroup<float>  : (
+     *     $of is 'int'        ? Semigroup<int>    : (
+     *     $of is 'string'     ? Semigroup<string> : (
+     *     $of is 'bool'       ? Semigroup<bool>   : (
+     *     $of is 'scalar'     ? Semigroup<scalar> : (
+     *     $of is class-string ? Semigroup<T>      : (
+     *     Semigroup
+     * )))))))
+     */
+    public static function lhsInstance(string $of): Semigroup
+    {
+        return new LhsSemigroup();
+    }
+
+    /**
+     * @template T
+     *
+     * @psalm-param 'float'|'int'|'string'|'bool'|'scalar'|class-string<T> $of
+     * @psalm-return (
+     *     $of is 'float'      ? Semigroup<float>  : (
+     *     $of is 'int'        ? Semigroup<int>    : (
+     *     $of is 'string'     ? Semigroup<string> : (
+     *     $of is 'bool'       ? Semigroup<bool>   : (
+     *     $of is 'scalar'     ? Semigroup<scalar> : (
+     *     $of is class-string ? Semigroup<T>      : (
+     *     Semigroup
+     * )))))))
+     */
+    public static function rhsInstance(string $of): Semigroup
+    {
+        return new RhsSemigroup();
+    }
+
+    /**
      * @template AA
      * @template EE
      *

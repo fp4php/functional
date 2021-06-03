@@ -7,6 +7,7 @@ namespace Tests\Mock;
 use Iterator;
 
 /**
+ * @internal
  * @implements Iterator<int, int>
  */
 class FooIterable implements Iterator
