@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Either;
 
 use Fp\Functional\Option\Option;
+use Fp\Functional\Validated\Validated;
 use Generator;
 use Throwable;
 
@@ -269,6 +270,30 @@ abstract class Either
     public function toOption(): Option
     {
         return $this->isRight() ? Option::some($this->value) : Option::none();
+    }
+
+    /**
+     * Convert Either to Validated
+     *
+     * REPL:
+     * >>> Either::right(1)->toValidated()
+     * => Valid(1)
+     * >>> Either::left('error')->toValidated()
+     * => Invalid('error')
+     *
+     * @psalm-return Validated<L, R>
+     */
+    public function toValidated(): Validated
+    {
+        if ($this->isRight()) {
+            return Validated::valid($this->value);
+        }
+
+        /**
+         * @var Left<L> $this
+         */
+
+        return Validated::invalid($this->value);
     }
 
     /**
