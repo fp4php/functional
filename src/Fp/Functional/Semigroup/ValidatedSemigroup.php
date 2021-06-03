@@ -50,6 +50,7 @@ class ValidatedSemigroup extends Semigroup
         if ($lhs->isInvalid() && $rhs->isInvalid()) {
             /**
              * @var Invalid<E> $lhs
+             * @var Invalid<E> $rhs
              */
             return Validated::invalid($this->invalidSemigroup->combine(
                 $lhs->get(),
