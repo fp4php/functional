@@ -4,31 +4,28 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Validated;
 
+use Fp\Functional\Semigroup\Semigroup;
+
 /**
- * @template-covariant E
- * @template-covariant A
+ * @template A
  * @psalm-immutable
- * @extends Validated<E, A>
+ * @extends Validated<empty, A>
  */
 final class Valid extends Validated
 {
     /**
-     * @var non-empty-list<A>
+     * @psalm-param A $value
+     * @psalm-param Semigroup<A> $semi
      */
-    protected array $value;
-
-    /**
-     * @psalm-param non-empty-list<A> $value
-     */
-    public function __construct(array $value) {
-        $this->value = $value;
+    public function __construct(protected Semigroup $semi)
+    {
     }
 
     /**
-     * @psalm-return non-empty-list<A>
+     * @psalm-return A
      */
-    public function get(): array
+    public function get(): mixed
     {
-        return $this->value;
+        return $this->semi->get();
     }
 }

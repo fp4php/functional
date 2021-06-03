@@ -10,13 +10,15 @@ use Fp\Functional\Either\Right;
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
+use Fp\Functional\Semigroup\Semigroup;
 
 /**
  * @template-covariant E
  * @template-covariant A
+ * @implements Semigroup<Validated<E, A>>
  * @psalm-immutable
  */
-abstract class Validated
+abstract class Validated implements Semigroup
 {
     /**
      * @psalm-template EE
@@ -24,7 +26,7 @@ abstract class Validated
      *
      * @psalm-param EE $value
      *
-     * @psalm-return Invalid<EE, AA>
+     * @psalm-return Invalid<EE>
      * @psalm-pure
      */
     public static function invalid(mixed $value): Invalid
@@ -36,24 +38,31 @@ abstract class Validated
      * @psalm-template EE
      * @psalm-template AA
      *
-     * @psalm-param AA $value
+     * @psalm-param Semigroup<AA> $semi
      *
-     * @psalm-return Valid<EE, AA>
+     * @psalm-return Valid<AA>
      * @psalm-pure
      */
-    public static function valid(mixed $value): Valid
+    public static function valid(Semigroup $semi): Valid
     {
-        return new Valid([$value]);
+        return new Valid($semi);
     }
 
     /**
-     * @psalm-return non-empty-list<E>|non-empty-list<A>
+     * @psalm-return non-empty-list<E>|A
      */
-    abstract public function get(): array;
-
+    abstract public function get(): mixed;
 
     /**
-     * @psalm-assert-if-true Valid<E, A> $this
+     * @return Validated<E, A>
+     */
+    public function extract(): Validated
+    {
+        return $this;
+    }
+
+    /**
+     * @psalm-assert-if-true Valid<A> $this
      */
     public function isValid(): bool
     {
@@ -61,7 +70,7 @@ abstract class Validated
     }
 
     /**
-     * @psalm-assert-if-true Invalid<E, A> $this
+     * @psalm-assert-if-true Invalid<E> $this
      */
     public function isInvalid(): bool
     {
@@ -69,47 +78,51 @@ abstract class Validated
     }
 
     /**
-     * @psalm-suppress all
-     *
-     * @psalm-template EE
-     * @psalm-template AA
-     *
-     * @psalm-param Validated<EE, AA> $that
-     *
-     * @psalm-return Validated<E|EE, A|AA>
+     * @psalm-param Validated<E, A> $rhs
+     * @psalm-return Validated<E, A>
      */
-    public function combine(Validated $that): Validated
+    public function combineOne(mixed $rhs): Validated
     {
-        if ($this->isValid() && $that->isValid()) {
-            return new Valid(array_merge($this->value, $that->value));
+        if ($this->isValid() && $rhs->isValid()) {
+            /**
+             * @var Valid<A> $this
+             */
+            return new Valid($this->combineOneSemi());
+            return new Valid($rhs->semi, $this->semi->combineOne($rhs->value));
         }
 
-        if ($this->isInvalid() && $that->isInvalid()) {
-            return new Invalid(array_merge($this->value, $that->value));
+        if ($this->isInvalid() && $rhs->isInvalid()) {
+            /**
+             * @var Invalid<E> $this
+             */
+            return new Invalid($this->semi->combineOne($rhs->value));
         }
 
-        return $that->isInvalid()
-            ? $that
-            : $this;
+        return $rhs->isInvalid() ? $rhs : $this;
     }
 
 
     /**
      * @psalm-template EE
      * @psalm-template AA
+     *
+     * @psalm-param Semigroup<AA> $semi
      * @psalm-param EE $left
      * @psalm-param AA $right
+     *
      * @psalm-return Validated<EE, AA>
+     *
      * @psalm-pure
      */
     public static function cond(
+        Semigroup $semi,
         bool $condition,
         mixed $valid,
         mixed $invalid,
     ): Validated
     {
         return $condition
-            ? self::valid($valid)
+            ? self::valid($semi, $valid)
             : self::invalid($invalid);
     }
 
@@ -117,7 +130,7 @@ abstract class Validated
     /**
      * @psalm-template B
      *
-     * @param callable(non-empty-list<A>): B $ifValid
+     * @param callable(A): B $ifValid
      * @param callable(non-empty-list<E>): B $ifInvalid
      *
      * @return B
@@ -136,7 +149,7 @@ abstract class Validated
     }
 
     /**
-     * @psalm-return Either<non-empty-list<E>, non-empty-list<A>>
+     * @psalm-return Either<non-empty-list<E>, A>
      */
     public function toEither(): Either
     {
@@ -146,7 +159,7 @@ abstract class Validated
         }
 
         /**
-         * @var Invalid<E, A> $this
+         * @var Invalid<E> $this
          */
 
         $value = $this->value;
@@ -155,7 +168,7 @@ abstract class Validated
     }
 
     /**
-     * @psalm-return Option<non-empty-list<A>>
+     * @psalm-return Option<A>
      */
     public function toOption(): Option
     {
@@ -163,5 +176,4 @@ abstract class Validated
             ? new Some($this->value)
             : new None();
     }
-
 }
