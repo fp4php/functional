@@ -12,6 +12,9 @@ namespace Fp\Functional\Monoid;
  */
 class ListMonoid extends Monoid
 {
+    /**
+     * @psalm-return list<TV>
+     */
     public function empty(): array
     {
         return [];
