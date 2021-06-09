@@ -10,8 +10,7 @@
     ],
     "license": "MIT",
     "scripts": {
-        "test": "vendor/bin/phpunit",
-        "psalm": "vendor/bin/psalm --clear-cache && vendor/bin/psalm --output-format=github --shepherd"
+        "test": "vendor/bin/phpunit"
     },
     "require": {
         "php": "^8.0",

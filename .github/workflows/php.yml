@@ -42,8 +42,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
+      - name: Composer dump
+        run: composer dump-autoload
+
       - name: Run psalm validation
-        run: composer run-script psalm
+        run: vendor/bin/psalm --output-format=github --shepherd
 
   test:
     runs-on: ubuntu-latest
