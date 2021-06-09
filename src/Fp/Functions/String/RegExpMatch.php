@@ -19,7 +19,7 @@ use function Symfony\Component\String\u;
  * => Some('c')
  *
  * @psalm-param positive-int|0 $capturingGroup
- * @psalm-return Option<string>
+ * @psalm-return Option<non-empty-string>
  */
 function regExpMatch(string $expr, string $text, int $capturingGroup = 0): Option
 {

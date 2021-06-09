@@ -89,13 +89,11 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  */
 function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false, bool $invariant = false): array
 {
-    /** @var array<TK, TVO> $instances */
-    $instances = filter(
+    /** @var array<TK, TVO> */
+    return filter(
         $collection,
         fn(mixed $v): bool => of($v, $fqcn, $invariant),
         $preserveKeys
     );
-
-    return $instances;
 }
 
