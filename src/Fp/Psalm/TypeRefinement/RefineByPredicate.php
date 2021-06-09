@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeRefinement;
 
-use Fp\Psalm\Psalm;
 use PhpParser\Node;
 use Psalm\Type;
 use Fp\Functional\Option\Option;
@@ -12,7 +11,6 @@ use Psalm\CodeLocation;
 use Psalm\Internal\Algebra;
 use Psalm\Internal\Algebra\FormulaGenerator;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
-use Psalm\NodeTypeProvider;
 use Psalm\Type\Reconciler;
 
 use function Fp\Collection\firstOf;
@@ -31,14 +29,9 @@ final class RefineByPredicate
     /**
      * @psalm-return Option<RefinementResult>
      */
-    public static function for(RefinementContext $context): Option
+    public static function for(RefinementContext $context, CollectionTypeParams $collection_params): Option
     {
-        return Option::do(function() use ($context) {
-            [$collection_key_type, $collection_val_type] = yield self::getCollectionTypeParameters(
-                collection_arg: $context->collection_arg,
-                provider: $context->provider
-            );
-
+        return Option::do(function() use ($context, $collection_params) {
             $predicate_function = yield self::getPredicateFunction($context->predicate_arg);
             $predicate_arg_name = yield self::getPredicateArgumentName($predicate_function);
             $predicate_return_expr = yield self::getPredicateSingleReturn($predicate_function);
@@ -52,29 +45,15 @@ final class RefineByPredicate
             $refined_val_type = self::refine(
                 source: $context->source,
                 assertions: $assertions,
-                collection_type_param: $collection_val_type,
+                collection_type_param: $collection_params->val_type,
                 return_expr: $predicate_return_expr,
             );
 
-            return new RefinementResult($collection_key_type, $refined_val_type->getOrElse($collection_val_type));
+            return new RefinementResult(
+                $collection_params->key_type,
+                $refined_val_type->getOrElse($collection_params->val_type),
+            );
         });
-    }
-
-    /**
-     * Extracts collection type parameter that going to be refined.
-     *
-     * @psalm-return Option<CollectionTypeParameters>
-     */
-    private static function getCollectionTypeParameters(Node\Arg $collection_arg, NodeTypeProvider $provider): Option
-    {
-        return Option::fromNullable($provider->getType($collection_arg->value))
-            ->flatMap(fn($type) => Psalm::getSingeAtomic($type))
-            ->flatMap(fn($atomic) => match (true) {
-                $atomic instanceof Type\Atomic\TList => Option::some([Type::getInt(), $atomic->type_param]),
-                $atomic instanceof Type\Atomic\TArray => Option::some($atomic->type_params),
-                $atomic instanceof Type\Atomic\TIterable => Option::some($atomic->type_params),
-                default => Option::none(),
-            });
     }
 
     /**

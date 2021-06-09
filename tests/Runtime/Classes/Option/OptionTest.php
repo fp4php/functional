@@ -135,4 +135,19 @@ final class OptionTest extends TestCase
         $this->assertInstanceOf(Left::class, Option::none()->toRight(fn() => 0));
         $this->assertEquals(0, Option::none()->toRight(fn() => 0)->get());
     }
+
+    public function testFilter(): void
+    {
+        $some = Option::some(42)
+            ->filter(fn(int $v) => $v >= 42)
+            ->get();
+
+        $this->assertEquals(42, $some);
+
+        $none = Option::some(42)
+            ->filter(fn(int $v) => $v > 42)
+            ->get();
+
+        $this->assertEquals(null, $none);
+    }
 }

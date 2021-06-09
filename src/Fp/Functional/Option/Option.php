@@ -119,6 +119,33 @@ abstract class Option
      * 1) Unwrap the box
      * 2) If the box is empty then do nothing
      * 3) Pass unwrapped value to callback
+     * 4) If callback return true, return Some<A>. Otherwise None.
+     *
+     * REPL:
+     * >>> $res1 = Option::fromNullable(42);
+     * => Some(42)
+     * >>> $res2 = $res1->filter(fn(int $i) => $i >= 42);
+     * => Some(42)
+     * >>> $res3 = $res2->filter(fn(int $i) => $i > 42);
+     * => None
+     *
+     * @param callable(A): bool $callback
+     * @return Option<A>
+     *
+     * todo: Remove suppression when https://github.com/vimeo/psalm/pull/5888 will be in stable release
+     * @psalm-suppress InvalidReturnType, InvalidReturnStatement, InvalidArgument
+     */
+    public function filter(callable $callback): Option
+    {
+        return $this->isSome() && call_user_func($callback, $this->value)
+            ? self::some($this->value)
+            : self::none();
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
      * 4) Replace old box with new one returned by callback
      *
      * REPL:
