@@ -7,6 +7,7 @@ namespace Fp\Psalm;
 use Fp\Psalm\Hooks\EitherAssertionAnalysis;
 use Fp\Psalm\Hooks\EitherGetOrElseMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\FilterFunctionReturnTypeProvider;
+use Fp\Psalm\Hooks\OptionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\OptionGetOrElseMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\OptionAssertionAnalysis;
 use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
@@ -31,6 +32,8 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(PartialFunctionReturnTypeProvider::class);
         $register(PartitionFunctionReturnTypeProvider::class);
         $register(PluckFunctionReturnTypeProvider::class);
+
+        $register(OptionFilterMethodReturnTypeProvider::class);
 
         $register(OptionGetOrElseMethodReturnTypeProvider::class);
         $register(EitherGetOrElseMethodReturnTypeProvider::class);
