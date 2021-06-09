@@ -84,7 +84,6 @@
             "src/Fp/Functions/Reflection/GetNamedTypes.php",
             "src/Fp/Functions/Reflection/GetReflectionClass.php",
             "src/Fp/Functions/Reflection/GetReflectionProperty.php",
-            "src/Fp/Functions/String/LastExploded.php",
             "src/Fp/Functions/String/RegExpMatch.php",
             "src/Fp/Functions/Id.php",
             "src/Fp/Functions/Of.php",

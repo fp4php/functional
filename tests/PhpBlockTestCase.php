@@ -49,7 +49,7 @@ abstract class PhpBlockTestCase extends TestCase
 
             $classMap = reindex(
                 $classes,
-                fn(string $fqcn) => lastExploded($fqcn, '\\')
+                fn(string $fqcn) => u($fqcn)->afterLast('\\')->toString()
             );
         }
 
