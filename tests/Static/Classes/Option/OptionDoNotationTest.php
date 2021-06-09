@@ -24,12 +24,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
                     return unit();
                 });
             ',
-            strtr(
-                'Option<Unit>',
-                [
-                    'Option' => Option::class,
-                    'Unit' => Unit::class,
-                ])
+            'Option<Unit>'
         );
 
         $this->assertBlockTypes(
@@ -47,12 +42,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
                     return unit();
                 });
             ',
-            strtr(
-                'Option<1|Unit>',
-                [
-                    'Option' => Option::class,
-                    'Unit' => Unit::class,
-                ])
+            'Option<1|Unit>'
         );
     }
 
@@ -72,11 +62,7 @@ final class OptionDoNotationTest extends PhpBlockTestCase
                     return $num + 32;
                 });
             ',
-            strtr(
-                'Option<positive-int>',
-                [
-                    'Option' => Option::class,
-                ])
+            'Option<positive-int>'
         );
     }
 }

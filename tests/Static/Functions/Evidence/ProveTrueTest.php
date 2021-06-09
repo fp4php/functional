@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Static\Functions\Evidence;
 
-use Fp\Functional\Either\Either;
-use Fp\Functional\Option\Option;
 use Tests\PhpBlockTestCase;
 
 final class ProveTrueTest extends PhpBlockTestCase
@@ -23,9 +21,7 @@ final class ProveTrueTest extends PhpBlockTestCase
                     return $number;
                 });
             ',
-            strtr('Option<int>', [
-                'Option' => Option::class,
-            ])
+            'Option<int>'
         );
 
         $this->assertBlockTypes(
@@ -39,9 +35,7 @@ final class ProveTrueTest extends PhpBlockTestCase
                     return $hasName["name"];
                 });
             ',
-            strtr('Option<string>', [
-                'Option' => Option::class,
-            ])
+            'Option<string>'
         );
 
         $this->assertBlockTypes(
@@ -55,9 +49,7 @@ final class ProveTrueTest extends PhpBlockTestCase
                     return $number;
                 });
             ',
-            strtr('Either<"not_number", int>', [
-                'Either' => Either::class,
-            ])
+            'Either<"not_number", int>'
         );
 
         $this->assertBlockTypes(
@@ -71,9 +63,7 @@ final class ProveTrueTest extends PhpBlockTestCase
                     return $hasName["name"];
                 });
             ',
-            strtr('Either<"no_prop", string>', [
-                'Either' => Either::class,
-            ])
+            'Either<"no_prop", string>'
         );
     }
 }

@@ -51,13 +51,10 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, strtr(
-            'array{list<Foo>, list<Bar|Foo>}',
-            [
-                'Foo' => Foo::class,
-                'Bar' => Bar::class,
-            ]
-        ));
+        $this->assertBlockTypes(
+            $phpBlock,
+            'array{list<Foo>, list<Bar|Foo>}'
+        );
     }
 
     public function testPartitionOfWithThreeClasses(): void
@@ -77,13 +74,10 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, strtr(
-            'array{list<Foo>, list<Bar>, list<Foo>, list<Bar|Foo>}',
-            [
-                'Foo' => Foo::class,
-                'Bar' => Bar::class,
-            ]
-        ));
+        $this->assertBlockTypes(
+            $phpBlock,
+            'array{list<Foo>, list<Bar>, list<Foo>, list<Bar|Foo>}'
+        );
     }
 
     public function testPartitionOfWithTenClasses(): void
@@ -110,12 +104,9 @@ final class PartitionTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, strtr(
-            'array{list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Bar|Foo>}',
-            [
-                'Foo' => Foo::class,
-                'Bar' => Bar::class,
-            ]
-        ));
+        $this->assertBlockTypes(
+            $phpBlock,
+            'array{list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Bar|Foo>}'
+        );
     }
 }

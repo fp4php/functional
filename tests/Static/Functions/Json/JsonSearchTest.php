@@ -16,6 +16,9 @@ final class JsonSearchTest extends PhpBlockTestCase
             $result = \Fp\Json\jsonSearch("[0]", $json);
         ';
 
-        $this->assertBlockTypes($phpBlock, Option::class . '<array<array-key, mixed>|scalar>');
+        $this->assertBlockTypes(
+            $phpBlock,
+            'Option<array<array-key, mixed>|scalar>'
+        );
     }
 }

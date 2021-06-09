@@ -27,9 +27,7 @@ final class EitherDoNotationTest extends PhpBlockTestCase
                     return $num1 + $num2;
                 });
             ',
-            strtr('Either<"num1 less than 10", positive-int>', [
-                'Either' => Either::class,
-            ])
+            'Either<"num1 less than 10", positive-int>'
         );
     }
 }

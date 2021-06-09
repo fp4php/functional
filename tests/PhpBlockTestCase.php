@@ -4,20 +4,26 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Exception;
 use Fp\Functional\Option\Option;
+use HaydenPierce\ClassFinder\ClassFinder;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PHPUnit\Framework\TestCase;
 
+use function Fp\Callable\compose;
+use function Fp\Cast\asList;
 use function Fp\Collection\last;
 use function Fp\Collection\map;
 use function Fp\Collection\reduce;
+use function Fp\Collection\reindex;
 use function Fp\Evidence\proveListOfScalar;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
 use function Fp\Json\jsonSearch;
+use function Fp\Json\lastExploded;
 use function Symfony\Component\String\u;
 
 /**
@@ -27,6 +33,30 @@ use function Symfony\Component\String\u;
  */
 abstract class PhpBlockTestCase extends TestCase
 {
+    /**
+     * @psalm-return array<string, class-string>
+     * @throws Exception
+     */
+    protected function getClassMap(): array
+    {
+        static $classMap = null;
+
+        if (is_null($classMap)) {
+            $classes = asList(
+                ClassFinder::getClassesInNamespace('Fp\Functional', ClassFinder::RECURSIVE_MODE),
+                ClassFinder::getClassesInNamespace('Tests\Mock', ClassFinder::RECURSIVE_MODE),
+            );
+
+            $classMap = reindex(
+                $classes,
+                fn(string $fqcn) => lastExploded($fqcn, '\\')
+            );
+        }
+
+        /** @var array<string, class-string> */
+        return $classMap;
+    }
+
     /**
      * Extracts php block traced types
      *
@@ -117,9 +147,12 @@ abstract class PhpBlockTestCase extends TestCase
     protected function assertBlockTypes(string $block, string ...$types): void
     {
         $trim = fn(string $s): string => u($s)->replace(' ', '')->toString();
+        $interpolateClasses = fn(string $s): string => strtr($s, $this->getClassMap());
+
+        $prepareAndInterpolate = compose($trim, $interpolateClasses);
 
         $actualTypes = map($this->analyzeBlock($block), fn(string $t) => $trim($t));
-        $expectedTypes = map($types, fn(string $t) => $trim($t));
+        $expectedTypes = map($types, fn(string $t) => $prepareAndInterpolate($t));
 
         $this->assertEquals($expectedTypes, $actualTypes);
     }

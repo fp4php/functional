@@ -27,8 +27,8 @@ final class ValidatedAssertionTest extends PhpBlockTestCase
                     $invalid = $validated;
                 }
             ',
-            Valid::class . '<int>',
-            Invalid::class . '<string>',
+            'Valid<int>',
+            'Invalid<string>',
         );
     }
 
@@ -49,8 +49,8 @@ final class ValidatedAssertionTest extends PhpBlockTestCase
                     $valid = $validated;
                 }
             ',
-            Invalid::class . '<string>',
-            Valid::class . '<int>',
+            'Invalid<string>',
+            'Valid<int>',
         );
     }
 
@@ -73,8 +73,8 @@ final class ValidatedAssertionTest extends PhpBlockTestCase
                         $invalid = $validated;
                     });
             ',
-            Valid::class . '<int>',
-            Invalid::class . '<string>',
+            'Valid<int>',
+            'Invalid<string>',
         );
     }
 
@@ -97,8 +97,8 @@ final class ValidatedAssertionTest extends PhpBlockTestCase
                         $valid = $validated;
                     });
             ',
-            Invalid::class . '<string>',
-            Valid::class . '<int>',
+            'Invalid<string>',
+            'Valid<int>',
         );
     }
 }

@@ -23,6 +23,9 @@ final class ReduceTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, Option::class . '<int>');
+        $this->assertBlockTypes(
+            $phpBlock,
+            'Option<int>'
+        );
     }
 }

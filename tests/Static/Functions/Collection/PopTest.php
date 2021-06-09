@@ -22,11 +22,9 @@ final class PopTest extends PhpBlockTestCase
             );
         ';
 
-        $this->assertBlockTypes($phpBlock, strtr(
-            'Option<array{int, list<int>}>',
-            [
-                'Option' => Option::class
-            ]
-        ));
+        $this->assertBlockTypes(
+            $phpBlock,
+            'Option<array{int, list<int>}>'
+        );
     }
 }

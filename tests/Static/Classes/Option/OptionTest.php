@@ -20,7 +20,7 @@ final class OptionTest extends PhpBlockTestCase
                 
                 $result = Option::fromNullable($value);
             ',
-            strtr('Option<int>', ['Option' => Option::class])
+            'Option<int>'
         );
     }
 

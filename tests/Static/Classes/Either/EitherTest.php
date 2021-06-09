@@ -18,7 +18,7 @@ final class EitherTest extends PhpBlockTestCase
                 
                 $result = Either::right(1);
             ',
-            strtr('Either<empty, 1>', ['Either' => Either::class])
+            'Either<empty, 1>'
         );
 
         $this->assertBlockTypes(
@@ -27,7 +27,7 @@ final class EitherTest extends PhpBlockTestCase
                 
                 $result = Either::left(1);
             ',
-            strtr('Either<1, empty>', ['Either' => Either::class])
+            'Either<1, empty>'
         );
     }
 
@@ -99,7 +99,7 @@ final class EitherTest extends PhpBlockTestCase
                     ->flatMap(fn(int $v) => Either::right((bool) $v))
                     ->swap();
             ',
-            strtr('Either<bool,string>', ['Either' => Either::class])
+            'Either<bool,string>'
         );
     }
 
@@ -123,7 +123,7 @@ final class EitherTest extends PhpBlockTestCase
                     ->mapLeft(fn(string $e) => (bool) $e)
                     ->mapLeft(fn(bool $e) => (int) $e);
             ',
-            strtr('Either<0|1,float>', ['Either' => Either::class])
+            'Either<0|1,float>'
         );
     }
 }

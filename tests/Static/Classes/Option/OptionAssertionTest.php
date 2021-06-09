@@ -28,8 +28,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                     $none = $option;
                 }
             ',
-            Some::class . '<int>',
-            None::class,
+            'Some<int>',
+            'None',
         );
     }
 
@@ -50,8 +50,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                     $none = $option;
                 }
             ',
-            Some::class . '<int>',
-            None::class,
+            'Some<int>',
+            'None',
         );
     }
 
@@ -72,8 +72,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                     $some = $option;
                 }
             ',
-            None::class,
-            Some::class . '<int>',
+            'None',
+            'Some<int>',
         );
     }
 
@@ -94,8 +94,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                     $some = $option;
                 }
             ',
-            None::class,
-            Some::class . '<int>',
+            'None',
+            'Some<int>',
         );
     }
 
@@ -118,8 +118,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                         $none = $option;
                     });
             ',
-            Some::class . '<int>',
-            None::class,
+            'Some<int>',
+            'None',
         );
     }
 
@@ -142,8 +142,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                         $none = $option;
                     });
             ',
-            Some::class . '<int>',
-            None::class,
+            'Some<int>',
+            'None',
         );
     }
 
@@ -166,8 +166,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                         $some = $option;    
                     });
             ',
-            None::class,
-            Some::class . '<int>',
+            'None',
+            'Some<int>',
         );
     }
 
@@ -190,8 +190,8 @@ final class OptionAssertionTest extends PhpBlockTestCase
                         $some = $option;    
                     });
             ',
-            None::class,
-            Some::class . '<int>',
+            'None',
+            'Some<int>',
         );
     }
 }

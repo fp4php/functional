@@ -70,7 +70,7 @@ abstract class Semigroup
      *     Semigroup<list>
      * )))))))
      */
-    public static function listInstance(string $of): Semigroup
+    public static function listInstance(?string $of = null): Semigroup
     {
         return new ListMonoid();
     }
@@ -89,7 +89,7 @@ abstract class Semigroup
      *     Semigroup
      * )))))))
      */
-    public static function lhsInstance(string $of): Semigroup
+    public static function lhsInstance(?string $of = null): Semigroup
     {
         return new LhsSemigroup();
     }
@@ -108,7 +108,7 @@ abstract class Semigroup
      *     Semigroup
      * )))))))
      */
-    public static function rhsInstance(string $of): Semigroup
+    public static function rhsInstance(?string $of = null): Semigroup
     {
         return new RhsSemigroup();
     }

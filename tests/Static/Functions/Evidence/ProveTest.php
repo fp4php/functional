@@ -16,20 +16,14 @@ final class ProveTest extends PhpBlockTestCase
             /** @lang InjectablePHP */ '
                 $result = \Fp\Evidence\proveOf(new \Tests\Mock\Foo(1), \Tests\Mock\Foo::class);
             ',
-            strtr('Option<Foo>', [
-            'Option' => Option::class,
-            'Foo' => Foo::class,
-            ])
+            'Option<Foo>'
         );
 
         $this->assertBlockTypes(
         /** @lang InjectablePHP */ '
                 $result = \Fp\Evidence\proveOf(new \Tests\Mock\Bar(true), \Tests\Mock\Foo::class);
             ',
-            strtr('Option<Foo>', [
-                'Option' => Option::class,
-                'Foo' => Foo::class,
-            ])
+            'Option<Foo>'
         );
     }
 }

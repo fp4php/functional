@@ -26,7 +26,8 @@
         "phpunit/phpunit": "^9",
         "symfony/process": "^5.2",
         "rregeer/phpunit-coverage-check": "^0.3.1",
-        "php-coveralls/php-coveralls": "^2.4"
+        "php-coveralls/php-coveralls": "^2.4",
+        "haydenpierce/class-finder": "^0.4.3"
     },
     "autoload": {
         "psr-4": {
@@ -83,6 +84,7 @@
             "src/Fp/Functions/Reflection/GetNamedTypes.php",
             "src/Fp/Functions/Reflection/GetReflectionClass.php",
             "src/Fp/Functions/Reflection/GetReflectionProperty.php",
+            "src/Fp/Functions/String/LastExploded.php",
             "src/Fp/Functions/String/RegExpMatch.php",
             "src/Fp/Functions/Id.php",
             "src/Fp/Functions/Of.php",

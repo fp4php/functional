@@ -98,10 +98,7 @@ final class EitherGetOrElseTest extends PhpBlockTestCase
                 $input = null;
                 $result = Fp\Functional\Either\Either::right($input)->getOrElse("1.1");
             ',
-            strtr(
-                '"1.1"|class-string<Foo>',
-                ['Foo' => Foo::class]
-            )
+            '"1.1"|class-string<Foo>'
         );
     }
 

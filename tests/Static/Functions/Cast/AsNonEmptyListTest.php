@@ -20,6 +20,9 @@ final class AsNonEmptyListTest extends PhpBlockTestCase
             $result = \Fp\Cast\asNonEmptyList(getCollection());
         ';
 
-        $this->assertBlockTypes($phpBlock, Option::class . '<non-empty-list<int>>');
+        $this->assertBlockTypes(
+            $phpBlock,
+            'Option<non-empty-list<int>>'
+        );
     }
 }

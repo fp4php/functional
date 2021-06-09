@@ -16,6 +16,9 @@ final class JsonDecodeTest extends PhpBlockTestCase
             $result = \Fp\Json\jsonDecode($json);
         ';
 
-        $this->assertBlockTypes($phpBlock, Either::class . '<string, array<array-key, mixed>|scalar>');
+        $this->assertBlockTypes(
+            $phpBlock,
+            'Either<string, array<array-key, mixed>|scalar>'
+        );
     }
 }

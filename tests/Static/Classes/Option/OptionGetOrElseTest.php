@@ -98,10 +98,7 @@ final class OptionGetOrElseTest extends PhpBlockTestCase
                 $input = null;
                 $result = Fp\Functional\Option\Option::fromNullable($input)->getOrElse("1.1");
             ',
-            strtr(
-                '"1.1"|class-string<Foo>',
-                ['Foo' => Foo::class]
-            )
+            '"1.1"|class-string<Foo>'
         );
     }
 

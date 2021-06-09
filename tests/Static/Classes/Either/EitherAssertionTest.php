@@ -28,8 +28,8 @@ final class EitherAssertionTest extends PhpBlockTestCase
                     $left = $either;
                 }
             ',
-            Right::class . '<int>',
-            Left::class . '<string>',
+            'Right<int>',
+            'Left<string>',
         );
     }
 
@@ -50,8 +50,8 @@ final class EitherAssertionTest extends PhpBlockTestCase
                     $right = $either;
                 }
             ',
-            Left::class . '<string>',
-            Right::class . '<int>',
+            'Left<string>',
+            'Right<int>',
         );
     }
 
@@ -74,8 +74,8 @@ final class EitherAssertionTest extends PhpBlockTestCase
                         $left = $either;
                     });
             ',
-            Right::class . '<int>',
-            Left::class . '<string>',
+            'Right<int>',
+            'Left<string>',
         );
     }
 
@@ -98,8 +98,8 @@ final class EitherAssertionTest extends PhpBlockTestCase
                         $right = $either;
                     });
             ',
-            Left::class . '<string>',
-            Right::class . '<int>',
+            'Left<string>',
+            'Right<int>',
         );
     }
 }
