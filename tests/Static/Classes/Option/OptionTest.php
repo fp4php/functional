@@ -55,7 +55,7 @@ final class OptionTest extends PhpBlockTestCase
                     ->map(fn(int $v) => (string) $v)
                     ->get();
             ',
-            'null|numeric-string'
+            '"1"|null'
         );
     }
 
@@ -69,7 +69,7 @@ final class OptionTest extends PhpBlockTestCase
                     ->flatMap(fn(int $v) => Option::fromNullable((string) $v))
                     ->get();
             ',
-            'null|numeric-string'
+            '"1"|null'
         );
     }
 }

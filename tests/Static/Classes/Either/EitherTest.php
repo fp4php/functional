@@ -76,7 +76,7 @@ final class EitherTest extends PhpBlockTestCase
                     ->flatMap(fn(int $v) => Either::right((string) $v))
                     ->get();
             ',
-            'numeric-string'
+            '"1"'
         );
     }
 
