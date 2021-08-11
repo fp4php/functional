@@ -11,7 +11,7 @@ use IteratorAggregate;
  * @template-covariant TK
  * @template-covariant TV
  */
-interface Collection extends IteratorAggregate
+interface NonEmptyCollection extends IteratorAggregate
 {
     /**
      * @psalm-pure
@@ -19,7 +19,7 @@ interface Collection extends IteratorAggregate
      * @template TVI
      *
      * @param iterable<TKI, TVI> $source
-     * @return Collection<TKI, TVI>
+     * @return NonEmptyCollection<TKI, TVI>
      */
-    public static function collect(iterable $source): self;
+    public static function collect(iterable $source): NonEmptyCollection;
 }

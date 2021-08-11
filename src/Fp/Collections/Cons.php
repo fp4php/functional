@@ -13,7 +13,7 @@ final class Cons extends LinkedList
 {
     /**
      * @param TV $head
-     * @param LinkedList<TV> $tail $head
+     * @param LinkedList<TV> $tail
      */
     public function __construct(public mixed $head, public LinkedList $tail)
     {

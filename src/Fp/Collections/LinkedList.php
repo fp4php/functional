@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Option\Option;
+use Generator;
 use Iterator;
 
 /**
@@ -14,6 +16,8 @@ use Iterator;
 class LinkedList implements LinearSeq
 {
     /**
+     * @psalm-pure
+     * @psalm-suppress ImpureMethodCall
      * @template TKI
      * @template TVI
      *
@@ -22,7 +26,7 @@ class LinkedList implements LinearSeq
      */
     public static function collect(iterable $source): LinkedList
     {
-        $list = Nil::create();
+        $list = new Nil();
 
         foreach ($source as $element) {
             $list = new Cons($element, $list);
@@ -31,8 +35,42 @@ class LinkedList implements LinearSeq
         return $list;
     }
 
+    /**
+     * @return Iterator<TV>
+     */
     public function getIterator(): Iterator
     {
         return new LinkedListIterator($this);
+    }
+
+    /**
+     * @template TVO
+     * @psalm-param callable(TV): TVO $callback
+     * @psalm-return LinkedList<TVO>
+     */
+    public function map(callable $callback): LinkedList
+    {
+        $buffer = function () use ($callback): Generator {
+            foreach ($this as $element) {
+                yield $callback($element);
+            }
+        };
+
+        return self::collect($buffer());
+    }
+
+    /**
+     * @psalm-return Option<TV>
+     */
+    public function head(): Option
+    {
+        $head = null;
+
+        foreach ($this as $element) {
+            $head = $element;
+            break;
+        }
+
+        return Option::fromNullable($head);
     }
 }
