@@ -30,6 +30,7 @@
     },
     "autoload": {
         "psr-4": {
+            "Fp\\Collections\\": "src/Fp/Collections",
             "Fp\\Functional\\": "src/Fp/Functional",
             "Fp\\Psalm\\": "src/Fp/Psalm"
         },
