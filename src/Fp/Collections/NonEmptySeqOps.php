@@ -21,4 +21,10 @@ interface NonEmptySeqOps
      * @psalm-return NonEmptySeq<TVO>
      */
     public function map(callable $callback): NonEmptySeq;
+
+    /**
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Seq<TV>
+     */
+    public function filter(callable $predicate): Seq;
 }

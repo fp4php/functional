@@ -50,13 +50,13 @@ class LinkedList implements LinearSeq
      */
     public function map(callable $callback): LinkedList
     {
-        $buffer = function () use ($callback): Generator {
+        $source = function () use ($callback): Generator {
             foreach ($this as $element) {
                 yield $callback($element);
             }
         };
 
-        return self::collect($buffer());
+        return self::collect($source());
     }
 
     /**
@@ -72,5 +72,22 @@ class LinkedList implements LinearSeq
         }
 
         return Option::fromNullable($head);
+    }
+
+    /**
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return LinkedList<TV>
+     */
+    public function filter(callable $predicate): LinkedList
+    {
+        $source = function () use ($predicate): Generator {
+            foreach ($this as $element) {
+                if ($predicate($element)) {
+                    yield $element;
+                }
+            }
+        };
+
+        return self::collect($source());
     }
 }

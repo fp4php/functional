@@ -17,16 +17,16 @@ interface SeqOps
      */
     public function head(): Option;
 
-//    /**
-//     * @template TVO
-//     * @psalm-param callable(TV): bool $predicate
-//     */
-//    public function any(callable $predicate): bool;
+    /**
+     * @template TVO
+     * @psalm-param callable(TV): TVO $callback
+     * @psalm-return Seq<TVO>
+     */
+    public function map(callable $callback): Seq;
 
-//    /**
-//     * @template TVO
-//     * @psalm-param callable(TV): TVO $callback
-//     * @psalm-return Seq<TVO>
-//     */
-//    public function map(callable $callback): Seq;
+    /**
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Seq<TV>
+     */
+    public function filter(callable $predicate): Seq;
 }

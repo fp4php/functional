@@ -47,19 +47,27 @@ class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
+     * @return Iterator<TV>
+     */
+    public function getIterator(): Iterator
+    {
+        return new LinkedListIterator(new Cons($this->head, $this->tail));
+    }
+
+    /**
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return NonEmptyLinkedList<TVO>
      */
     public function map(callable $callback): NonEmptyLinkedList
     {
-        $buffer = function () use ($callback): Generator {
+        $source = function () use ($callback): Generator {
             foreach ($this as $element) {
                 yield $callback($element);
             }
         };
 
-        return self::collect($buffer());
+        return self::collect($source());
     }
 
     /**
@@ -71,10 +79,19 @@ class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @return Iterator<TV>
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return LinkedList<TV>
      */
-    public function getIterator(): Iterator
+    public function filter(callable $predicate): LinkedList
     {
-        return new LinkedListIterator(new Cons($this->head, $this->tail));
+        $source = function () use ($predicate): Generator {
+            foreach ($this as $element) {
+                if ($predicate($element)) {
+                    yield $element;
+                }
+            }
+        };
+
+        return LinkedList::collect($source());
     }
 }
