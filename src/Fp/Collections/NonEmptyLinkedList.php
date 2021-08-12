@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Error;
 use Fp\Functional\Option\Option;
 use Iterator;
-use RuntimeException;
 
 /**
  * @psalm-immutable
@@ -31,6 +31,8 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      *
      * @param iterable<TKI, TVI> $source
      * @return NonEmptyLinkedList<TVI>
+     *
+     * @throws EmptyCollectionException
      */
     public static function collect(iterable $source): NonEmptyLinkedList
     {
@@ -41,10 +43,40 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
             $head = $collected->head;
             $tail = $collected->tail;
         } else {
-            throw new RuntimeException("Non empty collection must contain at least one element");
+            throw new EmptyCollectionException("Non empty collection must contain at least one element");
         }
 
         return new NonEmptyLinkedList($head, $tail);
+    }
+
+    /**
+     * @psalm-pure
+     * @template TKI
+     * @template TVI
+     *
+     * @param iterable<TKI, TVI> $source
+     * @return NonEmptyLinkedList<TVI>
+     */
+    public static function collectUnsafe(iterable $source): NonEmptyLinkedList
+    {
+        try {
+            return self::collect($source);
+        } catch (EmptyCollectionException $e) {
+            throw new Error(previous: $e);
+        }
+    }
+
+    /**
+     * @psalm-pure
+     * @template TKI
+     * @template TVI
+     *
+     * @param non-empty-array<TKI, TVI>|NonEmptyCollection<TKI, TVI> $source
+     * @return NonEmptyLinkedList<TVI>
+     */
+    public static function collectNonEmpty(iterable $source): NonEmptyLinkedList
+    {
+        return self::collectUnsafe($source);
     }
 
     /**
@@ -70,7 +102,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      */
     function append(mixed $elem): NonEmptySeq
     {
-        return self::collect($this->toLinkedList()->append($elem));
+        return self::collectUnsafe($this->toLinkedList()->append($elem));
     }
 
     /**
@@ -233,7 +265,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      */
     public function map(callable $callback): NonEmptyLinkedList
     {
-        return self::collect($this->toLinkedList()->map($callback));
+        return self::collectUnsafe($this->toLinkedList()->map($callback));
     }
 
     /**
@@ -252,7 +284,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      */
     function reverse(): NonEmptyLinkedList
     {
-        return self::collect($this);
+        return self::collectUnsafe($this->toLinkedList()->reverse());
     }
 
     /**
@@ -271,6 +303,6 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      */
     function unique(callable $callback): NonEmptyLinkedList
     {
-        return self::collect($this->toLinkedList()->unique($callback));
+        return self::collectUnsafe($this->toLinkedList()->unique($callback));
     }
 }

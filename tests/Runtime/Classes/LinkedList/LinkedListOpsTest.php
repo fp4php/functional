@@ -6,7 +6,6 @@ namespace Tests\Runtime\Classes\LinkedList;
 
 use Fp\Collections\LinkedList;
 use PHPUnit\Framework\TestCase;
-
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 

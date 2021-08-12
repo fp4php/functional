@@ -328,7 +328,13 @@ class LinkedList implements LinearSeq
      */
     function reverse(): LinkedList
     {
-        return self::collect($this);
+        $list = new Nil();
+
+        foreach ($this as $elem) {
+            $list = $list->prepend($elem);
+        }
+
+        return $list;
     }
 
     /**
