@@ -13,6 +13,20 @@ use Fp\Functional\Option\Option;
 interface NonEmptySeqOps
 {
     /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return NonEmptySeq<TV|TVI>
+     */
+    function append(mixed $elem): NonEmptySeq;
+
+    /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return NonEmptySeq<TV|TVI>
+     */
+    function prepend(mixed $elem): NonEmptySeq;
+
+    /**
      * Returns true if there is collection element of given class
      * False otherwise
      *

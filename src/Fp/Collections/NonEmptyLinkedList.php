@@ -64,6 +64,26 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return NonEmptySeq<TV|TVI>
+     */
+    function append(mixed $elem): NonEmptySeq
+    {
+        return self::collect($this->toLinkedList()->append($elem));
+    }
+
+    /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return NonEmptySeq<TV|TVI>
+     */
+    function prepend(mixed $elem): NonEmptySeq
+    {
+        return new self($elem, $this->toLinkedList());
+    }
+
+    /**
      * @inheritDoc
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name

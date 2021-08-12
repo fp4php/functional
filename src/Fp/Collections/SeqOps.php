@@ -13,6 +13,20 @@ use Fp\Functional\Option\Option;
 interface SeqOps
 {
     /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return Seq<TV|TVI>
+     */
+    function append(mixed $elem): Seq;
+
+    /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return Seq<TV|TVI>
+     */
+    function prepend(mixed $elem): Seq;
+
+    /**
      * Returns true if there is collection element of given class
      * False otherwise
      *

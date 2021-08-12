@@ -48,6 +48,34 @@ class LinkedList implements LinearSeq
     }
 
     /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return LinkedList<TV|TVI>
+     */
+    function append(mixed $elem): LinkedList
+    {
+        $source = function () use ($elem): Generator {
+            foreach ($this as $item) {
+                yield $item;
+            }
+
+            yield $elem;
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return LinkedList<TV|TVI>
+     */
+    function prepend(mixed $elem): LinkedList
+    {
+        return new Cons($elem, $this);
+    }
+
+    /**
      * @inheritDoc
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
