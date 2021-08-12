@@ -11,9 +11,9 @@ use RuntimeException;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements NonEmptySeq<TV>
+ * @implements NonEmptyLinearSeq<TV>
  */
-class NonEmptyLinkedList implements NonEmptySeq
+class NonEmptyLinkedList implements NonEmptyLinearSeq
 {
     /**
      * @param TV $head
