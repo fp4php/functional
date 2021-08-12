@@ -29,13 +29,13 @@ class LinkedList implements LinearSeq
      */
     public static function collect(iterable $source): LinkedList
     {
-        $list = new Nil();
+        $buffer = new LinkedListBuffer();
 
-        foreach ($source as $element) {
-            $list = new Cons($element, $list);
+        foreach ($source as $elem) {
+            $buffer->append($elem);
         }
 
-        return $list;
+        return $buffer->toLinkedList();
     }
 
     /**

@@ -69,7 +69,6 @@
             "src/Fp/Functions/Collection/Reindex.php",
             "src/Fp/Functions/Collection/Reverse.php",
             "src/Fp/Functions/Collection/Second.php",
-            "src/Fp/Functions/Collection/Seq.php",
             "src/Fp/Functions/Collection/Shift.php",
             "src/Fp/Functions/Collection/Any.php",
             "src/Fp/Functions/Collection/Tail.php",
