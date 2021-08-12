@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Iterator;
+use RuntimeException;
 
 /**
  * @psalm-immutable
@@ -40,7 +41,7 @@ class NonEmptyLinkedList implements NonEmptySeq
             $head = $collected->head;
             $tail = $collected->tail;
         } else {
-            throw new EmptyCollectionException("Non empty collection must contain at least one element");
+            throw new RuntimeException("Non empty collection must contain at least one element");
         }
 
         return new NonEmptyLinkedList($head, $tail);
