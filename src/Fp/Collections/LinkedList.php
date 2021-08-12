@@ -48,6 +48,7 @@ class LinkedList implements LinearSeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return LinkedList<TV|TVI>
@@ -66,6 +67,7 @@ class LinkedList implements LinearSeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return LinkedList<TV|TVI>

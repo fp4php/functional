@@ -80,7 +80,8 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
-     * @return Iterator<TV>
+     * @inheritDoc
+     * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator
     {
@@ -96,6 +97,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
@@ -106,6 +108,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
