@@ -28,10 +28,8 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-suppress ImpureMethodCall
      * @template TKI
      * @template TVI
-     *
      * @param iterable<TKI, TVI> $source
      * @return NonEmptyLinkedList<TVI>
-     *
      * @throws EmptyCollectionException
      */
     public static function collect(iterable $source): NonEmptyLinkedList
@@ -53,7 +51,6 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-pure
      * @template TKI
      * @template TVI
-     *
      * @param iterable<TKI, TVI> $source
      * @return NonEmptyLinkedList<TVI>
      */
@@ -70,7 +67,6 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-pure
      * @template TKI
      * @template TVI
-     *
      * @param non-empty-array<TKI, TVI>|NonEmptyCollection<TKI, TVI> $source
      * @return NonEmptyLinkedList<TVI>
      */

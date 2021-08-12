@@ -36,16 +36,19 @@ class LinkedListBuffer
      */
     public function append(mixed $elem): self
     {
-        $last1 = new Cons($elem, new Nil());
+        $appended = new Cons($elem, new Nil());
 
         if (0 === $this->length) {
-            $this->first = $last1;
+            $this->first = $appended;
         } elseif (isset($this->last)) {
-            /** @psalm-suppress InaccessibleProperty */
-            $this->last->tail = $last1;
+            /**
+             * @dies-from-psalm-suppress
+             * @psalm-suppress InaccessibleProperty
+             */
+            $this->last->tail = $appended;
         }
 
-        $this->last = $last1;
+        $this->last = $appended;
         $this->length += 1;
 
         return $this;

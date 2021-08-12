@@ -17,7 +17,6 @@ interface Collection extends IteratorAggregate
      * @psalm-pure
      * @template TKI
      * @template TVI
-     *
      * @param iterable<TKI, TVI> $source
      * @return Collection<TKI, TVI>
      */

@@ -17,10 +17,8 @@ interface NonEmptyCollection extends IteratorAggregate
      * @psalm-pure
      * @template TKI
      * @template TVI
-     *
      * @param iterable<TKI, TVI> $source
      * @return NonEmptyCollection<TKI, TVI>
-     *
      * @throws EmptyCollectionException
      */
     public static function collect(iterable $source): NonEmptyCollection;
@@ -29,7 +27,6 @@ interface NonEmptyCollection extends IteratorAggregate
      * @psalm-pure
      * @template TKI
      * @template TVI
-     *
      * @param iterable<TKI, TVI> $source
      * @return NonEmptyCollection<TKI, TVI>
      */
@@ -39,7 +36,6 @@ interface NonEmptyCollection extends IteratorAggregate
      * @psalm-pure
      * @template TKI
      * @template TVI
-     *
      * @param non-empty-array<TKI, TVI>|NonEmptyCollection<TKI, TVI> $source
      * @return NonEmptyCollection<TKI, TVI>
      */
