@@ -10,10 +10,12 @@ class LinkedListIterator implements Iterator
 {
     private LinkedList $originalList;
     private LinkedList $list;
+    private int $idx;
 
     public function __construct(LinkedList $list)
     {
         $this->originalList = $this->list = $list;
+        $this->idx = 0;
     }
 
     public function current(): mixed
@@ -25,15 +27,15 @@ class LinkedListIterator implements Iterator
 
     public function next(): void
     {
-        $this->list = match (true) {
-            $this->list instanceof Cons => $this->list->tail,
-            $this->list instanceof Nil => $this->list,
-        };
+        if ($this->list instanceof Cons) {
+            $this->list = $this->list->tail;
+            $this->idx++;
+        }
     }
 
-    public function key()
+    public function key(): int
     {
-        return null;
+        return $this->idx;
     }
 
     public function valid(): bool
@@ -44,5 +46,6 @@ class LinkedListIterator implements Iterator
     public function rewind(): void
     {
         $this->list = $this->originalList;
+        $this->idx = 0;
     }
 }
