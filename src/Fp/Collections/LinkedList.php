@@ -203,8 +203,7 @@ class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-template TA of TV
-     * @psalm-param TA $init initial accumulator value
+     * @psalm-param TV $init initial accumulator value
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
      * @psalm-return TV
      */
