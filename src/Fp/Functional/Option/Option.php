@@ -8,6 +8,7 @@ use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
 use Generator;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -301,6 +302,25 @@ abstract class Option
      * @psalm-return A|null
      */
     public abstract function get(): mixed;
+
+    /**
+     * Unwrap "the box" and get contained value
+     * or throw exception for empty box case
+     *
+     * REPL:
+     * >>> Option::some(1)->get()
+     * => 1
+     * >>> Option::none()->get()
+     * => RuntimeException
+     *
+     * @psalm-return A
+     */
+    public function getUnsafe(): mixed
+    {
+        return $this->isSome()
+            ? $this->get()
+            : throw new RuntimeException("Trying to get value of None");
+    }
 
     /**
      * Unwrap "the box" and get contained value
