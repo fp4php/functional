@@ -100,10 +100,10 @@ interface NonEmptySeqOps
 
     /**
      * @psalm-template TVO
-     * @psalm-param callable(TV): NonEmptySeq<TVO> $callback
-     * @psalm-return NonEmptySeq<TVO>
+     * @psalm-param callable(TV): iterable<TVO> $callback
+     * @psalm-return Seq<TVO>
      */
-    function flatMap(callable $callback): NonEmptySeq;
+    function flatMap(callable $callback): Seq;
 
     /**
      * Do something for all collection elements
@@ -157,8 +157,8 @@ interface NonEmptySeqOps
     /**
      * Returns collection unique elements
      *
-     * @psalm-param null|(callable(TV): (int|string)) $callback returns element unique id
+     * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return NonEmptySeq<TV>
      */
-    function unique(?callable $callback = null): NonEmptySeq;
+    function unique(callable $callback): NonEmptySeq;
 }

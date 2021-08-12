@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Generator;
+use Fp\Functional\Option\Option;
 use Iterator;
 
 /**
@@ -51,47 +51,205 @@ class NonEmptyLinkedList implements NonEmptySeq
      */
     public function getIterator(): Iterator
     {
-        return new LinkedListIterator(new Cons($this->head, $this->tail));
+        return new LinkedListIterator($this->toLinkedList());
     }
 
     /**
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return new Cons($this->head, $this->tail);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    function anyOf(string $fqcn, bool $invariant = false): bool
+    {
+        return $this->toLinkedList()->anyOf($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    function at(int $index): Option
+    {
+        return $this->toLinkedList()->at($index);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    function every(callable $predicate): bool
+    {
+        return $this->toLinkedList()->every($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    function everyOf(string $fqcn, bool $invariant = false): bool
+    {
+        return $this->toLinkedList()->everyOf($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    function exists(callable $predicate): bool
+    {
+        return $this->toLinkedList()->exists($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return LinkedList<TV>
+     */
+    function filter(callable $predicate): LinkedList
+    {
+        return $this->toLinkedList()->filter($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return LinkedList<TV>
+     */
+    function filterNotNull(): LinkedList
+    {
+        return $this->toLinkedList()->filterNotNull();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return LinkedList<TVO>
+     */
+    function filterOf(string $fqcn, bool $invariant = false): LinkedList
+    {
+        return $this->toLinkedList()->filterOf($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    function first(callable $predicate): Option
+    {
+        return $this->toLinkedList()->first($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
+     */
+    function firstOf(string $fqcn, bool $invariant = false): Option
+    {
+        return $this->toLinkedList()->firstOf($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param callable(TV): iterable<TVO> $callback
+     * @psalm-return LinkedList<TVO>
+     */
+    function flatMap(callable $callback): LinkedList
+    {
+        return $this->toLinkedList()->flatMap($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV) $callback
+     */
+    function forAll(callable $callback): void
+    {
+        /** @psalm-suppress UnusedMethodCall */
+        $this->toLinkedList()->forAll($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return TV
+     */
+    function head(): mixed
+    {
+        return $this->head;
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    function last(callable $predicate): Option
+    {
+        return $this->toLinkedList()->last($predicate);
+    }
+
+    /**
+     * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return NonEmptyLinkedList<TVO>
      */
     public function map(callable $callback): NonEmptyLinkedList
     {
-        $source = function () use ($callback): Generator {
-            foreach ($this as $element) {
-                yield $callback($element);
-            }
-        };
-
-        return self::collect($source());
+        return self::collect($this->toLinkedList()->map($callback));
     }
 
     /**
+     * @inheritDoc
+     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
      * @psalm-return TV
      */
-    public function head(): mixed
+    function reduce(callable $callback): mixed
     {
-        return $this->head;
+        return $this->toLinkedList()->reduce($callback)->getUnsafe();
     }
 
     /**
-     * @psalm-param callable(TV): bool $predicate
+     * @inheritDoc
+     * @psalm-return NonEmptyLinkedList<TV>
+     */
+    function reverse(): NonEmptyLinkedList
+    {
+        return self::collect($this);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return LinkedList<TV>
      */
-    public function filter(callable $predicate): LinkedList
+    function tail(): LinkedList
     {
-        $source = function () use ($predicate): Generator {
-            foreach ($this as $element) {
-                if ($predicate($element)) {
-                    yield $element;
-                }
-            }
-        };
+        return $this->tail;
+    }
 
-        return LinkedList::collect($source());
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): (int|string) $callback returns element unique id
+     * @psalm-return NonEmptyLinkedList<TV>
+     */
+    function unique(callable $callback): NonEmptyLinkedList
+    {
+        return self::collect($this->toLinkedList()->unique($callback));
     }
 }

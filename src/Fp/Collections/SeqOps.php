@@ -129,7 +129,7 @@ interface SeqOps
     /**
      * Returns last collection element which satisfies the condition
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @psalm-param null|callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
     function last(?callable $predicate = null): Option;
