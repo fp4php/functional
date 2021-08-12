@@ -6,12 +6,19 @@ namespace Fp\Collections;
 
 use Iterator;
 
+/**
+ * @template TV
+ * @implements Iterator<int, TV>
+ */
 class LinkedListIterator implements Iterator
 {
     private LinkedList $originalList;
     private LinkedList $list;
     private int $idx;
 
+    /**
+     * @param LinkedList<TV> $list
+     */
     public function __construct(LinkedList $list)
     {
         $this->originalList = $this->list = $list;

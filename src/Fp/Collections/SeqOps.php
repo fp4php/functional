@@ -83,7 +83,7 @@ interface SeqOps
     /**
      * Find first element which satisfies the condition
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @psalm-param callable(TV, int): bool $predicate
      * @psalm-return Option<TV>
      */
     function first(callable $predicate): Option;
@@ -100,7 +100,7 @@ interface SeqOps
 
     /**
      * @psalm-template TVO
-     * @psalm-param callable(TV): Seq<TVO> $callback
+     * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return Seq<TVO>
      */
     function flatMap(callable $callback): Seq;
@@ -108,10 +108,10 @@ interface SeqOps
     /**
      * Fold many elements into one
      *
-     * @psalm-template TA
+     * @psalm-template TA of TV
      * @psalm-param TA $init initial accumulator value
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
-     * @psalm-return TA|TV
+     * @psalm-return TV
      */
     function fold(mixed $init, callable $callback): mixed;
 
@@ -133,7 +133,7 @@ interface SeqOps
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    function last(callable $predicate): Option;
+    function last(?callable $predicate = null): Option;
 
     /**
      * @template TVO
@@ -168,8 +168,8 @@ interface SeqOps
     /**
      * Returns collection unique elements
      *
-     * @psalm-param null|(callable(TV): (int|string)) $callback returns element unique id
+     * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return Seq<TV>
      */
-    function unique(?callable $callback = null): Seq;
+    function unique(callable $callback): Seq;
 }
