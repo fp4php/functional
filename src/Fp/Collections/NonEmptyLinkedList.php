@@ -130,17 +130,6 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function anyOf(string $fqcn, bool $invariant = false): bool
-    {
-        return $this->toLinkedList()->anyOf($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function at(int $index): Option
@@ -175,6 +164,17 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     public function exists(callable $predicate): bool
     {
         return $this->toLinkedList()->exists($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function existsOf(string $fqcn, bool $invariant = false): bool
+    {
+        return $this->toLinkedList()->existsOf($fqcn, $invariant);
     }
 
     /**

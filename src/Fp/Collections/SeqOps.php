@@ -13,6 +13,8 @@ use Fp\Functional\Option\Option;
 interface SeqOps
 {
     /**
+     * Add element to the collection end
+     *
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return Seq<TV|TVI>
@@ -20,21 +22,13 @@ interface SeqOps
     public function append(mixed $elem): Seq;
 
     /**
+     * Add element to the collection start
+     *
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return Seq<TV|TVI>
      */
     public function prepend(mixed $elem): Seq;
-
-    /**
-     * Returns true if there is collection element of given class
-     * False otherwise
-     *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function anyOf(string $fqcn, bool $invariant = false): bool;
 
     /**
      * Find element by its index
@@ -70,6 +64,16 @@ interface SeqOps
     public function exists(callable $predicate): bool;
 
     /**
+     * Returns true if there is collection element of given class
+     * False otherwise
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function existsOf(string $fqcn, bool $invariant = false): bool;
+
+    /**
      * Filter collection by condition
      *
      * @psalm-param callable(TV): bool $predicate
@@ -78,7 +82,7 @@ interface SeqOps
     public function filter(callable $predicate): Seq;
 
     /**
-     * Filter not null elements
+     * Exclude null elements
      *
      * @psalm-return Seq<TV>
      */
@@ -129,6 +133,8 @@ interface SeqOps
     public function fold(mixed $init, callable $callback): mixed;
 
     /**
+     * Return first collection element
+     *
      * @psalm-return Option<TV>
      */
     public function head(): Option;
@@ -149,6 +155,9 @@ interface SeqOps
     public function lastElement(): Option;
 
     /**
+     * Produces a new collection of elements by mapping each element in collection
+     * through a transformation function (callback)
+     *
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return Seq<TVO>
@@ -165,7 +174,7 @@ interface SeqOps
     public function reduce(callable $callback): Option;
 
     /**
-     * Copy collection in reversed orderx
+     * Copy collection in reversed order
      *
      * @psalm-return Seq<TV>
      */

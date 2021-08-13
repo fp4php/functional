@@ -27,14 +27,6 @@ final class LinkedListOpsTest extends TestCase
         );
     }
 
-    public function testAnyOf(): void
-    {
-        $linkedList = LinkedList::collect([1, new Foo(1)]);
-
-        $this->assertTrue($linkedList->anyOf(Foo::class));
-        $this->assertFalse($linkedList->anyOf(Bar::class));
-    }
-
     public function testAt(): void
     {
         $linkedList = LinkedList::collect([0, 1, 2, 3, 4, 5]);
@@ -68,6 +60,14 @@ final class LinkedListOpsTest extends TestCase
 
         $this->assertTrue($linkedList->exists(fn($i) => $i === 1));
         $this->assertFalse($linkedList->exists(fn($i) => $i === 2));
+    }
+
+    public function testExistsOf(): void
+    {
+        $linkedList = LinkedList::collect([1, new Foo(1)]);
+
+        $this->assertTrue($linkedList->existsOf(Foo::class));
+        $this->assertFalse($linkedList->existsOf(Bar::class));
     }
 
     public function testFilter(): void

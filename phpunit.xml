@@ -11,6 +11,7 @@
         <include>
             <directory suffix=".php">src/Fp/Functional</directory>
             <directory suffix=".php">src/Fp/Functions</directory>
+            <directory suffix=".php">src/Fp/Collections</directory>
         </include>
         <report>
             <clover outputFile="build/logs/clover.xml"/>

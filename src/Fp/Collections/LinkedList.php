@@ -94,20 +94,6 @@ class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function anyOf(string $fqcn, bool $invariant = false): bool
-    {
-        return $this->firstOf($fqcn, $invariant)->fold(
-            fn() => true,
-            fn() => false,
-        );
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function at(int $index): Option
@@ -160,6 +146,20 @@ class LinkedList implements LinearSeq
     public function exists(callable $predicate): bool
     {
         return $this->first($predicate)->isSome();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function existsOf(string $fqcn, bool $invariant = false): bool
+    {
+        return $this->firstOf($fqcn, $invariant)->fold(
+            fn() => true,
+            fn() => false,
+        );
     }
 
     /**

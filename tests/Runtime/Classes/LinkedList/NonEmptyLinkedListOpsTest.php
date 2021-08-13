@@ -27,14 +27,6 @@ final class NonEmptyLinkedListOpsTest extends TestCase
         );
     }
 
-    public function testAnyOf(): void
-    {
-        $linkedList = NonEmptyLinkedList::collectNonEmpty([1, new Foo(1)]);
-
-        $this->assertTrue($linkedList->anyOf(Foo::class));
-        $this->assertFalse($linkedList->anyOf(Bar::class));
-    }
-
     public function testAt(): void
     {
         $linkedList = NonEmptyLinkedList::collectNonEmpty([0, 1, 2, 3, 4, 5]);
@@ -68,6 +60,14 @@ final class NonEmptyLinkedListOpsTest extends TestCase
 
         $this->assertTrue($linkedList->exists(fn($i) => $i === 1));
         $this->assertFalse($linkedList->exists(fn($i) => $i === 2));
+    }
+
+    public function testExistsOf(): void
+    {
+        $linkedList = NonEmptyLinkedList::collectNonEmpty([1, new Foo(1)]);
+
+        $this->assertTrue($linkedList->existsOf(Foo::class));
+        $this->assertFalse($linkedList->existsOf(Bar::class));
     }
 
     public function testFilter(): void

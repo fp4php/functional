@@ -13,6 +13,8 @@ use Fp\Functional\Option\Option;
 interface NonEmptySeqOps
 {
     /**
+     * Add element to the collection end
+     *
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
@@ -20,21 +22,13 @@ interface NonEmptySeqOps
     public function append(mixed $elem): NonEmptySeq;
 
     /**
+     * Add element to the collection start
+     *
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
     public function prepend(mixed $elem): NonEmptySeq;
-
-    /**
-     * Returns true if there is collection element of given class
-     * False otherwise
-     *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function anyOf(string $fqcn, bool $invariant = false): bool;
 
     /**
      * Find element by its index
@@ -70,6 +64,16 @@ interface NonEmptySeqOps
     public function exists(callable $predicate): bool;
 
     /**
+     * Returns true if there is collection element of given class
+     * False otherwise
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function existsOf(string $fqcn, bool $invariant = false): bool;
+
+    /**
      * Filter collection by condition
      *
      * @psalm-param callable(TV): bool $predicate
@@ -78,7 +82,7 @@ interface NonEmptySeqOps
     public function filter(callable $predicate): Seq;
 
     /**
-     * Filter not null elements
+     * Exclude null elements
      *
      * @psalm-return Seq<TV>
      */
@@ -120,6 +124,8 @@ interface NonEmptySeqOps
     public function flatMap(callable $callback): Seq;
 
     /**
+     * Return first collection element
+     *
      * @psalm-return TV
      */
     public function head(): mixed;
@@ -140,6 +146,9 @@ interface NonEmptySeqOps
     public function lastElement(): mixed;
 
     /**
+     * Produces a new collection of elements by mapping each element in collection
+     * through a transformation function (callback)
+     *
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return NonEmptySeq<TVO>
