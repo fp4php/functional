@@ -68,7 +68,7 @@ class LinkedList implements LinearSeq
      * @psalm-param TVI $elem
      * @psalm-return LinkedList<TV|TVI>
      */
-    function append(mixed $elem): LinkedList
+    public function append(mixed $elem): LinkedList
     {
         $source = function () use ($elem): Generator {
             foreach ($this as $item) {
@@ -87,7 +87,7 @@ class LinkedList implements LinearSeq
      * @psalm-param TVI $elem
      * @psalm-return LinkedList<TV|TVI>
      */
-    function prepend(mixed $elem): LinkedList
+    public function prepend(mixed $elem): LinkedList
     {
         return new Cons($elem, $this);
     }
@@ -98,7 +98,7 @@ class LinkedList implements LinearSeq
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      */
-    function anyOf(string $fqcn, bool $invariant = false): bool
+    public function anyOf(string $fqcn, bool $invariant = false): bool
     {
         return $this->firstOf($fqcn, $invariant)->fold(
             fn() => true,
@@ -110,7 +110,7 @@ class LinkedList implements LinearSeq
      * @inheritDoc
      * @psalm-return Option<TV>
      */
-    function at(int $index): Option
+    public function at(int $index): Option
     {
         $first = null;
 
@@ -128,7 +128,7 @@ class LinkedList implements LinearSeq
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      */
-    function every(callable $predicate): bool
+    public function every(callable $predicate): bool
     {
         $result = true;
 
@@ -148,7 +148,7 @@ class LinkedList implements LinearSeq
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      */
-    function everyOf(string $fqcn, bool $invariant = false): bool
+    public function everyOf(string $fqcn, bool $invariant = false): bool
     {
         return $this->every(fn(mixed $v) => of($v, $fqcn, $invariant));
     }
@@ -157,7 +157,7 @@ class LinkedList implements LinearSeq
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      */
-    function exists(callable $predicate): bool
+    public function exists(callable $predicate): bool
     {
         return $this->first($predicate)->isSome();
     }
@@ -184,7 +184,7 @@ class LinkedList implements LinearSeq
      * @inheritDoc
      * @psalm-return LinkedList<TV>
      */
-    function filterNotNull(): LinkedList
+    public function filterNotNull(): LinkedList
     {
         return $this->filter(fn(mixed $v) => !is_null($v));
     }
@@ -196,7 +196,7 @@ class LinkedList implements LinearSeq
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      * @psalm-return LinkedList<TVO>
      */
-    function filterOf(string $fqcn, bool $invariant = false): LinkedList
+    public function filterOf(string $fqcn, bool $invariant = false): LinkedList
     {
         /** @var LinkedList<TVO> */
         return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
@@ -207,7 +207,7 @@ class LinkedList implements LinearSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    function first(callable $predicate): Option
+    public function first(callable $predicate): Option
     {
         $first = null;
 
@@ -228,7 +228,7 @@ class LinkedList implements LinearSeq
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      * @psalm-return Option<TVO>
      */
-    function firstOf(string $fqcn, bool $invariant = false): Option
+    public function firstOf(string $fqcn, bool $invariant = false): Option
     {
         /** @var Option<TVO> */
         return $this->first(fn(mixed $v): bool => of($v, $fqcn, $invariant));
@@ -240,7 +240,7 @@ class LinkedList implements LinearSeq
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return LinkedList<TVO>
      */
-    function flatMap(callable $callback): LinkedList
+    public function flatMap(callable $callback): LinkedList
     {
         $source = function () use ($callback): Generator {
             foreach ($this as $element) {
@@ -261,7 +261,7 @@ class LinkedList implements LinearSeq
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
      * @psalm-return TV
      */
-    function fold(mixed $init, callable $callback): mixed
+    public function fold(mixed $init, callable $callback): mixed
     {
         $acc = $init;
 
@@ -270,17 +270,6 @@ class LinkedList implements LinearSeq
         }
 
         return $acc;
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV) $callback
-     */
-    function forAll(callable $callback): void
-    {
-        foreach ($this as $element) {
-            $callback($element);
-        }
     }
 
     /**
@@ -304,7 +293,7 @@ class LinkedList implements LinearSeq
      * @psalm-param null|callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    function last(?callable $predicate = null): Option
+    public function last(?callable $predicate = null): Option
     {
         $last = null;
 
@@ -338,7 +327,7 @@ class LinkedList implements LinearSeq
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
      * @psalm-return Option<TV>
      */
-    function reduce(callable $callback): Option
+    public function reduce(callable $callback): Option
     {
         return $this->head()->map(function ($head) use ($callback) {
             /**
@@ -352,7 +341,7 @@ class LinkedList implements LinearSeq
      * @inheritDoc
      * @psalm-return LinkedList<TV>
      */
-    function reverse(): LinkedList
+    public function reverse(): LinkedList
     {
         $list = new Nil();
 
@@ -367,7 +356,7 @@ class LinkedList implements LinearSeq
      * @inheritDoc
      * @psalm-return LinkedList<TV>
      */
-    function tail(): LinkedList
+    public function tail(): LinkedList
     {
         return match (true) {
             $this instanceof Cons => $this->tail,
@@ -380,7 +369,7 @@ class LinkedList implements LinearSeq
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return LinkedList<TV>
      */
-    function unique(callable $callback): LinkedList
+    public function unique(callable $callback): LinkedList
     {
         $source = function () use ($callback): Generator {
             $hashTable = [];

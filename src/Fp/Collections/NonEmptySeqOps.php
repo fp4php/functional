@@ -17,14 +17,14 @@ interface NonEmptySeqOps
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    function append(mixed $elem): NonEmptySeq;
+    public function append(mixed $elem): NonEmptySeq;
 
     /**
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    function prepend(mixed $elem): NonEmptySeq;
+    public function prepend(mixed $elem): NonEmptySeq;
 
     /**
      * Returns true if there is collection element of given class
@@ -34,7 +34,7 @@ interface NonEmptySeqOps
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      */
-    function anyOf(string $fqcn, bool $invariant = false): bool;
+    public function anyOf(string $fqcn, bool $invariant = false): bool;
 
     /**
      * Find element by its index
@@ -42,7 +42,7 @@ interface NonEmptySeqOps
      *
      * @psalm-return Option<TV>
      */
-    function at(int $index): Option;
+    public function at(int $index): Option;
 
     /**
      * Returns true if every collection element satisfy the condition
@@ -50,7 +50,7 @@ interface NonEmptySeqOps
      *
      * @psalm-param callable(TV): bool $predicate
      */
-    function every(callable $predicate): bool;
+    public function every(callable $predicate): bool;
 
     /**
      * Returns true if every collection element is of given class
@@ -60,14 +60,14 @@ interface NonEmptySeqOps
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      */
-    function everyOf(string $fqcn, bool $invariant = false): bool;
+    public function everyOf(string $fqcn, bool $invariant = false): bool;
 
     /**
      * Find if there is element which satisfies the condition
      *
      * @psalm-param callable(TV): bool $predicate
      */
-    function exists(callable $predicate): bool;
+    public function exists(callable $predicate): bool;
 
     /**
      * Filter collection by condition
@@ -75,14 +75,14 @@ interface NonEmptySeqOps
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Seq<TV>
      */
-    function filter(callable $predicate): Seq;
+    public function filter(callable $predicate): Seq;
 
     /**
      * Filter not null elements
      *
      * @psalm-return Seq<TV>
      */
-    function filterNotNull(): Seq;
+    public function filterNotNull(): Seq;
 
     /**
      * Filter elements of given class
@@ -92,7 +92,7 @@ interface NonEmptySeqOps
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      * @psalm-return Seq<TVO>
      */
-    function filterOf(string $fqcn, bool $invariant = false): Seq;
+    public function filterOf(string $fqcn, bool $invariant = false): Seq;
 
     /**
      * Find first element which satisfies the condition
@@ -100,7 +100,7 @@ interface NonEmptySeqOps
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    function first(callable $predicate): Option;
+    public function first(callable $predicate): Option;
 
     /**
      * Find first element of given class
@@ -110,26 +110,19 @@ interface NonEmptySeqOps
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      * @psalm-return Option<TVO>
      */
-    function firstOf(string $fqcn, bool $invariant = false): Option;
+    public function firstOf(string $fqcn, bool $invariant = false): Option;
 
     /**
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return Seq<TVO>
      */
-    function flatMap(callable $callback): Seq;
-
-    /**
-     * Do something for all collection elements
-     *
-     * @psalm-param callable(TV) $callback
-     */
-    function forAll(callable $callback): void;
+    public function flatMap(callable $callback): Seq;
 
     /**
      * @psalm-return TV
      */
-    function head(): mixed;
+    public function head(): mixed;
 
     /**
      * Returns last collection element which satisfies the condition
@@ -137,7 +130,7 @@ interface NonEmptySeqOps
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    function last(callable $predicate): Option;
+    public function last(callable $predicate): Option;
 
     /**
      * @template TVO
@@ -152,21 +145,21 @@ interface NonEmptySeqOps
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
      * @psalm-return TV
      */
-    function reduce(callable $callback): mixed;
+    public function reduce(callable $callback): mixed;
 
     /**
      * Copy collection in reversed order
      *
      * @psalm-return NonEmptySeq<TV>
      */
-    function reverse(): NonEmptySeq;
+    public function reverse(): NonEmptySeq;
 
     /**
      * Returns every collection element except first
      *
      * @psalm-return Seq<TV>
      */
-    function tail(): Seq;
+    public function tail(): Seq;
 
     /**
      * Returns collection unique elements
@@ -174,5 +167,5 @@ interface NonEmptySeqOps
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return NonEmptySeq<TV>
      */
-    function unique(callable $callback): NonEmptySeq;
+    public function unique(callable $callback): NonEmptySeq;
 }

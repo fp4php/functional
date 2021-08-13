@@ -112,7 +112,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    function append(mixed $elem): NonEmptySeq
+    public function append(mixed $elem): NonEmptySeq
     {
         return self::collectUnsafe($this->toLinkedList()->append($elem));
     }
@@ -123,7 +123,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    function prepend(mixed $elem): NonEmptySeq
+    public function prepend(mixed $elem): NonEmptySeq
     {
         return new self($elem, $this->toLinkedList());
     }
@@ -134,7 +134,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      */
-    function anyOf(string $fqcn, bool $invariant = false): bool
+    public function anyOf(string $fqcn, bool $invariant = false): bool
     {
         return $this->toLinkedList()->anyOf($fqcn, $invariant);
     }
@@ -143,7 +143,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @psalm-return Option<TV>
      */
-    function at(int $index): Option
+    public function at(int $index): Option
     {
         return $this->toLinkedList()->at($index);
     }
@@ -152,7 +152,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      */
-    function every(callable $predicate): bool
+    public function every(callable $predicate): bool
     {
         return $this->toLinkedList()->every($predicate);
     }
@@ -163,7 +163,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      */
-    function everyOf(string $fqcn, bool $invariant = false): bool
+    public function everyOf(string $fqcn, bool $invariant = false): bool
     {
         return $this->toLinkedList()->everyOf($fqcn, $invariant);
     }
@@ -172,7 +172,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      */
-    function exists(callable $predicate): bool
+    public function exists(callable $predicate): bool
     {
         return $this->toLinkedList()->exists($predicate);
     }
@@ -182,7 +182,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return LinkedList<TV>
      */
-    function filter(callable $predicate): LinkedList
+    public function filter(callable $predicate): LinkedList
     {
         return $this->toLinkedList()->filter($predicate);
     }
@@ -191,7 +191,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @psalm-return LinkedList<TV>
      */
-    function filterNotNull(): LinkedList
+    public function filterNotNull(): LinkedList
     {
         return $this->toLinkedList()->filterNotNull();
     }
@@ -203,7 +203,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      * @psalm-return LinkedList<TVO>
      */
-    function filterOf(string $fqcn, bool $invariant = false): LinkedList
+    public function filterOf(string $fqcn, bool $invariant = false): LinkedList
     {
         return $this->toLinkedList()->filterOf($fqcn, $invariant);
     }
@@ -213,7 +213,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    function first(callable $predicate): Option
+    public function first(callable $predicate): Option
     {
         return $this->toLinkedList()->first($predicate);
     }
@@ -225,7 +225,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
      * @psalm-return Option<TVO>
      */
-    function firstOf(string $fqcn, bool $invariant = false): Option
+    public function firstOf(string $fqcn, bool $invariant = false): Option
     {
         return $this->toLinkedList()->firstOf($fqcn, $invariant);
     }
@@ -236,26 +236,16 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return LinkedList<TVO>
      */
-    function flatMap(callable $callback): LinkedList
+    public function flatMap(callable $callback): LinkedList
     {
         return $this->toLinkedList()->flatMap($callback);
     }
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV) $callback
-     */
-    function forAll(callable $callback): void
-    {
-        /** @psalm-suppress UnusedMethodCall */
-        $this->toLinkedList()->forAll($callback);
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-return TV
      */
-    function head(): mixed
+    public function head(): mixed
     {
         return $this->head;
     }
@@ -265,7 +255,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    function last(callable $predicate): Option
+    public function last(callable $predicate): Option
     {
         return $this->toLinkedList()->last($predicate);
     }
@@ -286,7 +276,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
      * @psalm-return TV
      */
-    function reduce(callable $callback): mixed
+    public function reduce(callable $callback): mixed
     {
         return $this->toLinkedList()->reduce($callback)->getUnsafe();
     }
@@ -295,7 +285,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @psalm-return NonEmptyLinkedList<TV>
      */
-    function reverse(): NonEmptyLinkedList
+    public function reverse(): NonEmptyLinkedList
     {
         return self::collectUnsafe($this->toLinkedList()->reverse());
     }
@@ -304,7 +294,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @psalm-return LinkedList<TV>
      */
-    function tail(): LinkedList
+    public function tail(): LinkedList
     {
         return $this->tail;
     }
@@ -314,7 +304,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return NonEmptyLinkedList<TV>
      */
-    function unique(callable $callback): NonEmptyLinkedList
+    public function unique(callable $callback): NonEmptyLinkedList
     {
         return self::collectUnsafe($this->toLinkedList()->unique($callback));
     }
