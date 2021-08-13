@@ -8,6 +8,7 @@ use Fp\Collections\LinkedList;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
+use Tests\Mock\SubBar;
 
 use function Fp\Cast\asList;
 
@@ -58,5 +59,143 @@ final class LinkedListOpsTest extends TestCase
 
         $this->assertTrue($linkedList0->everyOf(Foo::class));
         $this->assertFalse($linkedList1->everyOf(Foo::class));
+    }
+
+    public function testExists(): void
+    {
+        /** @var LinkedList<mixed> $linkedList */
+        $linkedList = LinkedList::collect([new Foo(1), 1, new Foo(1)]);
+
+        $this->assertTrue($linkedList->exists(fn($i) => $i === 1));
+        $this->assertFalse($linkedList->exists(fn($i) => $i === 2));
+    }
+
+    public function testFilter(): void
+    {
+        $linkedList = LinkedList::collect([new Foo(1), 1, new Foo(1)]);
+        $this->assertEquals([1], $linkedList->filter(fn($i) => $i === 1)->toArray());
+    }
+
+    public function testFilterNotNull(): void
+    {
+        $linkedList = LinkedList::collect([1, null, 3]);
+        $this->assertEquals([1, 3], $linkedList->filterNotNull()->toArray());
+    }
+
+    public function testFilterOf(): void
+    {
+        $bar = new Bar(1);
+        $subBar = new SubBar(1);
+        $linkedList = LinkedList::collect([new Foo(1), $bar, $subBar]);
+
+        $this->assertEquals([$bar, $subBar], $linkedList->filterOf(Bar::class, false)->toArray());
+        $this->assertEquals([$bar], $linkedList->filterOf(Bar::class, true)->toArray());
+    }
+
+    public function testFirst(): void
+    {
+        /** @var LinkedList<mixed> $linkedList */
+        $linkedList = LinkedList::collect([new Foo(1), 2, 1, 3]);
+
+        $this->assertEquals(1, $linkedList->first(fn($e) => 1 === $e)->get());
+        $this->assertNull($linkedList->first(fn($e) => 5 === $e)->get());
+    }
+
+    public function testFirstOf(): void
+    {
+        $bar = new Bar(1);
+        $subBar = new SubBar(1);
+        $linkedList = LinkedList::collect([new Foo(1), $subBar, $bar]);
+
+        $this->assertEquals($subBar, $linkedList->firstOf(Bar::class, false)->get());
+        $this->assertEquals($bar, $linkedList->firstOf(Bar::class, true)->get());
+    }
+
+    public function testFlatMap(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3, 4, 5, 6],
+            LinkedList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
+        );
+    }
+
+    public function testFold(): void
+    {
+        /** @psalm-var LinkedList<int> $list */
+        $list = LinkedList::collect([2, 3]);
+
+        $this->assertEquals(
+            6,
+            $list->fold(1, fn($acc, $e) => $acc + $e)
+        );
+    }
+
+    public function testHead(): void
+    {
+        $this->assertEquals(
+            2,
+            LinkedList::collect([2, 3])->head()->get()
+        );
+    }
+
+    public function testLast(): void
+    {
+        $this->assertEquals(
+            3,
+            LinkedList::collect([2, 3, 0])->last(fn($e) => $e > 0)->get()
+        );
+    }
+
+    public function testLastElement(): void
+    {
+        $this->assertEquals(
+            0,
+            LinkedList::collect([2, 3, 0])->lastElement()->get()
+        );
+    }
+
+    public function testMap(): void
+    {
+        $this->assertEquals(
+            ['2', '3', '4'],
+            LinkedList::collect([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
+        );
+    }
+
+    public function testReduce(): void
+    {
+        /** @var LinkedList<string> $list */
+        $list = LinkedList::collect(['1', '2', '3']);
+
+        $this->assertEquals(
+            '123',
+            $list->reduce(fn($acc, $e) => $acc . $e)->get()
+        );
+    }
+
+    public function testReverse(): void
+    {
+        $this->assertEquals(
+            [3, 2, 1],
+            LinkedList::collect([1, 2, 3])->reverse()->toArray()
+        );
+    }
+
+    public function testTail(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            LinkedList::collect([1, 2, 3])->tail()->toArray()
+        );
+    }
+
+    public function testUnique(): void
+    {
+        $foo1 = new Foo(1);
+        $foo2 = new Foo(2);
+        $this->assertEquals(
+            [$foo1, $foo2],
+            LinkedList::collect([$foo1, $foo1, $foo2])->unique(fn(Foo $e) => $e->a)->toArray()
+        );
     }
 }
