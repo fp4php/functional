@@ -25,7 +25,7 @@ class LinkedListBuffer
 
     public function __construct()
     {
-        $this->first = new Nil();
+        $this->first = Nil::getInstance();
         $this->last = null;
         $this->length = 0;
     }
@@ -36,7 +36,7 @@ class LinkedListBuffer
      */
     public function append(mixed $elem): self
     {
-        $appended = new Cons($elem, new Nil());
+        $appended = new Cons($elem, Nil::getInstance());
 
         if (0 === $this->length) {
             $this->first = $appended;
