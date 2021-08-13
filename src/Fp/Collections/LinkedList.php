@@ -97,7 +97,16 @@ class LinkedList implements LinearSeq
      */
     function at(int $index): Option
     {
-        return $this->first(fn(mixed $v, mixed $k) => $k === $index);
+        $first = null;
+
+        foreach ($this as $idx => $element) {
+            if ($idx === $index) {
+                $first = $element;
+                break;
+            }
+        }
+
+        return Option::fromNullable($first);
     }
 
     /**
@@ -180,7 +189,7 @@ class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV, int): bool $predicate
+     * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
     function first(callable $predicate): Option
@@ -188,7 +197,7 @@ class LinkedList implements LinearSeq
         $first = null;
 
         foreach ($this as $index => $element) {
-            if ($predicate($element, $index)) {
+            if ($predicate($element)) {
                 $first = $element;
                 break;
             }

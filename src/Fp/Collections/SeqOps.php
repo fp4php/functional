@@ -97,7 +97,7 @@ interface SeqOps
     /**
      * Find first element which satisfies the condition
      *
-     * @psalm-param callable(TV, int): bool $predicate
+     * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
     function first(callable $predicate): Option;
