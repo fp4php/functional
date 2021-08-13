@@ -133,6 +133,13 @@ interface NonEmptySeqOps
     public function last(callable $predicate): Option;
 
     /**
+     * Returns last collection element
+     *
+     * @psalm-return TV
+     */
+    public function lastElement(): mixed;
+
+    /**
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return NonEmptySeq<TVO>

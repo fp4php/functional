@@ -262,6 +262,21 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
 
     /**
      * @inheritDoc
+     * @psalm-return TV
+     */
+    public function lastElement(): mixed
+    {
+        $last = $this->head;
+
+        foreach ($this->tail as $element) {
+            $last = $element;
+        }
+
+        return $last;
+    }
+
+    /**
+     * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return NonEmptyLinkedList<TVO>

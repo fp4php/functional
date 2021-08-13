@@ -290,20 +290,30 @@ class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-param null|callable(TV): bool $predicate
+     * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
      */
-    public function last(?callable $predicate = null): Option
+    public function last(callable $predicate): Option
     {
         $last = null;
 
         foreach ($this as $element) {
-            if (is_null($predicate) || $predicate($element)) {
+            if ($predicate($element)) {
                 $last = $element;
             }
         }
 
         return Option::fromNullable($last);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    public function lastElement(): Option
+    {
+        return $this->last(fn() => true);
     }
 
     /**
