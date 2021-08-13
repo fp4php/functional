@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 use Generator;
 use Iterator;
 
+use function Fp\Cast\asList;
 use function Fp\of;
 
 /**
@@ -45,6 +46,20 @@ class LinkedList implements LinearSeq
     public function getIterator(): Iterator
     {
         return new LinkedListIterator($this);
+    }
+
+    /**
+     * @return list<TV>
+     */
+    public function toArray(): array
+    {
+        $buffer = [];
+
+        foreach ($this as $elem) {
+            $buffer[] = $elem;
+        }
+
+        return $buffer;
     }
 
     /**

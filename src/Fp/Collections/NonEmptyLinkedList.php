@@ -85,6 +85,20 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @return non-empty-list<TV>
+     */
+    public function toArray(): array
+    {
+        $buffer = [$this->head];
+
+        foreach ($this->tail as $elem) {
+            $buffer[] = $elem;
+        }
+
+        return $buffer;
+    }
+
+    /**
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
