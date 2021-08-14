@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Iterator;
 use IteratorAggregate;
 
 /**
@@ -13,5 +14,9 @@ use IteratorAggregate;
  */
 interface Collection extends IteratorAggregate
 {
-
+    /**
+     * @inheritDoc
+     * @return Iterator<TV>
+     */
+    public function getIterator(): Iterator;
 }

@@ -17,7 +17,7 @@ use Generator;
 final class HashMap implements Map
 {
     /**
-     * @var array<hash, array{TK, TV}>
+     * @var array<hash, Seq<array{TK, TV}>>
      */
     private array $hashTable = [];
 
@@ -28,7 +28,17 @@ final class HashMap implements Map
     {
         foreach ($source as $pair) {
             $hash = is_object($pair[0]) ? spl_object_hash($pair[0]) : (string) $pair[0];
-            $this->hashTable[$hash] = $pair;
+
+            /** @var Seq<array{TK, TV}> $nil */
+            $nil = Nil::getInstance();
+
+            if (!isset($this->hashTable[$hash])) {
+                $this->hashTable[$hash] = $nil;
+            }
+
+            $this->hashTable[$hash] = $this->hashTable[$hash]
+                ->filter(fn(array $p) => $pair[0] !== $p[0])
+                ->prepend($pair);
         }
     }
 
@@ -64,10 +74,26 @@ final class HashMap implements Map
     }
 
     /**
-     * @return ArrayIterator<hash, array{TK, TV}>
+     * @return ArrayIterator<int, array{TK, TV}>
      */
     public function getIterator(): ArrayIterator
     {
-        return new ArrayIterator($this->hashTable);
+        return new ArrayIterator($this->toArray());
+    }
+
+    /**
+     * @return list<array{TK, TV}>
+     */
+    public function toArray(): array
+    {
+        $buffer = [];
+
+        foreach ($this->hashTable as $bucket) {
+            foreach ($bucket as $pair) {
+                $buffer[] = $pair;
+            }
+        }
+
+        return $buffer;
     }
 }

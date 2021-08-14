@@ -26,13 +26,12 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     /**
      * @psalm-pure
      * @psalm-suppress ImpureMethodCall
-     * @template TKI
      * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return NonEmptyLinkedList<TVI>
+     * @param iterable<TVI> $source
+     * @return self<TVI>
      * @throws EmptyCollectionException
      */
-    public static function collect(iterable $source): NonEmptyLinkedList
+    public static function collect(iterable $source): self
     {
         $collected = LinkedList::collect($source);
 
@@ -49,12 +48,11 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
 
     /**
      * @psalm-pure
-     * @template TKI
      * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return NonEmptyLinkedList<TVI>
+     * @param iterable<TVI> $source
+     * @return self<TVI>
      */
-    public static function collectUnsafe(iterable $source): NonEmptyLinkedList
+    public static function collectUnsafe(iterable $source): self
     {
         try {
             return self::collect($source);
@@ -65,12 +63,11 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
 
     /**
      * @psalm-pure
-     * @template TKI
      * @template TVI
-     * @param non-empty-array<TKI, TVI>|NonEmptyCollection<TKI, TVI> $source
-     * @return NonEmptyLinkedList<TVI>
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @return self<TVI>
      */
-    public static function collectNonEmpty(iterable $source): NonEmptyLinkedList
+    public static function collectNonEmpty(iterable $source): self
     {
         return self::collectUnsafe($source);
     }
