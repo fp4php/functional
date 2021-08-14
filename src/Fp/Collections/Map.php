@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @template TK
+ * @template TK of (object|scalar)
  * @template-covariant TV
  * @psalm-immutable
  * @extends Collection<array{TK, TV}>
@@ -15,7 +15,7 @@ interface Map extends Collection, MapOps
 {
     /**
      * @psalm-pure
-     * @template TKI
+     * @template TKI of (object|scalar)
      * @template TVI
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>

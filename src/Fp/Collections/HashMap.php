@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use ArrayIterator;
+use Error;
 use Generator;
 
 /**
- * @template TK
+ * @template TK of (object|scalar)
  * @template-covariant TV
  * @psalm-immutable
  * @implements Map<TK, TV>
@@ -27,24 +28,51 @@ final class HashMap implements Map
     private function __construct(iterable $source)
     {
         foreach ($source as $pair) {
-            $hash = is_object($pair[0]) ? spl_object_hash($pair[0]) : (string) $pair[0];
 
-            /** @var Seq<array{TK, TV}> $nil */
-            $nil = Nil::getInstance();
+            $hash = (string) $this->computeKeyHash($pair[0]);
 
             if (!isset($this->hashTable[$hash])) {
-                $this->hashTable[$hash] = $nil;
+                $this->hashTable[$hash] = Nil::getInstance();
             }
 
             $this->hashTable[$hash] = $this->hashTable[$hash]
-                ->filter(fn(array $p) => $pair[0] !== $p[0])
+                ->filter(function (array $p) use ($pair) {
+                    return match (true) {
+                        $pair[0] instanceof HashContract && $p[0] instanceof HashContract => !($pair[0]->equals($p[0])),
+                        default => !($this->hashEquals($pair[0], $p[0])),
+                    };
+                })
                 ->prepend($pair);
         }
     }
 
     /**
+     * @param object|scalar $lhs
+     * @param object|scalar $rhs
+     * @return bool
+     */
+    private function hashEquals(mixed $lhs, mixed $rhs): bool
+    {
+        return $this->computeKeyHash($lhs) === $this->computeKeyHash($rhs);
+    }
+
+    /**
+     * @param object|scalar $key
+     * @return string|int|float|bool
+     */
+    private function computeKeyHash(object|string|int|float|bool $key): string|int|float|bool
+    {
+        /** @psalm-suppress ImpureMethodCall */
+        return match (true) {
+            $key instanceof HashContract => $key->hashCode(),
+            is_object($key) => spl_object_hash($key),
+            default => $key,
+        };
+    }
+
+    /**
      * @psalm-pure
-     * @template TKI
+     * @template TKI of (object|scalar)
      * @template TVI
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
