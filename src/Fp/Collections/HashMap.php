@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use ArrayIterator;
-use Error;
+use Fp\Functional\Option\Option;
 use Generator;
 
 /**
@@ -36,22 +36,37 @@ final class HashMap implements Map
             }
 
             $this->hashTable[$hash] = $this->hashTable[$hash]
-                ->filter(function (array $p) use ($pair) {
-                    return match (true) {
-                        $pair[0] instanceof HashContract && $p[0] instanceof HashContract => !($pair[0]->equals($p[0])),
-                        default => !($this->hashEquals($pair[0], $p[0])),
-                    };
-                })
+                ->filter(fn(array $p) => !$this->keyEquals($pair[0], $p[0]))
                 ->prepend($pair);
         }
     }
 
     /**
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
+    }
+
+    /**
      * @param object|scalar $lhs
      * @param object|scalar $rhs
-     * @return bool
+     * @psalm-suppress ImpureMethodCall
      */
-    private function hashEquals(mixed $lhs, mixed $rhs): bool
+    private function keyEquals(mixed $lhs, mixed $rhs): bool
+    {
+        return $lhs instanceof HashContract && $rhs instanceof HashContract
+            ? $lhs->equals($rhs)
+            : $this->keyHashEquals($lhs, $rhs);
+    }
+
+    /**
+     * @param object|scalar $lhs
+     * @param object|scalar $rhs
+     */
+    private function keyHashEquals(mixed $lhs, mixed $rhs): bool
     {
         return $this->computeKeyHash($lhs) === $this->computeKeyHash($rhs);
     }
@@ -59,10 +74,10 @@ final class HashMap implements Map
     /**
      * @param object|scalar $key
      * @return string|int|float|bool
+     * @psalm-suppress ImpureMethodCall
      */
     private function computeKeyHash(object|string|int|float|bool $key): string|int|float|bool
     {
-        /** @psalm-suppress ImpureMethodCall */
         return match (true) {
             $key instanceof HashContract => $key->hashCode(),
             is_object($key) => spl_object_hash($key),
@@ -123,5 +138,18 @@ final class HashMap implements Map
         }
 
         return $buffer;
+    }
+
+    /**
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function get(mixed $key): Option
+    {
+        $hash = (string) $this->computeKeyHash($key);
+
+        return Option::fromNullable($this->hashTable[$hash] ?? null)
+            ->flatMap(fn(Seq $bucket) => $bucket->first(fn($pair) => $this->keyEquals($pair[0], $key)))
+            ->map(fn($pair) => $pair[1]);
     }
 }
