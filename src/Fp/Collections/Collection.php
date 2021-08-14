@@ -8,17 +8,10 @@ use IteratorAggregate;
 
 /**
  * @psalm-immutable
- * @template-covariant TK
  * @template-covariant TV
+ * @implements IteratorAggregate<empty, TV>
  */
 interface Collection extends IteratorAggregate
 {
-    /**
-     * @psalm-pure
-     * @template TKI
-     * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return Collection<TKI, TVI>
-     */
-    public static function collect(iterable $source): self;
+
 }

@@ -7,10 +7,16 @@ namespace Fp\Collections;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends Collection<empty, TV>
+ * @extends Collection<TV>
  * @extends SeqOps<TV>
  */
 interface Seq extends Collection, SeqOps
 {
-
+    /**
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return self<TVI>
+     */
+    public static function collect(iterable $source): self;
 }

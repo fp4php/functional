@@ -8,7 +8,6 @@ use Fp\Functional\Option\Option;
 use Generator;
 use Iterator;
 
-use function Fp\Cast\asList;
 use function Fp\of;
 
 /**
