@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use ArrayIterator;
+use Generator;
 
 /**
  * @template TK
@@ -13,7 +14,7 @@ use ArrayIterator;
  * @implements Map<TK, TV>
  * @psalm-type hash = string
  */
-class HashMap implements Map
+final class HashMap implements Map
 {
     /**
      * @var array<hash, array{TK, TV}>
@@ -23,7 +24,7 @@ class HashMap implements Map
     /**
      * @param iterable<array{TK, TV}> $source
      */
-    public function __construct(iterable $source)
+    private function __construct(iterable $source)
     {
         foreach ($source as $pair) {
             $hash = is_object($pair[0]) ? spl_object_hash($pair[0]) : (string) $pair[0];
@@ -52,14 +53,14 @@ class HashMap implements Map
      */
     public static function collectIterable(iterable $source): self
     {
-        $buffer = []; // TODO
+        $pairSource = function() use ($source): Generator {
+            foreach ($source as $idx => $elem) {
+                yield [$idx, $elem];
+            }
+        };
 
-        /** @psalm-suppress ImpureMethodCall */
-        foreach ($source as $idx => $elem) {
-            $buffer[] = [$idx, $elem];
-        }
-
-        return self::collect($buffer);
+        /** @psalm-suppress ImpureFunctionCall */
+        return self::collect($pairSource());
     }
 
     /**
