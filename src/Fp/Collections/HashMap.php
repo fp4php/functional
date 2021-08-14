@@ -51,41 +51,6 @@ final class HashMap implements Map
     }
 
     /**
-     * @param object|scalar $lhs
-     * @param object|scalar $rhs
-     * @psalm-suppress ImpureMethodCall
-     */
-    private function keyEquals(mixed $lhs, mixed $rhs): bool
-    {
-        return $lhs instanceof HashContract && $rhs instanceof HashContract
-            ? $lhs->equals($rhs)
-            : $this->keyHashEquals($lhs, $rhs);
-    }
-
-    /**
-     * @param object|scalar $lhs
-     * @param object|scalar $rhs
-     */
-    private function keyHashEquals(mixed $lhs, mixed $rhs): bool
-    {
-        return $this->computeKeyHash($lhs) === $this->computeKeyHash($rhs);
-    }
-
-    /**
-     * @param object|scalar $key
-     * @return string|int|float|bool
-     * @psalm-suppress ImpureMethodCall
-     */
-    private function computeKeyHash(object|string|int|float|bool $key): string|int|float|bool
-    {
-        return match (true) {
-            $key instanceof HashContract => $key->hashCode(),
-            is_object($key) => spl_object_hash($key),
-            default => $key,
-        };
-    }
-
-    /**
      * @psalm-pure
      * @template TKI of (object|scalar)
      * @template TVI
@@ -146,10 +111,67 @@ final class HashMap implements Map
      */
     public function get(mixed $key): Option
     {
-        $hash = (string) $this->computeKeyHash($key);
-
-        return Option::fromNullable($this->hashTable[$hash] ?? null)
+        return $this->findBucketByKey($key)
             ->flatMap(fn(Seq $bucket) => $bucket->first(fn($pair) => $this->keyEquals($pair[0], $key)))
             ->map(fn($pair) => $pair[1]);
+    }
+
+    /**
+     * @todo performance optimization
+     *
+     * @template TKI of (object|scalar)
+     * @template TVI
+     * @param TKI $key
+     * @param TVI $value
+     * @return HashMap<TK|TKI, TV|TVI>
+     */
+    public function put(mixed $key, mixed $value): HashMap
+    {
+        return self::collect([...$this->toArray(), [$key, $value]]);
+    }
+
+    /**
+     * @param object|scalar $lhs
+     * @param object|scalar $rhs
+     * @psalm-suppress ImpureMethodCall
+     */
+    private function keyEquals(mixed $lhs, mixed $rhs): bool
+    {
+        return $lhs instanceof HashContract && $rhs instanceof HashContract
+            ? $lhs->equals($rhs)
+            : $this->keyHashEquals($lhs, $rhs);
+    }
+
+    /**
+     * @param object|scalar $lhs
+     * @param object|scalar $rhs
+     */
+    private function keyHashEquals(mixed $lhs, mixed $rhs): bool
+    {
+        return $this->computeKeyHash($lhs) === $this->computeKeyHash($rhs);
+    }
+
+    /**
+     * @param object|scalar $key
+     * @return string|int|float|bool
+     * @psalm-suppress ImpureMethodCall
+     */
+    private function computeKeyHash(object|string|int|float|bool $key): string|int|float|bool
+    {
+        return match (true) {
+            $key instanceof HashContract => $key->hashCode(),
+            is_object($key) => spl_object_hash($key),
+            default => $key,
+        };
+    }
+
+    /**
+     * @param TK $key
+     * @return Option<Seq<array{TK, TV}>>
+     */
+    private function findBucketByKey(mixed $key): Option
+    {
+        $hash = (string) $this->computeKeyHash($key);
+        return Option::fromNullable($this->hashTable[$hash] ?? null);
     }
 }

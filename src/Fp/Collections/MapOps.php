@@ -18,4 +18,13 @@ interface MapOps
      * @return Option<TV>
      */
     public function get(mixed $key): Option;
+
+    /**
+     * @template TKI of (object|scalar)
+     * @template TVI
+     * @param TKI $key
+     * @param TVI $value
+     * @return Map<TK|TKI, TV|TVI>
+     */
+    public function put(mixed $key, mixed $value): Map;
 }
