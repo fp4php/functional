@@ -13,6 +13,11 @@ use Fp\Functional\Option\Option;
 interface NonEmptySeqOps
 {
     /**
+     * @return non-empty-list<TV>
+     */
+    public function toArray(): array;
+
+    /**
      * Add element to the collection end
      *
      * @template TVI

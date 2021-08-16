@@ -14,12 +14,21 @@ use Fp\Functional\Option\Option;
 interface MapOps
 {
     /**
+     * @return list<array{TK, TV}>
+     */
+    public function toArray(): array;
+
+    /**
+     * Get an element by its key
+     *
      * @param TK $key
      * @return Option<TV>
      */
     public function get(mixed $key): Option;
 
     /**
+     * Produces new collection with given element
+     *
      * @template TKI of (object|scalar)
      * @template TVI
      * @param TKI $key
@@ -29,6 +38,8 @@ interface MapOps
     public function updated(mixed $key, mixed $value): Map;
 
     /**
+     * Produces new collection without an element with given key
+     *
      * @param TK $key
      * @return Map<TK, TV>
      */
@@ -51,6 +62,8 @@ interface MapOps
     public function filter(callable $predicate): Map;
 
     /**
+     * Map collection and flatten the result
+     *
      * @psalm-template TKO of (object|scalar)
      * @psalm-template TVO
      * @psalm-param callable(TV, TK): iterable<array{TKO, TVO}> $callback
