@@ -96,10 +96,8 @@ final class HashMap implements Map
     {
         $buffer = [];
 
-        foreach ($this->hashTable as $bucket) {
-            foreach ($bucket as $pair) {
-                $buffer[] = $pair;
-            }
+        foreach ($this->generatePairs() as $pair) {
+            $buffer[] = $pair;
         }
 
         return $buffer;
@@ -117,17 +115,43 @@ final class HashMap implements Map
     }
 
     /**
-     * @todo performance optimization
-     *
      * @template TKI of (object|scalar)
      * @template TVI
      * @param TKI $key
      * @param TVI $value
-     * @return HashMap<TK|TKI, TV|TVI>
+     * @return self<TK|TKI, TV|TVI>
      */
-    public function updated(mixed $key, mixed $value): HashMap
+    public function updated(mixed $key, mixed $value): self
     {
         return self::collect([...$this->toArray(), [$key, $value]]);
+    }
+
+    /**
+     * @param TK $key
+     * @return self<TK, TV>
+     */
+    public function removed(mixed $key): self
+    {
+        return $this->filter(fn($v, $k) => $k !== $key);
+    }
+
+    /**
+     * Filter collection by condition
+     *
+     * @psalm-param callable(TV, TK): bool $predicate
+     * @psalm-return self<TK, TV>
+     */
+    public function filter(callable $predicate): self
+    {
+        $source = function () use ($predicate):Generator {
+            foreach ($this->generatePairs() as $pair) {
+                if ($predicate($pair[1], $pair[0])) {
+                    yield $pair;
+                }
+            }
+        };
+
+        return self::collect($source());
     }
 
     /**
@@ -173,5 +197,17 @@ final class HashMap implements Map
     {
         $hash = (string) $this->computeKeyHash($key);
         return Option::fromNullable($this->hashTable[$hash] ?? null);
+    }
+
+    /**
+     * @return Generator<array{TK, TV}>
+     */
+    private function generatePairs(): Generator
+    {
+        foreach ($this->hashTable as $bucket) {
+            foreach ($bucket as $pair) {
+                yield $pair;
+            }
+        }
     }
 }

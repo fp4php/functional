@@ -29,7 +29,6 @@ interface MapOps
     public function updated(mixed $key, mixed $value): Map;
 
     /**
-     * TODO
      * @param TK $key
      * @return Map<TK, TV>
      */
