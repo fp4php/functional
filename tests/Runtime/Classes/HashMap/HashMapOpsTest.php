@@ -74,7 +74,7 @@ final class HashMapOpsTest extends TestCase
         $hm = HashMap::collect([['2', 2], ['3', 3]]);
 
         $this->assertEquals(
-            ['123', 6],
+            ['23', 5],
             $hm->reduce(fn(array $acc, array $cur): array => [$acc[0] . $cur[0], $acc[1] + $cur[1]])->get()
         );
     }
