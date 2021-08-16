@@ -42,15 +42,6 @@ final class HashMap implements Map
     }
 
     /**
-     * @param TK $key
-     * @return Option<TV>
-     */
-    public function __invoke(mixed $key): Option
-    {
-        return $this->get($key);
-    }
-
-    /**
      * @psalm-pure
      * @template TKI of (object|scalar)
      * @template TVI
@@ -111,6 +102,16 @@ final class HashMap implements Map
     public function toLinkedList(): LinkedList
     {
         return LinkedList::collect($this->generatePairs());
+    }
+
+    /**
+     * @inheritDoc
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
     }
 
     /**

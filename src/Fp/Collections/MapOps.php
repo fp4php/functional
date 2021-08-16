@@ -15,6 +15,15 @@ interface MapOps
 {
     /**
      * Get an element by its key
+     * Alias for @see MapOps::get
+     *
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option;
+
+    /**
+     * Get an element by its key
      *
      * @param TK $key
      * @return Option<TV>

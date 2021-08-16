@@ -46,7 +46,10 @@ class HashSet implements Set
     {
         $pairs = LinkedList::collect($source)->map(fn(mixed $elem) => [$elem, $elem]);
 
-        /** @var self<TVI> */
+        /**
+         * Inference isn't working in generic context
+         * @var self<TVI>
+         */
         return new self(HashMap::collect($pairs));
     }
 
@@ -57,5 +60,23 @@ class HashSet implements Set
     public function getIterator(): Iterator
     {
         return new LinkedListIterator($this->toLinkedList());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param TV $element
+     */
+    public function __invoke(mixed $element): bool
+    {
+        return $this->contains($element);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param TV $element
+     */
+    public function contains(mixed $element): bool
+    {
+        return $this->map->get($element)->isNonEmpty();
     }
 }
