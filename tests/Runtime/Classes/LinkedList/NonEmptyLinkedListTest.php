@@ -39,4 +39,22 @@ final class NonEmptyLinkedListTest extends TestCase
             NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->toArray(),
         );
     }
+
+    public function testCasts(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->toLinkedList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->toNonEmptyLinkedList()->toArray(),
+        );
+    }
 }

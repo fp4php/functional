@@ -108,4 +108,14 @@ final class HashMapOpsTest extends TestCase
             $hm->keys()->toArray()
         );
     }
+
+    public function testValues(): void
+    {
+        $hm = HashMap::collect([['a', 22], ['b', 33]]);
+
+        $this->assertEquals(
+            [22, 33],
+            $hm->values()->toArray()
+        );
+    }
 }
