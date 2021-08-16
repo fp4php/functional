@@ -125,7 +125,7 @@ final class HashMap implements Map
      * @param TVI $value
      * @return HashMap<TK|TKI, TV|TVI>
      */
-    public function put(mixed $key, mixed $value): HashMap
+    public function updated(mixed $key, mixed $value): HashMap
     {
         return self::collect([...$this->toArray(), [$key, $value]]);
     }
