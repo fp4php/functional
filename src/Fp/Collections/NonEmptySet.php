@@ -6,11 +6,11 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
- * @template-covariant TV
+ * @template-covariant TV of (object|scalar)
  * @extends NonEmptyCollection<TV>
- * @extends NonEmptySeqOps<TV>
+ * @extends NonEmptySetOps<TV>
  */
-interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps
+interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps
 {
     /**
      * @return non-empty-list<TV>
@@ -18,13 +18,13 @@ interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps
     public function toArray(): array;
 
     /**
-     * @return LinkedList<TV>
+     * @return NonEmptyLinkedList<TV>
      */
-    public function toLinkedList(): LinkedList;
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList;
 
     /**
      * @psalm-pure
-     * @template TVI
+     * @template TVI of (object|scalar)
      * @param iterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
@@ -33,7 +33,7 @@ interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps
 
     /**
      * @psalm-pure
-     * @template TVI
+     * @template TVI of (object|scalar)
      * @param iterable<TVI> $source
      * @return self<TVI>
      */
@@ -41,8 +41,8 @@ interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps
 
     /**
      * @psalm-pure
-     * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @template TVI of (object|scalar)
+     * @param non-empty-array<TVI>|NonEmptySet<TVI>|NonEmptySeq<TVI> $source
      * @return self<TVI>
      */
     public static function collectNonEmpty(iterable $source): self;

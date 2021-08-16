@@ -89,9 +89,9 @@ class HashSet implements Set
      * @inheritDoc
      * @template TVI of (object|scalar)
      * @param TVI $element
-     * @return Set<TV|TVI>
+     * @return self<TV|TVI>
      */
-    public function updated(mixed $element): Set
+    public function updated(mixed $element): self
     {
         return new self($this->map->updated($element, $element));
     }
@@ -99,9 +99,9 @@ class HashSet implements Set
     /**
      * @inheritDoc
      * @param TV $element
-     * @return Set<TV>
+     * @return self<TV>
      */
-    public function removed(mixed $element): Set
+    public function removed(mixed $element): self
     {
         return new self($this->map->removed($element));
     }
@@ -127,9 +127,9 @@ class HashSet implements Set
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Set<TV>
+     * @psalm-return self<TV>
      */
-    public function filter(callable $predicate): Set
+    public function filter(callable $predicate): self
     {
         return new self($this->map->filter($predicate));
     }
@@ -138,9 +138,9 @@ class HashSet implements Set
      * @inheritDoc
      * @psalm-template TVO of (object|scalar)
      * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return Set<TVO>
+     * @psalm-return self<TVO>
      */
-    public function flatMap(callable $callback): Set
+    public function flatMap(callable $callback): self
     {
         $source = function () use ($callback): Generator {
             foreach ($this as $element) {
@@ -180,9 +180,9 @@ class HashSet implements Set
      * @inheritDoc
      * @template TVO of (object|scalar)
      * @psalm-param callable(TV): TVO $callback
-     * @psalm-return Set<TVO>
+     * @psalm-return self<TVO>
      */
-    public function map(callable $callback): Set
+    public function map(callable $callback): self
     {
         $source = function () use ($callback): Generator {
             foreach ($this as $element) {
