@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
- * @template-covariant TV
+ * @template-covariant TV of (object|scalar)
  * @extends Collection<TV>
  * @extends SetOps<TV>
  */
@@ -24,7 +24,7 @@ interface Set extends Collection, SetOps
 
     /**
      * @psalm-pure
-     * @template TVI
+     * @template TVI of (object|scalar)
      * @param iterable<TVI> $source
      * @return self<TVI>
      */

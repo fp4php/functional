@@ -21,6 +21,7 @@ class HashSet implements Set
     }
 
     /**
+     * @inheritDoc
      * @return list<TV>
      */
     public function toArray(): array
@@ -29,6 +30,7 @@ class HashSet implements Set
     }
 
     /**
+     * @inheritDoc
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -37,6 +39,7 @@ class HashSet implements Set
     }
 
     /**
+     * @inheritDoc
      * @psalm-pure
      * @template TVI of (object|scalar)
      * @param iterable<TVI> $source
@@ -78,5 +81,26 @@ class HashSet implements Set
     public function contains(mixed $element): bool
     {
         return $this->map->get($element)->isNonEmpty();
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI of (object|scalar)
+     * @param TVI $element
+     * @return Set<TV|TVI>
+     */
+    public function updated(mixed $element): Set
+    {
+        return new self($this->map->updated($element, $element));
+    }
+
+    /**
+     * @inheritDoc
+     * @param TV $element
+     * @return Set<TV>
+     */
+    public function removed(mixed $element): Set
+    {
+        return new self($this->map->removed($element));
     }
 }

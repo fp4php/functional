@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
- * @template-covariant TV
+ * @template-covariant TV of (object|scalar)
  */
 interface SetOps
 {
@@ -24,4 +24,21 @@ interface SetOps
      * @psalm-param TV $element
      */
     public function contains(mixed $element): bool;
+
+    /**
+     * Produces new set with given element included
+     *
+     * @template TVI of (object|scalar)
+     * @param TVI $element
+     * @return Set<TV|TVI>
+     */
+    public function updated(mixed $element): Set;
+
+    /**
+     * Produces new set with given element excluded
+     *
+     * @param TV $element
+     * @return Set<TV>
+     */
+    public function removed(mixed $element): Set;
 }
