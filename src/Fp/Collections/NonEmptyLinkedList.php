@@ -105,6 +105,14 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList
+    {
+        return new self($this->head, $this->tail);
+    }
+
+    /**
      * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem

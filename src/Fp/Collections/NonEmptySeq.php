@@ -23,6 +23,11 @@ interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps
     public function toLinkedList(): LinkedList;
 
     /**
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList;
+
+    /**
      * @psalm-pure
      * @template TVI
      * @param iterable<TVI> $source

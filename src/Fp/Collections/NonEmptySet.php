@@ -18,6 +18,11 @@ interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps
     public function toArray(): array;
 
     /**
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList;
+
+    /**
      * @return NonEmptyLinkedList<TV>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList;

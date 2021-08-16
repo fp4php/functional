@@ -36,6 +36,14 @@ class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return $this->toNonEmptyLinkedList()->toLinkedList();
+    }
+
+    /**
      * @inheritDoc
      * @return NonEmptyLinkedList<TV>
      */
