@@ -82,6 +82,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @inheritDoc
      * @return non-empty-list<TV>
      */
     public function toArray(): array
@@ -276,9 +277,9 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
-     * @psalm-return NonEmptyLinkedList<TVO>
+     * @psalm-return self<TVO>
      */
-    public function map(callable $callback): NonEmptyLinkedList
+    public function map(callable $callback): self
     {
         return self::collectUnsafe($this->toLinkedList()->map($callback));
     }
@@ -295,9 +296,9 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-return NonEmptyLinkedList<TV>
+     * @psalm-return self<TV>
      */
-    public function reverse(): NonEmptyLinkedList
+    public function reverse(): self
     {
         return self::collectUnsafe($this->toLinkedList()->reverse());
     }
@@ -314,9 +315,9 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     /**
      * @inheritDoc
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
-     * @psalm-return NonEmptyLinkedList<TV>
+     * @psalm-return self<TV>
      */
-    public function unique(callable $callback): NonEmptyLinkedList
+    public function unique(callable $callback): self
     {
         return self::collectUnsafe($this->toLinkedList()->unique($callback));
     }

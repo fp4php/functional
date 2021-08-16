@@ -25,9 +25,9 @@ abstract class LinkedList implements LinearSeq
      * @template TVI
      *
      * @param iterable<TKI, TVI> $source
-     * @return LinkedList<TVI>
+     * @return self<TVI>
      */
-    public static function collect(iterable $source): LinkedList
+    public static function collect(iterable $source): self
     {
         $buffer = new LinkedListBuffer();
 
@@ -65,9 +65,9 @@ abstract class LinkedList implements LinearSeq
      * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
-     * @psalm-return LinkedList<TV|TVI>
+     * @psalm-return self<TV|TVI>
      */
-    public function appended(mixed $elem): LinkedList
+    public function appended(mixed $elem): self
     {
         $source = function () use ($elem): Generator {
             foreach ($this as $item) {
@@ -84,9 +84,9 @@ abstract class LinkedList implements LinearSeq
      * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
-     * @psalm-return LinkedList<TV|TVI>
+     * @psalm-return self<TV|TVI>
      */
-    public function prepended(mixed $elem): LinkedList
+    public function prepended(mixed $elem): self
     {
         return new Cons($elem, $this);
     }
@@ -164,9 +164,9 @@ abstract class LinkedList implements LinearSeq
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
-     * @psalm-return LinkedList<TV>
+     * @psalm-return self<TV>
      */
-    public function filter(callable $predicate): LinkedList
+    public function filter(callable $predicate): self
     {
         $source = function () use ($predicate): Generator {
             foreach ($this as $element) {
@@ -181,9 +181,9 @@ abstract class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-return LinkedList<TV>
+     * @psalm-return self<TV>
      */
-    public function filterNotNull(): LinkedList
+    public function filterNotNull(): self
     {
         return $this->filter(fn(mixed $v) => !is_null($v));
     }
@@ -193,11 +193,11 @@ abstract class LinkedList implements LinearSeq
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return LinkedList<TVO>
+     * @psalm-return self<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): LinkedList
+    public function filterOf(string $fqcn, bool $invariant = false): self
     {
-        /** @var LinkedList<TVO> */
+        /** @var self<TVO> */
         return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
     }
 
@@ -237,9 +237,9 @@ abstract class LinkedList implements LinearSeq
      * @inheritDoc
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return LinkedList<TVO>
+     * @psalm-return self<TVO>
      */
-    public function flatMap(callable $callback): LinkedList
+    public function flatMap(callable $callback): self
     {
         $source = function () use ($callback): Generator {
             foreach ($this as $element) {
@@ -318,9 +318,9 @@ abstract class LinkedList implements LinearSeq
     /**
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
-     * @psalm-return LinkedList<TVO>
+     * @psalm-return self<TVO>
      */
-    public function map(callable $callback): LinkedList
+    public function map(callable $callback): self
     {
         $source = function () use ($callback): Generator {
             foreach ($this as $element) {
@@ -348,9 +348,9 @@ abstract class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-return LinkedList<TV>
+     * @psalm-return self<TV>
      */
-    public function reverse(): LinkedList
+    public function reverse(): self
     {
         $list = Nil::getInstance();
 
@@ -363,9 +363,9 @@ abstract class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-return LinkedList<TV>
+     * @psalm-return self<TV>
      */
-    public function tail(): LinkedList
+    public function tail(): self
     {
         return match (true) {
             $this instanceof Cons => $this->tail,
@@ -376,9 +376,9 @@ abstract class LinkedList implements LinearSeq
     /**
      * @inheritDoc
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
-     * @psalm-return LinkedList<TV>
+     * @psalm-return self<TV>
      */
-    public function unique(callable $callback): LinkedList
+    public function unique(callable $callback): self
     {
         $source = function () use ($callback): Generator {
             $hashTable = [];
