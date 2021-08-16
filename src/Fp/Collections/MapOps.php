@@ -14,11 +14,6 @@ use Fp\Functional\Option\Option;
 interface MapOps
 {
     /**
-     * @return list<array{TK, TV}>
-     */
-    public function toArray(): array;
-
-    /**
      * Get an element by its key
      *
      * @param TK $key

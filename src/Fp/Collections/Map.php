@@ -14,6 +14,11 @@ namespace Fp\Collections;
 interface Map extends Collection, MapOps
 {
     /**
+     * @return list<array{TK, TV}>
+     */
+    public function toArray(): array;
+
+    /**
      * @psalm-pure
      * @template TKI of (object|scalar)
      * @template TVI

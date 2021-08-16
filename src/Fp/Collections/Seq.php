@@ -13,6 +13,11 @@ namespace Fp\Collections;
 interface Seq extends Collection, SeqOps
 {
     /**
+     * @return list<TV>
+     */
+    public function toArray(): array;
+
+    /**
      * @psalm-pure
      * @template TVI
      * @param iterable<TVI> $source

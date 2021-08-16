@@ -12,6 +12,10 @@ namespace Fp\Collections;
  */
 interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps
 {
+    /**
+     * @return non-empty-list<TV>
+     */
+    public function toArray(): array;
 
     /**
      * @psalm-pure
