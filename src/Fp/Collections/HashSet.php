@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Option\Option;
+use Generator;
 use Iterator;
 
 /**
@@ -102,5 +104,92 @@ class HashSet implements Set
     public function removed(mixed $element): Set
     {
         return new self($this->map->removed($element));
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return $this->map->every($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return $this->toLinkedList()->exists($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Set<TV>
+     */
+    public function filter(callable $predicate): Set
+    {
+        return new self($this->map->filter($predicate));
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO of (object|scalar)
+     * @psalm-param callable(TV): iterable<TVO> $callback
+     * @psalm-return Set<TVO>
+     */
+    public function flatMap(callable $callback): Set
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this as $element) {
+                $result = $callback($element);
+
+                foreach ($result as $item) {
+                    yield $item;
+                }
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param TV $init initial accumulator value
+     * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
+     * @psalm-return TV
+     */
+    public function fold(mixed $init, callable $callback): mixed
+    {
+        return $this->toLinkedList()->fold($init, $callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
+     * @psalm-return Option<TV>
+     */
+    public function reduce(callable $callback): Option
+    {
+        return $this->toLinkedList()->reduce($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVO of (object|scalar)
+     * @psalm-param callable(TV): TVO $callback
+     * @psalm-return Set<TVO>
+     */
+    public function map(callable $callback): Set
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this as $element) {
+                yield $callback($element);
+            }
+        };
+
+        return self::collect($source());
     }
 }
