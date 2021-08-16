@@ -104,6 +104,15 @@ final class HashMap implements Map
     }
 
     /**
+     * @return LinkedList<array{TK, TV}>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect($this->generatePairs());
+    }
+
+    /**
+     * @inheritDoc
      * @param TK $key
      * @return Option<TV>
      */
@@ -115,6 +124,7 @@ final class HashMap implements Map
     }
 
     /**
+     * @inheritDoc
      * @template TKI of (object|scalar)
      * @template TVI
      * @param TKI $key
@@ -127,6 +137,7 @@ final class HashMap implements Map
     }
 
     /**
+     * @inheritDoc
      * @param TK $key
      * @return self<TK, TV>
      */
@@ -136,8 +147,25 @@ final class HashMap implements Map
     }
 
     /**
-     * Filter collection by condition
-     *
+     * @inheritDoc
+     * @psalm-param callable(TV, TK): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        $result = true;
+
+        foreach ($this as $pair) {
+            if (!$predicate($pair[1], $pair[0])) {
+                $result = false;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-param callable(TV, TK): bool $predicate
      * @psalm-return self<TK, TV>
      */
@@ -152,6 +180,95 @@ final class HashMap implements Map
         };
 
         return self::collect($source());
+    }
+
+    /**
+     * @psalm-template TKO of (object|scalar)
+     * @psalm-template TVO
+     * @psalm-param callable(TV, TK): iterable<array{TKO, TVO}> $callback
+     * @psalm-return self<TKO, TVO>
+     */
+    public function flatMap(callable $callback): self
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this->generatePairs() as $pair) {
+                foreach ($callback($pair[1], $pair[0]) as $p) {
+                    yield $p;
+                }
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param array{TK, TV} $init initial accumulator value
+     * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current element): new accumulator
+     * @psalm-return array{TK, TV}
+     */
+    public function fold(array $init, callable $callback): array
+    {
+        return $this->toLinkedList()->fold($init, $callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current value): new accumulator
+     * @psalm-return Option<array{TK, TV}>
+     */
+    public function reduce(callable $callback): Option
+    {
+        return $this->toLinkedList()->reduce($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVO
+     * @psalm-param callable(TV, TK): TVO $callback
+     * @psalm-return self<TK, TVO>
+     */
+    public function map(callable $callback): self
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this->generatePairs() as $pair) {
+                yield [$pair[0], $callback($pair[1], $pair[0])];
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKO of (object|scalar)
+     * @psalm-param callable(TV, TK): TKO $callback
+     * @psalm-return self<TKO, TV>
+     */
+    public function reindex(callable $callback): self
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this->generatePairs() as $pair) {
+                yield [$callback($pair[1], $pair[0]), $pair[1]];
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Seq<TK>
+     */
+    public function keys(): Seq
+    {
+        $source = function (): Generator {
+            foreach ($this->generatePairs() as $pair) {
+                yield $pair[0];
+            }
+        };
+
+        return LinkedList::collect($source());
     }
 
     /**
