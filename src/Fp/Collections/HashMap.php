@@ -90,6 +90,7 @@ final class HashMap implements Map
     }
 
     /**
+     * @inheritDoc
      * @return list<array{TK, TV}>
      */
     public function toArray(): array
@@ -104,6 +105,7 @@ final class HashMap implements Map
     }
 
     /**
+     * @inheritDoc
      * @return LinkedList<array{TK, TV}>
      */
     public function toLinkedList(): LinkedList
@@ -265,6 +267,21 @@ final class HashMap implements Map
         $source = function (): Generator {
             foreach ($this->generatePairs() as $pair) {
                 yield $pair[0];
+            }
+        };
+
+        return LinkedList::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Seq<TV>
+     */
+    public function values(): Seq
+    {
+        $source = function (): Generator {
+            foreach ($this->generatePairs() as $pair) {
+                yield $pair[1];
             }
         };
 

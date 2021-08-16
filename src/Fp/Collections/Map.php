@@ -19,6 +19,11 @@ interface Map extends Collection, MapOps
     public function toArray(): array;
 
     /**
+     * @return LinkedList<array{TK, TV}>
+     */
+    public function toLinkedList(): LinkedList;
+
+    /**
      * @psalm-pure
      * @template TKI of (object|scalar)
      * @template TVI

@@ -110,4 +110,11 @@ interface MapOps
      * @psalm-return Seq<TK>
      */
     public function keys(): Seq;
+
+    /**
+     * Returns sequence of collection values
+     *
+     * @psalm-return Seq<TV>
+     */
+    public function values(): Seq;
 }
