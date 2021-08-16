@@ -19,7 +19,7 @@ interface NonEmptySeqOps
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    public function append(mixed $elem): NonEmptySeq;
+    public function appended(mixed $elem): NonEmptySeq;
 
     /**
      * Add element to the collection start
@@ -28,7 +28,7 @@ interface NonEmptySeqOps
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    public function prepend(mixed $elem): NonEmptySeq;
+    public function prepended(mixed $elem): NonEmptySeq;
 
     /**
      * Find element by its index

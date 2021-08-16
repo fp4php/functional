@@ -15,7 +15,7 @@ use function Fp\of;
  * @template-covariant TV
  * @implements LinearSeq<TV>
  */
-class LinkedList implements LinearSeq
+abstract class LinkedList implements LinearSeq
 {
     /**
      * @inheritDoc
@@ -67,7 +67,7 @@ class LinkedList implements LinearSeq
      * @psalm-param TVI $elem
      * @psalm-return LinkedList<TV|TVI>
      */
-    public function append(mixed $elem): LinkedList
+    public function appended(mixed $elem): LinkedList
     {
         $source = function () use ($elem): Generator {
             foreach ($this as $item) {
@@ -86,7 +86,7 @@ class LinkedList implements LinearSeq
      * @psalm-param TVI $elem
      * @psalm-return LinkedList<TV|TVI>
      */
-    public function prepend(mixed $elem): LinkedList
+    public function prepended(mixed $elem): LinkedList
     {
         return new Cons($elem, $this);
     }
@@ -355,7 +355,7 @@ class LinkedList implements LinearSeq
         $list = Nil::getInstance();
 
         foreach ($this as $elem) {
-            $list = $list->prepend($elem);
+            $list = $list->prepended($elem);
         }
 
         return $list;

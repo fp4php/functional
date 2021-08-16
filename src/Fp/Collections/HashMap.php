@@ -37,7 +37,7 @@ final class HashMap implements Map
 
             $this->hashTable[$hash] = $this->hashTable[$hash]
                 ->filter(fn(array $p) => !$this->keyEquals($pair[0], $p[0]))
-                ->prepend($pair);
+                ->prepended($pair);
         }
     }
 

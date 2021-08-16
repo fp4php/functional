@@ -109,9 +109,9 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    public function append(mixed $elem): NonEmptySeq
+    public function appended(mixed $elem): NonEmptySeq
     {
-        return self::collectUnsafe($this->toLinkedList()->append($elem));
+        return self::collectUnsafe($this->toLinkedList()->appended($elem));
     }
 
     /**
@@ -120,7 +120,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
-    public function prepend(mixed $elem): NonEmptySeq
+    public function prepended(mixed $elem): NonEmptySeq
     {
         return new self($elem, $this->toLinkedList());
     }

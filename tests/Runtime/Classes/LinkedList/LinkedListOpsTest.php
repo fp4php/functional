@@ -17,7 +17,7 @@ final class LinkedListOpsTest extends TestCase
     public function testAppendPrepend(): void
     {
         $linkedList = LinkedList::collect([1, 2, 3]);
-        $linkedList = $linkedList->prepend(0)->append(4);
+        $linkedList = $linkedList->prepended(0)->appended(4);
 
         $list = asList($linkedList);
 

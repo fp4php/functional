@@ -19,7 +19,7 @@ interface SeqOps
      * @psalm-param TVI $elem
      * @psalm-return Seq<TV|TVI>
      */
-    public function append(mixed $elem): Seq;
+    public function appended(mixed $elem): Seq;
 
     /**
      * Add element to the collection start
@@ -28,7 +28,7 @@ interface SeqOps
      * @psalm-param TVI $elem
      * @psalm-return Seq<TV|TVI>
      */
-    public function prepend(mixed $elem): Seq;
+    public function prepended(mixed $elem): Seq;
 
     /**
      * Find element by its index
