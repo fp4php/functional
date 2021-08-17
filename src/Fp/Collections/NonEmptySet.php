@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
- * @template-covariant TV of (object|scalar)
+ * @template-covariant TV
  * @extends NonEmptyCollection<TV>
  * @extends NonEmptySetOps<TV>
  */
@@ -28,8 +28,18 @@ interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps
     public function toNonEmptyLinkedList(): NonEmptyLinkedList;
 
     /**
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet;
+
+    /**
+     * @return NonEmptyHashSet<TV>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet;
+
+    /**
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
@@ -38,7 +48,7 @@ interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps
 
     /**
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
      */
@@ -46,7 +56,7 @@ interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps
 
     /**
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param non-empty-array<TVI>|NonEmptySet<TVI>|NonEmptySeq<TVI> $source
      * @return self<TVI>
      */

@@ -18,6 +18,16 @@ interface Seq extends Collection, SeqOps
     public function toArray(): array;
 
     /**
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList;
+
+    /**
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet;
+
+    /**
      * REPL:
      * >>> LinkedList::collect([1, 2])
      * => LinkedList(1, 2)

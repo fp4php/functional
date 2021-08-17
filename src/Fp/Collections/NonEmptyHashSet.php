@@ -11,7 +11,7 @@ use Generator;
 use Iterator;
 
 /**
- * @template-covariant TV of (object|scalar)
+ * @template-covariant TV
  * @psalm-immutable
  * @implements NonEmptySet<TV>
  */
@@ -36,6 +36,7 @@ class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
+     * @inheritDoc
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -55,8 +56,26 @@ class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
+     * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyHashSet<TV>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet
+    {
+        return NonEmptyHashSet::collectUnsafe($this);
+    }
+
+    /**
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
@@ -75,7 +94,7 @@ class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
      */
@@ -90,7 +109,7 @@ class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param non-empty-array<TVI>|NonEmptySet<TVI>|NonEmptySeq<TVI> $source
      * @return self<TVI>
      */
@@ -128,7 +147,7 @@ class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @inheritDoc
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param TVI $element
      * @return self<TV|TVI>
      */
@@ -187,7 +206,7 @@ class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @inheritDoc
-     * @template TVO of (object|scalar)
+     * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>
      */

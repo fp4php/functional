@@ -9,7 +9,7 @@ use Generator;
 use Iterator;
 
 /**
- * @template-covariant TV of (object|scalar)
+ * @template-covariant TV
  * @psalm-immutable
  * @implements Set<TV>
  */
@@ -42,8 +42,17 @@ class HashSet implements Set
 
     /**
      * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
      */
@@ -87,7 +96,7 @@ class HashSet implements Set
 
     /**
      * @inheritDoc
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param TVI $element
      * @return self<TV|TVI>
      */
@@ -136,7 +145,7 @@ class HashSet implements Set
 
     /**
      * @inheritDoc
-     * @psalm-template TVO of (object|scalar)
+     * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return self<TVO>
      */
@@ -178,7 +187,7 @@ class HashSet implements Set
 
     /**
      * @inheritDoc
-     * @template TVO of (object|scalar)
+     * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>
      */

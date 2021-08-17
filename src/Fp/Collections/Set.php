@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
- * @template-covariant TV of (object|scalar)
+ * @template-covariant TV
  * @extends Collection<TV>
  * @extends SetOps<TV>
  */
@@ -23,12 +23,17 @@ interface Set extends Collection, SetOps
     public function toLinkedList(): LinkedList;
 
     /**
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet;
+
+    /**
      * REPL:
      * >>> HashSet::collect([1, 2])
      * => HashSet(1, 2)
      *
      * @psalm-pure
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
      */

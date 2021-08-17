@@ -8,7 +8,7 @@ use Fp\Functional\Option\Option;
 
 /**
  * @psalm-immutable
- * @template-covariant TV of (object|scalar)
+ * @template-covariant TV
  */
 interface SetOps
 {
@@ -46,7 +46,7 @@ interface SetOps
      * >>> HashSet::collect([1, 1, 2])->updated(3)->toArray()
      * => [1, 2, 3]
      *
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param TVI $element
      * @return Set<TV|TVI>
      */
@@ -108,7 +108,7 @@ interface SetOps
      * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toArray()
      * => [1, 2, 3, 4, 5, 6]
      *
-     * @psalm-template TVO of (object|scalar)
+     * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return Set<TVO>
      */
@@ -149,7 +149,7 @@ interface SetOps
      * >>> HashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray()
      * => ['1', '2']
      *
-     * @template TVO of (object|scalar)
+     * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return Set<TVO>
      */

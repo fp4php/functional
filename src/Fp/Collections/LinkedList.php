@@ -48,6 +48,7 @@ abstract class LinkedList implements LinearSeq
     }
 
     /**
+     * @inheritDoc
      * @return list<TV>
      */
     public function toArray(): array
@@ -59,6 +60,24 @@ abstract class LinkedList implements LinearSeq
         }
 
         return $buffer;
+    }
+
+    /**
+     * @inheritDoc
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
     }
 
     /**

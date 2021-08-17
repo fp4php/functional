@@ -9,7 +9,7 @@ use Fp\Functional\Option\Option;
 use Generator;
 
 /**
- * @template TK of (object|scalar)
+ * @template TK
  * @template-covariant TV
  * @psalm-immutable
  * @implements Map<TK, TV>
@@ -43,7 +43,7 @@ final class HashMap implements Map
 
     /**
      * @psalm-pure
-     * @template TKI of (object|scalar)
+     * @template TKI
      * @template TVI
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
@@ -106,6 +106,15 @@ final class HashMap implements Map
 
     /**
      * @inheritDoc
+     * @return HashSet<array{TK, TV}>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this->toArray());
+    }
+
+    /**
+     * @inheritDoc
      * @param TK $key
      * @return Option<TV>
      */
@@ -128,7 +137,7 @@ final class HashMap implements Map
 
     /**
      * @inheritDoc
-     * @template TKI of (object|scalar)
+     * @template TKI
      * @template TVI
      * @param TKI $key
      * @param TVI $value
@@ -186,7 +195,7 @@ final class HashMap implements Map
     }
 
     /**
-     * @psalm-template TKO of (object|scalar)
+     * @psalm-template TKO
      * @psalm-template TVO
      * @psalm-param callable(TV, TK): iterable<array{TKO, TVO}> $callback
      * @psalm-return self<TKO, TVO>
@@ -244,7 +253,7 @@ final class HashMap implements Map
 
     /**
      * @inheritDoc
-     * @template TKO of (object|scalar)
+     * @template TKO
      * @psalm-param callable(TV, TK): TKO $callback
      * @psalm-return self<TKO, TV>
      */
@@ -290,8 +299,6 @@ final class HashMap implements Map
     }
 
     /**
-     * @param object|scalar $lhs
-     * @param object|scalar $rhs
      * @psalm-suppress ImpureMethodCall
      */
     private function keyEquals(mixed $lhs, mixed $rhs): bool
@@ -301,27 +308,37 @@ final class HashMap implements Map
             : $this->keyHashEquals($lhs, $rhs);
     }
 
-    /**
-     * @param object|scalar $lhs
-     * @param object|scalar $rhs
-     */
     private function keyHashEquals(mixed $lhs, mixed $rhs): bool
     {
         return $this->computeKeyHash($lhs) === $this->computeKeyHash($rhs);
     }
 
-    /**
-     * @param object|scalar $key
-     * @return string|int|float|bool
-     * @psalm-suppress ImpureMethodCall
-     */
-    private function computeKeyHash(object|string|int|float|bool $key): string|int|float|bool
+    private function computeKeyHash(mixed $key): mixed
     {
         return match (true) {
-            $key instanceof HashContract => $key->hashCode(),
-            is_object($key) => spl_object_hash($key),
+            is_object($key) => $this->computeKeyHashForObject($key),
+            is_array($key) => $this->computeKeyHashForArray($key),
             default => $key,
         };
+    }
+
+    /**
+     * @psalm-suppress ImpureMethodCall
+     */
+    private function computeKeyHashForObject(object $object): string
+    {
+        return $object instanceof HashContract
+            ? $object->hashCode()
+            : spl_object_hash($object);
+    }
+
+    private function computeKeyHashForArray(array $arr): string
+    {
+        $list = LinkedList::collect($arr)
+            ->map(fn($elem): mixed => $this->computeKeyHash($elem))
+            ->toArray();
+
+        return json_encode($list) ?: '';
     }
 
     /**

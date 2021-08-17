@@ -7,7 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 
 /**
- * @template TK of (object|scalar)
+ * @template TK
  * @template-covariant TV
  * @psalm-immutable
  */
@@ -49,7 +49,7 @@ interface MapOps
      * >>> HashMap::collect([['a', 1], ['b', 2]])->updated('b', 3)->toArray()
      * => [['a', 1], ['b', 3]]
      *
-     * @template TKI of (object|scalar)
+     * @template TKI
      * @template TVI
      * @param TKI $key
      * @param TVI $value
@@ -106,7 +106,7 @@ interface MapOps
      * >>>     ->toArray()
      * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
      *
-     * @psalm-template TKO of (object|scalar)
+     * @psalm-template TKO
      * @psalm-template TVO
      * @psalm-param callable(TV, TK): iterable<array{TKO, TVO}> $callback
      * @psalm-return Map<TKO, TVO>
@@ -171,7 +171,7 @@ interface MapOps
      * >>> $collection->reindex(fn($elem) => $elem + 1)
      * => HashMap(2 -> 1, 3 -> 2)
      *
-     * @template TKO of (object|scalar)
+     * @template TKO
      * @psalm-param callable(TV, TK): TKO $callback
      * @psalm-return Map<TKO, TV>
      */

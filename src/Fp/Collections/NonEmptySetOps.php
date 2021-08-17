@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
- * @template-covariant TV of (object|scalar)
+ * @template-covariant TV
  */
 interface NonEmptySetOps
 {
@@ -44,7 +44,7 @@ interface NonEmptySetOps
      * >>> NonEmptyHashSet::collect([1, 1, 2])->updated(3)->toArray()
      * => [1, 2, 3]
      *
-     * @template TVI of (object|scalar)
+     * @template TVI
      * @param TVI $element
      * @return NonEmptySet<TV|TVI>
      */
@@ -121,7 +121,7 @@ interface NonEmptySetOps
      * >>> NonEmptyHashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray()
      * => ['1', '2']
      *
-     * @template TVO of (object|scalar)
+     * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return NonEmptySet<TVO>
      */

@@ -97,6 +97,7 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @inheritDoc
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -105,11 +106,30 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
     }
 
     /**
+     * @inheritDoc
      * @return NonEmptyLinkedList<TV>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
     {
         return new self($this->head, $this->tail);
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyHashSet<TV>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet
+    {
+        return NonEmptyHashSet::collectUnsafe($this);
     }
 
     /**
