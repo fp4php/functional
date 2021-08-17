@@ -18,6 +18,10 @@ interface Seq extends Collection, SeqOps
     public function toArray(): array;
 
     /**
+     * REPL:
+     * >>> LinkedList::collect([1, 2])
+     * => LinkedList(1, 2)
+     *
      * @psalm-pure
      * @template TVI
      * @param iterable<TVI> $source

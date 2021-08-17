@@ -23,6 +23,10 @@ interface Set extends Collection, SetOps
     public function toLinkedList(): LinkedList;
 
     /**
+     * REPL:
+     * >>> HashSet::collect([1, 2])
+     * => HashSet(1, 2)
+     *
      * @psalm-pure
      * @template TVI of (object|scalar)
      * @param iterable<TVI> $source

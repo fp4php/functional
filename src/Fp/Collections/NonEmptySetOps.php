@@ -14,6 +14,12 @@ interface NonEmptySetOps
      * Check if the element is present in the set
      * Alias for @see SetOps::contains
      *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 1, 2])(1)
+     * => true
+     * >>> NonEmptyHashSet::collect([1, 1, 2])(3)
+     * => false
+     *
      * @psalm-param TV $element
      */
     public function __invoke(mixed $element): bool;
@@ -21,12 +27,22 @@ interface NonEmptySetOps
     /**
      * Check if the element is present in the set
      *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 1, 2])->contains(1)
+     * => true
+     * >>> NonEmptyHashSet::collect([1, 1, 2])->contains(3)
+     * => false
+     *
      * @psalm-param TV $element
      */
     public function contains(mixed $element): bool;
 
     /**
      * Produces new set with given element included
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 1, 2])->updated(3)->toArray()
+     * => [1, 2, 3]
      *
      * @template TVI of (object|scalar)
      * @param TVI $element
@@ -37,6 +53,10 @@ interface NonEmptySetOps
     /**
      * Produces new set with given element excluded
      *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 1, 2])->removed(2)->toArray()
+     * => [1]
+     *
      * @param TV $element
      * @return Set<TV>
      */
@@ -46,6 +66,12 @@ interface NonEmptySetOps
      * Returns true if every collection element satisfy the condition
      * false otherwise
      *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 0)
+     * => true
+     * >>> NonEmptyHashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 1)
+     * => false
+     *
      * @psalm-param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool;
@@ -53,12 +79,22 @@ interface NonEmptySetOps
     /**
      * Find if there is element which satisfies the condition
      *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 2, 2])->exists(fn($elem) => 2 === $elem)
+     * => true
+     * >>> NonEmptyHashSet::collect([1, 2, 2])->exists(fn($elem) => 3 === $elem)
+     * => false
+     *
      * @psalm-param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
 
     /**
      * Filter collection by condition
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 2, 2])->filter(fn($elem) => $elem > 1)->toArray()
+     * => [2]
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Set<TV>
@@ -68,6 +104,10 @@ interface NonEmptySetOps
     /**
      * Reduce multiple elements into one
      *
+     * REPL:
+     * >>> NonEmptyHashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)
+     * => '12'
+     *
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
      * @psalm-return TV
      */
@@ -76,6 +116,10 @@ interface NonEmptySetOps
     /**
      * Produces a new collection of elements by mapping each element in collection
      * through a transformation function (callback)
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray()
+     * => ['1', '2']
      *
      * @template TVO of (object|scalar)
      * @psalm-param callable(TV): TVO $callback
