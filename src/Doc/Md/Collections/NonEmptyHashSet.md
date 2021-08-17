@@ -7,8 +7,27 @@ Collection of unique elements.
 Object comparison by default uses spl_object_hash function. If you want to override default comparison behaviour then you need to implement HashContract interface for your classes which objects will be used as elements in HashSet.
 
 ```php
-use Tests\Mock\Foo;
 use Fp\Collections\NonEmptyHashSet;
+
+/**
+ * @implements HashContract<Foo>
+ */
+class Foo implements HashContract
+{
+    public function __construct(public int $a)
+    {
+    }
+
+    public function equals(mixed $rhs): bool
+    {
+        return $this->a === $rhs->a;
+    }
+
+    public function hashCode(): string
+    {
+        return implode(',', [md5((string) $this->a)]);
+    }
+}
 
 $collection = NonEmptyHashSet::collect([
     new Foo(1), new Foo(2), new Foo(2), 

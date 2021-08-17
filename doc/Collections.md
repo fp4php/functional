@@ -21,8 +21,27 @@ implement HashContract interface for your classes which objects will be
 used as keys in HashMap.
 
 ``` php
-use Tests\Mock\Foo;
 use Fp\Collections\HashMap;
+
+/**
+ * @implements HashContract<Foo>
+ */
+class Foo implements HashContract
+{
+    public function __construct(public int $a)
+    {
+    }
+
+    public function equals(mixed $rhs): bool
+    {
+        return $this->a === $rhs->a;
+    }
+
+    public function hashCode(): string
+    {
+        return implode(',', [md5((string) $this->a)]);
+    }
+}
 
 $collection = HashMap::collect([
     [new Foo(1), 1], [new Foo(2), 2],
@@ -54,8 +73,27 @@ HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
 ``` php
-use Tests\Mock\Foo;
 use Fp\Collections\HashSet;
+
+/**
+ * @implements HashContract<Foo>
+ */
+class Foo implements HashContract
+{
+    public function __construct(public int $a)
+    {
+    }
+
+    public function equals(mixed $rhs): bool
+    {
+        return $this->a === $rhs->a;
+    }
+
+    public function hashCode(): string
+    {
+        return implode(',', [md5((string) $this->a)]);
+    }
+}
 
 $collection = HashSet::collect([
     new Foo(1), new Foo(2), new Foo(2), 
@@ -74,22 +112,22 @@ $collection(new Foo(2)); // true
 
 # Hierarchy
 
-  - #### empty collections
-    
-        Collection<TV> -> Seq<TV> -> LinearSeq<TV> -> LinkedList<TV>
-        
-        Collection<TV> -> Seq<TV> -> IndexedSeq<TV> -> TODO
-        
-        Collection<TV> -> Set<TV> -> HashSet<TV>
-        
-        Collection<array{TK, TV}> -> Map<TK, TV> -> HashMap<TK, TV>
+-   #### empty collections
 
-  - #### non-empty collections
-    
+        Collection<TV> -> Seq<TV> -> LinearSeq<TV> -> LinkedList<TV>
+
+        Collection<TV> -> Seq<TV> -> IndexedSeq<TV> -> TODO
+
+        Collection<TV> -> Set<TV> -> HashSet<TV>
+
+        Collection<TV> -> Map<TK, TV> -> HashMap<TK, TV>
+
+-   #### non-empty collections
+
         NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyLinearSeq<TV> -> NonEmptyLinkedList<TV>
-        
+
         NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyIndexedSeq<TV> -> TODO
-        
+
         NonEmptyCollection<TV> -> NonEmptySet<TV> -> NonEmptyHashSet<TV>
 
 # LinkedList
@@ -120,14 +158,33 @@ Standard `NonEmptySet<TV>` interface implementation.
 
 Collection of unique elements.
 
-Object comparison by default uses spl\_object\_hash function. If you
-want to override default comparison behaviour then you need to implement
+Object comparison by default uses spl_object_hash function. If you want
+to override default comparison behaviour then you need to implement
 HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
 ``` php
-use Tests\Mock\Foo;
 use Fp\Collections\NonEmptyHashSet;
+
+/**
+ * @implements HashContract<Foo>
+ */
+class Foo implements HashContract
+{
+    public function __construct(public int $a)
+    {
+    }
+
+    public function equals(mixed $rhs): bool
+    {
+        return $this->a === $rhs->a;
+    }
+
+    public function hashCode(): string
+    {
+        return implode(',', [md5((string) $this->a)]);
+    }
+}
 
 $collection = NonEmptyHashSet::collect([
     new Foo(1), new Foo(2), new Foo(2), 

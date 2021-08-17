@@ -8,7 +8,7 @@
     
     Collection<TV> -> Set<TV> -> HashSet<TV>
     
-    Collection<array{TK, TV}> -> Map<TK, TV> -> HashMap<TK, TV>
+    Collection<TV> -> Map<TK, TV> -> HashMap<TK, TV>
     ```
 
 - #### non-empty collections
