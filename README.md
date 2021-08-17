@@ -6,6 +6,7 @@ PHP Functional Programming library. Monads and common use functions.
 [![phpunit coverage](https://coveralls.io/repos/github/whsv26/functional/badge.svg)](https://coveralls.io/github/whsv26/functional)
 
 ## Documentation
+- ### [Collections](doc/Collections.md)
 - ### [Functions](doc/Functions.md)
 - ### [Monads](doc/Monads.md)
 
