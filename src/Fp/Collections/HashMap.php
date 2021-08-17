@@ -298,11 +298,9 @@ final class HashMap implements Map
         return LinkedList::collect($source());
     }
 
-    /**
-     * @psalm-suppress ImpureMethodCall
-     */
     private function keyEquals(mixed $lhs, mixed $rhs): bool
     {
+        /** @psalm-suppress ImpureMethodCall */
         return $lhs instanceof HashContract && $rhs instanceof HashContract
             ? $lhs->equals($rhs)
             : $this->keyHashEquals($lhs, $rhs);
@@ -322,11 +320,9 @@ final class HashMap implements Map
         };
     }
 
-    /**
-     * @psalm-suppress ImpureMethodCall
-     */
     private function computeKeyHashForObject(object $object): string
     {
+        /** @psalm-suppress ImpureMethodCall */
         return $object instanceof HashContract
             ? $object->hashCode()
             : spl_object_hash($object);

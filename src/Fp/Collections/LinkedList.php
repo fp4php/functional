@@ -394,6 +394,7 @@ abstract class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
+     * @experimental
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return self<TV>
      */

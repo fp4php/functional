@@ -60,5 +60,15 @@ final class NonEmptyHashSetTest extends TestCase
             [1, 2, 3],
             NonEmptyHashSet::collectNonEmpty([1, 2, 3])->toNonEmptyLinkedList()->toArray(),
         );
+
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->toHashSet()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->toNonEmptyHashSet()->toArray(),
+        );
     }
 }

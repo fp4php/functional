@@ -28,19 +28,34 @@ final class HashMapTest extends TestCase
     {
         $this->assertEquals(
             [['a', 1], ['b', 2]],
+            HashMap::collect([['a', 1], ['b', 2]])->toArray(),
+        );
+
+        $this->assertEquals(
+            [['a', 1], ['b', 2]],
             HashMap::collect([['a', 1], ['b', 2]])->toLinkedList()->toArray(),
         );
 
+        $this->assertEquals(
+            [['a', 1], ['b', 2]],
+            HashMap::collect([['a', 1], ['b', 2]])->toHashSet()->toArray(),
+        );
     }
 
     public function testContract(): void
     {
         $bar = new Bar(1);
         $hm = HashMap::collect([[$bar, 'v1'], [new Foo(2), 'v2']]);
+        $hm1 = HashMap::collect([[[new Foo(1), new Foo(2)], 'v1']]);
 
         $this->assertEquals(
             'v2',
             $hm(new Foo(2))->get(),
+        );
+
+        $this->assertEquals(
+            'v1',
+            $hm1([new Foo(1), new Foo(2)])->get(),
         );
 
         $this->assertEquals(

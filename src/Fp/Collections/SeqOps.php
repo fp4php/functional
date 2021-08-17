@@ -291,7 +291,7 @@ interface SeqOps
      * >>> LinkedList::collect([1, 1, 2])->unique(fn($elem) => $elem)->toArray()
      * => [1, 2]
      *
-     * @deprecated use {@see Set}
+     * @experimental
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return Seq<TV>
      */

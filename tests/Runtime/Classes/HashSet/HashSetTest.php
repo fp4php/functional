@@ -28,6 +28,16 @@ final class HashSetTest extends TestCase
             HashSet::collect([new Bar(1), new Bar(1)])->toArray()
         );
 
+        $this->assertCount(
+            1,
+            HashSet::collect([[new Foo(1), new Foo(2)], [new Foo(1), new Foo(2)]])->toArray()
+        );
+
+        $this->assertCount(
+            2,
+            HashSet::collect([[new Foo(1), new Bar(2)], [new Foo(1), new Bar(2)]])->toArray()
+        );
+
         $bar1 = new Bar(1);
         $bar2 = $bar1;
 
@@ -47,6 +57,11 @@ final class HashSetTest extends TestCase
         $this->assertEquals(
             [1, 2, 3],
             HashSet::collect([1, 2, 3, 3])->toLinkedList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
+            HashSet::collect([1, 2, 3, 3])->toHashSet()->toArray(),
         );
     }
 }
