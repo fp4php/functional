@@ -122,6 +122,7 @@ interface MapOps
      * >>> $collection->fold(['1', 1], fn(array $acc, array $cur): array => [$acc[0] . $cur[0], $acc[1] + $cur[1]])
      * => ['123', 6]
      *
+     * @deprecated use {@see MapOps::reduce} + getOrElse
      * @psalm-param array{TK, TV} $init initial accumulator value
      * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current element): new accumulator
      * @psalm-return array{TK, TV}

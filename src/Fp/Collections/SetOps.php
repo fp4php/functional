@@ -121,6 +121,7 @@ interface SetOps
      * >>> HashSet::collect(['1', '2', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
      * => '012'
      *
+     * @deprecated use {@see SetOps::reduce} + getOrElse
      * @psalm-param TV $init initial accumulator value
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
      * @psalm-return TV
