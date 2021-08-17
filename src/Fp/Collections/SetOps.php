@@ -16,6 +16,12 @@ interface SetOps
      * Check if the element is present in the set
      * Alias for @see SetOps::contains
      *
+     * REPL:
+     * >>> HashSet::collect([1, 1, 2])(1)
+     * => true
+     * >>> HashSet::collect([1, 1, 2])(3)
+     * => false
+     *
      * @psalm-param TV $element
      */
     public function __invoke(mixed $element): bool;
@@ -23,12 +29,22 @@ interface SetOps
     /**
      * Check if the element is present in the set
      *
+     * REPL:
+     * >>> HashSet::collect([1, 1, 2])->contains(1)
+     * => true
+     * >>> HashSet::collect([1, 1, 2])->contains(3)
+     * => false
+     *
      * @psalm-param TV $element
      */
     public function contains(mixed $element): bool;
 
     /**
      * Produces new set with given element included
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 1, 2])->updated(3)->toArray()
+     * => [1, 2, 3]
      *
      * @template TVI of (object|scalar)
      * @param TVI $element
@@ -39,6 +55,10 @@ interface SetOps
     /**
      * Produces new set with given element excluded
      *
+     * REPL:
+     * >>> HashSet::collect([1, 1, 2])->removed(2)->toArray()
+     * => [1]
+     *
      * @param TV $element
      * @return Set<TV>
      */
@@ -48,12 +68,24 @@ interface SetOps
      * Returns true if every collection element satisfy the condition
      * false otherwise
      *
+     * REPL:
+     * >>> HashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 0)
+     * => true
+     * >>> HashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 1)
+     * => false
+     *
      * @psalm-param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool;
 
     /**
      * Find if there is element which satisfies the condition
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2, 2])->exists(fn($elem) => 2 === $elem)
+     * => true
+     * >>> HashSet::collect([1, 2, 2])->exists(fn($elem) => 3 === $elem)
+     * => false
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -62,12 +94,20 @@ interface SetOps
     /**
      * Filter collection by condition
      *
+     * REPL:
+     * >>> HashSet::collect([1, 2, 2])->filter(fn($elem) => $elem > 1)->toArray()
+     * => [2]
+     *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Set<TV>
      */
     public function filter(callable $predicate): Set;
 
     /**
+     * REPL:
+     * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toArray()
+     * => [1, 2, 3, 4, 5, 6]
+     *
      * @psalm-template TVO of (object|scalar)
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return Set<TVO>
@@ -76,6 +116,10 @@ interface SetOps
 
     /**
      * Fold many elements into one
+     *
+     * REPL:
+     * >>> HashSet::collect(['1', '2', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
+     * => '012'
      *
      * @psalm-param TV $init initial accumulator value
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
@@ -87,6 +131,10 @@ interface SetOps
      * Reduce multiple elements into one
      * Returns None for empty collection
      *
+     * REPL:
+     * >>> HashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
+     * => '12'
+     *
      * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
      * @psalm-return Option<TV>
      */
@@ -95,6 +143,10 @@ interface SetOps
     /**
      * Produces a new collection of elements by mapping each element in collection
      * through a transformation function (callback)
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray()
+     * => ['1', '2']
      *
      * @template TVO of (object|scalar)
      * @psalm-param callable(TV): TVO $callback

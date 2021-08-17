@@ -178,7 +178,7 @@ interface SeqOps
      * Map collection and then flatten the result
      *
      * REPL:
-     * >>> LinkedList::collect([2, 5])->flatMap(fn($elem) => [$elem - 1, $elem, $elem + 1])->toArray()
+     * >>> LinkedList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
      * => [1, 2, 3, 4, 5, 6]
      *
      * @psalm-template TVO
