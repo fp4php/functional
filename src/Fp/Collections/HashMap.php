@@ -174,7 +174,7 @@ final class HashMap implements Map
      */
     public function filter(callable $predicate): self
     {
-        $source = function () use ($predicate):Generator {
+        $source = function () use ($predicate): Generator {
             foreach ($this->generatePairs() as $pair) {
                 if ($predicate($pair[1], $pair[0])) {
                     yield $pair;
