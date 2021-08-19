@@ -136,8 +136,9 @@ interface SetOps
      * >>> HashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
      * => '12'
      *
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<TV>
+     * @template TVI
+     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback (accumulator, current value): new accumulator
+     * @psalm-return Option<TV|TVI>
      */
     public function reduce(callable $callback): Option;
 

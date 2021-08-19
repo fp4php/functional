@@ -202,6 +202,20 @@ interface SeqOps
     public function fold(mixed $init, callable $callback): mixed;
 
     /**
+     * Reduce multiple elements into one
+     * Returns None for empty collection
+     *
+     * REPL:
+     * >>> LinkedList::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
+     * => '12'
+     *
+     * @template TVI
+     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback (accumulator, current value): new accumulator
+     * @psalm-return Option<TV|TVI>
+     */
+    public function reduce(callable $callback): Option;
+
+    /**
      * Return first collection element
      *
      * REPL:
@@ -248,19 +262,6 @@ interface SeqOps
      * @psalm-return Seq<TVO>
      */
     public function map(callable $callback): Seq;
-
-    /**
-     * Reduce multiple elements into one
-     * Returns None for empty collection
-     *
-     * REPL:
-     * >>> LinkedList::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
-     * => '12'
-     *
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<TV>
-     */
-    public function reduce(callable $callback): Option;
 
     /**
      * Copy collection in reversed order

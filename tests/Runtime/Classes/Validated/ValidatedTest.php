@@ -8,10 +8,6 @@ use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Some;
-use Fp\Functional\Semigroup\LhsSemigroup;
-use Fp\Functional\Semigroup\NonEmptyListSemigroup;
-use Fp\Functional\Semigroup\Semigroup;
-use Fp\Functional\Semigroup\ValidatedSemigroup;
 use Fp\Functional\Validated\Invalid;
 use Fp\Functional\Validated\Valid;
 use Fp\Functional\Validated\Validated;
@@ -38,7 +34,7 @@ final class ValidatedTest extends TestCase
         $this->assertEquals([
             '"a" must be greater than 0',
             '"a" must be greater than 1',
-            '"b" must be greater that 2020',
+            '"b" must be greater than 2020',
             '"c" must be true',
         ], $invalid->get());
     }
@@ -54,12 +50,12 @@ final class ValidatedTest extends TestCase
 
         $this->assertEquals($validInput, $valid->get());
         $this->assertEquals([
-            '"b" must be greater that 2020',
+            '"b" must be greater than 2020',
             '"c" must be true',
         ], $invalid->get());
 
         $this->assertEquals(
-            '"b" must be greater that 2020, "c" must be true',
+            '"b" must be greater than 2020, "c" must be true',
             $invalid->fold(
                 fn(FooInput $input) => $input,
                 fn(array $invalidNel) => reduceNel(

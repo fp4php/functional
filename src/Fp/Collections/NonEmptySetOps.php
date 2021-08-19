@@ -108,8 +108,9 @@ interface NonEmptySetOps
      * >>> NonEmptyHashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)
      * => '12'
      *
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
-     * @psalm-return TV
+     * @template TVI
+     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback (accumulator, current value): new accumulator
+     * @psalm-return (TV|TVI)
      */
     public function reduce(callable $callback): mixed;
 

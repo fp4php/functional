@@ -178,8 +178,9 @@ class HashSet implements Set
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<TV>
+     * @template TVI
+     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
+     * @psalm-return Option<TV|TVI>
      */
     public function reduce(callable $callback): Option
     {

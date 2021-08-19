@@ -314,8 +314,9 @@ class NonEmptyLinkedList implements NonEmptyLinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
-     * @psalm-return TV
+     * @template TVI
+     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
+     * @psalm-return (TV|TVI)
      */
     public function reduce(callable $callback): mixed
     {

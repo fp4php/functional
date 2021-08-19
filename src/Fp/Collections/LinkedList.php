@@ -293,6 +293,26 @@ abstract class LinkedList implements LinearSeq
 
     /**
      * @inheritDoc
+     * @template TVI
+     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
+     * @psalm-return Option<TV|TVI>
+     */
+    public function reduce(callable $callback): Option
+    {
+        return $this->head()->map(function ($head) use ($callback) {
+            /** @var TV $acc */
+            $acc = $head;
+
+            foreach ($this as $element) {
+                $acc = $callback($acc, $element);
+            }
+
+            return $acc;
+        });
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function head(): Option
@@ -349,21 +369,6 @@ abstract class LinkedList implements LinearSeq
         };
 
         return self::collect($source());
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<TV>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return $this->head()->map(function ($head) use ($callback) {
-            /**
-             * @var TV $head TODO
-             */
-            return $this->tail()->fold($head, $callback);
-        });
     }
 
     /**
