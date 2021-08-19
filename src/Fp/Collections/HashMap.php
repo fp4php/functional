@@ -215,11 +215,12 @@ final class HashMap implements Map
 
     /**
      * @inheritDoc
-     * @psalm-param array{TK, TV} $init initial accumulator value
-     * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current element): new accumulator
-     * @psalm-return array{TK, TV}
+     * @template TVI
+     * @psalm-param TVI $init initial accumulator value
+     * @psalm-param callable(TVI, array{TK, TV}): TVI $callback (accumulator, current element): new accumulator
+     * @psalm-return TVI
      */
-    public function fold(array $init, callable $callback): array
+    public function fold(mixed $init, callable $callback): mixed
     {
         return $this->toLinkedList()->fold($init, $callback);
     }

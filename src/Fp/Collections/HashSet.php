@@ -166,9 +166,10 @@ class HashSet implements Set
 
     /**
      * @inheritDoc
-     * @psalm-param TV $init initial accumulator value
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
-     * @psalm-return TV
+     * @template TVI
+     * @psalm-param TVI $init initial accumulator value
+     * @psalm-param callable(TVI, TV): TVI $callback (accumulator, current element): new accumulator
+     * @psalm-return TVI
      */
     public function fold(mixed $init, callable $callback): mixed
     {

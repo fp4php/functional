@@ -126,7 +126,7 @@ final class LinkedListOpsTest extends TestCase
 
         $this->assertEquals(
             6,
-            $list->fold(1, fn($acc, $e) => $acc + $e)
+            $list->fold(1, fn(int $acc, $e) => $acc + $e)
         );
     }
 

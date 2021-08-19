@@ -63,8 +63,8 @@ final class HashMapOpsTest extends TestCase
         $hm = HashMap::collect([['2', 2], ['3', 3]]);
 
         $this->assertEquals(
-            ['123', 6],
-            $hm->fold(['1', 1], fn(array $acc, array $cur): array => [$acc[0] . $cur[0], $acc[1] + $cur[1]])
+            6,
+            $hm->fold(1, fn(int $acc, array $cur) => $acc + $cur[1])
         );
     }
 

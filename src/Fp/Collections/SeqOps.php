@@ -194,10 +194,10 @@ interface SeqOps
      * >>> LinkedList::collect(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
      * => '012'
      *
-     * @deprecated use {@see SeqOps::reduce} + getOrElse
-     * @psalm-param TV $init initial accumulator value
-     * @psalm-param callable(TV, TV): TV $callback (accumulator, current element): new accumulator
-     * @psalm-return TV
+     * @template TVI
+     * @psalm-param TVI $init initial accumulator value
+     * @psalm-param callable(TVI, TV): TVI $callback (accumulator, current element): new accumulator
+     * @psalm-return TVI
      */
     public function fold(mixed $init, callable $callback): mixed;
 
