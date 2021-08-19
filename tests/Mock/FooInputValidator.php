@@ -46,7 +46,7 @@ class FooInputValidator
     private function validateB(FooInput $input): Validated {
         return $this->semigroup->combineAll([
             Validated::cond($input->b !== '', $input, ['empty string is not allowed for "b"']),
-            Validated::cond($input->b > '2020', $input, ['"b" must be greater that 2020']),
+            Validated::cond($input->b > '2020', $input, ['"b" must be greater than 2020']),
         ]);
     }
 

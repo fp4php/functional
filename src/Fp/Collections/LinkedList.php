@@ -303,7 +303,7 @@ abstract class LinkedList implements LinearSeq
             /** @var TV $acc */
             $acc = $head;
 
-            foreach ($this as $element) {
+            foreach ($this->tail() as $element) {
                 $acc = $callback($acc, $element);
             }
 
