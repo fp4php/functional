@@ -34,16 +34,12 @@ $collection = HashMap::collect([
     [new Foo(3), 3], [new Foo(4), 4]
 ]);
 
-[$reducedKeys, $reducedValues] = $collection
-    ->map(fn($elem) => $elem + 10)
-    ->filter(fn($elem) => $elem > 11)
+$collection(new Foo(2))->getOrElse(0); // 2
+
+$collection
+    ->map(fn($elem) => $elem + 1)
+    ->filter(fn($elem) => $elem > 2)
     ->reindex(fn($elem, Foo $key) => $key->a)
-    ->reduce(fn($acc, $elem) => [$acc[0] + $elem[0], $acc[1] + $elem[1]])
-    ->getOrElse([0, 0]); // [9, 39]
-
-
-$collection(new Foo(2))->getOrElse(0); // 2 
-
-// It's possible to use new Foo(2) because Foo class implements HashContract
+    ->fold(0, fn(int $acc, array $pair) => $acc + $pair[1]); // 3+4+5=12 
 ```
 
