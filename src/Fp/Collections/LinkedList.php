@@ -413,10 +413,6 @@ abstract class LinkedList implements LinearSeq
             return [$callback($elem), $elem];
         });
 
-        $source = HashMap::collect($pairs)
-            ->toLinkedList()
-            ->map(fn($pair): mixed => $pair[1]);
-
-        return self::collect($source);
+        return self::collect(HashMap::collect($pairs)->values());
     }
 }
