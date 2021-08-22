@@ -14,7 +14,7 @@ use Iterator;
  * @psalm-immutable
  * @implements NonEmptySet<TV>
  */
-class NonEmptyHashSet implements NonEmptySet
+final class NonEmptyHashSet implements NonEmptySet
 {
     /**
      * @param HashSet<TV> $set

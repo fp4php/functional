@@ -9,7 +9,7 @@ namespace Fp\Collections;
  *
  * @template TV
  */
-class LinkedListBuffer
+final class LinkedListBuffer
 {
     /**
      * @var LinkedList<TV>

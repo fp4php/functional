@@ -4,40 +4,46 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use ArrayIterator;
 use Fp\Functional\Option\Option;
-use Generator;
 use Iterator;
 
 use function Fp\of;
 
 /**
- * O(1) {@see Seq::prepended} operation
+ * O(1) {@see Seq::at()} and {@see IndexedSeq::__invoke} operations
  *
  * @psalm-immutable
  * @template-covariant TV
- * @implements LinearSeq<TV>
+ * @implements IndexedSeq<TV>
  */
-abstract class LinkedList implements LinearSeq
+final class ArrayList implements IndexedSeq
 {
+    /**
+     * @param list<TV> $elements
+     */
+    public function __construct(private array $elements)
+    {
+    }
+
     /**
      * @inheritDoc
      * @psalm-pure
-     * @psalm-suppress ImpureMethodCall
      * @template TKI
      * @template TVI
-     *
      * @param iterable<TKI, TVI> $source
      * @return self<TVI>
      */
     public static function collect(iterable $source): self
     {
-        $buffer = new LinkedListBuffer();
+        $buffer = [];
 
+        /** @psalm-suppress ImpureMethodCall */
         foreach ($source as $elem) {
-            $buffer->append($elem);
+            $buffer[] = $elem;
         }
 
-        return $buffer->toLinkedList();
+        return new self($buffer);
     }
 
     /**
@@ -46,7 +52,18 @@ abstract class LinkedList implements LinearSeq
      */
     public function getIterator(): Iterator
     {
-        return new LinkedListIterator($this);
+        return new ArrayIterator($this->elements);
+    }
+
+    /**
+     * O(1) time/space complexity
+     *
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
     }
 
     /**
@@ -57,7 +74,7 @@ abstract class LinkedList implements LinearSeq
     {
         $buffer = [];
 
-        foreach ($this as $elem) {
+        foreach ($this->elements as $elem) {
             $buffer[] = $elem;
         }
 
@@ -90,15 +107,7 @@ abstract class LinkedList implements LinearSeq
      */
     public function appended(mixed $elem): self
     {
-        $source = function () use ($elem): Generator {
-            foreach ($this as $item) {
-                yield $item;
-            }
-
-            yield $elem;
-        };
-
-        return self::collect($source());
+        return new self([...$this->elements, $elem]);
     }
 
     /**
@@ -109,25 +118,18 @@ abstract class LinkedList implements LinearSeq
      */
     public function prepended(mixed $elem): self
     {
-        return new Cons($elem, $this);
+        return new self([$elem, ...$this->elements]);
     }
 
     /**
+     * O(1) time/space complexity
+     *
      * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function at(int $index): Option
     {
-        $first = null;
-
-        foreach ($this as $idx => $element) {
-            if ($idx === $index) {
-                $first = $element;
-                break;
-            }
-        }
-
-        return Option::fromNullable($first);
+        return Option::fromNullable($this->elements[$index] ?? null);
     }
 
     /**
@@ -138,7 +140,7 @@ abstract class LinkedList implements LinearSeq
     {
         $result = true;
 
-        foreach ($this as $element) {
+        foreach ($this->elements as $element) {
             if (!$predicate($element)) {
                 $result = false;
                 break;
@@ -189,15 +191,15 @@ abstract class LinkedList implements LinearSeq
      */
     public function filter(callable $predicate): self
     {
-        $source = function () use ($predicate): Generator {
-            foreach ($this as $element) {
-                if ($predicate($element)) {
-                    yield $element;
-                }
-            }
-        };
+        $buffer = [];
 
-        return self::collect($source());
+        foreach ($this->elements as $element) {
+            if ($predicate($element)) {
+                $buffer[] = $element;
+            }
+        }
+
+        return new self($buffer);
     }
 
     /**
@@ -231,7 +233,7 @@ abstract class LinkedList implements LinearSeq
     {
         $first = null;
 
-        foreach ($this as $index => $element) {
+        foreach ($this->elements as $element) {
             if ($predicate($element)) {
                 $first = $element;
                 break;
@@ -262,17 +264,17 @@ abstract class LinkedList implements LinearSeq
      */
     public function flatMap(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
-            foreach ($this as $element) {
-                $result = $callback($element);
+        $buffer = [];
 
-                foreach ($result as $item) {
-                    yield $item;
-                }
+        foreach ($this->elements as $element) {
+            $result = $callback($element);
+
+            foreach ($result as $item) {
+                $buffer[] =  $item;
             }
-        };
+        }
 
-        return self::collect($source());
+        return new self($buffer);
     }
 
     /**
@@ -286,7 +288,7 @@ abstract class LinkedList implements LinearSeq
     {
         $acc = $init;
 
-        foreach ($this as $element) {
+        foreach ($this->elements as $element) {
             $acc = $callback($acc, $element);
         }
 
@@ -319,14 +321,7 @@ abstract class LinkedList implements LinearSeq
      */
     public function head(): Option
     {
-        $head = null;
-
-        foreach ($this as $element) {
-            $head = $element;
-            break;
-        }
-
-        return Option::fromNullable($head);
+        return Option::fromNullable($this->elements[0] ?? null);
     }
 
     /**
@@ -338,7 +333,7 @@ abstract class LinkedList implements LinearSeq
     {
         $last = null;
 
-        foreach ($this as $element) {
+        foreach ($this->elements as $element) {
             if ($predicate($element)) {
                 $last = $element;
             }
@@ -364,13 +359,13 @@ abstract class LinkedList implements LinearSeq
      */
     public function map(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
-            foreach ($this as $element) {
-                yield $callback($element);
-            }
-        };
+        $buffer = [];
 
-        return self::collect($source());
+        foreach ($this->elements as $element) {
+            $buffer[] = $callback($element);
+        }
+
+        return new self($buffer);
     }
 
     /**
@@ -379,13 +374,7 @@ abstract class LinkedList implements LinearSeq
      */
     public function reverse(): self
     {
-        $list = Nil::getInstance();
-
-        foreach ($this as $elem) {
-            $list = $list->prepended($elem);
-        }
-
-        return $list;
+        return new self(array_reverse($this->elements));
     }
 
     /**
@@ -394,10 +383,9 @@ abstract class LinkedList implements LinearSeq
      */
     public function tail(): self
     {
-        return match (true) {
-            $this instanceof Cons => $this->tail,
-            $this instanceof Nil => $this,
-        };
+        $buffer = $this->toArray();
+        array_shift($buffer);
+        return new self($buffer);
     }
 
     /**

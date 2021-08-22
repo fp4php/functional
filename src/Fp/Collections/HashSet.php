@@ -13,7 +13,7 @@ use Iterator;
  * @psalm-immutable
  * @implements Set<TV>
  */
-class HashSet implements Set
+final class HashSet implements Set
 {
     /**
      * @param Map<TV, TV> $map

@@ -10,7 +10,7 @@ use Iterator;
  * @template TV
  * @implements Iterator<int, TV>
  */
-class LinkedListIterator implements Iterator
+final class LinkedListIterator implements Iterator
 {
     private LinkedList $originalList;
     private LinkedList $list;

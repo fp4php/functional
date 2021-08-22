@@ -13,7 +13,7 @@ use Iterator;
  * @template-covariant TV
  * @implements NonEmptyLinearSeq<TV>
  */
-class NonEmptyLinkedList implements NonEmptyLinearSeq
+final class NonEmptyLinkedList implements NonEmptyLinearSeq
 {
     /**
      * @param TV $head

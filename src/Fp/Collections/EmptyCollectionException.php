@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 use Exception;
 
-class EmptyCollectionException extends Exception
+final class EmptyCollectionException extends Exception
 {
 
 }
