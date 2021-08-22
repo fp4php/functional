@@ -71,4 +71,9 @@ final class NonEmptyArrayListTest extends TestCase
             NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toNonEmptyHashSet()->toArray(),
         );
     }
+
+    public function testCount(): void
+    {
+        $this->assertEquals(3, NonEmptyArrayList::collect([1, 2, 3])->count());
+    }
 }

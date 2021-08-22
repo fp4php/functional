@@ -34,4 +34,9 @@ final class ArrayListTest extends TestCase
             ArrayList::collect([1, 2, 3])->toHashSet()->toArray(),
         );
     }
+
+    public function testCount(): void
+    {
+        $this->assertEquals(3, ArrayList::collect([1, 2, 3])->count());
+    }
 }

@@ -79,4 +79,9 @@ final class HashMapTest extends TestCase
         $this->assertEquals('v2', $hm1(false)->get());
         $this->assertEquals('v3', $hm1('')->get());
     }
+
+    public function testCount(): void
+    {
+        $this->assertEquals(2, HashMap::collect([[1, 1], [2, 2]])->count());
+    }
 }

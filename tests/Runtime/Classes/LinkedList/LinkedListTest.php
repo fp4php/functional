@@ -37,4 +37,9 @@ final class LinkedListTest extends TestCase
             LinkedList::collect([1, 2, 3])->toHashSet()->toArray(),
         );
     }
+
+    public function testCount(): void
+    {
+        $this->assertEquals(3, LinkedList::collect([1, 2, 3])->count());
+    }
 }

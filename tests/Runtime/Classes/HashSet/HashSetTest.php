@@ -64,4 +64,9 @@ final class HashSetTest extends TestCase
             HashSet::collect([1, 2, 3, 3])->toHashSet()->toArray(),
         );
     }
+
+    public function testCount(): void
+    {
+        $this->assertEquals(3, HashSet::collect([1, 2, 3])->count());
+    }
 }
