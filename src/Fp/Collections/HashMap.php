@@ -29,14 +29,14 @@ final class HashMap implements Map
     {
         foreach ($source as $pair) {
 
-            $hash = (string) $this->computeKeyHash($pair[0]);
+            $hash = (string) HashComparator::computeHash($pair[0]);
 
             if (!isset($this->hashTable[$hash])) {
                 $this->hashTable[$hash] = Nil::getInstance();
             }
 
             $this->hashTable[$hash] = $this->hashTable[$hash]
-                ->filter(fn(array $p) => !$this->keyEquals($pair[0], $p[0]))
+                ->filter(fn(array $p) => !HashComparator::hashEquals($pair[0], $p[0]))
                 ->prepended($pair);
         }
     }
@@ -131,7 +131,7 @@ final class HashMap implements Map
     public function get(mixed $key): Option
     {
         return $this->findBucketByKey($key)
-            ->flatMap(fn(Seq $bucket) => $bucket->first(fn($pair) => $this->keyEquals($pair[0], $key)))
+            ->flatMap(fn(Seq $bucket) => $bucket->first(fn($pair) => HashComparator::hashEquals($pair[0], $key)))
             ->map(fn($pair) => $pair[1]);
     }
 
@@ -299,54 +299,14 @@ final class HashMap implements Map
         return LinkedList::collect($source());
     }
 
-    private function keyEquals(mixed $lhs, mixed $rhs): bool
-    {
-        /** @psalm-suppress ImpureMethodCall */
-        return match (true) {
-            $lhs instanceof HashContract => $lhs->equals($rhs),
-            $rhs instanceof HashContract => $rhs->equals($lhs),
-            default => $this->keyHashEquals($lhs, $rhs),
-        };
-    }
-
-    private function keyHashEquals(mixed $lhs, mixed $rhs): bool
-    {
-        return $this->computeKeyHash($lhs) === $this->computeKeyHash($rhs);
-    }
-
-    private function computeKeyHash(mixed $key): mixed
-    {
-        return match (true) {
-            is_object($key) => $this->computeKeyHashForObject($key),
-            is_array($key) => $this->computeKeyHashForArray($key),
-            default => $key,
-        };
-    }
-
-    private function computeKeyHashForObject(object $object): string
-    {
-        /** @psalm-suppress ImpureMethodCall */
-        return $object instanceof HashContract
-            ? $object->hashCode()
-            : spl_object_hash($object);
-    }
-
-    private function computeKeyHashForArray(array $arr): string
-    {
-        $list = LinkedList::collect($arr)
-            ->map(fn($elem): mixed => $this->computeKeyHash($elem))
-            ->toArray();
-
-        return json_encode($list) ?: '';
-    }
-
     /**
      * @param TK $key
      * @return Option<Seq<array{TK, TV}>>
      */
     private function findBucketByKey(mixed $key): Option
     {
-        $hash = (string) $this->computeKeyHash($key);
+        /** @psalm-suppress ImpureMethodCall */
+        $hash = (string) HashComparator::computeHash($key);
         return Option::fromNullable($this->hashTable[$hash] ?? null);
     }
 
