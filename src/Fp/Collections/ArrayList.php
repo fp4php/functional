@@ -401,6 +401,6 @@ final class ArrayList implements IndexedSeq
             return [$callback($elem), $elem];
         });
 
-        return self::collect(self::collect(HashMap::collect($pairs)->values()));
+        return self::collect(HashMap::collect($pairs)->values());
     }
 }
