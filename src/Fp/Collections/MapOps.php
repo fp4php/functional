@@ -141,6 +141,7 @@ interface MapOps
      * >>>     ->get()
      * => ['23', 5]
      *
+     * @exprimental
      * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current value): new accumulator
      * @psalm-return Option<array{TK, TV}>
      */

@@ -227,6 +227,7 @@ final class HashMap implements Map
 
     /**
      * @inheritDoc
+     * @exprimental
      * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current value): new accumulator
      * @psalm-return Option<array{TK, TV}>
      */
