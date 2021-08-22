@@ -302,9 +302,11 @@ final class HashMap implements Map
     private function keyEquals(mixed $lhs, mixed $rhs): bool
     {
         /** @psalm-suppress ImpureMethodCall */
-        return $lhs instanceof HashContract && $rhs instanceof HashContract
-            ? $lhs->equals($rhs)
-            : $this->keyHashEquals($lhs, $rhs);
+        return match (true) {
+            $lhs instanceof HashContract => $lhs->equals($rhs),
+            $rhs instanceof HashContract => $rhs->equals($lhs),
+            default => $this->keyHashEquals($lhs, $rhs),
+        };
     }
 
     private function keyHashEquals(mixed $lhs, mixed $rhs): bool

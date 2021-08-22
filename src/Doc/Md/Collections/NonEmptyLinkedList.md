@@ -1,6 +1,6 @@
 # NonEmptyLinkedList
 
-Standard ```NonEmptySeq<TV>``` interface implementation.
+```NonEmptySeq<TV>``` interface implementation.
 
 Collection with O(1) prepend operation.
 

@@ -1,6 +1,6 @@
 # HashSet
 
-Standard ```Set<TV>``` interface implementation.
+```Set<TV>``` interface implementation.
 
 Collection of unique elements.
 
@@ -9,23 +9,22 @@ Object comparison by default uses ```spl_object_hash``` function. If you want to
 ```php
 use Fp\Collections\HashSet;
 
-/**
- * @implements HashContract<Foo>
- */
 class Foo implements HashContract
 {
-    public function __construct(public int $a)
+    public function __construct(public int $a, public bool $b = true)
     {
     }
 
     public function equals(mixed $rhs): bool
     {
-        return $this->a === $rhs->a;
+        return $rhs instanceof self
+            && $this->a === $rhs->a
+            && $this->b === $rhs->b;
     }
 
     public function hashCode(): string
     {
-        return implode(',', [md5((string) $this->a)]);
+        return md5(implode(',', [$this->a, $this->b]));
     }
 }
 

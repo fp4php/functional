@@ -8,26 +8,22 @@ use Fp\Collections\HashContract;
 
 /**
  * @internal
- * @implements HashContract<Foo>
  */
 class Foo implements HashContract
 {
-    public function __construct(public int $a)
+    public function __construct(public int $a, public bool $b = true)
     {
-    }
-
-    public static function test(int $a, bool $b): string
-    {
-        return 'x' . $a;
     }
 
     public function equals(mixed $rhs): bool
     {
-        return $this->a === $rhs->a;
+        return $rhs instanceof self
+            && $this->a === $rhs->a
+            && $this->b === $rhs->b;
     }
 
     public function hashCode(): string
     {
-        return implode(',', [md5((string) $this->a)]);
+        return md5(implode(',', [$this->a, $this->b]));
     }
 }

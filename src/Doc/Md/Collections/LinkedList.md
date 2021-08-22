@@ -1,6 +1,6 @@
 # LinkedList
 
-Standard ```Seq<TV>``` interface implementation.
+```Seq<TV>``` interface implementation.
 
 Collection with O(1) prepend operation.
 

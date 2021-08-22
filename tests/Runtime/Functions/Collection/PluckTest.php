@@ -17,7 +17,7 @@ final class PluckTest extends TestCase
             [null, null],
             pluck(
                 [['a' => 1], ['a' => 2]],
-                'b'
+                'c'
             )
         );
 
@@ -25,7 +25,7 @@ final class PluckTest extends TestCase
             [null, null],
             pluck(
                 [new Foo(1), new Foo(3)],
-                'b'
+                'c'
             )
         );
     }
