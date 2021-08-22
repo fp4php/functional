@@ -1,13 +1,38 @@
 # Collections
 **Contents**
+- [ArrayList](#ArrayList)
 - [HashMap](#HashMap)
 - [HashSet](#HashSet)
 - [Hierarchy](#Hierarchy)
   - [empty collections](#empty-collections)
   - [non-empty collections](#non-empty-collections)
 - [LinkedList](#LinkedList)
+- [NonEmptyArrayList](#NonEmptyArrayList)
 - [NonEmptyHashSet](#NonEmptyHashSet)
 - [NonEmptyLinkedList](#NonEmptyLinkedList)
+
+# ArrayList
+
+`IndexedSeq<TV>` interface implementation.
+
+Collection with O(1) `Seq::at()` and `IndexedSeq::__invoke()`
+operations.
+
+``` php
+use Tests\Mock\Foo;
+use Fp\Collections\ArrayList;
+
+$collection = ArrayList::collect([
+    new Foo(1), new Foo(2) 
+    new Foo(3), new Foo(4),
+]);
+
+$collection
+    ->map(fn(Foo $elem) => $elem->a)
+    ->filter(fn(int $elem) => $elem > 1)
+    ->reduce(fn($acc, $elem) => $acc + $elem)
+    ->getOrElse(0); // 9
+```
 
 # HashMap
 
@@ -106,27 +131,27 @@ $collection(new Foo(2)); // true
 
 # Hierarchy
 
-  - #### empty collections
-    
+-   #### empty collections
+
         Collection<TV> -> Seq<TV> -> LinearSeq<TV> -> LinkedList<TV>
-        
-        Collection<TV> -> Seq<TV> -> IndexedSeq<TV> -> TODO
-        
+
+        Collection<TV> -> Seq<TV> -> IndexedSeq<TV> -> ArrayList<TV>
+
         Collection<TV> -> Set<TV> -> HashSet<TV>
-        
+
         Collection<TV> -> Map<TK, TV> -> HashMap<TK, TV>
 
-  - #### non-empty collections
-    
+-   #### non-empty collections
+
         NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyLinearSeq<TV> -> NonEmptyLinkedList<TV>
-        
-        NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyIndexedSeq<TV> -> TODO
-        
+
+        NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyIndexedSeq<TV> -> NonEmptyArrayList<TV>
+
         NonEmptyCollection<TV> -> NonEmptySet<TV> -> NonEmptyHashSet<TV>
 
 # LinkedList
 
-`Seq<TV>` interface implementation.
+`LinearSeq<TV>` interface implementation.
 
 Collection with O(1) prepend operation.
 
@@ -146,14 +171,35 @@ $collection
     ->getOrElse(0); // 9
 ```
 
+# NonEmptyArrayList
+
+`NonEmptyIndexedSeq<TV>` interface implementation.
+
+Collection with O(1) `NonEmptySeq::at()` and
+`NonEmptyIndexedSeq::__invoke()` operations.
+
+``` php
+use Tests\Mock\Foo;
+use Fp\Collections\NonEmptyArrayList;
+
+$collection = NonEmptyArrayList::collect([
+    new Foo(1), new Foo(2) 
+    new Foo(3), new Foo(4),
+]);
+
+$collection
+    ->map(fn(Foo $elem) => $elem->a)
+    ->reduce(fn($acc, $elem) => $acc + $elem); // 10
+```
+
 # NonEmptyHashSet
 
 `NonEmptySet<TV>` interface implementation.
 
 Collection of unique elements.
 
-Object comparison by default uses spl\_object\_hash function. If you
-want to override default comparison behaviour then you need to implement
+Object comparison by default uses spl_object_hash function. If you want
+to override default comparison behaviour then you need to implement
 HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
