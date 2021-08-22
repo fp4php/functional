@@ -8,8 +8,6 @@ use Fp\Functional\Option\Option;
 
 use function Fp\Collection\everyOf;
 use function Fp\Collection\head;
-use function Fp\Collection\isSequence;
-use function Fp\Collection\keys;
 
 /**
  * Prove that given collection is of list type
@@ -32,9 +30,22 @@ function proveList(iterable $collection): Option
 {
     return Option::do(function () use ($collection) {
         $array = yield proveArray($collection);
-        yield proveTrue(isSequence(keys($array)));
+        $isSequence = true;
+        $previousKey = -1;
 
-        /** @var list<TV> $array */
+        foreach (array_keys($array) as $key) {
+            if (is_int($key) && is_int($previousKey) && 1 === ((int) $key - (int) $previousKey)) {
+                $previousKey = $key;
+            } else {
+                $isSequence = false;
+                break;
+            }
+
+        }
+
+        yield proveTrue($isSequence);
+
+        /** @var list<TV> */
         return $array;
     });
 }

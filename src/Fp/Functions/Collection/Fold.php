@@ -15,6 +15,7 @@ namespace Fp\Collection;
  * )
  * => 'abc'
  *
+ * @deprecated use {@see Seq::fold()} or {@see Set::fold()} or {@see Map::fold()}
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TA of TV

@@ -13,7 +13,7 @@ use Fp\Psalm\Hooks\PluckFunctionReturnTypeProvider;
  * >>> pluck([['a' => 1], ['a' => 2]], 'a');
  * => [1, 2]
  *
- *
+ * @deprecated use {@see map()} function
  * @psalm-param iterable<array-key, object|array> $collection
  * @psalm-return array
  * @psalm-suppress MixedAssignment

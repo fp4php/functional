@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Callable;
 
-use function Fp\Collection\filterNotNull;
-use function Fp\Collection\fold;
+use Fp\Collections\NonEmptyLinkedList;
 
-use const Fp\id;
+use function Fp\Collection\filterNotNull;
 
 /**
  * Compose functions
@@ -58,7 +57,7 @@ use const Fp\id;
  *     callable(A): L
  * )))))))))
  *
- * @psalm-suppress InvalidReturnStatement, InvalidReturnType
+ * @psalm-suppress all
  */
 function compose(
     callable $aToB,
@@ -73,14 +72,11 @@ function compose(
     callable $kToL = null,
 ): callable
 {
-    $callables = filterNotNull([$aToB, $bToC, $cToD, $dToF, $fToG, $gToH, $hToI, $iToJ, $jToK, $kToL]);
+    $callableChain = filterNotNull([$aToB, $bToC, $cToD, $dToF, $fToG, $gToH, $hToI, $iToJ, $jToK, $kToL]);
 
-    return fold(
-        id,
-        $callables,
-        function(callable $acc, callable $c) {
-            return fn(mixed $v): mixed => call_user_func($c, $acc($v));
-        }
-    );
+    return NonEmptyLinkedList::collectUnsafe($callableChain)
+        ->reduce(function(callable $acc, callable $cur) {
+            return fn(mixed $v): mixed => $cur($acc($v));
+        });
 }
 

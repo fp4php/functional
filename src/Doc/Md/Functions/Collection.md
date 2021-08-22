@@ -139,24 +139,6 @@
   $result = head([1, 2, 3]); 
   ```
 
-- #### isSequence
-  Check if collection is ascending or descending integer sequence from given start value
-
-  ```php
-  isSequence([1, 2, 3]); // false
-  isSequence([0, 1, 2, 3]); // true 
-  isSequence([]); // true 
-  ```
-
-- #### isNonEmptySequence
-  Check if collection is non empty ascending or descending integer sequence from given start value
-
-  ```php
-  isNonEmptySequence([1, 2, 3]); // false
-  isNonEmptySequence([0, 1, 2, 3]); // true
-  isNonEmptySequence([]); // false 
-  ```
-
 - #### keys
   Returns list of collection keys
 
@@ -203,13 +185,6 @@
   );
   ```
 
-- #### pluck
-  Transform every collection element into given property or key value
-
-  ```php
-  pluck([['a' => 1], ['a' => 2]], 'a'); // [1, 2]   
-  ```
-
 - #### pop
   Pop last collection element and return tuple containing this element and other collection elements. If there is no last element then returns None
 
@@ -235,30 +210,6 @@
   ); 
   
   $option->get(); // 'abc'
-  ```
-
-- #### reduceNel
-  Reduce non-empty-list into one value
-
-  ```php
-  reduceNel(
-    ['a', 'b', 'c'], 
-    fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
-  ); 
-  
-  // 'abc'
-  ```
-
-- #### reduceNer
-  Reduce non-empty-array into one value
-
-  ```php
-  reduceNer(
-    ['x' => 'a', 'b', 'c'], 
-    fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
-  ); 
-  
-  // 'abc'
   ```
 
 - #### reindex
@@ -301,17 +252,6 @@
 
   ```php
   tail([1, 2, 3]); // [2, 3]   
-  ```
-
-- #### unique
-  Returns unique collection elements
-
-  ```php
-  unique([1, 2, 2, 3, 3, 3, 3]); // [1, 2, 3]   
-  ```
-
-  ```php
-  unique($users, fn(User $user) => $user->getIdAsString());   
   ```
 
 - #### zip

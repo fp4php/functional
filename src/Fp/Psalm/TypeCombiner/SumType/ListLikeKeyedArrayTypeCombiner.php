@@ -51,6 +51,22 @@ class ListLikeKeyedArrayTypeCombiner implements TypeCombinerInterface
 
     public function isListLike(TKeyedArray $a): bool
     {
-        return isNonEmptySequence(keys($a->properties));
+        $isSequence = true;
+        $empty = true;
+        $previousKey = -1;
+
+        foreach (keys($a->properties) as $key) {
+            $empty = false;
+            $intKey = (int) $key;
+
+            if (1 !== $intKey - $previousKey) {
+                $isSequence = false;
+                break;
+            }
+
+            $previousKey = $intKey;
+        }
+
+        return $isSequence && !$empty;
     }
 }

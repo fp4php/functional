@@ -16,6 +16,7 @@ namespace Fp\Collection;
  * >>> isSequence([]);
  * => true
  *
+ * @deprecated
  * @psalm-template TK
  *
  * @psalm-param iterable<TK, int|string> $collection
@@ -54,6 +55,7 @@ function isSequence(iterable $collection, int $from = 0, string $direction = 'AS
  * >>> isSequence([]);
  * => false
  *
+ * @deprecated
  * @psalm-template TK
  *
  * @psalm-param iterable<TK, int|string> $collection

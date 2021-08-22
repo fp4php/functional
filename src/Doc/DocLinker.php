@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Doc;
 
+use Fp\Collections\LinkedList;
 use Fp\Functional\Option\Option;
 
 use Symfony\Component\Process\Process;
@@ -16,7 +17,7 @@ class DocLinker
 {
     /**
      * @param string $path
-     * @return array<AbstractMdHeader>
+     * @return list<AbstractMdHeader>
      */
     private function parseHeaders(string $path): array
     {
@@ -53,22 +54,18 @@ class DocLinker
             Process::fromShellCommandline($commandLine)->run();
             $contents = file_get_contents($to);
 
-            $headers = map($this->parseHeaders($to), function(AbstractMdHeader $header) {
-                $headerTitle = $header->title;
-                $headerRef = u($headerTitle)->replace(' ', '-');
+            $refMap = LinkedList::collect($this->parseHeaders($to))
+                ->map(function(AbstractMdHeader $header) {
+                    $headerTitle = $header->title;
+                    $headerRef = u($headerTitle)->replace(' ', '-');
 
-                return match ($header::class) {
-                    MdHeader1::class => "- [$headerTitle](#$headerRef)" . PHP_EOL,
-                    MdHeader4::class => "  - [$headerTitle](#$headerRef)" . PHP_EOL,
-                    default => '',
-                };
-            });
-
-            $refMap = fold(
-                '',
-                $headers,
-                fn (string $acc, string $h) => $acc . $h
-            );
+                    return match ($header::class) {
+                        MdHeader1::class => "- [$headerTitle](#$headerRef)" . PHP_EOL,
+                        MdHeader4::class => "  - [$headerTitle](#$headerRef)" . PHP_EOL,
+                        default => '',
+                    };
+                })
+                ->fold('', fn (string $acc, string $h) => $acc . $h);
 
             file_put_contents($to, implode(PHP_EOL, [
                 '# ' . basename($dir),

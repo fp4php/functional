@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Collections\Seq;
+
 /**
  * Returns collection unique elements
  *
@@ -16,7 +18,7 @@ namespace Fp\Collection;
  * );
  * => [User(1), User(2)]
  *
- *
+ * @deprecated use {@see Set} or {@see Seq::unique()}
  * @psalm-template TK of array-key
  * @psalm-template TV of (object|scalar)
  *

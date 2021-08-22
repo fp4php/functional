@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Collections\NonEmptySeq;
+use Fp\Collections\NonEmptySet;
+use Fp\Collections\Seq;
+use Fp\Collections\Set;
 use Fp\Functional\Option\Option;
 
 use function Fp\Cast\asNonEmptyList;
@@ -19,7 +23,8 @@ use function Fp\Cast\asNonEmptyList;
  * )->get();
  * => 'abc'
  *
- *
+ * @deprecated use {@see Seq::reduce()} or {@see Set::reduce()}
+ * @psalm-suppress DeprecatedFunction
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -46,7 +51,8 @@ function reduce(iterable $collection, callable $callback): Option
  * );
  * => 'abc'
  *
- *
+ * @deprecated use {@see NonEmptySeq::reduce()} or {@see NonEmptySet::reduce()}
+ * @psalm-suppress DeprecatedFunction
  * @psalm-template TV
  *
  * @psalm-param non-empty-list<TV> $collection
@@ -70,6 +76,7 @@ function reduceNel(array $collection, callable $callback): mixed
  * => 'abc'
  *
  *
+ * @deprecated use {@see NonEmptySeq::reduce()} or {@see NonEmptySet::reduce()}
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
