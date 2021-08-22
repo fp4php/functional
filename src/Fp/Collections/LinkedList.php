@@ -49,6 +49,17 @@ abstract class LinkedList implements LinearSeq
         return new LinkedListIterator($this);
     }
 
+    public function count(): int
+    {
+        $counter = 0;
+
+        foreach ($this as $ignored) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
     /**
      * @inheritDoc
      * @return list<TV>

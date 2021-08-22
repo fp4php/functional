@@ -55,6 +55,11 @@ final class ArrayList implements IndexedSeq
         return new ArrayIterator($this->elements);
     }
 
+    public function count(): int
+    {
+        return count($this->elements);
+    }
+
     /**
      * O(1) time/space complexity
      *

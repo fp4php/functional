@@ -82,6 +82,11 @@ final class NonEmptyArrayList implements NonEmptyIndexedSeq
         return $this->arrayList->getIterator();
     }
 
+    public function count(): int
+    {
+        return $this->arrayList->count();
+    }
+
     /**
      * O(1) time/space complexity
      *

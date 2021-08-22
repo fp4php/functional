@@ -16,9 +16,9 @@ use Iterator;
 final class HashSet implements Set
 {
     /**
-     * @param Map<TV, TV> $map
+     * @param HashMap<TV, TV> $map
      */
-    private function __construct(private Map $map)
+    private function __construct(private HashMap $map)
     {
     }
 
@@ -74,6 +74,11 @@ final class HashSet implements Set
     public function getIterator(): Iterator
     {
         return new LinkedListIterator($this->toLinkedList());
+    }
+
+    public function count(): int
+    {
+        return $this->map->count();
     }
 
     /**

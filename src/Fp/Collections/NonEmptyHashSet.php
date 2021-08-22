@@ -126,6 +126,11 @@ final class NonEmptyHashSet implements NonEmptySet
         return new ArrayIterator($this->toArray());
     }
 
+    public function count(): int
+    {
+        return $this->set->count();
+    }
+
     /**
      * @inheritDoc
      * @psalm-param TV $element

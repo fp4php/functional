@@ -80,6 +80,19 @@ final class HashMap implements Map
         return new ArrayIterator($this->toArray());
     }
 
+    public function count(): int
+    {
+        $counter = 0;
+
+        foreach ($this->hashTable as $bucket) {
+            foreach ($bucket as $ignored) {
+                $counter++;
+            }
+        }
+
+        return $counter;
+    }
+
     /**
      * @inheritDoc
      * @return list<array{TK, TV}>

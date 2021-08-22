@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Countable;
 use Iterator;
 use IteratorAggregate;
 
@@ -12,7 +13,7 @@ use IteratorAggregate;
  * @template-covariant TV
  * @implements IteratorAggregate<empty, TV>
  */
-interface Collection extends IteratorAggregate
+interface Collection extends IteratorAggregate, Countable
 {
     /**
      * @inheritDoc
