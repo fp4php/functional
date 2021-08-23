@@ -8,6 +8,8 @@ use ArrayIterator;
 use Fp\Functional\Option\Option;
 use Generator;
 
+use function Functional\first;
+
 /**
  * @template TK
  * @template-covariant TV
@@ -18,27 +20,10 @@ use Generator;
 final class HashMap implements Map
 {
     /**
-     * @var array<hash, Seq<array{TK, TV}>>
+     * @param array<hash, list<array{TK, TV}>> $hashTable
      */
-    private array $hashTable = [];
-
-    /**
-     * @param iterable<array{TK, TV}> $source
-     */
-    private function __construct(iterable $source)
+    private function __construct(private array $hashTable)
     {
-        foreach ($source as $pair) {
-
-            $hash = (string) HashComparator::computeHash($pair[0]);
-
-            if (!isset($this->hashTable[$hash])) {
-                $this->hashTable[$hash] = Nil::getInstance();
-            }
-
-            $this->hashTable[$hash] = $this->hashTable[$hash]
-                ->filter(fn(array $p) => !HashComparator::hashEquals($pair[0], $p[0]))
-                ->prepended($pair);
-        }
     }
 
     /**
@@ -47,10 +32,17 @@ final class HashMap implements Map
      * @template TVI
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
+     * @psalm-suppress ImpureMethodCall
      */
     public static function collect(iterable $source): self
     {
-        return new self($source);
+        $buffer = new HashMapBuffer();
+
+        foreach ($source as [$key, $value]) {
+            $buffer->update($key, $value);
+        }
+
+        return $buffer->toHashMap();
     }
 
     /**
@@ -143,9 +135,16 @@ final class HashMap implements Map
      */
     public function get(mixed $key): Option
     {
-        return $this->findBucketByKey($key)
-            ->flatMap(fn(Seq $bucket) => $bucket->first(fn($pair) => HashComparator::hashEquals($pair[0], $key)))
-            ->map(fn($pair) => $pair[1]);
+        $elem = null;
+
+        /** @psalm-suppress ImpureMethodCall */
+        foreach ($this->findBucketByKey($key)->getOrElse([]) as [$k, $v]) {
+            if (HashComparator::hashEquals($key, $k)) {
+                $elem = $v;
+            }
+        }
+
+        return Option::fromNullable($elem);
     }
 
     /**
@@ -315,7 +314,7 @@ final class HashMap implements Map
 
     /**
      * @param TK $key
-     * @return Option<Seq<array{TK, TV}>>
+     * @return Option<list<array{TK, TV}>>
      */
     private function findBucketByKey(mixed $key): Option
     {

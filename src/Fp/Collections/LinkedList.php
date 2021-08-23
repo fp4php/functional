@@ -474,7 +474,7 @@ abstract class LinkedList implements LinearSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return self<TV>
      */
-    public function takeWhile($predicate): self
+    public function takeWhile(callable $predicate): self
     {
         $source = function () use ($predicate): Generator {
             foreach ($this as $element) {
@@ -494,7 +494,7 @@ abstract class LinkedList implements LinearSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return self<TV>
      */
-    public function dropWhile($predicate): self
+    public function dropWhile(callable $predicate): self
     {
         $source = function () use ($predicate): Generator {
             foreach ($this as $element) {

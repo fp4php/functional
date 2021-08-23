@@ -25,9 +25,7 @@ final class LinkedListBuffer
 
     public function __construct()
     {
-        $this->first = Nil::getInstance();
-        $this->last = null;
-        $this->length = 0;
+        $this->flush();
     }
 
     /**
@@ -59,6 +57,16 @@ final class LinkedListBuffer
      */
     public function toLinkedList(): LinkedList
     {
-        return $this->first;
+        $first = $this->first;
+        $this->flush();
+
+        return $first;
+    }
+
+    private function flush(): void
+    {
+        $this->first = Nil::getInstance();
+        $this->last = null;
+        $this->length = 0;
     }
 }
