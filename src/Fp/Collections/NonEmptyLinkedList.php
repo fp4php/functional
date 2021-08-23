@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Error;
 use Fp\Functional\Option\Option;
+use Generator;
 use Iterator;
 
 /**
@@ -141,9 +142,9 @@ final class NonEmptyLinkedList implements NonEmptyLinearSeq
      * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
-     * @psalm-return NonEmptySeq<TV|TVI>
+     * @psalm-return self<TV|TVI>
      */
-    public function appended(mixed $elem): NonEmptySeq
+    public function appended(mixed $elem): self
     {
         return self::collectUnsafe($this->toLinkedList()->appended($elem));
     }
@@ -151,12 +152,54 @@ final class NonEmptyLinkedList implements NonEmptyLinearSeq
     /**
      * @inheritDoc
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return NonEmptySeq<TV|TVI>
+     * @psalm-param iterable<TVI> $suffix
+     * @psalm-return self<TV|TVI>
      */
-    public function prepended(mixed $elem): NonEmptySeq
+    public function appendedAll(iterable $suffix): self
+    {
+        $source = function() use ($suffix): Generator {
+            foreach ($this as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($suffix as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collectUnsafe($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return self<TV|TVI>
+     */
+    public function prepended(mixed $elem): self
     {
         return new self($elem, $this->toLinkedList());
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param iterable<TVI> $prefix
+     * @psalm-return self<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): self
+    {
+        $source = function() use ($prefix): Generator {
+            foreach ($prefix as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($this as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collectUnsafe($source());
     }
 
     /**

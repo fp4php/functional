@@ -26,6 +26,19 @@ interface NonEmptySeqOps
     public function appended(mixed $elem): NonEmptySeq;
 
     /**
+     * Add elements to the collection end
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collect([1, 2])->appendedAll([3, 4])->toArray()
+     * => [1, 2, 3, 4]
+     *
+     * @template TVI
+     * @psalm-param iterable<TVI> $suffix
+     * @psalm-return NonEmptySeq<TV|TVI>
+     */
+    public function appendedAll(iterable $suffix): NonEmptySeq;
+
+    /**
      * Add element to the collection start
      *
      * REPL:
@@ -37,6 +50,19 @@ interface NonEmptySeqOps
      * @psalm-return NonEmptySeq<TV|TVI>
      */
     public function prepended(mixed $elem): NonEmptySeq;
+
+    /**
+     * Add elements to the collection start
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collect([1, 2])->prependedAll(-1, 0)->toArray()
+     * => [-1, 0, 1, 2]
+     *
+     * @template TVI
+     * @psalm-param iterable<TVI> $prefix
+     * @psalm-return NonEmptySeq<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): NonEmptySeq;
 
     /**
      * Find element by its index

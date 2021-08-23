@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Error;
 use Fp\Functional\Option\Option;
+use Generator;
 use Iterator;
 
 /**
@@ -163,12 +164,54 @@ final class NonEmptyArrayList implements NonEmptyIndexedSeq
     /**
      * @inheritDoc
      * @template TVI
+     * @psalm-param iterable<TVI> $suffix
+     * @psalm-return self<TV|TVI>
+     */
+    public function appendedAll(iterable $suffix): self
+    {
+        $source = function() use ($suffix): Generator {
+            foreach ($this as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($suffix as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collectUnsafe($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return NonEmptySeq<TV|TVI>
      */
     public function prepended(mixed $elem): NonEmptySeq
     {
         return new self($this->arrayList->prepended($elem));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param iterable<TVI> $prefix
+     * @psalm-return self<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): self
+    {
+        $source = function() use ($prefix): Generator {
+            foreach ($prefix as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($this as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collectUnsafe($source());
     }
 
     /**

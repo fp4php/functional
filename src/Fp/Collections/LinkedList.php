@@ -115,12 +115,54 @@ abstract class LinkedList implements LinearSeq
     /**
      * @inheritDoc
      * @template TVI
+     * @psalm-param iterable<TVI> $suffix
+     * @psalm-return self<TV|TVI>
+     */
+    public function appendedAll(iterable $suffix): self
+    {
+        $source = function() use ($suffix): Generator {
+            foreach ($this as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($suffix as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return self<TV|TVI>
      */
     public function prepended(mixed $elem): self
     {
         return new Cons($elem, $this);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param iterable<TVI> $prefix
+     * @psalm-return self<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): self
+    {
+        $source = function() use ($prefix): Generator {
+            foreach ($prefix as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($this as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collect($source());
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use ArrayIterator;
 use Fp\Functional\Option\Option;
+use Generator;
 use Iterator;
 
 use function Fp\of;
@@ -22,7 +23,7 @@ final class ArrayList implements IndexedSeq
     /**
      * @param list<TV> $elements
      */
-    public function __construct(private array $elements)
+    public function __construct(public array $elements)
     {
     }
 
@@ -118,12 +119,54 @@ final class ArrayList implements IndexedSeq
     /**
      * @inheritDoc
      * @template TVI
+     * @psalm-param iterable<TVI> $suffix
+     * @psalm-return self<TV|TVI>
+     */
+    public function appendedAll(iterable $suffix): self
+    {
+        $source = function() use ($suffix): Generator {
+            foreach ($this->elements as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($suffix as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return self<TV|TVI>
      */
     public function prepended(mixed $elem): self
     {
         return new self([$elem, ...$this->elements]);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param iterable<TVI> $prefix
+     * @psalm-return self<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): self
+    {
+        $source = function() use ($prefix): Generator {
+            foreach ($prefix as $prefixElem) {
+                yield $prefixElem;
+            }
+
+            foreach ($this->elements as $suffixElem) {
+                yield $suffixElem;
+            }
+        };
+
+        return self::collect($source());
     }
 
     /**
@@ -408,4 +451,5 @@ final class ArrayList implements IndexedSeq
 
         return self::collect(HashMap::collect($pairs)->values());
     }
+
 }

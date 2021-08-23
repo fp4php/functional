@@ -26,6 +26,19 @@ interface SeqOps
     public function appended(mixed $elem): Seq;
 
     /**
+     * Add elements to the collection end
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 2])->appendedAll([3, 4])->toArray()
+     * => [1, 2, 3, 4]
+     *
+     * @template TVI
+     * @psalm-param iterable<TVI> $suffix
+     * @psalm-return Seq<TV|TVI>
+     */
+    public function appendedAll(iterable $suffix): Seq;
+
+    /**
      * Add element to the collection start
      *
      * REPL:
@@ -37,6 +50,19 @@ interface SeqOps
      * @psalm-return Seq<TV|TVI>
      */
     public function prepended(mixed $elem): Seq;
+
+    /**
+     * Add elements to the collection start
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 2])->prependedAll(-1, 0)->toArray()
+     * => [-1, 0, 1, 2]
+     *
+     * @template TVI
+     * @psalm-param iterable<TVI> $prefix
+     * @psalm-return Seq<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): Seq;
 
     /**
      * Find element by its index (Starts from zero)
