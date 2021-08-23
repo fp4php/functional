@@ -32,7 +32,6 @@ final class HashMap implements Map
      * @template TVI
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
-     * @psalm-suppress ImpureMethodCall
      */
     public static function collect(iterable $source): self
     {
@@ -60,7 +59,6 @@ final class HashMap implements Map
             }
         };
 
-        /** @psalm-suppress ImpureFunctionCall */
         return self::collect($pairSource());
     }
 
@@ -137,7 +135,6 @@ final class HashMap implements Map
     {
         $elem = null;
 
-        /** @psalm-suppress ImpureMethodCall */
         foreach ($this->findBucketByKey($key)->getOrElse([]) as [$k, $v]) {
             if (HashComparator::hashEquals($key, $k)) {
                 $elem = $v;
@@ -318,7 +315,6 @@ final class HashMap implements Map
      */
     private function findBucketByKey(mixed $key): Option
     {
-        /** @psalm-suppress ImpureMethodCall */
         $hash = (string) HashComparator::computeHash($key);
         return Option::fromNullable($this->hashTable[$hash] ?? null);
     }

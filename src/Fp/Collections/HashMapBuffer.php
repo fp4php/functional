@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Option\Option;
 use ReflectionClass;
 
 use function Fp\Reflection\getReflectionClass;
@@ -21,6 +22,23 @@ final class HashMapBuffer
      * @var array<string, list<array{TK, TV}>>
      */
     private array $hashTable = [];
+
+    /**
+     * @param TK $key
+     */
+    public function get(mixed $key): Option
+    {
+        $hash = (string) HashComparator::computeHash($key);
+        $elem = null;
+
+        foreach ($this->hashTable[$hash] ?? [] as [$k, $v]) {
+            if (HashComparator::hashEquals($key, $k)) {
+                $elem = $v;
+            }
+        }
+
+        return Option::fromNullable($elem);
+    }
 
     /**
      * @param TK $key

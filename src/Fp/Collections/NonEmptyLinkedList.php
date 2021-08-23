@@ -26,7 +26,6 @@ final class NonEmptyLinkedList implements NonEmptyLinearSeq
 
     /**
      * @psalm-pure
-     * @psalm-suppress ImpureMethodCall
      * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>

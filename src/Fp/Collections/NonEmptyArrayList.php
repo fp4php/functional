@@ -35,7 +35,6 @@ final class NonEmptyArrayList implements NonEmptyIndexedSeq
         $isEmpty = true;
         $buffer = [];
 
-        /** @psalm-suppress ImpureMethodCall */
         foreach ($source as $elem) {
             $isEmpty = false;
             $buffer[] = $elem;

@@ -39,7 +39,6 @@ final class ArrayList implements IndexedSeq
     {
         $buffer = [];
 
-        /** @psalm-suppress ImpureMethodCall */
         foreach ($source as $elem) {
             $buffer[] = $elem;
         }
@@ -457,7 +456,7 @@ final class ArrayList implements IndexedSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return self<TV>
      */
-    public function takeWhile($predicate): self
+    public function takeWhile(callable $predicate): self
     {
         $buffer = [];
 
@@ -477,7 +476,7 @@ final class ArrayList implements IndexedSeq
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return self<TV>
      */
-    public function dropWhile($predicate): self
+    public function dropWhile(callable $predicate): self
     {
         $buffer = [];
 
@@ -528,5 +527,27 @@ final class ArrayList implements IndexedSeq
         }
 
         return new self($buffer);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return Map<TKO, Seq<TV>>
+     */
+    public function groupBy(callable $callback): Map
+    {
+        $buffer = new HashMapBuffer();
+
+        foreach ($this as $elem) {
+            $key = $callback($elem);
+
+            /** @var Seq<TV> $group */
+            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
+
+            $buffer->update($key, $group->prepended($elem));
+        }
+
+        return $buffer->toHashMap();
     }
 }

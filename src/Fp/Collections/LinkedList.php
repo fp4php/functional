@@ -22,7 +22,6 @@ abstract class LinkedList implements LinearSeq
     /**
      * @inheritDoc
      * @psalm-pure
-     * @psalm-suppress ImpureMethodCall
      * @template TKI
      * @template TVI
      *
@@ -545,5 +544,27 @@ abstract class LinkedList implements LinearSeq
         };
 
         return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return Map<TKO, Seq<TV>>
+     */
+    public function groupBy(callable $callback): Map
+    {
+        $buffer = new HashMapBuffer();
+
+        foreach ($this as $elem) {
+            $key = $callback($elem);
+
+            /** @var Seq<TV> $group */
+            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
+
+            $buffer->update($key, $group->prepended($elem));
+        }
+
+        return $buffer->toHashMap();
     }
 }

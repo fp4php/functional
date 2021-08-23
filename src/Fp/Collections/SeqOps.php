@@ -334,7 +334,7 @@ interface SeqOps
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Seq<TV>
      */
-    public function takeWhile($predicate): Seq;
+    public function takeWhile(callable $predicate): Seq;
 
     /**
      * Drop collection elements while predicate is true
@@ -346,7 +346,7 @@ interface SeqOps
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Seq<TV>
      */
-    public function dropWhile($predicate): Seq;
+    public function dropWhile(callable $predicate): Seq;
 
     /**
      * Take N collection elements
@@ -369,4 +369,20 @@ interface SeqOps
      * @psalm-return Seq<TV>
      */
     public function drop(int $length): Seq;
+
+    /**
+     * Group elements
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 1, 3])
+     * >>>     ->groupBy(fn($e) => $e)
+     * >>>     ->map(fn(Seq $e) => $e->toArray())
+     * >>>     ->toArray();
+     * => [[1, [1, 1]], [3, [3]]]
+     *
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return Map<TKO, Seq<TV>>
+     */
+    public function groupBy(callable $callback): Map;
 }
