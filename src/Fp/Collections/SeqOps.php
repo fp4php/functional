@@ -323,4 +323,50 @@ interface SeqOps
      * @psalm-return Seq<TV>
      */
     public function unique(callable $callback): Seq;
+
+    /**
+     * Take collection elements while predicate is true
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray()
+     * => [1, 2]
+     *
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Seq<TV>
+     */
+    public function takeWhile($predicate): Seq;
+
+    /**
+     * Drop collection elements while predicate is true
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray()
+     * => [3]
+     *
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Seq<TV>
+     */
+    public function dropWhile($predicate): Seq;
+
+    /**
+     * Take N collection elements
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 2, 3])->take(2)->toArray()
+     * => [1, 2]
+     *
+     * @psalm-return Seq<TV>
+     */
+    public function take(int $length): Seq;
+
+    /**
+     * Drop N collection elements
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 2, 3])->drop(2)->toArray()
+     * => [3]
+     *
+     * @psalm-return Seq<TV>
+     */
+    public function drop(int $length): Seq;
 }

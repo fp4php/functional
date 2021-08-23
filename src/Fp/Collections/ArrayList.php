@@ -452,4 +452,81 @@ final class ArrayList implements IndexedSeq
         return self::collect(HashMap::collect($pairs)->values());
     }
 
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return self<TV>
+     */
+    public function takeWhile($predicate): self
+    {
+        $buffer = [];
+
+        foreach ($this->elements as $element) {
+            if (!$predicate($element)) {
+                break;
+            }
+
+            $buffer[] = $element;
+        }
+
+        return new self($buffer);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return self<TV>
+     */
+    public function dropWhile($predicate): self
+    {
+        $buffer = [];
+
+        foreach ($this->elements as $element) {
+            if ($predicate($element)) {
+                continue;
+            }
+
+            $buffer[] = $element;
+        }
+
+        return new self($buffer);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return self<TV>
+     */
+    public function take(int $length): self
+    {
+        $buffer = [];
+
+        foreach ($this->elements as $i => $element) {
+            if ($i === $length) {
+                break;
+            }
+
+            $buffer[] = $element;
+        }
+
+        return new self($buffer);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return self<TV>
+     */
+    public function drop(int $length): self
+    {
+        $buffer = [];
+
+        foreach ($this->elements as $i => $element) {
+            if ($i < $length) {
+                continue;
+            }
+
+            $buffer[] = $element;
+        }
+
+        return new self($buffer);
+    }
 }

@@ -468,4 +468,82 @@ abstract class LinkedList implements LinearSeq
 
         return self::collect(HashMap::collect($pairs)->values());
     }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return self<TV>
+     */
+    public function takeWhile($predicate): self
+    {
+        $source = function () use ($predicate): Generator {
+            foreach ($this as $element) {
+                if (!$predicate($element)) {
+                    break;
+                }
+
+                yield $element;
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return self<TV>
+     */
+    public function dropWhile($predicate): self
+    {
+        $source = function () use ($predicate): Generator {
+            foreach ($this as $element) {
+                if ($predicate($element)) {
+                    continue;
+                }
+
+                yield $element;
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return self<TV>
+     */
+    public function take(int $length): self
+    {
+        $source = function () use ($length): Generator {
+            foreach ($this as $i => $element) {
+                if ($i === $length) {
+                    break;
+                }
+
+                yield $element;
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return self<TV>
+     */
+    public function drop(int $length): self
+    {
+        $source = function () use ($length): Generator {
+            foreach ($this as $i => $element) {
+                if ($i < $length) {
+                    continue;
+                }
+
+                yield $element;
+            }
+        };
+
+        return self::collect($source());
+    }
 }
