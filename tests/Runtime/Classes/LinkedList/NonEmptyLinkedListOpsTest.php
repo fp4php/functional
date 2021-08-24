@@ -17,12 +17,16 @@ final class NonEmptyLinkedListOpsTest extends TestCase
     public function testAppendPrepend(): void
     {
         $linkedList = NonEmptyLinkedList::collectNonEmpty([1, 2, 3]);
-        $linkedList = $linkedList->prepended(0)->appended(4);
+        $linkedList = $linkedList
+            ->prepended(0)
+            ->appended(4)
+            ->appendedAll([5, 6])
+            ->prependedAll([-2, -1]);
 
         $list = asList($linkedList);
 
         $this->assertEquals(
-            [0, 1, 2, 3, 4],
+            [-2, -1, 0, 1, 2, 3, 4, 5, 6],
             $list,
         );
     }

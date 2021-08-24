@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\ArrayList;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\Seq;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -17,12 +18,16 @@ final class ArrayListOpsTest extends TestCase
     public function testAppendPrepend(): void
     {
         $linkedList = ArrayList::collect([1, 2, 3]);
-        $linkedList = $linkedList->prepended(0)->appended(4);
+        $linkedList = $linkedList
+            ->prepended(0)
+            ->appended(4)
+            ->appendedAll([5, 6])
+            ->prependedAll([-2, -1]);
 
         $list = asList($linkedList);
 
         $this->assertEquals(
-            [0, 1, 2, 3, 4],
+            [-2, -1, 0, 1, 2, 3, 4, 5, 6],
             $list,
         );
     }
@@ -59,7 +64,7 @@ final class ArrayListOpsTest extends TestCase
 
     public function testExists(): void
     {
-        /** @var ArrayList<mixed> $linkedList */
+        /** @psalm-var ArrayList<mixed> $linkedList */
         $linkedList = ArrayList::collect([new Foo(1), 1, new Foo(1)]);
 
         $this->assertTrue($linkedList->exists(fn($i) => $i === 1));
@@ -98,7 +103,7 @@ final class ArrayListOpsTest extends TestCase
 
     public function testFirst(): void
     {
-        /** @var ArrayList<mixed> $linkedList */
+        /** @psalm-var ArrayList<mixed> $linkedList */
         $linkedList = ArrayList::collect([new Foo(1), 2, 1, 3]);
 
         $this->assertEquals(1, $linkedList->first(fn($e) => 1 === $e)->get());
@@ -168,7 +173,7 @@ final class ArrayListOpsTest extends TestCase
 
     public function testReduce(): void
     {
-        /** @var ArrayList<string> $list */
+        /** @psalm-var ArrayList<string> $list */
         $list = ArrayList::collect(['1', '2', '3']);
 
         $this->assertEquals(
@@ -201,5 +206,56 @@ final class ArrayListOpsTest extends TestCase
             [$foo1, $foo2],
             ArrayList::collect([$foo1, $foo1, $foo2])->unique(fn(Foo $e) => $e->a)->toArray()
         );
+    }
+
+    public function testTakeAndDrop(): void
+    {
+        $this->assertEquals(
+            [0, 1],
+            ArrayList::collect([0, 1, 2])->takeWhile(fn($e) => $e < 2)->toArray()
+        );
+
+        $this->assertEquals(
+            [2],
+            ArrayList::collect([0, 1, 2])->dropWhile(fn($e) => $e < 2)->toArray()
+        );
+
+        $this->assertEquals(
+            [0, 1],
+            ArrayList::collect([0, 1, 2])->take(2)->toArray()
+        );
+
+        $this->assertEquals(
+            [2],
+            ArrayList::collect([0, 1, 2])->drop(2)->toArray()
+        );
+    }
+
+    public function testGroupBy(): void
+    {
+        $foos = [
+            $f1 = new Foo(1), $f2 = new Foo(2),
+            $f3 = new Foo(1), $f4 = new Foo(3)
+        ];
+
+        $res1 = ArrayList::collect($foos)
+            ->groupBy(fn(Foo $foo) => $foo)
+            ->map(fn(Seq $seq) => $seq->toArray())
+            ->toArray();
+
+        $res2 = ArrayList::collect($foos)
+            ->groupBy(fn(Foo $foo) => $foo->a)
+            ->map(fn(Seq $seq) => $seq->toArray())
+            ->toArray();
+
+        $res3 = ArrayList::collect($foos)
+            ->map(fn(Foo $foo) => $foo->a)
+            ->groupBy(fn(int $a) => $a)
+            ->map(fn(Seq $seq) => $seq->toArray())
+            ->toArray();
+
+        $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);
+        $this->assertEquals([[1, [$f1, $f3]], [2, [$f2]], [3, [$f4]]], $res2);
+        $this->assertEquals([[1, [1, 1]], [2, [2]], [3, [3]]], $res3);
     }
 }
