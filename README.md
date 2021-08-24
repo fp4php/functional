@@ -27,20 +27,6 @@ $ vendor/bin/psalm-plugin enable Fp\\Psalm\\FunctionalPlugin
 ```
 
 
-## Contribution
-
-### Build documentation
-
-1) Install dependencies
-  ```console
-  whsv26@whsv26:~$ sudo apt install pandoc
-  ```
-
-2) Generate **doc** from **src**
-  ```console
-  whsv26@whsv26:~$ make
-  ```
-
 ## Examples
 
 - Type safety
@@ -48,7 +34,7 @@ $ vendor/bin/psalm-plugin enable Fp\\Psalm\\FunctionalPlugin
 /**
  * Inferred type is NonEmptyLinkedList<1|2|3>
  */
-$res1 = NonEmptyLinkedList::collectNonEmpty([1, 2, 3]);
+$collection = NonEmptyLinkedList::collectNonEmpty([1, 2, 3]);
 
 /**
  * Inferred type is NonEmptyLinkedList<int>
@@ -56,13 +42,28 @@ $res1 = NonEmptyLinkedList::collectNonEmpty([1, 2, 3]);
  * Literal types are dropped after map transformation,
  * but NonEmpty collection prefix has been kept
  */
-$res2 = $res1->map(fn($elem) => $elem - 1);
+$mappedCollection = $collection->map(fn($elem) => $elem - 1);
 
 /**
- * Inferred type is LinkedList<int>
+ * Inferred type is LinkedList<positive-int>
  * NonEmpty prefix has been dropped
  */
-$res3 = $res2->filter(fn(int $elem) => $elem > 0);
+$filteredCollection = $mappedCollection->filter(fn(int $elem) => $elem > 0);
+```
+```php
+/**
+ * Inferred type is ArrayList<Foo|Bar>
+ * Null type was removed
+ */
+$withoutNulls = NonEmptyArrayList::collectNonEmpty([new Foo(1), null, new Bar(2)])
+    ->filter(fn($elem) => null !== $elem);
+
+/**
+ * Inferred type is ArrayList<Foo>
+ * Bar type was removed
+ */
+$onlyFoos = $withoutNulls->filter(fn($elem) => $elem instanceof Foo);
+
 ```
 
 - Covariance
@@ -125,3 +126,18 @@ $emptyCollection
     ->flatMap(fn(int $elem): float => div($elem, $elem - 1))
     ->getOrElse(0)
 ```
+
+
+## Contribution
+
+### Build documentation
+
+1) Install dependencies
+  ```console
+  whsv26@whsv26:~$ sudo apt install pandoc
+  ```
+
+2) Generate **doc** from **src**
+  ```console
+  whsv26@whsv26:~$ make
+  ```
