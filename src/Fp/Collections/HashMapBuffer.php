@@ -5,23 +5,24 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use ReflectionClass;
-
-use function Fp\Reflection\getReflectionClass;
 
 /**
  * Provides fast update operation
  *
  * @template TK
  * @template TV
- * @psalm-type hash = string
  */
 final class HashMapBuffer
 {
     /**
-     * @var array<string, list<array{TK, TV}>>
+     * @var HashTable<TK, TV>
      */
-    private array $hashTable = [];
+    private HashTable $hashTable;
+
+    public function __construct()
+    {
+        $this->hashTable = new HashTable();
+    }
 
     /**
      * @param TK $key
@@ -31,7 +32,7 @@ final class HashMapBuffer
         $hash = (string) HashComparator::computeHash($key);
         $elem = null;
 
-        foreach ($this->hashTable[$hash] ?? [] as [$k, $v]) {
+        foreach ($this->hashTable->table[$hash] ?? [] as [$k, $v]) {
             if (HashComparator::hashEquals($key, $k)) {
                 $elem = $v;
             }
@@ -50,21 +51,21 @@ final class HashMapBuffer
     {
         $hash = (string) HashComparator::computeHash($key);
 
-        if (!isset($this->hashTable[$hash])) {
-            $this->hashTable[$hash] = [];
+        if (!isset($this->hashTable->table[$hash])) {
+            $this->hashTable->table[$hash] = [];
         }
 
         $replacedIdx = -1;
 
-        foreach ($this->hashTable[$hash] as $idx => [$k, $v]) {
+        foreach ($this->hashTable->table[$hash] as $idx => [$k, $v]) {
             if (HashComparator::hashEquals($key, $k)) {
                 $replacedIdx = $idx;
-                $this->hashTable[$hash][$idx][1] = $value;
+                $this->hashTable->table[$hash][$idx][1] = $value;
             }
         }
 
         if ($replacedIdx < 0) {
-            $this->hashTable[$hash][] = [$key, $value];
+            $this->hashTable->table[$hash][] = [$key, $value];
         }
 
         return $this;
@@ -75,17 +76,6 @@ final class HashMapBuffer
      */
     public function toHashMap(): HashMap
     {
-        /** @var HashMap<TK, TV> */
-        return getReflectionClass(HashMap::class)
-            ->map(function (ReflectionClass $class) {
-                $constructor = $class->getConstructor();
-                $object = $class->newInstanceWithoutConstructor();
-                $constructor?->setAccessible(true);
-                $constructor?->invoke($object, $this->hashTable);
-
-                return $object;
-            })
-            ->toOption()
-            ->getUnsafe();
+        return new HashMap($this->hashTable);
     }
 }

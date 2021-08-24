@@ -8,21 +8,19 @@ use ArrayIterator;
 use Fp\Functional\Option\Option;
 use Generator;
 
-use function Functional\first;
-
 /**
  * @template TK
  * @template-covariant TV
  * @psalm-immutable
  * @implements Map<TK, TV>
- * @psalm-type hash = string
  */
 final class HashMap implements Map
 {
     /**
-     * @param array<hash, list<array{TK, TV}>> $hashTable
+     * @internal
+     * @param HashTable<TK, TV> $hashTable
      */
-    private function __construct(private array $hashTable)
+    public function __construct(private HashTable $hashTable)
     {
     }
 
@@ -74,7 +72,7 @@ final class HashMap implements Map
     {
         $counter = 0;
 
-        foreach ($this->hashTable as $bucket) {
+        foreach ($this->hashTable->table as $bucket) {
             foreach ($bucket as $ignored) {
                 $counter++;
             }
@@ -316,7 +314,7 @@ final class HashMap implements Map
     private function findBucketByKey(mixed $key): Option
     {
         $hash = (string) HashComparator::computeHash($key);
-        return Option::fromNullable($this->hashTable[$hash] ?? null);
+        return Option::fromNullable($this->hashTable->table[$hash] ?? null);
     }
 
     /**
@@ -324,7 +322,7 @@ final class HashMap implements Map
      */
     private function generatePairs(): Generator
     {
-        foreach ($this->hashTable as $bucket) {
+        foreach ($this->hashTable->table as $bucket) {
             foreach ($bucket as $pair) {
                 yield $pair;
             }
