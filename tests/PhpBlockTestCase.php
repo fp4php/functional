@@ -23,7 +23,6 @@ use function Fp\Evidence\proveListOfScalar;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
 use function Fp\Json\jsonSearch;
-use function Fp\Json\lastExploded;
 use function Symfony\Component\String\u;
 
 /**
@@ -43,6 +42,7 @@ abstract class PhpBlockTestCase extends TestCase
 
         if (is_null($classMap)) {
             $classes = asList(
+                ClassFinder::getClassesInNamespace('Fp\Collections', ClassFinder::RECURSIVE_MODE),
                 ClassFinder::getClassesInNamespace('Fp\Functional', ClassFinder::RECURSIVE_MODE),
                 ClassFinder::getClassesInNamespace('Tests\Mock', ClassFinder::RECURSIVE_MODE),
             );
