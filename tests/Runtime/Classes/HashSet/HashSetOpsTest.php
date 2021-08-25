@@ -53,6 +53,7 @@ final class HashSetOpsTest extends TestCase
     {
         $hs = HashSet::collect([new Foo(1), 1, 1, new Foo(1)]);
         $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toArray());
+        $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toArray());
     }
 
     public function testFlatMap(): void

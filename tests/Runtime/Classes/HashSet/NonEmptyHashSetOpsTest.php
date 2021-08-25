@@ -53,6 +53,8 @@ final class NonEmptyHashSetOpsTest extends TestCase
     {
         $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);
         $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toArray());
+        $this->assertEquals([1], NonEmptyHashSet::collectNonEmpty([1, null])->filterNotNull()->toArray());
+
     }
 
     public function testReduce(): void
@@ -62,7 +64,7 @@ final class NonEmptyHashSetOpsTest extends TestCase
 
         $this->assertEquals(
             '123',
-            $list->reduce(fn($acc, $e) => $acc . $e)
+            $list->reduce(fn(string $acc, $e) => $acc . $e)
         );
     }
 

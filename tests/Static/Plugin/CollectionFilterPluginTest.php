@@ -85,4 +85,64 @@ final class CollectionFilterPluginTest extends PhpBlockTestCase
             'Fp\Collections\Set<1|2>',
         );
     }
+
+    public function testFilterNotNull(): void
+    {
+        $this->assertBlockTypes(
+        /** @lang InjectablePHP */ '
+                
+                /** @psalm-trace $r1 */
+                $r1 = \Fp\Collections\ArrayList::collect([1, null, 2])->filterNotNull();
+                    
+                /** @psalm-trace $r2 */
+                $r2 = \Fp\Collections\LinkedList::collect([1, null, 2])->filterNotNull();
+                    
+                /** @psalm-trace $r3 */
+                $r3 = \Fp\Collections\HashSet::collect([1, null, 2])->filterNotNull();
+                    
+                /** @psalm-trace $r5 */
+                $r5 = \Fp\Collections\NonEmptyArrayList::collectNonEmpty([1, null, 2])->filterNotNull();
+                    
+                /** @psalm-trace $r6 */
+                $r6 = \Fp\Collections\NonEmptyLinkedList::collectNonEmpty([1, null, 2])->filterNotNull();
+                    
+                /** @psalm-trace $r7 */
+                $r7 = \Fp\Collections\NonEmptyHashSet::collectNonEmpty([1, null, 2])->filterNotNull();
+                   
+                /** @var \Fp\Collections\Seq<1|null|2> $seq */ 
+                $seq = \Fp\Collections\LinkedList::collect([1, null, 2]);
+                
+                /** @var \Fp\Collections\Set<1|null|2> $set */ 
+                $set = \Fp\Collections\LinkedList::collect([1, null, 2]);
+                
+                /** @var \Fp\Collections\NonEmptySeq<1|null|2> $nonEmptySeq */ 
+                $nonEmptySeq = \Fp\Collections\NonEmptyLinkedList::collectNonEmpty([1, null, 2]);
+                
+                /** @var \Fp\Collections\NonEmptySet<1|null|2> $nonEmptySet */ 
+                $nonEmptySet = \Fp\Collections\NonEmptyLinkedList::collectNonEmpty([1, null, 2]);
+                
+                /** @psalm-trace $r8 */
+                $r8 = $seq->filterNotNull();
+                
+                /** @psalm-trace $r9 */
+                $r9 = $set->filterNotNull();
+                
+                /** @psalm-trace $r11 */
+                $r11 = $nonEmptySeq->filterNotNull();
+                
+                /** @psalm-trace $r12 */
+                $r12 = $nonEmptySet->filterNotNull();
+            ',
+            'ArrayList<1|2>',
+            'LinkedList<1|2>',
+            'HashSet<1|2>',
+            'ArrayList<1|2>',
+            'LinkedList<1|2>',
+            'HashSet<1|2>',
+            'Fp\Collections\Seq<1|2>',
+            'Fp\Collections\Set<1|2>',
+            'Fp\Collections\Seq<1|2>',
+            'Fp\Collections\Set<1|2>',
+        );
+    }
 }

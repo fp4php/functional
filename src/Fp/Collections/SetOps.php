@@ -104,6 +104,17 @@ interface SetOps
     public function filter(callable $predicate): Set;
 
     /**
+     * Exclude null elements
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 1, null])->filterNotNull()->toArray()
+     * => [1]
+     *
+     * @psalm-return Set<TV>
+     */
+    public function filterNotNull(): Set;
+
+    /**
      * REPL:
      * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toArray()
      * => [1, 2, 3, 4, 5, 6]

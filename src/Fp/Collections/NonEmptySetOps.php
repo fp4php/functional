@@ -102,6 +102,17 @@ interface NonEmptySetOps
     public function filter(callable $predicate): Set;
 
     /**
+     * Exclude null elements
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 1, null])->filterNotNull()->toArray()
+     * => [1]
+     *
+     * @psalm-return Set<TV>
+     */
+    public function filterNotNull(): Set;
+
+    /**
      * Reduce multiple elements into one
      *
      * REPL:

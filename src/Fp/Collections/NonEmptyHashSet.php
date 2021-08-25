@@ -200,6 +200,15 @@ final class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @inheritDoc
+     * @psalm-return Set<TV>
+     */
+    public function filterNotNull(): Set
+    {
+        return $this->filter(fn($elem) => null !== $elem);
+    }
+
+    /**
+     * @inheritDoc
      * @template TVI
      * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
      * @psalm-return (TV|TVI)

@@ -150,6 +150,15 @@ final class HashSet implements Set
 
     /**
      * @inheritDoc
+     * @psalm-return self<TV>
+     */
+    public function filterNotNull(): self
+    {
+        return $this->filter(fn($elem) => null !== $elem);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return self<TVO>

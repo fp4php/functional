@@ -17,6 +17,11 @@ use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Psalm\TypeRefinement\CollectionTypeParams;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Isset_;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Param;
+use Psalm\Node\Expr\VirtualArrowFunction;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type;
@@ -33,6 +38,14 @@ use function Symfony\Component\String\s;
 
 final class CollectionFilterMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
+    public const FILTER = 'filter';
+    public const FILTER_NOT_NULL = 'filternotnull';
+
+    public const ALLOWED_METHODS = [
+        self::FILTER,
+        self::FILTER_NOT_NULL,
+    ];
+
     public static function getClassLikeNames(): array
     {
         return [
@@ -57,9 +70,9 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Type\Union
     {
         $reconciled = Option::do(function() use ($event) {
-            yield proveTrue('filter' === $event->getMethodNameLowercase());
+            yield proveTrue(in_array($event->getMethodNameLowercase(), self::ALLOWED_METHODS, true));
             $source = yield proveOf($event->getSource(), StatementsAnalyzer::class);
-            $predicate_arg = yield first($event->getCallArgs());
+            $predicate_arg = yield self::extractPredicateArg($event);
             $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
 
             $collection_type_params = 2 === count($template_params)
@@ -82,6 +95,35 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
         });
 
         return $reconciled->get();
+    }
+
+    /**
+     * @psalm-return Option<Arg>
+     */
+    public static function extractPredicateArg(MethodReturnTypeProviderEvent $event): Option
+    {
+        return first($event->getCallArgs())->orElse(fn() => self::mockNotNullPredicateArg($event));
+    }
+
+    /**
+     * @psalm-return Option<Arg>
+     */
+    public static function mockNotNullPredicateArg(MethodReturnTypeProviderEvent $event): Option
+    {
+        return Option::do(function () use ($event) {
+            yield proveTrue(self::FILTER_NOT_NULL === $event->getMethodNameLowercase());
+
+            $var = new Variable('$elem');
+            $expr = new Isset_([$var]);
+            $param = new Param($var);
+
+            $expr = new VirtualArrowFunction([
+                'expr' => $expr,
+                'params' => [$param],
+            ]);
+
+            return new Arg($expr);
+        });
     }
 
     /**
