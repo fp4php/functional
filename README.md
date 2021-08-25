@@ -114,7 +114,10 @@ $resultWithDefaultValue = $emptyCollection
     ->reduce(fn(int $accumulator, int $element) => $accumulator + $element)
     ->getOrElse(0);
 
-function div(int $a, int $b): float {
+/**
+ * @return Option<float>
+ */
+function div(int $a, int $b): Option {
     return 0 === $b 
         ? Option::none()
         : Option::some($a / $b)
