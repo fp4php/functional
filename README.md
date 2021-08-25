@@ -51,12 +51,14 @@ $mappedCollection = $collection->map(fn($elem) => $elem - 1);
 $filteredCollection = $mappedCollection->filter(fn(int $elem) => $elem > 0);
 ```
 ```php
+$source = [new Foo(1), null, new Bar(2)];
+
 /**
  * Inferred type is ArrayList<Foo|Bar>
  * Null type was removed
+ * NonEmpty prefix was removed
  */
-$withoutNulls = NonEmptyArrayList::collectNonEmpty([new Foo(1), null, new Bar(2)])
-    ->filter(fn($elem) => null !== $elem);
+$withoutNulls = NonEmptyArrayList::collectNonEmpty($source)->filterNotNull();
 
 /**
  * Inferred type is ArrayList<Foo>
@@ -123,6 +125,11 @@ function div(int $a, int $b): Option {
         : Option::some($a / $b)
 }
 
+/**
+ * It's possible there is no first collection element above zero
+ * In this case the execution will short circuit (stop) 
+ * And no Null Pointer Exception will be thrown
+ */
 $emptyCollection
     ->first(fn(int $elem) => $elem > 0)
     ->map(fn(int $elem) => $elem + 1)
