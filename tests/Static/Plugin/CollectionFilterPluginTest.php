@@ -63,7 +63,7 @@ final class CollectionFilterPluginTest extends PhpBlockTestCase
                 $r9 = $set->filter(fn($e) => null !== $e);
                 
                 /** @psalm-trace $r10 */
-                $r10 = $map->filter(fn($e) => null !== $e);
+                $r10 = $map->filter(fn($e, $k) => null !== $e && $k !== "c");
                 
                 /** @psalm-trace $r11 */
                 $r11 = $nonEmptySeq->filter(fn($e) => null !== $e);
@@ -80,7 +80,7 @@ final class CollectionFilterPluginTest extends PhpBlockTestCase
             'HashSet<1|2>',
             'Fp\Collections\Seq<1|2>',
             'Fp\Collections\Set<1|2>',
-            'Fp\Collections\Map<"a"|"b"|"c", 1|2>',
+            'Fp\Collections\Map<"a"|"b", 1|2>',
             'Fp\Collections\Seq<1|2>',
             'Fp\Collections\Set<1|2>',
         );
