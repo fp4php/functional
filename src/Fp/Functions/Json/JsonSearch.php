@@ -19,6 +19,7 @@ use function JmesPath\search;
  * >>> jsonSearch('a[0].b', '{"a": [{"b": true}]}');
  * => true
  *
+ * @deprecated will be removed
  *
  * @psalm-param string $expr json path expression
  * @psalm-param array|string $data json-string or decoded into associative array json
