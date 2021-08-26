@@ -21,5 +21,5 @@ const unit = '\Fp\unit';
  */
 function unit(): Unit
 {
-    return new Unit();
+    return Unit::getInstance();
 }
