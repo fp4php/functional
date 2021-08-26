@@ -144,10 +144,10 @@ $emptyCollection
 
 1) Install dependencies
   ```console
-  whsv26@whsv26:~$ sudo apt install pandoc
+  $ sudo apt install pandoc
   ```
 
 2) Generate **doc** from **src**
   ```console
-  whsv26@whsv26:~$ make
+  $ make
   ```
