@@ -12,20 +12,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
 
-    - name: Cache Composer packages
+    - name: Cache Composer dependencies
       id: composer-cache
       uses: actions/cache@v2
       with:
         path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+        key: ${{ runner.os }}-php-${{ github.sha }}
 
   psalm:
     runs-on: ubuntu-latest
@@ -33,17 +28,12 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Composer packages
+      - name: Restore cached composer dependencies
         id: composer-cache
         uses: actions/cache@v2
         with:
           path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
-
-      - name: Composer dump
-        run: composer dump-autoload
+          key: ${{ runner.os }}-php-${{ github.sha }}
 
       - name: Run psalm validation
         run: vendor/bin/psalm --output-format=github --shepherd
@@ -60,17 +50,12 @@ jobs:
           php-version: '8.0'
           coverage: xdebug
 
-      - name: Cache Composer packages
+      - name: Restore cached composer dependencies
         id: composer-cache
         uses: actions/cache@v2
         with:
           path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
-
-      - name: Composer dump autoload
-        run: composer dump-autoload
+          key: ${{ runner.os }}-php-${{ github.sha }}
 
       - name: Run test suite
         run: php vendor/bin/phpunit
