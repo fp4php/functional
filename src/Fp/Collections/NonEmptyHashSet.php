@@ -126,6 +126,9 @@ final class NonEmptyHashSet implements NonEmptySet
         return new ArrayIterator($this->toArray());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         return $this->set->count();

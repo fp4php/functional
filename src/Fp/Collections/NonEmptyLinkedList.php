@@ -81,6 +81,9 @@ final class NonEmptyLinkedList implements NonEmptyLinearSeq
         return new LinkedListIterator($this->toLinkedList());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         return $this->tail->count() + 1;

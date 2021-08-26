@@ -68,6 +68,9 @@ final class HashMap implements Map
         return new ArrayIterator($this->toArray());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         $counter = 0;

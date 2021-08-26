@@ -82,6 +82,9 @@ final class NonEmptyArrayList implements NonEmptyIndexedSeq
         return $this->arrayList->getIterator();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         return $this->arrayList->count();

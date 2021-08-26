@@ -76,6 +76,9 @@ final class HashSet implements Set
         return new LinkedListIterator($this->toLinkedList());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         return $this->map->count();

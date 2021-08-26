@@ -55,6 +55,9 @@ final class ArrayList implements IndexedSeq
         return new ArrayIterator($this->elements);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         return count($this->elements);
