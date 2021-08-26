@@ -23,7 +23,6 @@ use function Fp\Evidence\proveListOfScalar;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
 use function Fp\Json\jsonSearch;
-use function Symfony\Component\String\u;
 
 /**
  * @psalm-type PhpBlock = string
@@ -49,7 +48,7 @@ abstract class PhpBlockTestCase extends TestCase
 
             $classMap = reindex(
                 $classes,
-                fn(string $fqcn) => u($fqcn)->afterLast('\\')->toString()
+                fn(string $fqcn) => last(preg_split('/\\\\/', $fqcn))->getOrElse($fqcn)
             );
         }
 
@@ -93,10 +92,7 @@ abstract class PhpBlockTestCase extends TestCase
      */
     public function prepareBlock(string $block): string
     {
-        $phpBlock = u($block)
-            ->prepend('<?php' . ' ')
-            ->append(' ?>')
-            ->toString();
+        $phpBlock = '<?php' . ' ' . $block . ' ?>';
 
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $ast = $parser->parse($phpBlock);
@@ -133,7 +129,7 @@ abstract class PhpBlockTestCase extends TestCase
 
             return map(
                 $stringMessages,
-                fn(string $msg) => u($msg)->after(': ')->toString()
+                fn(string $msg) => substr($msg, (int) strpos($msg, ': ') + 2)
             );
         });
     }
@@ -146,7 +142,7 @@ abstract class PhpBlockTestCase extends TestCase
      */
     protected function assertBlockTypes(string $block, string ...$types): void
     {
-        $trim = fn(string $s): string => u($s)->replace(' ', '')->toString();
+        $trim = fn(string $s): string => str_replace(' ', '', $s);
         $interpolateClasses = fn(string $s): string => strtr($s, $this->getClassMap());
 
         $prepareAndInterpolate = compose($trim, $interpolateClasses);

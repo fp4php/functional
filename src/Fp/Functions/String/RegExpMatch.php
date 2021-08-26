@@ -8,7 +8,6 @@ use Fp\Functional\Option\Option;
 
 use function Fp\Collection\at;
 use function Fp\Evidence\proveNonEmptyString;
-use function Symfony\Component\String\u;
 
 /**
  * Regular expression search
@@ -24,8 +23,7 @@ use function Symfony\Component\String\u;
 function regExpMatch(string $expr, string $text, int $capturingGroup = 0): Option
 {
     return Option::do(function () use ($expr, $text, $capturingGroup) {
-        /** @var list<string> $matches */
-        $matches = u($text)->match($expr);
+        preg_match($expr . 'u', $text, $matches);
         $subMatch = yield at($matches, $capturingGroup);
         return yield proveNonEmptyString($subMatch);
     });

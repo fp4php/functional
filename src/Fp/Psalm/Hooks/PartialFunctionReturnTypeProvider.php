@@ -24,7 +24,6 @@ use function Fp\Collection\filterNotNull;
 use function Fp\Collection\head;
 use function Fp\Collection\map;
 use function Fp\Collection\tail;
-use function Symfony\Component\String\u;
 
 class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
@@ -60,7 +59,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
                 ))
             )))
             ->map(function (TClosure|TCallable $closure_type) use ($event) {
-                $is_partial_right = u($event->getFunctionId())->endsWith('right');
+                $is_partial_right = str_ends_with($event->getFunctionId(), 'right');
                 $closure_type_copy = clone $closure_type;
                 $closure_params = $closure_type_copy->params ?? [];
                 $tail_args = tail($event->getCallArgs());

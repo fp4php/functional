@@ -6,12 +6,9 @@ namespace Doc;
 
 use Fp\Collections\LinkedList;
 use Fp\Functional\Option\Option;
-
 use Symfony\Component\Process\Process;
 
-use function Fp\Collection\fold;
 use function Fp\Collection\map;
-use function Symfony\Component\String\u;
 
 class DocLinker
 {
@@ -24,13 +21,14 @@ class DocLinker
         $parser = new MdParser([]);
         $lines = file($path);
         $headers = map($lines, function (string $line) {
-            $uLine = u($line)->trim();
+            $uLine = trim($line);
+            $after = fn(string $prefix): string => substr($uLine, (int) strpos($uLine, $prefix) + strlen($prefix));
 
             return Option::fromNullable(match (true) {
-                $uLine->containsAny(MdHeader4::prefix()) => MdHeader4::fromTitle($uLine->after(MdHeader4::prefix())),
-                $uLine->containsAny(MdHeader3::prefix()) => MdHeader3::fromTitle($uLine->after(MdHeader3::prefix())),
-                $uLine->containsAny(MdHeader2::prefix()) => MdHeader2::fromTitle($uLine->after(MdHeader2::prefix())),
-                $uLine->containsAny(MdHeader1::prefix()) => MdHeader1::fromTitle($uLine->after(MdHeader1::prefix())),
+                str_contains($uLine, MdHeader4::prefix()) => MdHeader4::fromTitle($after(MdHeader4::prefix())),
+                str_contains($uLine, MdHeader3::prefix()) => MdHeader3::fromTitle($after(MdHeader3::prefix())),
+                str_contains($uLine, MdHeader2::prefix()) => MdHeader2::fromTitle($after(MdHeader2::prefix())),
+                str_contains($uLine, MdHeader1::prefix()) => MdHeader1::fromTitle($after(MdHeader1::prefix())),
                 default => null,
             });
         });
@@ -57,7 +55,7 @@ class DocLinker
             $refMap = LinkedList::collect($this->parseHeaders($to))
                 ->map(function(AbstractMdHeader $header) {
                     $headerTitle = $header->title;
-                    $headerRef = u($headerTitle)->replace(' ', '-');
+                    $headerRef = str_replace(' ', '-', $headerTitle);
 
                     return match ($header::class) {
                         MdHeader1::class => "- [$headerTitle](#$headerRef)" . PHP_EOL,

@@ -19,7 +19,6 @@ use function Fp\Collection\second;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
 use function Fp\Evidence\proveTrue;
-use function Symfony\Component\String\s;
 
 /**
  * @psalm-type CollectionTypeParameters = array{Type\Union, Type\Union}
@@ -203,9 +202,9 @@ final class RefineByPredicate
             }
 
             // Replace arg name with constant name
-            $arn_name = s($key)->replace($predicate_arg_name, self::CONSTANT_ARG_NAME);
+            $arn_name = str_replace($predicate_arg_name, self::CONSTANT_ARG_NAME, $key);
 
-            $assertions[$arn_name->toString()] = $assertion;
+            $assertions[$arn_name] = $assertion;
         }
 
         return $assertions;

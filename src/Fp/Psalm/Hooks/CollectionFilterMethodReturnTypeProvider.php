@@ -34,7 +34,6 @@ use Fp\Functional\Option\Option;
 use function Fp\Collection\first;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
-use function Symfony\Component\String\s;
 
 final class CollectionFilterMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
@@ -131,9 +130,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
      */
     private static function getReturnType(MethodReturnTypeProviderEvent $event, RefinementResult $result): Option
     {
-        $class_name = s($event->getFqClasslikeName())
-            ->replace('NonEmpty', '')
-            ->toString();
+        $class_name = str_replace('NonEmpty', '', $event->getFqClasslikeName());
 
         $template_params = is_a($class_name, Map::class, true)
             ? [$result->collection_key_type, $result->collection_value_type]

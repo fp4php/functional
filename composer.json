@@ -19,9 +19,7 @@
     },
     "require-dev": {
         "vimeo/psalm": "^4.8",
-        "lstrojny/functional-php": "^1.17",
         "klimick/psalm-show-type": "^1.0",
-        "nikic/php-parser": "^4.10",
         "phpunit/phpunit": "^9",
         "symfony/process": "^5.2",
         "rregeer/phpunit-coverage-check": "^0.3.1",
