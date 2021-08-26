@@ -186,7 +186,7 @@ abstract class Either
     }
 
     /**
-     * Do-notation a.k.a for-comprehension.
+     * Do-notation a.k.a. for-comprehension.
      *
      * Syntax sugar for sequential {@see Either::flatMap()} calls
      *
@@ -206,10 +206,12 @@ abstract class Either
      * });
      * => Left('error!')
      *
+     * @todo Replace Either<TL, mixed> with Either<TL, TR> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
+     *
      * @template TL
      * @template TR
      * @template TO
-     * @psalm-param callable(): Generator<int, Either<TL, TR>, TR, TO> $computation
+     * @psalm-param callable(): Generator<int, Either<TL, mixed>, TR, TO> $computation
      * @psalm-return Either<TL, TO>
      */
     public static function do(callable $computation): Either {
@@ -219,6 +221,7 @@ abstract class Either
             $currentStep = $generator->current();
 
             if ($currentStep->isRight()) {
+                /** @psalm-suppress MixedArgument */
                 $generator->send($currentStep->get());
             } else {
                 /** @var Either<TL, TO> $currentStep */

@@ -169,7 +169,7 @@ abstract class Option
     }
 
     /**
-     * Do-notation a.k.a for-comprehension.
+     * Do-notation a.k.a. for-comprehension.
      *
      * Syntax sugar for sequential {@see Option::flatMap()} calls
      *
@@ -189,9 +189,11 @@ abstract class Option
      * });
      * => None
      *
+     * @todo Replace Option<mixed> with Option<TS> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
+     *
      * @template TS
      * @template TO
-     * @psalm-param callable(): Generator<int, Option<TS>, TS, TO> $computation
+     * @psalm-param callable(): Generator<int, Option<mixed>, TS, TO> $computation
      * @psalm-return Option<TO>
      */
     public static function do(callable $computation): Option {
@@ -201,6 +203,7 @@ abstract class Option
             $currentStep = $generator->current();
 
             if ($currentStep->isSome()) {
+                /** @psalm-suppress MixedArgument */
                 $generator->send($currentStep->get());
             } else {
                 /** @var Option<TO> $currentStep */
