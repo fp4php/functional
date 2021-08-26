@@ -9,6 +9,7 @@ use Fp\Functional\Option\Option;
 /**
  * Provides fast update operation
  *
+ * @internal
  * @template TK
  * @template TV
  */

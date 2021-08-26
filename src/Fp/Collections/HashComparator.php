@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+/**
+ * @internal
+ */
 final class HashComparator
 {
     public static function hashEquals(mixed $lhs, mixed $rhs): bool

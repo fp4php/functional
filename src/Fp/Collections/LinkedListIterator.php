@@ -7,6 +7,7 @@ namespace Fp\Collections;
 use Iterator;
 
 /**
+ * @internal
  * @template TV
  * @implements Iterator<int, TV>
  */

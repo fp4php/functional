@@ -7,6 +7,7 @@ namespace Fp\Collections;
 /**
  * Provides constant time append to list
  *
+ * @internal
  * @template TV
  */
 final class LinkedListBuffer
