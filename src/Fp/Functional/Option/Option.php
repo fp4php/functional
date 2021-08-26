@@ -400,7 +400,7 @@ abstract class Option
      */
     public static function none(): Option
     {
-        return new None();
+        return None::getInstance();
     }
 
     /**

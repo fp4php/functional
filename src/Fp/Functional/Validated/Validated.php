@@ -134,6 +134,6 @@ abstract class Validated
     {
         return $this->isValid()
             ? new Some($this->value)
-            : new None();
+            : None::getInstance();
     }
 }
