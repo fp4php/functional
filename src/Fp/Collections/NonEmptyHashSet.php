@@ -24,55 +24,6 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @return non-empty-list<TV>
-     */
-    public function toArray(): array
-    {
-        $list = $this->set->toLinkedList();
-
-        return [$list->head()->getUnsafe(), ...$list->tail()->toArray()];
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<TV>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return $this->toNonEmptyLinkedList()->toLinkedList();
-    }
-
-    /**
-     * @inheritDoc
-     * @return NonEmptyLinkedList<TV>
-     */
-    public function toNonEmptyLinkedList(): NonEmptyLinkedList
-    {
-        $list = $this->set->toLinkedList();
-
-        return new NonEmptyLinkedList($list->head()->getUnsafe(), $list->tail());
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return NonEmptyHashSet<TV>
-     */
-    public function toNonEmptyHashSet(): NonEmptyHashSet
-    {
-        return NonEmptyHashSet::collectUnsafe($this);
-    }
-
-    /**
      * @psalm-pure
      * @template TVI
      * @param iterable<TVI> $source
@@ -123,24 +74,7 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
      */
     public function getIterator(): Iterator
     {
-        return new ArrayIterator($this->toArray());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        return $this->set->count();
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param TV $element
-     */
-    public function __invoke(mixed $element): bool
-    {
-        return $this->contains($element);
+        return $this->set->getIterator();
     }
 
     /**
@@ -150,6 +84,15 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     public function contains(mixed $element): bool
     {
         return $this->set->contains($element);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return HashSet<TV>
+     */
+    public function tail(): HashSet
+    {
+        return $this->set->tail();
     }
 
     /**
@@ -176,24 +119,6 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
-     */
-    public function every(callable $predicate): bool
-    {
-        return $this->set->every($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return $this->set->exists($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
      * @psalm-return Set<TV>
      */
     public function filter(callable $predicate): Set
@@ -208,17 +133,6 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     public function filterNotNull(): Set
     {
         return $this->filter(fn($elem) => null !== $elem);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
-     * @psalm-return (TV|TVI)
-     */
-    public function reduce(callable $callback): mixed
-    {
-        return $this->set->reduce($callback)->getUnsafe();
     }
 
     /**
