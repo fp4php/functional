@@ -64,50 +64,6 @@ final class ArrayList extends AbstractSeq
     }
 
     /**
-     * O(1) time/space complexity
-     *
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function __invoke(int $index): Option
-    {
-        return $this->at($index);
-    }
-
-    /**
-     * @inheritDoc
-     * @return list<TV>
-     */
-    public function toArray(): array
-    {
-        $buffer = [];
-
-        foreach ($this->elements as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<TV>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return LinkedList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
      * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem

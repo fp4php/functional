@@ -50,53 +50,6 @@ abstract class LinkedList extends AbstractSeq
 
     /**
      * @inheritDoc
-     */
-    public function count(): int
-    {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
-    }
-
-    /**
-     * @inheritDoc
-     * @return list<TV>
-     */
-    public function toArray(): array
-    {
-        $buffer = [];
-
-        foreach ($this as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<TV>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return LinkedList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
-     * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return self<TV|TVI>

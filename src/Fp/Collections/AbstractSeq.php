@@ -22,6 +22,62 @@ abstract class AbstractSeq implements Seq
 
     /**
      * @inheritDoc
+     */
+    public function count(): int
+    {
+        $counter = 0;
+
+        foreach ($this as $ignored) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    /**
+     * @inheritDoc
+     * @return list<TV>
+     */
+    public function toArray(): array
+    {
+        $buffer = [];
+
+        foreach ($this as $elem) {
+            $buffer[] = $elem;
+        }
+
+        return $buffer;
+    }
+
+    /**
+     * @inheritDoc
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function firstElement(): Option

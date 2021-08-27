@@ -65,6 +65,20 @@ interface SeqOps
     public function prependedAll(iterable $prefix): Seq;
 
     /**
+     * Find element by its index (Starts from zero).
+     * Returns None if there is no such collection element.
+     *
+     * REPL:
+     * >>> ArrayList::collect([1, 2])->at(1)->get()
+     * => 2
+     *
+     * Alias for {@see Seq::at()}
+     *
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option;
+
+    /**
      * Find element by its index (Starts from zero)
      * Returns None if there is no such collection element
      *
