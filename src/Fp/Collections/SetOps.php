@@ -79,6 +79,22 @@ interface SetOps
     public function every(callable $predicate): bool;
 
     /**
+     * Returns true if every collection element is of given class
+     * false otherwise
+     *
+     * REPL:
+     * >>> HashSet::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class)
+     * => true
+     * >>> HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class)
+     * => false
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function everyOf(string $fqcn, bool $invariant = false): bool;
+
+    /**
      * Find if there is element which satisfies the condition
      *
      * REPL:
@@ -90,6 +106,22 @@ interface SetOps
      * @psalm-param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
+
+    /**
+     * Returns true if there is collection element of given class
+     * False otherwise
+     *
+     * REPL:
+     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Foo::class)
+     * => true
+     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Bar::class)
+     * => false
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function existsOf(string $fqcn, bool $invariant = false): bool;
 
     /**
      * Filter collection by condition
@@ -113,6 +145,44 @@ interface SetOps
      * @psalm-return Set<TV>
      */
     public function filterNotNull(): Set;
+
+    /**
+     * Find first element which satisfies the condition
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
+     * => 2
+     *
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    public function first(callable $predicate): Option;
+
+    /**
+     * Returns last collection element which satisfies the condition
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
+     * => 2
+     *
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    public function last(callable $predicate): Option;
+
+    /**
+     * Find first element of given class
+     *
+     * REPL:
+     * >>> HashSet::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
+     * => Foo(2)
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
+     */
+    public function firstOf(string $fqcn, bool $invariant = false): Option;
 
     /**
      * REPL:
@@ -152,6 +222,51 @@ interface SetOps
      * @psalm-return Option<TV|TVI>
      */
     public function reduce(callable $callback): Option;
+
+    /**
+     * Return first collection element
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2])->head()->get()
+     * => 1
+     *
+     * @psalm-return Option<TV>
+     */
+    public function head(): Option;
+
+    /**
+     * Returns every collection element except first
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2, 3])->tail()->toArray()
+     * => [2, 3]
+     *
+     * @psalm-return Set<TV>
+     */
+    public function tail(): Set;
+
+    /**
+     * Returns first collection element
+     * Alias for {@see SetOps::head}
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2])->firstElement()->get()
+     * => 1
+     *
+     * @psalm-return Option<TV>
+     */
+    public function firstElement(): Option;
+
+    /**
+     * Returns last collection element
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2])->lastElement()->get()
+     * => 2
+     *
+     * @psalm-return Option<TV>
+     */
+    public function lastElement(): Option;
 
     /**
      * Produces a new collection of elements by mapping each element in collection

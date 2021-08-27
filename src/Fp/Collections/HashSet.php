@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Functional\Option\Option;
 use Generator;
 use Iterator;
 
@@ -20,33 +19,6 @@ final class HashSet extends AbstractSet
      */
     private function __construct(private HashMap $map)
     {
-    }
-
-    /**
-     * @inheritDoc
-     * @return list<TV>
-     */
-    public function toArray(): array
-    {
-        return $this->toLinkedList()->toArray();
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<TV>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return $this->map->toLinkedList()->map(fn($pair) => $pair[1]);
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
     }
 
     /**
@@ -74,23 +46,6 @@ final class HashSet extends AbstractSet
     public function getIterator(): Iterator
     {
         return new LinkedListIterator($this->toLinkedList());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        return $this->map->count();
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param TV $element
-     */
-    public function __invoke(mixed $element): bool
-    {
-        return $this->contains($element);
     }
 
     /**
@@ -125,20 +80,24 @@ final class HashSet extends AbstractSet
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return self<TV>
      */
-    public function every(callable $predicate): bool
+    public function tail(): self
     {
-        return $this->map->every($predicate);
-    }
+        $source = function (): Generator {
+            $toggle = true;
 
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return $this->toLinkedList()->exists($predicate);
+            foreach ($this as $elem) {
+                if ($toggle) {
+                    $toggle = false;
+                    continue;
+                }
+
+                yield $elem;
+            }
+        };
+
+        return self::collect($source());
     }
 
     /**
@@ -179,29 +138,6 @@ final class HashSet extends AbstractSet
         };
 
         return self::collect($source());
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $init initial accumulator value
-     * @psalm-param callable(TVI, TV): TVI $callback (accumulator, current element): new accumulator
-     * @psalm-return TVI
-     */
-    public function fold(mixed $init, callable $callback): mixed
-    {
-        return $this->toLinkedList()->fold($init, $callback);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
-     * @psalm-return Option<TV|TVI>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return $this->toLinkedList()->reduce($callback);
     }
 
     /**
