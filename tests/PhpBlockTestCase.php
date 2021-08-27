@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use Exception;
+use Fp\Functional\Either\Right;
 use Fp\Functional\Option\Option;
 use HaydenPierce\ClassFinder\ClassFinder;
 use PhpParser\Comment\Doc;
@@ -22,7 +23,8 @@ use function Fp\Collection\reindex;
 use function Fp\Evidence\proveListOfScalar;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
-use function Fp\Json\jsonSearch;
+use function Fp\Json\jsonDecode;
+use function JmesPath\search;
 
 /**
  * @psalm-type PhpBlock = string
@@ -124,13 +126,44 @@ abstract class PhpBlockTestCase extends TestCase
     {
         return Option::do(function () use ($lines) {
             $json           = yield reduce($lines, fn(string $acc, string $line) => $acc . $line);
-            $messages       = yield jsonSearch("[?type=='Trace'].message", $json);
+            $messages       = yield $this->jsonSearch("[?type=='Trace'].message", $json);
             $stringMessages = yield proveListOfScalar($messages, 'string');
 
             return map(
                 $stringMessages,
                 fn(string $msg) => substr($msg, (int) strpos($msg, ': ') + 2)
             );
+        });
+    }
+
+    /**
+     * Search by JsonPath expression
+     * Returns None if there is no data by given expression
+     *
+     * REPL:
+     * >>> jsonSearch('a[0].b', ['a' => [['b' => true]]]);
+     * => true
+     * >>> jsonSearch('a[0].b', '{"a": [{"b": true}]}');
+     * => true
+     *
+     * @psalm-param string $expr json path expression
+     * @psalm-param array|string $data json-string or decoded into associative array json
+     * @psalm-return Option<array|scalar>
+     * @see jmespath
+     */
+    private function jsonSearch(string $expr, array|string $data): Option
+    {
+        $decodedEither = is_string($data)
+            ? jsonDecode($data)
+            : Right::of($data);
+
+        return Option::do(function () use ($decodedEither, $expr) {
+            $decoded = yield $decodedEither->toOption();
+
+            /** @psalm-var array|scalar|null $nullableResult */
+            $nullableResult = search($expr, $decoded);
+
+            return yield Option::fromNullable($nullableResult);
         });
     }
 

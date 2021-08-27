@@ -12,7 +12,7 @@ use Iterator;
 use function Fp\of;
 
 /**
- * O(1) {@see Seq::at()} and {@see IndexedSeq::__invoke} operations
+ * O(1) {@see Seq::at()} and {@see Seq::__invoke} operations
  *
  * @psalm-immutable
  * @template-covariant TV
