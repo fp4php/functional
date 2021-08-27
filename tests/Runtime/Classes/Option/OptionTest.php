@@ -105,7 +105,8 @@ final class OptionTest extends TestCase
     {
         $this->assertEquals(1, Option::some(1)->getOrElse(0));
         $this->assertEquals(0, Option::none()->getOrElse(0));
-        $this->assertEquals(0, Option::none()->getOrElse(fn() => 0));
+        $this->assertEquals(1, Option::some(1)->getOrCall(fn() => 0));
+        $this->assertEquals(0, Option::none()->getOrCall(fn() => 0));
     }
 
     public function testOrElse(): void

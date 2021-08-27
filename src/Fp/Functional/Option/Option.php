@@ -336,19 +336,35 @@ abstract class Option
      * => 0
      *
      * @psalm-template B
-     * @psalm-param B|(pure-callable(): B) $fallback
+     * @psalm-param B $fallback
      * @psalm-return A|B
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        if ($this->isSome()) {
-            return $this->value;
-        }
-
-        /** @psalm-var B */
-        return is_callable($fallback)
-            ? call_user_func($fallback)
+        return $this->isSome()
+            ? $this->value
             : $fallback;
+    }
+
+    /**
+     * Unwrap "the box" and get contained value
+     * or return callable result as fallback value for empty box case
+     *
+     * REPL:
+     * >>> Option::some(1)->getOrCall(fn() => 0)
+     * => 1
+     * >>> Option::none()->getOrElse(fn() => 0)
+     * => 0
+     *
+     * @psalm-template B
+     * @psalm-param (pure-callable(): B) $fallback
+     * @psalm-return A|B
+     */
+    public function getOrCall(callable $fallback): mixed
+    {
+        return $this->isSome()
+            ? $this->value
+            : $fallback();
     }
 
     /**
