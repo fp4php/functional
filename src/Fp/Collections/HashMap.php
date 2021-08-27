@@ -323,11 +323,35 @@ final class HashMap implements Map
     /**
      * @return Generator<array{TK, TV}>
      */
-    private function generatePairs(): Generator
+    public function generatePairs(): Generator
     {
         foreach ($this->hashTable->table as $bucket) {
             foreach ($bucket as $pair) {
                 yield $pair;
+            }
+        }
+    }
+
+    /**
+     * @return Generator<TK>
+     */
+    public function generateKeys(): Generator
+    {
+        foreach ($this->hashTable->table as $bucket) {
+            foreach ($bucket as $pair) {
+                yield $pair[0];
+            }
+        }
+    }
+
+    /**
+     * @return Generator<TV>
+     */
+    public function generateValues(): Generator
+    {
+        foreach ($this->hashTable->table as $bucket) {
+            foreach ($bucket as $pair) {
+                yield $pair[1];
             }
         }
     }

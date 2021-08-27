@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use ArrayIterator;
 use Generator;
 use Iterator;
 
@@ -45,7 +46,7 @@ final class HashSet extends AbstractSet
      */
     public function getIterator(): Iterator
     {
-        return new LinkedListIterator($this->toLinkedList());
+        return new ArrayIterator(iterator_to_array($this->map->generateValues()));
     }
 
     /**
