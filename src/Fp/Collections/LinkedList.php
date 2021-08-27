@@ -17,8 +17,31 @@ use function Fp\of;
  * @template-covariant TV
  * @extends AbstractSeq<TV>
  */
-abstract class LinkedList extends AbstractSeq
+class LinkedList extends AbstractSeq
 {
+    /**
+     * @param Cons<TV>|Nil $value
+     */
+    public function __construct(public Cons|Nil $value)
+    {
+    }
+
+    /**
+     * @psalm-pure
+     * @psalm-suppress ImpureStaticVariable
+     */
+    public static function nil(): self
+    {
+        static $nil;
+
+        if (empty($nil)) {
+            $nil = new LinkedList(Nil::getInstance());
+        }
+
+        /** @var self */
+        return $nil;
+    }
+
     /**
      * @inheritDoc
      * @psalm-pure
@@ -96,7 +119,7 @@ abstract class LinkedList extends AbstractSeq
      */
     public function prepended(mixed $elem): self
     {
-        return new Cons($elem, $this);
+        return new self(new Cons($elem, $this));
     }
 
     /**
@@ -377,7 +400,7 @@ abstract class LinkedList extends AbstractSeq
      */
     public function reverse(): self
     {
-        $list = Nil::getInstance();
+        $list = new self(Nil::getInstance());
 
         foreach ($this as $elem) {
             $list = $list->prepended($elem);
@@ -393,8 +416,8 @@ abstract class LinkedList extends AbstractSeq
     public function tail(): self
     {
         return match (true) {
-            $this instanceof Cons => $this->tail,
-            $this instanceof Nil => $this,
+            $this->value instanceof Cons => $this->value->tail,
+            $this->value instanceof Nil => $this,
         };
     }
 
@@ -506,7 +529,7 @@ abstract class LinkedList extends AbstractSeq
             $key = $callback($elem);
 
             /** @var Seq<TV> $group */
-            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
+            $group = $buffer->get($key)->getOrCall(fn() => LinkedList::nil());
 
             $buffer->update($key, $group->prepended($elem));
         }

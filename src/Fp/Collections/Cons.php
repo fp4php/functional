@@ -7,9 +7,8 @@ namespace Fp\Collections;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends LinkedList<TV>
  */
-final class Cons extends LinkedList
+final class Cons
 {
     /**
      * @param TV $head

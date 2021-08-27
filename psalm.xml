@@ -13,7 +13,6 @@
     </projectFiles>
     <plugins>
         <pluginClass class="Klimick\PsalmShowType\ShowTypePlugin"/>
-
         <pluginClass class="Fp\Psalm\FunctionalPlugin"/>
     </plugins>
     <issueHandlers>

@@ -83,7 +83,7 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     {
         $collected = LinkedList::collect($source);
 
-        if ($collected instanceof Nil) {
+        if ($collected->value instanceof Nil) {
             throw new EmptyCollectionException("Non empty collection must contain at least one element");
         }
 

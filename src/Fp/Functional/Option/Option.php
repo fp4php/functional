@@ -132,9 +132,6 @@ abstract class Option
      *
      * @param callable(A): bool $callback
      * @return Option<A>
-     *
-     * todo: Remove suppression when https://github.com/vimeo/psalm/pull/5888 will be in stable release
-     * @psalm-suppress InvalidReturnType, InvalidReturnStatement, InvalidArgument
      */
     public function filter(callable $callback): Option
     {
@@ -357,7 +354,7 @@ abstract class Option
      * => 0
      *
      * @psalm-template B
-     * @psalm-param (pure-callable(): B) $fallback
+     * @psalm-param callable(): B $fallback
      * @psalm-return A|B
      */
     public function getOrCall(callable $fallback): mixed
