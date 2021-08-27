@@ -235,6 +235,18 @@ interface NonEmptySeqOps
     public function last(callable $predicate): Option;
 
     /**
+     * Returns first collection element
+     * Alias for {@see NonEmptySeqOps::head}
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collect([1, 2])->firstElement()
+     * => 1
+     *
+     * @psalm-return TV
+     */
+    public function firstElement(): mixed;
+
+    /**
      * Returns last collection element
      *
      * REPL:

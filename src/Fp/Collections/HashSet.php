@@ -11,9 +11,9 @@ use Iterator;
 /**
  * @template-covariant TV
  * @psalm-immutable
- * @implements Set<TV>
+ * @extends AbstractSet<TV>
  */
-final class HashSet implements Set
+final class HashSet extends AbstractSet
 {
     /**
      * @param HashMap<TV, TV> $map

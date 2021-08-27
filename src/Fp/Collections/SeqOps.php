@@ -265,6 +265,18 @@ interface SeqOps
     public function last(callable $predicate): Option;
 
     /**
+     * Returns first collection element
+     * Alias for {@see SeqOps::head}
+     *
+     * REPL:
+     * >>> LinkedList::collect([1, 2])->firstElement()->get()
+     * => 1
+     *
+     * @psalm-return Option<TV>
+     */
+    public function firstElement(): Option;
+
+    /**
      * Returns last collection element
      *
      * REPL:

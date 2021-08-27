@@ -12,9 +12,9 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements NonEmptyLinearSeq<TV>
+ * @extends AbstractNonEmptySeq<TV>
  */
-final class NonEmptyLinkedList implements NonEmptyLinearSeq
+final class NonEmptyLinkedList extends AbstractNonEmptySeq
 {
     /**
      * @param TV $head
@@ -334,21 +334,6 @@ final class NonEmptyLinkedList implements NonEmptyLinearSeq
     public function last(callable $predicate): Option
     {
         return $this->toLinkedList()->last($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return TV
-     */
-    public function lastElement(): mixed
-    {
-        $last = $this->head;
-
-        foreach ($this->tail as $element) {
-            $last = $element;
-        }
-
-        return $last;
     }
 
     /**

@@ -15,9 +15,9 @@ use function Fp\of;
  *
  * @psalm-immutable
  * @template-covariant TV
- * @implements LinearSeq<TV>
+ * @extends AbstractSeq<TV>
  */
-abstract class LinkedList implements LinearSeq
+abstract class LinkedList extends AbstractSeq
 {
     /**
      * @inheritDoc
@@ -400,16 +400,6 @@ abstract class LinkedList implements LinearSeq
         }
 
         return Option::fromNullable($last);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function lastElement(): Option
-    {
-        return $this->last(fn() => true);
     }
 
     /**

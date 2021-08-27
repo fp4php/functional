@@ -16,9 +16,9 @@ use function Fp\of;
  *
  * @psalm-immutable
  * @template-covariant TV
- * @implements IndexedSeq<TV>
+ * @extends AbstractSeq<TV>
  */
-final class ArrayList implements IndexedSeq
+final class ArrayList extends AbstractSeq
 {
     /**
      * @param list<TV> $elements
@@ -390,16 +390,6 @@ final class ArrayList implements IndexedSeq
         }
 
         return Option::fromNullable($last);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function lastElement(): Option
-    {
-        return $this->last(fn() => true);
     }
 
     /**

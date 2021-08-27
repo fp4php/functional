@@ -12,9 +12,9 @@ use Iterator;
 /**
  * @template-covariant TV
  * @psalm-immutable
- * @implements NonEmptySet<TV>
+ * @extends AbstractNonEmptySet<TV>
  */
-final class NonEmptyHashSet implements NonEmptySet
+final class NonEmptyHashSet extends AbstractNonEmptySet
 {
     /**
      * @param HashSet<TV> $set

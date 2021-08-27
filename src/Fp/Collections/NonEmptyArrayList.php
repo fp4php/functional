@@ -12,9 +12,9 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements NonEmptyIndexedSeq<TV>
+ * @extends AbstractNonEmptySeq<TV>
  */
-final class NonEmptyArrayList implements NonEmptyIndexedSeq
+final class NonEmptyArrayList extends AbstractNonEmptySeq
 {
     /**
      * @param ArrayList<TV> $arrayList
@@ -346,15 +346,6 @@ final class NonEmptyArrayList implements NonEmptyIndexedSeq
     public function last(callable $predicate): Option
     {
         return $this->arrayList->last($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return TV
-     */
-    public function lastElement(): mixed
-    {
-        return $this->arrayList->lastElement()->getUnsafe();
     }
 
     /**
