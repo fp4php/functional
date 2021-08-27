@@ -155,6 +155,14 @@ final class ArrayListOpsTest extends TestCase
         );
     }
 
+    public function testFirstElement(): void
+    {
+        $this->assertEquals(
+            1,
+            ArrayList::collect([1, 2, 3])->firstElement()->get()
+        );
+    }
+
     public function testLastElement(): void
     {
         $this->assertEquals(

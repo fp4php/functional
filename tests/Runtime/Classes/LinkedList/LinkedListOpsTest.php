@@ -151,6 +151,14 @@ final class LinkedListOpsTest extends TestCase
         );
     }
 
+    public function testFirstElement(): void
+    {
+        $this->assertEquals(
+            1,
+            LinkedList::collect([1, 2, 3])->firstElement()->get()
+        );
+    }
+
     public function testLastElement(): void
     {
         $this->assertEquals(

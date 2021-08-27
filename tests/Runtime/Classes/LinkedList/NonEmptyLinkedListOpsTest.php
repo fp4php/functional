@@ -139,6 +139,14 @@ final class NonEmptyLinkedListOpsTest extends TestCase
         );
     }
 
+    public function testFirstElement(): void
+    {
+        $this->assertEquals(
+            1,
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->firstElement()
+        );
+    }
+
     public function testLastElement(): void
     {
         $this->assertEquals(

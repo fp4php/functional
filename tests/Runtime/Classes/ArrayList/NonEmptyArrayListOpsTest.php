@@ -143,6 +143,14 @@ final class NonEmptyArrayListOpsTest extends TestCase
         );
     }
 
+    public function testFirstElement(): void
+    {
+        $this->assertEquals(
+            1,
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3])->firstElement()
+        );
+    }
+
     public function testLastElement(): void
     {
         $this->assertEquals(
