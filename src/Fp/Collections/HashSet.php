@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use ArrayIterator;
 use Generator;
-use Iterator;
 
 /**
  * @template-covariant TV
@@ -42,11 +40,11 @@ final class HashSet extends AbstractSet
 
     /**
      * @inheritDoc
-     * @return Iterator<int, TV>
+     * @return Generator<int, TV>
      */
-    public function getIterator(): Iterator
+    public function getIterator(): Generator
     {
-        return new ArrayIterator(iterator_to_array($this->map->generateValues()));
+        return $this->map->generateValues();
     }
 
     /**

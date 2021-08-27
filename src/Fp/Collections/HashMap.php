@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use ArrayIterator;
 use Fp\Functional\Option\Option;
 use Generator;
 
@@ -12,9 +11,9 @@ use Generator;
  * @template TK
  * @template-covariant TV
  * @psalm-immutable
- * @implements Map<TK, TV>
+ * @extends AbstractMap<TK, TV>
  */
-final class HashMap implements Map
+final class HashMap extends AbstractMap
 {
     /**
      * @internal
@@ -61,70 +60,15 @@ final class HashMap implements Map
     }
 
     /**
-     * @return ArrayIterator<int, array{TK, TV}>
+     * @return Generator<int, array{TK, TV}>
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(): Generator
     {
-        return new ArrayIterator($this->toArray());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        $counter = 0;
-
         foreach ($this->hashTable->table as $bucket) {
-            foreach ($bucket as $ignored) {
-                $counter++;
+            foreach ($bucket as $pair) {
+                yield $pair;
             }
         }
-
-        return $counter;
-    }
-
-    /**
-     * @inheritDoc
-     * @return list<array{TK, TV}>
-     */
-    public function toArray(): array
-    {
-        $buffer = [];
-
-        foreach ($this->generatePairs() as $pair) {
-            $buffer[] = $pair;
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<array{TK, TV}>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return LinkedList::collect($this->generatePairs());
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<array{TK, TV}>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this->toArray());
-    }
-
-    /**
-     * @inheritDoc
-     * @param TK $key
-     * @return Option<TV>
-     */
-    public function __invoke(mixed $key): Option
-    {
-        return $this->get($key);
     }
 
     /**
@@ -171,24 +115,6 @@ final class HashMap implements Map
     /**
      * @inheritDoc
      * @psalm-param callable(TV, TK): bool $predicate
-     */
-    public function every(callable $predicate): bool
-    {
-        $result = true;
-
-        foreach ($this as $pair) {
-            if (!$predicate($pair[1], $pair[0])) {
-                $result = false;
-                break;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV, TK): bool $predicate
      * @psalm-return self<TK, TV>
      */
     public function filter(callable $predicate): self
@@ -205,6 +131,7 @@ final class HashMap implements Map
     }
 
     /**
+     * @experimental
      * @psalm-template TKO
      * @psalm-template TVO
      * @psalm-param callable(TV, TK): iterable<array{TKO, TVO}> $callback
@@ -221,29 +148,6 @@ final class HashMap implements Map
         };
 
         return self::collect($source());
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $init initial accumulator value
-     * @psalm-param callable(TVI, array{TK, TV}): TVI $callback (accumulator, current element): new accumulator
-     * @psalm-return TVI
-     */
-    public function fold(mixed $init, callable $callback): mixed
-    {
-        return $this->toLinkedList()->fold($init, $callback);
-    }
-
-    /**
-     * @inheritDoc
-     * @exprimental
-     * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<array{TK, TV}>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return $this->toLinkedList()->reduce($callback);
     }
 
     /**
@@ -286,13 +190,7 @@ final class HashMap implements Map
      */
     public function keys(): Seq
     {
-        $source = function (): Generator {
-            foreach ($this->generatePairs() as $pair) {
-                yield $pair[0];
-            }
-        };
-
-        return LinkedList::collect($source());
+        return ArrayList::collect($this->generateKeys());
     }
 
     /**
@@ -301,13 +199,7 @@ final class HashMap implements Map
      */
     public function values(): Seq
     {
-        $source = function (): Generator {
-            foreach ($this->generatePairs() as $pair) {
-                yield $pair[1];
-            }
-        };
-
-        return LinkedList::collect($source());
+        return ArrayList::collect($this->generateValues());
     }
 
     /**
@@ -318,41 +210,5 @@ final class HashMap implements Map
     {
         $hash = (string) HashComparator::computeHash($key);
         return Option::fromNullable($this->hashTable->table[$hash] ?? null);
-    }
-
-    /**
-     * @return Generator<array{TK, TV}>
-     */
-    public function generatePairs(): Generator
-    {
-        foreach ($this->hashTable->table as $bucket) {
-            foreach ($bucket as $pair) {
-                yield $pair;
-            }
-        }
-    }
-
-    /**
-     * @return Generator<TK>
-     */
-    public function generateKeys(): Generator
-    {
-        foreach ($this->hashTable->table as $bucket) {
-            foreach ($bucket as $pair) {
-                yield $pair[0];
-            }
-        }
-    }
-
-    /**
-     * @return Generator<TV>
-     */
-    public function generateValues(): Generator
-    {
-        foreach ($this->hashTable->table as $bucket) {
-            foreach ($bucket as $pair) {
-                yield $pair[1];
-            }
-        }
     }
 }
