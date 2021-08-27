@@ -34,12 +34,11 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
     public static function collect(iterable $source): self
     {
         $collected = LinkedList::collect($source);
-        $consOrNil = $collected->value;
 
-        if ($consOrNil instanceof Cons) {
-            /** @var Cons<TVI> $consOrNil */
-            $head = $consOrNil->head;
-            $tail = $consOrNil->tail;
+        if ($collected instanceof Cons) {
+            /** @var Cons<TVI> $collected */
+            $head = $collected->head;
+            $tail = $collected->tail;
         } else {
             throw new EmptyCollectionException("Non empty collection must contain at least one element");
         }
@@ -111,7 +110,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
      */
     public function toLinkedList(): LinkedList
     {
-        return new LinkedList(new Cons($this->head, $this->tail));
+        return new Cons($this->head, $this->tail);
     }
 
     /**

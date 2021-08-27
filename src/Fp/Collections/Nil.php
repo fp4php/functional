@@ -6,8 +6,9 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
+ * @extends LinkedList<empty>
  */
-final class Nil
+final class Nil extends LinkedList
 {
     private static ?self $instance = null;
 

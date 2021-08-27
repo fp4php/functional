@@ -35,8 +35,7 @@ final class LinkedListBuffer
      */
     public function append(mixed $elem): self
     {
-        $cons = new Cons($elem, LinkedList::nil());
-        $appended = new LinkedList($cons);
+        $appended = new Cons($elem, Nil::getInstance());
 
         if (0 === $this->length) {
             $this->first = $appended;
@@ -48,7 +47,7 @@ final class LinkedListBuffer
             $this->last->tail = $appended;
         }
 
-        $this->last = $cons;
+        $this->last = $appended;
         $this->length += 1;
 
         return $this;
@@ -67,7 +66,7 @@ final class LinkedListBuffer
 
     private function flush(): void
     {
-        $this->first = LinkedList::nil();
+        $this->first = Nil::getInstance();
         $this->last = null;
         $this->length = 0;
     }

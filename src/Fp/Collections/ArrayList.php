@@ -492,7 +492,7 @@ final class ArrayList extends AbstractSeq
             $key = $callback($elem);
 
             /** @var Seq<TV> $group */
-            $group = $buffer->get($key)->getOrCall(fn() => LinkedList::nil());
+            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
 
             $buffer->update($key, $group->prepended($elem));
         }

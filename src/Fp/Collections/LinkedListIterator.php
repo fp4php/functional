@@ -28,15 +28,15 @@ final class LinkedListIterator implements Iterator
 
     public function current(): mixed
     {
-        return $this->list->value instanceof Cons
-            ? $this->list->value->head
+        return $this->list instanceof Cons
+            ? $this->list->head
             : null;
     }
 
     public function next(): void
     {
-        if ($this->list->value instanceof Cons) {
-            $this->list = $this->list->value->tail;
+        if ($this->list instanceof Cons) {
+            $this->list = $this->list->tail;
             $this->idx++;
         }
     }
@@ -48,7 +48,7 @@ final class LinkedListIterator implements Iterator
 
     public function valid(): bool
     {
-        return $this->list->value instanceof Cons;
+        return $this->list instanceof Cons;
     }
 
     public function rewind(): void
