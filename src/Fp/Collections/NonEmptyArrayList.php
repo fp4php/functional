@@ -12,9 +12,9 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractNonEmptySeq<TV>
+ * @extends AbstractNonEmptyIndexedSeq<TV>
  */
-final class NonEmptyArrayList extends AbstractNonEmptySeq
+final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
 {
     /**
      * @param ArrayList<TV> $arrayList
@@ -88,17 +88,6 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
     public function count(): int
     {
         return $this->arrayList->count();
-    }
-
-    /**
-     * O(1) time/space complexity
-     *
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function __invoke(int $index): Option
-    {
-        return ($this->arrayList)($index);
     }
 
     /**
@@ -228,46 +217,6 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
-     */
-    public function every(callable $predicate): bool
-    {
-        return $this->arrayList->every($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function everyOf(string $fqcn, bool $invariant = false): bool
-    {
-        return $this->arrayList->everyOf($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return $this->arrayList->exists($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function existsOf(string $fqcn, bool $invariant = false): bool
-    {
-        return $this->arrayList->existsOf($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
      * @psalm-return ArrayList<TV>
      */
     public function filter(callable $predicate): ArrayList
@@ -298,28 +247,6 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function first(callable $predicate): Option
-    {
-        return $this->arrayList->first($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
-     */
-    public function firstOf(string $fqcn, bool $invariant = false): Option
-    {
-        return $this->arrayList->firstOf($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return ArrayList<TVO>
@@ -331,25 +258,6 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @psalm-return TV
-     */
-    public function head(): mixed
-    {
-        return $this->arrayList->head()->getUnsafe();
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function last(callable $predicate): Option
-    {
-        return $this->arrayList->last($predicate);
-    }
-
-    /**
-     * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>
@@ -357,17 +265,6 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
     public function map(callable $callback): self
     {
         return new self($this->arrayList->map($callback));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
-     * @psalm-return (TV|TVI)
-     */
-    public function reduce(callable $callback): mixed
-    {
-        return $this->arrayList->reduce($callback)->getUnsafe();
     }
 
     /**

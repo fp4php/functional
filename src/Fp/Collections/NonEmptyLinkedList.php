@@ -12,9 +12,9 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractNonEmptySeq<TV>
+ * @extends AbstractNonEmptyLinearSeq<TV>
  */
-final class NonEmptyLinkedList extends AbstractNonEmptySeq
+final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
 {
     /**
      * @param TV $head
@@ -216,46 +216,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
-     */
-    public function every(callable $predicate): bool
-    {
-        return $this->toLinkedList()->every($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function everyOf(string $fqcn, bool $invariant = false): bool
-    {
-        return $this->toLinkedList()->everyOf($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return $this->toLinkedList()->exists($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function existsOf(string $fqcn, bool $invariant = false): bool
-    {
-        return $this->toLinkedList()->existsOf($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
      * @psalm-return LinkedList<TV>
      */
     public function filter(callable $predicate): LinkedList
@@ -286,28 +246,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function first(callable $predicate): Option
-    {
-        return $this->toLinkedList()->first($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
-     */
-    public function firstOf(string $fqcn, bool $invariant = false): Option
-    {
-        return $this->toLinkedList()->firstOf($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
      * @psalm-return LinkedList<TVO>
@@ -328,16 +266,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function last(callable $predicate): Option
-    {
-        return $this->toLinkedList()->last($predicate);
-    }
-
-    /**
-     * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>
@@ -345,17 +273,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
     public function map(callable $callback): self
     {
         return self::collectUnsafe($this->toLinkedList()->map($callback));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
-     * @psalm-return (TV|TVI)
-     */
-    public function reduce(callable $callback): mixed
-    {
-        return $this->toLinkedList()->reduce($callback)->getUnsafe();
     }
 
     /**
