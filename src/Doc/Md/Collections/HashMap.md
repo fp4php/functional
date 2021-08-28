@@ -38,8 +38,8 @@ $collection(new Foo(2))->getOrElse(0); // 2
 
 $collection
     ->map(fn($elem) => $elem + 1)
-    ->filter(fn($elem) => $elem > 2)
-    ->reindex(fn($elem, Foo $key) => $key->a)
-    ->fold(0, fn(int $acc, array $pair) => $acc + $pair[1]); // 3+4+5=12 
+    ->filter(fn(Entry $entry) => $entry->value > 2)
+    ->reindex(fn(Entry $entry) => $entry->key->a)
+    ->fold(0, fn(int $acc, Entry $entry) => $acc + $entry->value); // 3+4+5=12 
 ```
 

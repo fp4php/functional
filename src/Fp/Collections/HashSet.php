@@ -106,7 +106,11 @@ final class HashSet extends AbstractSet
      */
     public function filter(callable $predicate): self
     {
-        return new self($this->map->filter(fn(Entry $e) => $predicate($e->value)));
+        return new self($this->map->filter(function (Entry $e) use ($predicate) {
+            /** @psalm-var TV $value */
+            $value = $e->value;
+            return $predicate($value);
+        }));
     }
 
     /**
