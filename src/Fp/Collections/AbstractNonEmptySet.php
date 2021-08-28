@@ -17,6 +17,31 @@ use function Fp\of;
 abstract class AbstractNonEmptySet implements NonEmptySet
 {
     /**
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return self<TVI>
+     * @throws EmptyCollectionException
+     */
+    abstract public static function collect(iterable $source): self;
+
+    /**
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return self<TVI>
+     */
+    abstract public static function collectUnsafe(iterable $source): self;
+
+    /**
+     * @psalm-pure
+     * @template TVI
+     * @param non-empty-array<TVI>|NonEmptySet<TVI>|NonEmptySeq<TVI> $source
+     * @return self<TVI>
+     */
+    abstract public static function collectNonEmpty(iterable $source): self;
+
+    /**
      * @inheritDoc
      * @return Iterator<TV>
      */

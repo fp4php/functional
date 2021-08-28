@@ -206,15 +206,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
 
     /**
      * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function at(int $index): Option
-    {
-        return $this->toLinkedList()->at($index);
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return LinkedList<TV>
      */

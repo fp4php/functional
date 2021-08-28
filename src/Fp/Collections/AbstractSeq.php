@@ -17,6 +17,18 @@ use function Fp\of;
 abstract class AbstractSeq implements Seq
 {
     /**
+     * REPL:
+     * >>> LinkedList::collect([1, 2])
+     * => LinkedList(1, 2)
+     *
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return self<TVI>
+     */
+    abstract public static function collect(iterable $source): self;
+
+    /**
      * @inheritDoc
      * @return Iterator<int, TV>
      */

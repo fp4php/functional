@@ -17,6 +17,18 @@ use function Fp\of;
 abstract class AbstractSet implements Set
 {
     /**
+     * REPL:
+     * >>> HashSet::collect([1, 2])
+     * => HashSet(1, 2)
+     *
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return self<TVI>
+     */
+    abstract public static function collect(iterable $source): self;
+
+    /**
      * @inheritDoc
      * @return Iterator<int, TV>
      */
