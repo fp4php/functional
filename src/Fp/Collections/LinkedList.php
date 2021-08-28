@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Functional\Option\Option;
 use Generator;
 use Iterator;
 
