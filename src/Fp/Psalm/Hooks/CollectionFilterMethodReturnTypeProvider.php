@@ -17,6 +17,7 @@ use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Psalm\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\TypeRefinement\GetPredicateFunction;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\Variable;
@@ -71,7 +72,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
         $reconciled = Option::do(function() use ($event) {
             yield proveTrue(in_array($event->getMethodNameLowercase(), self::ALLOWED_METHODS, true));
             $source = yield proveOf($event->getSource(), StatementsAnalyzer::class);
-            $predicate_arg = yield self::extractPredicateArg($event);
+            $predicate = yield self::extractPredicateArg($event)->flatMap([GetPredicateFunction::class, 'from']);
             $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
 
             $collection_type_params = 2 === count($template_params)
@@ -79,13 +80,14 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
                 : new CollectionTypeParams(Type::getArrayKey(), $template_params[0]);
 
             $refinement_context = new RefinementContext(
-                predicate_arg: $predicate_arg,
+                refine_for: $event->getFqClasslikeName(),
+                predicate: $predicate,
                 execution_context: $event->getContext(),
                 codebase: $source->getCodebase(),
                 source: $source,
             );
 
-            $result = yield RefineByPredicate::for(
+            $result = RefineByPredicate::for(
                 $refinement_context,
                 $collection_type_params,
             );

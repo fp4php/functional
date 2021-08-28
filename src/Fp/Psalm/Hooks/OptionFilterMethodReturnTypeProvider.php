@@ -7,6 +7,7 @@ namespace Fp\Psalm\Hooks;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use Fp\Psalm\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\TypeRefinement\GetPredicateFunction;
 use Fp\Psalm\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\TypeRefinement\RefinementContext;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
@@ -44,14 +45,17 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
                 val_type: $option_type_param,
             );
 
+            $predicate = yield GetPredicateFunction::from($call_args[0]);
+
             $refinement_context = new RefinementContext(
-                predicate_arg: $call_args[0],
+                refine_for: $event->getFqClasslikeName(),
+                predicate: $predicate,
                 execution_context: $event->getContext(),
                 codebase: $source->getCodebase(),
                 source: $source,
             );
 
-            $result = yield RefineByPredicate::for($refinement_context, $collection_type_params);
+            $result = RefineByPredicate::for($refinement_context, $collection_type_params);
 
             return new Type\Union([
                 new Type\Atomic\TGenericObject(Option::class, [$result->collection_value_type]),
