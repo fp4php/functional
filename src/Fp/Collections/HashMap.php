@@ -109,21 +109,22 @@ final class HashMap extends AbstractMap
      */
     public function removed(mixed $key): self
     {
-        return $this->filter(fn($v, $k) => $k !== $key);
+        return $this->filter(fn(Entry $e) => $e->key !== $key);
     }
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV, TK): bool $predicate
+     * @psalm-param callable(Entry<TK, TV>): bool $predicate
      * @psalm-return self<TK, TV>
      */
     public function filter(callable $predicate): self
     {
         $source = function () use ($predicate): Generator {
-            foreach ($this->generatePairs() as $pair) {
-                if ($predicate($pair[1], $pair[0])) {
-                    yield $pair;
+            foreach ($this->generateEntries() as $entry) {
+                if ($predicate($entry)) {
+                    yield $entry->toArray();
                 }
+                unset($entry);
             }
         };
 
@@ -134,16 +135,17 @@ final class HashMap extends AbstractMap
      * @experimental
      * @psalm-template TKO
      * @psalm-template TVO
-     * @psalm-param callable(TV, TK): iterable<array{TKO, TVO}> $callback
+     * @psalm-param callable(Entry<TK, TV>): iterable<array{TKO, TVO}> $callback
      * @psalm-return self<TKO, TVO>
      */
     public function flatMap(callable $callback): self
     {
         $source = function () use ($callback): Generator {
-            foreach ($this->generatePairs() as $pair) {
-                foreach ($callback($pair[1], $pair[0]) as $p) {
+            foreach ($this->generateEntries() as $entry) {
+                foreach ($callback($entry) as $p) {
                     yield $p;
                 }
+                unset($entry);
             }
         };
 
@@ -153,14 +155,15 @@ final class HashMap extends AbstractMap
     /**
      * @inheritDoc
      * @template TVO
-     * @psalm-param callable(TV, TK): TVO $callback
+     * @psalm-param callable(Entry<TK, TV>): TVO $callback
      * @psalm-return self<TK, TVO>
      */
     public function map(callable $callback): self
     {
         $source = function () use ($callback): Generator {
-            foreach ($this->generatePairs() as $pair) {
-                yield [$pair[0], $callback($pair[1], $pair[0])];
+            foreach ($this->generateEntries() as $entry) {
+                yield [$entry->key, $callback($entry)];
+                unset($entry);
             }
         };
 
@@ -170,14 +173,15 @@ final class HashMap extends AbstractMap
     /**
      * @inheritDoc
      * @template TKO
-     * @psalm-param callable(TV, TK): TKO $callback
+     * @psalm-param callable(Entry<TK, TV>): TKO $callback
      * @psalm-return self<TKO, TV>
      */
     public function reindex(callable $callback): self
     {
         $source = function () use ($callback): Generator {
-            foreach ($this->generatePairs() as $pair) {
-                yield [$callback($pair[1], $pair[0]), $pair[1]];
+            foreach ($this->generateEntries() as $entry) {
+                yield [$callback($entry), $entry->value];
+                unset($entry);
             }
         };
 

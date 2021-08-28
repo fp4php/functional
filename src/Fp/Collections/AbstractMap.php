@@ -101,35 +101,25 @@ abstract class AbstractMap implements Map
      * @inheritDoc
      * @template TVI
      * @psalm-param TVI $init initial accumulator value
-     * @psalm-param callable(TVI, array{TK, TV}): TVI $callback (accumulator, current element): new accumulator
+     * @psalm-param callable(TVI, Entry<TK, TV>): TVI $callback (accumulator, current element): new accumulator
      * @psalm-return TVI
      */
     public function fold(mixed $init, callable $callback): mixed
     {
         $acc = $init;
 
-        foreach ($this as $pair) {
-            $acc = $callback($acc, $pair);
+        foreach ($this->generateEntries() as $entry) {
+            $acc = $callback($acc, $entry);
+            unset($entry);
         }
 
         return $acc;
     }
 
     /**
-     * @inheritDoc
-     * @exprimental
-     * @psalm-param callable(array{TK, TV}, array{TK, TV}): array{TK, TV} $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<array{TK, TV}>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return $this->toLinkedList()->reduce($callback);
-    }
-
-    /**
      * @return Generator<array{TK, TV}>
      */
-    public function generatePairs(): Generator
+    protected function generatePairs(): Generator
     {
         foreach ($this as $pair) {
             yield $pair;
@@ -137,9 +127,19 @@ abstract class AbstractMap implements Map
     }
 
     /**
+     * @return Generator<Entry<TK, TV>>
+     */
+    protected function generateEntries(): Generator
+    {
+        foreach ($this as [$key, $value]) {
+            yield new Entry($key, $value);
+        }
+    }
+
+    /**
      * @return Generator<TK>
      */
-    public function generateKeys(): Generator
+    protected function generateKeys(): Generator
     {
         foreach ($this as $pair) {
             yield $pair[0];
@@ -149,7 +149,7 @@ abstract class AbstractMap implements Map
     /**
      * @return Generator<int, TV>
      */
-    public function generateValues(): Generator
+    protected function generateValues(): Generator
     {
         $i = 0;
 

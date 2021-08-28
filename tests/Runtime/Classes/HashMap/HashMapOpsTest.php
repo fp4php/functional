@@ -39,7 +39,7 @@ final class HashMapOpsTest extends TestCase
     public function testFilter(): void
     {
         $hm = HashMap::collectIterable(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]);
-        $this->assertEquals([['b', 1]], $hm->filter(fn($i) => $i === 1)->toArray());
+        $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toArray());
     }
 
     public function testFlatMap(): void
@@ -48,12 +48,16 @@ final class HashMapOpsTest extends TestCase
 
         $this->assertEquals(
             [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]],
-            $hm->flatMap(fn($e, $k) => [[$e - 1, $e - 1], [$e, $e], [$e + 1, $e + 1]])->toArray()
+            $hm->flatMap(fn($e) => [
+                [$e->value - 1, $e->value - 1],
+                [$e->value, $e->value],
+                [$e->value + 1, $e->value + 1]
+            ])->toArray()
         );
 
         $this->assertEquals(
             [['2', 20], ['5', 5]],
-            $hm->flatMap(fn($e, $k) => [['2', 20], [$k, $e]])->toArray()
+            $hm->flatMap(fn($e) => [['2', 20], [$e->key, $e->value]])->toArray()
         );
     }
 
@@ -64,18 +68,7 @@ final class HashMapOpsTest extends TestCase
 
         $this->assertEquals(
             6,
-            $hm->fold(1, fn(int $acc, array $cur) => $acc + $cur[1])
-        );
-    }
-
-    public function testReduce(): void
-    {
-        /** @var HashMap<string, int> $hm */
-        $hm = HashMap::collect([['2', 2], ['3', 3]]);
-
-        $this->assertEquals(
-            ['23', 5],
-            $hm->reduce(fn(array $acc, array $cur): array => [$acc[0] . $cur[0], $acc[1] + $cur[1]])->get()
+            $hm->fold(1, fn(int $acc, $cur) => $acc + $cur->value)
         );
     }
 
@@ -85,7 +78,7 @@ final class HashMapOpsTest extends TestCase
 
         $this->assertEquals(
             [['2', '2'], ['3', '3']],
-            $hm->map(fn($e, $k) => $k)->toArray()
+            $hm->map(fn($e) => $e->key)->toArray()
         );
     }
 
@@ -95,7 +88,7 @@ final class HashMapOpsTest extends TestCase
 
         $this->assertEquals(
             [[22, 22], [33, 33]],
-            $hm->reindex(fn($e, $k) => $e)->toArray()
+            $hm->reindex(fn($e) => $e->value)->toArray()
         );
     }
 

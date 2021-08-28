@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests;
 
 use Exception;
+use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Right;
 use Fp\Functional\Option\Option;
 use HaydenPierce\ClassFinder\ClassFinder;
@@ -18,7 +19,6 @@ use function Fp\Callable\compose;
 use function Fp\Cast\asList;
 use function Fp\Collection\last;
 use function Fp\Collection\map;
-use function Fp\Collection\reduce;
 use function Fp\Collection\reindex;
 use function Fp\Evidence\proveListOfScalar;
 use function Fp\Evidence\proveOf;
@@ -124,8 +124,10 @@ abstract class PhpBlockTestCase extends TestCase
      */
     private function parseTraceResult(array $lines): Option
     {
-        return Option::do(function () use ($lines) {
-            $json           = yield reduce($lines, fn(string $acc, string $line) => $acc . $line);
+        $linesList = ArrayList::collect($lines);
+
+        return Option::do(function () use ($linesList) {
+            $json           = yield $linesList->reduce(fn(string $acc, string $line) => $acc . $line);
             $messages       = yield $this->jsonSearch("[?type=='Trace'].message", $json);
             $stringMessages = yield proveListOfScalar($messages, 'string');
 
