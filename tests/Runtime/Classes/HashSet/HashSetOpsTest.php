@@ -6,6 +6,7 @@ namespace Tests\Runtime\Classes\HashSet;
 
 use Fp\Collections\HashSet;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class HashSetOpsTest extends TestCase
@@ -40,6 +41,12 @@ final class HashSetOpsTest extends TestCase
         $this->assertFalse($hs->every(fn($i) => $i > 0));
     }
 
+    public function testEveryOf(): void
+    {
+        $this->assertTrue(HashSet::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class));
+        $this->assertFalse(HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class));
+    }
+
     public function testExists(): void
     {
         /** @var HashSet<object|scalar> $hs */
@@ -49,11 +56,33 @@ final class HashSetOpsTest extends TestCase
         $this->assertFalse($hs->exists(fn($i) => $i === 2));
     }
 
+    public function testExistsOf(): void
+    {
+        $hs = HashSet::collect([new Foo(1), 1, 1, new Foo(1)]);
+
+        $this->assertTrue($hs->existsOf(Foo::class));
+        $this->assertFalse($hs->existsOf(Bar::class));
+    }
+
     public function testFilter(): void
     {
         $hs = HashSet::collect([new Foo(1), 1, 1, new Foo(1)]);
         $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toArray());
         $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toArray());
+    }
+
+    public function testFirstsAndLasts(): void
+    {
+        $hs = HashSet::collect(['1', 2, '3']);
+        $this->assertEquals('1', $hs->first(fn($i) => is_string($i))->get());
+        $this->assertEquals('1', $hs->firstElement()->get());
+
+        $hs = HashSet::collect(['1', 2, '3']);
+        $this->assertEquals('3', $hs->last(fn($i) => is_string($i))->get());
+        $this->assertEquals('3', $hs->lastElement()->get());
+
+        $hs = HashSet::collect([$f1 = new Foo(1), 2, new Foo(2)]);
+        $this->assertEquals($f1, $hs->firstOf(Foo::class)->get());
     }
 
     public function testFlatMap(): void

@@ -248,18 +248,18 @@ final class ArrayListOpsTest extends TestCase
 
         $res1 = ArrayList::collect($foos)
             ->groupBy(fn(Foo $foo) => $foo)
-            ->map(fn(Seq $seq) => $seq->toArray())
+            ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
         $res2 = ArrayList::collect($foos)
             ->groupBy(fn(Foo $foo) => $foo->a)
-            ->map(fn(Seq $seq) => $seq->toArray())
+            ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
         $res3 = ArrayList::collect($foos)
             ->map(fn(Foo $foo) => $foo->a)
             ->groupBy(fn(int $a) => $a)
-            ->map(fn(Seq $seq) => $seq->toArray())
+            ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
         $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);

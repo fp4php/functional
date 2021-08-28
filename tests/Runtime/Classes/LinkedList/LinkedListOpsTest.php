@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\LinkedList;
 
 use Fp\Collections\LinkedList;
-use Fp\Collections\Seq;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -244,18 +243,18 @@ final class LinkedListOpsTest extends TestCase
 
         $res1 = LinkedList::collect($foos)
             ->groupBy(fn(Foo $foo) => $foo)
-            ->map(fn(Seq $seq) => $seq->toArray())
+            ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
         $res2 = LinkedList::collect($foos)
             ->groupBy(fn(Foo $foo) => $foo->a)
-            ->map(fn(Seq $seq) => $seq->toArray())
+            ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
         $res3 = LinkedList::collect($foos)
             ->map(fn(Foo $foo) => $foo->a)
             ->groupBy(fn(int $a) => $a)
-            ->map(fn(Seq $seq) => $seq->toArray())
+            ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
         $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);

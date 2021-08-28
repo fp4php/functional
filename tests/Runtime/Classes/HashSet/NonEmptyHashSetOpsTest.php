@@ -6,13 +6,14 @@ namespace Tests\Runtime\Classes\HashSet;
 
 use Fp\Collections\NonEmptyHashSet;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class NonEmptyHashSetOpsTest extends TestCase
 {
     public function testContains(): void
     {
-        /** @var NonEmptyHashSet<int> $hs */
+        /** @psalm-var NonEmptyHashSet<int> $hs */
         $hs = NonEmptyHashSet::collectNonEmpty([1, 2, 2]);
 
         $this->assertTrue($hs->contains(1));
@@ -26,7 +27,7 @@ final class NonEmptyHashSetOpsTest extends TestCase
 
     public function testUpdatedAndRemoved(): void
     {
-        /** @var NonEmptyHashSet<int> $hs */
+        /** @psalm-var NonEmptyHashSet<int> $hs */
         $hs = NonEmptyHashSet::collectNonEmpty([1, 2, 2])->updated(3)->removed(1);
 
         $this->assertEquals([2, 3], $hs->toArray());
@@ -40,13 +41,27 @@ final class NonEmptyHashSetOpsTest extends TestCase
         $this->assertFalse($hs->every(fn($i) => $i > 0));
     }
 
+    public function testEveryOf(): void
+    {
+        $this->assertTrue(NonEmptyHashSet::collectNonEmpty([new Foo(1), new Foo(2)])->everyOf(Foo::class));
+        $this->assertFalse(NonEmptyHashSet::collectNonEmpty([new Foo(1), new Bar(2)])->everyOf(Foo::class));
+    }
+
     public function testExists(): void
     {
-        /** @var NonEmptyHashSet<object|scalar> $hs */
+        /** @psalm-var NonEmptyHashSet<object|scalar> $hs */
         $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);
 
         $this->assertTrue($hs->exists(fn($i) => $i === 1));
         $this->assertFalse($hs->exists(fn($i) => $i === 2));
+    }
+
+    public function testExistsOf(): void
+    {
+        $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);
+
+        $this->assertTrue($hs->existsOf(Foo::class));
+        $this->assertFalse($hs->existsOf(Bar::class));
     }
 
     public function testFilter(): void
@@ -57,9 +72,23 @@ final class NonEmptyHashSetOpsTest extends TestCase
 
     }
 
+    public function testFirstsAndLasts(): void
+    {
+        $hs = NonEmptyHashSet::collectNonEmpty(['1', 2, '3']);
+        $this->assertEquals('1', $hs->first(fn($i) => is_string($i))->get());
+        $this->assertEquals('1', $hs->firstElement());
+
+        $hs = NonEmptyHashSet::collectNonEmpty(['1', 2, '3']);
+        $this->assertEquals('3', $hs->last(fn($i) => is_string($i))->get());
+        $this->assertEquals('3', $hs->lastElement());
+
+        $hs = NonEmptyHashSet::collectNonEmpty([$f1 = new Foo(1), 2, new Foo(2)]);
+        $this->assertEquals($f1, $hs->firstOf(Foo::class)->get());
+    }
+
     public function testReduce(): void
     {
-        /** @var NonEmptyHashSet<string> $list */
+        /** @psalm-var NonEmptyHashSet<string> $list */
         $list = NonEmptyHashSet::collectNonEmpty(['1', '2', '3']);
 
         $this->assertEquals(

@@ -139,7 +139,7 @@ abstract class AbstractMap implements Map
     /**
      * @return Generator<TK>
      */
-    protected function generateKeys(): Generator
+    public function generateKeys(): Generator
     {
         foreach ($this as $pair) {
             yield $pair[0];
@@ -149,7 +149,7 @@ abstract class AbstractMap implements Map
     /**
      * @return Generator<int, TV>
      */
-    protected function generateValues(): Generator
+    public function generateValues(): Generator
     {
         $i = 0;
 
