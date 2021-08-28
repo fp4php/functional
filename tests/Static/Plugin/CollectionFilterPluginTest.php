@@ -25,6 +25,7 @@ final class CollectionFilterPluginTest extends PhpBlockTestCase
                 $r3 = \Fp\Collections\HashSet::collect([1, null, 2])
                     ->filter(fn($e) => null !== $e);
                     
+                /** @psalm-trace $r4 */
                 $r4 = \Fp\Collections\HashMap::collect([["a", 1], ["b", null], ["c", 2]])
                     ->filter(fn($e) => null !== $e->value && $e->key !== "c");
                     
@@ -73,6 +74,7 @@ final class CollectionFilterPluginTest extends PhpBlockTestCase
             'ArrayList<1|2>',
             'LinkedList<1|2>',
             'HashSet<1|2>',
+            'HashMap<"a"|"b", 1|2>',
             'ArrayList<1|2>',
             'LinkedList<1|2>',
             'HashSet<1|2>',
