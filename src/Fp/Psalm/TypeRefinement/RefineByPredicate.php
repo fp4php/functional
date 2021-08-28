@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeRefinement;
 
+use Fp\Collections\Map;
 use PhpParser\Node;
 use Psalm\Type;
 use Fp\Functional\Option\Option;
@@ -32,19 +33,14 @@ final class RefineByPredicate
      * Refine collection type-parameters
      * By predicate expression
      *
-     * @psalm-return Option<RefinementResult>
+     * @psalm-return RefinementResult
      */
-    public static function for(RefinementContext $context, CollectionTypeParams $collection_params): Option
+    public static function for(RefinementContext $context, CollectionTypeParams $collection_params): RefinementResult
     {
-        return Option::do(function() use ($context, $collection_params) {
-            $refined_key_type = self::forKey($context, $collection_params);
-            $refined_val_type = self::forValue($context, $collection_params);
-
-            return yield Option::some(new RefinementResult(
-                $refined_key_type->getOrElse($collection_params->key_type),
-                $refined_val_type->getOrElse($collection_params->val_type),
-            ));
-        });
+        return new RefinementResult(
+            self::forKey($context, $collection_params)->getOrElse($collection_params->key_type),
+            self::forValue($context, $collection_params)->getOrElse($collection_params->val_type),
+        );
     }
 
     /**
@@ -55,9 +51,8 @@ final class RefineByPredicate
     public static function forKey(RefinementContext $context, CollectionTypeParams $collection_params): Option
     {
         return Option::do(function() use ($context, $collection_params) {
-            $predicate_function     = yield self::getPredicateFunction($context->predicate_arg);
-            $predicate_key_arg_name = yield self::getPredicateKeyArgumentName($predicate_function);
-            $predicate_return_expr  = yield self::getPredicateSingleReturn($predicate_function);
+            $predicate_key_arg_name = yield self::getPredicateKeyArgumentName($context);
+            $predicate_return_expr  = yield self::getPredicateSingleReturn($context);
 
             $assertions_for_collection_key = self::collectAssertions(
                 context: $context,
@@ -82,9 +77,8 @@ final class RefineByPredicate
     public static function forValue(RefinementContext $context, CollectionTypeParams $collection_params): Option
     {
         return Option::do(function() use ($context, $collection_params) {
-            $predicate_function       = yield self::getPredicateFunction($context->predicate_arg);
-            $predicate_value_arg_name = yield self::getPredicateValueArgumentName($predicate_function);
-            $predicate_return_expr    = yield self::getPredicateSingleReturn($predicate_function);
+            $predicate_value_arg_name = yield self::getPredicateValueArgumentName($context);
+            $predicate_return_expr    = yield self::getPredicateSingleReturn($context);
 
             $assertions_for_collection_value = self::collectAssertions(
                 context: $context,
@@ -102,35 +96,24 @@ final class RefineByPredicate
     }
 
     /**
-     * Returns function if argument is Closure or ArrowFunction.
-     *
-     * @psalm-return Option<Node\Expr\Closure|Node\Expr\ArrowFunction>
-     */
-    private static function getPredicateFunction(Node\Arg $predicate_arg): Option
-    {
-        return Option::do(function() use ($predicate_arg) {
-            yield proveTrue(
-                $predicate_arg->value instanceof Node\Expr\Closure ||
-                $predicate_arg->value instanceof Node\Expr\ArrowFunction
-            );
-
-            return $predicate_arg->value;
-        });
-    }
-
-    /**
      * Returns key argument name of $predicate that going to be refined.
      *
      * @psalm-return Option<non-empty-string>
      */
-    private static function getPredicateKeyArgumentName(Node\Expr\Closure|Node\Expr\ArrowFunction $predicate): Option
+    private static function getPredicateKeyArgumentName(RefinementContext $context): Option
     {
-        return Option::do(function() use ($predicate) {
-            $key_param = yield second($predicate->params);
-            return yield proveOf($key_param->var, Node\Expr\Variable::class)
-                ->flatMap(fn($variable) => proveString($variable->name))
-                ->map(fn($name) => '$' . $name);
-        });
+        $refine_for_map = is_a($context->refine_for, Map::class, true);
+
+        $key_arg = $refine_for_map
+            ? first($context->predicate->params)
+            : second($context->predicate->params);
+
+        return $key_arg
+            ->flatMap(fn($key_param) => proveOf($key_param->var, Node\Expr\Variable::class))
+            ->flatMap(fn($variable) => proveString($variable->name))
+            ->map(fn($name) => $refine_for_map
+                ? ('$' . $name . '->key')
+                : ('$' . $name));
     }
 
     /**
@@ -138,14 +121,14 @@ final class RefineByPredicate
      *
      * @psalm-return Option<non-empty-string>
      */
-    private static function getPredicateValueArgumentName(Node\Expr\Closure|Node\Expr\ArrowFunction $predicate): Option
+    private static function getPredicateValueArgumentName(RefinementContext $context): Option
     {
-        return Option::do(function() use ($predicate) {
-            $value_param = yield first($predicate->params);
-            return yield proveOf($value_param->var, Node\Expr\Variable::class)
-                ->flatMap(fn($variable) => proveString($variable->name))
-                ->map(fn($name) => '$' . $name);
-        });
+        return first($context->predicate->params)
+            ->flatMap(fn($value_param) => proveOf($value_param->var, Node\Expr\Variable::class))
+            ->flatMap(fn($variable) => proveString($variable->name))
+            ->map(fn($name) => is_a($context->refine_for, Map::class, true)
+                ? ('$' . $name . '->value')
+                : ('$' . $name));
     }
 
     /**
@@ -154,10 +137,10 @@ final class RefineByPredicate
      *
      * @psalm-return Option<Node\Expr>
      */
-    private static function getPredicateSingleReturn(Node\Expr\Closure|Node\Expr\ArrowFunction $predicate): Option
+    private static function getPredicateSingleReturn(RefinementContext $context): Option
     {
-        return Option::do(function() use ($predicate) {
-            $statements = $predicate->getStmts();
+        return Option::do(function() use ($context) {
+            $statements = $context->predicate->getStmts();
             yield proveTrue(1 === count($statements));
 
             return yield firstOf($statements, Node\Stmt\Return_::class)
