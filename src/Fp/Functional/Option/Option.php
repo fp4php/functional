@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Option;
 
+use Error;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
 use Generator;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -112,7 +112,7 @@ abstract class Option
     public function map(callable $callback): Option
     {
         return $this->isSome()
-            ? self::some(call_user_func($callback, $this->value))
+            ? self::some($callback($this->value))
             : self::none();
     }
 
@@ -135,7 +135,7 @@ abstract class Option
      */
     public function filter(callable $callback): Option
     {
-        return $this->isSome() && call_user_func($callback, $this->value)
+        return $this->isSome() && $callback($this->value)
             ? self::some($this->value)
             : self::none();
     }
@@ -161,7 +161,7 @@ abstract class Option
     public function flatMap(callable $callback): Option
     {
         return $this->isSome()
-            ? call_user_func($callback, $this->value)
+            ? $callback($this->value)
             : self::none();
     }
 
@@ -233,7 +233,7 @@ abstract class Option
      */
     public static function fromNullable(mixed $value): Option
     {
-        return !is_null($value)
+        return null !== $value
             ? self::some($value)
             : self::none();
     }
@@ -256,7 +256,7 @@ abstract class Option
     public static function try(callable $callback): Option
     {
         try {
-            return self::some(call_user_func($callback));
+            return self::some($callback());
         } catch (Throwable) {
             return self::none();
         }
@@ -285,7 +285,7 @@ abstract class Option
     public function fold(callable $ifSome, callable $ifNone): mixed
     {
         return $this->isSome()
-            ? call_user_func($ifSome, $this->value)
+            ? $ifSome($this->value)
             : $ifNone();
     }
 
@@ -319,7 +319,7 @@ abstract class Option
     {
         return $this->isSome()
             ? $this->get()
-            : throw new RuntimeException("Trying to get value of None");
+            : throw new Error("Trying to get value of None");
     }
 
     /**
@@ -381,7 +381,7 @@ abstract class Option
     {
         return $this->isSome()
             ? $this
-            : call_user_func($fallback);
+            : $fallback();
     }
 
     /**
@@ -436,7 +436,7 @@ abstract class Option
     {
         return $this->isSome()
             ? Either::left($this->value)
-            : Either::right(call_user_func($right));
+            : Either::right($right());
     }
 
     /**
@@ -459,6 +459,6 @@ abstract class Option
     {
         return $this->isSome()
             ? Either::right($this->value)
-            : Either::left(call_user_func($left));
+            : Either::left($left());
     }
 }
