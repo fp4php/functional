@@ -199,7 +199,6 @@ final class RefineByPredicate
     /**
      * Reconciles $collection_type_param with $assertions using internal Psalm api.
      *
-     * @psalm-suppress InternalMethod
      * @psalm-param PsalmAssertions $assertions
      * @psalm-return Option<Union>
      */

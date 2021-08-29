@@ -36,6 +36,16 @@ class Psalm
     }
 
     /**
+     * @psalm-return Option<FunctionLike>
+     */
+    public static function getArgFunctionLike(Arg $predicate_arg): Option
+    {
+        return Option::some($predicate_arg)
+            ->map(fn(Arg $arg) => $arg->value)
+            ->filter(fn(Expr $expr) => $expr instanceof FunctionLike);
+    }
+
+    /**
      * @psalm-return Option<Atomic>
      */
     public static function getSingeAtomic(Union $union): Option
@@ -73,15 +83,5 @@ class Psalm
                 $union->getCallableTypes()
             ));
         });
-    }
-
-    /**
-     * @psalm-return Option<FunctionLike>
-     */
-    public static function getPredicateFunction(Arg $predicate_arg): Option
-    {
-        return Option::some($predicate_arg)
-            ->map(fn(Arg $arg) => $arg->value)
-            ->filter(fn(Expr $expr) => $expr instanceof FunctionLike);
     }
 }

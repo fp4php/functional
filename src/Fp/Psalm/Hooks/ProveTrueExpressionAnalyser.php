@@ -26,9 +26,6 @@ final class ProveTrueExpressionAnalyser implements AfterExpressionAnalysisInterf
         return ['fp\evidence\provetrue'];
     }
 
-    /**
-     * @psalm-suppress InternalClass, InternalMethod
-     */
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {
         return Option::do(function() use ($event) {

@@ -40,7 +40,6 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
     }
 
     /**
-     * @psalm-suppress InternalClass, InternalMethod
      * @inheritDoc
      */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union

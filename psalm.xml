@@ -47,6 +47,21 @@
                 <directory name="src/Fp/Functional"/>
             </errorLevel>
         </DuplicateClass>
+        <InternalMethod errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="src/Fp/Psalm"/>
+            </errorLevel>
+        </InternalMethod>
+        <InternalClass errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="src/Fp/Psalm"/>
+            </errorLevel>
+        </InternalClass>
+        <InternalProperty errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="src/Fp/Psalm"/>
+            </errorLevel>
+        </InternalProperty>
         <UnusedClosureParam errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

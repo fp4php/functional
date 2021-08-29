@@ -66,9 +66,6 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
         ];
     }
 
-    /**
-     * @psalm-suppress InternalMethod
-     */
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         $reconciled = Option::do(function() use ($event) {
@@ -76,7 +73,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
 
             $source          = yield proveOf($event->getSource(), StatementsAnalyzer::class);
             $predicate_arg   = yield self::extractPredicateArg($event);
-            $predicate       = yield Psalm::getPredicateFunction($predicate_arg);
+            $predicate       = yield Psalm::getArgFunctionLike($predicate_arg);
             $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
 
             $collection_type_params = 2 === count($template_params)

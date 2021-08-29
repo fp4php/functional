@@ -14,6 +14,8 @@ use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type;
+use Psalm\Type\Atomic\TGenericObject;
+use Psalm\Type\Union;
 
 use function Fp\Collection\first;
 use function Fp\Evidence\proveOf;
@@ -26,9 +28,6 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
         return [Option::class, Some::class];
     }
 
-    /**
-     * @psalm-suppress InternalMethod
-     */
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Type\Union
     {
         $return_type = Option::do(function() use ($event) {
@@ -45,7 +44,7 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
                 val_type: $option_type_param,
             );
 
-            $predicate = yield Psalm::getPredicateFunction($call_args[0]);
+            $predicate = yield Psalm::getArgFunctionLike($call_args[0]);
 
             $refinement_context = new RefinementContext(
                 refine_for: $event->getFqClasslikeName(),
@@ -57,8 +56,8 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
 
             $result = RefineByPredicate::for($refinement_context, $collection_type_params);
 
-            return new Type\Union([
-                new Type\Atomic\TGenericObject(Option::class, [$result->collection_value_type]),
+            return new Union([
+                new TGenericObject(Option::class, [$result->collection_value_type]),
             ]);
         });
 

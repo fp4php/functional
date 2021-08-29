@@ -25,9 +25,6 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         return ['fp\collection\filter'];
     }
 
-    /**
-     * @psalm-suppress InternalMethod
-     */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Type\Union
     {
         $reconciled = Option::do(function() use ($event) {
@@ -39,7 +36,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
             $collection_type_params = yield Psalm::getFirstArgType($event)
                 ->flatMap([CollectionTypeExtractor::class, 'extract']);
 
-            $predicate = yield Psalm::getPredicateFunction($call_args[1]);
+            $predicate = yield Psalm::getArgFunctionLike($call_args[1]);
 
             $refinement_context = new RefinementContext(
                 refine_for: 'fp\collection\filter',
