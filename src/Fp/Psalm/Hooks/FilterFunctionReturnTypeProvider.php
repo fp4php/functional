@@ -6,7 +6,6 @@ namespace Fp\Psalm\Hooks;
 
 use Fp\Psalm\Psalm;
 use Fp\Psalm\TypeRefinement\CollectionTypeExtractor;
-use Fp\Psalm\TypeRefinement\GetPredicateFunction;
 use Psalm\Type;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -40,7 +39,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
             $collection_type_params = yield Psalm::getFirstArgType($event)
                 ->flatMap([CollectionTypeExtractor::class, 'extract']);
 
-            $predicate = yield GetPredicateFunction::from($call_args[1]);
+            $predicate = yield Psalm::getPredicateFunction($call_args[1]);
 
             $refinement_context = new RefinementContext(
                 refine_for: 'fp\collection\filter',

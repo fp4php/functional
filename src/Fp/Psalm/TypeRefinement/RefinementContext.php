@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeRefinement;
 
-use PhpParser\Node;
+use PhpParser\Node\FunctionLike;
 use Psalm\Codebase;
 use Psalm\Context;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
@@ -16,7 +16,7 @@ final class RefinementContext
 {
     public function __construct(
         public string $refine_for,
-        public Node\Expr\Closure|Node\Expr\ArrowFunction $predicate,
+        public FunctionLike $predicate,
         public Context $execution_context,
         public Codebase $codebase,
         public StatementsAnalyzer $source,

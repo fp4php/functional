@@ -6,13 +6,16 @@ namespace Fp\Psalm\TypeRefinement;
 
 use Fp\Collections\Map;
 use PhpParser\Node;
-use Psalm\Type;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt\Return_;
 use Fp\Functional\Option\Option;
 use Psalm\CodeLocation;
 use Psalm\Internal\Algebra;
 use Psalm\Internal\Algebra\FormulaGenerator;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Type\Reconciler;
+use Psalm\Type\Union;
 
 use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
@@ -22,7 +25,7 @@ use function Fp\Evidence\proveString;
 use function Fp\Evidence\proveTrue;
 
 /**
- * @psalm-type CollectionTypeParameters = array{Type\Union, Type\Union}
+ * @psalm-type CollectionTypeParameters = array{Union, Union}
  * @psalm-type PsalmAssertions = array<string, array<array<int, string>>>
  */
 final class RefineByPredicate
@@ -46,7 +49,7 @@ final class RefineByPredicate
     /**
      * Try to refine collection key type-parameter
      *
-     * @psalm-return Option<Type\Union>
+     * @psalm-return Option<Union>
      */
     public static function forKey(RefinementContext $context, CollectionTypeParams $collection_params): Option
     {
@@ -72,7 +75,7 @@ final class RefineByPredicate
     /**
      * Try to refine collection value type-parameter
      *
-     * @psalm-return Option<Type\Union>
+     * @psalm-return Option<Union>
      */
     public static function forValue(RefinementContext $context, CollectionTypeParams $collection_params): Option
     {
@@ -105,11 +108,11 @@ final class RefineByPredicate
         $refine_for_map = is_a($context->refine_for, Map::class, true);
 
         $key_arg = $refine_for_map
-            ? first($context->predicate->params)
-            : second($context->predicate->params);
+            ? first($context->predicate->getParams())
+            : second($context->predicate->getParams());
 
         return $key_arg
-            ->flatMap(fn($key_param) => proveOf($key_param->var, Node\Expr\Variable::class))
+            ->flatMap(fn($key_param) => proveOf($key_param->var, Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
             ->map(fn($name) => $refine_for_map
                 ? ('$' . $name . '->key')
@@ -123,7 +126,7 @@ final class RefineByPredicate
      */
     private static function getPredicateValueArgumentName(RefinementContext $context): Option
     {
-        return first($context->predicate->params)
+        return first($context->predicate->getParams())
             ->flatMap(fn($value_param) => proveOf($value_param->var, Node\Expr\Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
             ->map(fn($name) => is_a($context->refine_for, Map::class, true)
@@ -135,15 +138,15 @@ final class RefineByPredicate
      * Returns single return expression of $predicate if present.
      * Collection type parameter can be refined only for function with single return.
      *
-     * @psalm-return Option<Node\Expr>
+     * @psalm-return Option<Expr>
      */
     private static function getPredicateSingleReturn(RefinementContext $context): Option
     {
         return Option::do(function() use ($context) {
-            $statements = $context->predicate->getStmts();
+            $statements = yield Option::fromNullable($context->predicate->getStmts());
             yield proveTrue(1 === count($statements));
 
-            return yield firstOf($statements, Node\Stmt\Return_::class)
+            return yield firstOf($statements, Return_::class)
                 ->flatMap(fn($return_statement) => Option::fromNullable($return_statement->expr));
         });
     }
@@ -155,10 +158,10 @@ final class RefineByPredicate
      */
     private static function collectAssertions(
         RefinementContext $context,
-        Node\Expr $return_expr,
+        Expr $return_expr,
         string $predicate_arg_name,
-    ): array {
-
+    ): array
+    {
         $cond_object_id = spl_object_id($return_expr);
 
         // Generate formula
@@ -196,17 +199,17 @@ final class RefineByPredicate
     /**
      * Reconciles $collection_type_param with $assertions using internal Psalm api.
      *
-     * @psalm-param PsalmAssertions $assertions
-     * @psalm-return Option<Type\Union>
      * @psalm-suppress InternalMethod
+     * @psalm-param PsalmAssertions $assertions
+     * @psalm-return Option<Union>
      */
     private static function refine(
         StatementsAnalyzer $source,
         array $assertions,
-        Type\Union $collection_type_param,
-        Node\Expr $return_expr
-    ): Option {
-
+        Union $collection_type_param,
+        Expr $return_expr
+    ): Option
+    {
         return Option::do(function() use ($source, $assertions, $collection_type_param, $return_expr) {
             yield proveTrue(!empty($assertions));
 

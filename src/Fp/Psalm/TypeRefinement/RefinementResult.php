@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeRefinement;
 
-use Psalm\Type;
+use Psalm\Type\Union;
 
 /**
  * @psalm-immutable
@@ -12,7 +12,7 @@ use Psalm\Type;
 final class RefinementResult
 {
     public function __construct(
-        public Type\Union $collection_key_type,
-        public Type\Union $collection_value_type,
+        public Union $collection_key_type,
+        public Union $collection_value_type,
     ) { }
 }

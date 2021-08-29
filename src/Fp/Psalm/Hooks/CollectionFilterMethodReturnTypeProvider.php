@@ -16,8 +16,8 @@ use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
+use Fp\Psalm\Psalm;
 use Fp\Psalm\TypeRefinement\CollectionTypeParams;
-use Fp\Psalm\TypeRefinement\GetPredicateFunction;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\Variable;
@@ -31,6 +31,8 @@ use Fp\Psalm\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\TypeRefinement\RefinementContext;
 use Fp\Psalm\TypeRefinement\RefinementResult;
 use Fp\Functional\Option\Option;
+use Psalm\Type\Atomic\TGenericObject;
+use Psalm\Type\Union;
 
 use function Fp\Collection\first;
 use function Fp\Evidence\proveOf;
@@ -67,12 +69,14 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     /**
      * @psalm-suppress InternalMethod
      */
-    public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Type\Union
+    public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         $reconciled = Option::do(function() use ($event) {
             yield proveTrue(in_array($event->getMethodNameLowercase(), self::ALLOWED_METHODS, true));
-            $source = yield proveOf($event->getSource(), StatementsAnalyzer::class);
-            $predicate = yield self::extractPredicateArg($event)->flatMap([GetPredicateFunction::class, 'from']);
+
+            $source          = yield proveOf($event->getSource(), StatementsAnalyzer::class);
+            $predicate_arg   = yield self::extractPredicateArg($event);
+            $predicate       = yield Psalm::getPredicateFunction($predicate_arg);
             $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
 
             $collection_type_params = 2 === count($template_params)
@@ -103,7 +107,8 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
      */
     public static function extractPredicateArg(MethodReturnTypeProviderEvent $event): Option
     {
-        return first($event->getCallArgs())->orElse(fn() => self::mockNotNullPredicateArg($event));
+        return first($event->getCallArgs())
+            ->orElse(fn() => self::mockNotNullPredicateArg($event));
     }
 
     /**
@@ -128,7 +133,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     }
 
     /**
-     * @psalm-return Option<Type\Union>
+     * @psalm-return Option<Union>
      */
     private static function getReturnType(MethodReturnTypeProviderEvent $event, RefinementResult $result): Option
     {
@@ -138,8 +143,8 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
             ? [$result->collection_key_type, $result->collection_value_type]
             : [$result->collection_value_type];
 
-        return Option::some(new Type\Union([
-            new Type\Atomic\TGenericObject($class_name, $template_params),
+        return Option::some(new Union([
+            new TGenericObject($class_name, $template_params),
         ]));
     }
 }

@@ -6,6 +6,8 @@ namespace Fp\Psalm;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
+use PhpParser\Node\FunctionLike;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
@@ -19,6 +21,8 @@ use function Fp\Collection\head;
 use function Fp\Evidence\proveTrue;
 
 /**
+ * Psalm helper methods
+ *
  * @internal
  */
 class Psalm
@@ -69,5 +73,15 @@ class Psalm
                 $union->getCallableTypes()
             ));
         });
+    }
+
+    /**
+     * @psalm-return Option<FunctionLike>
+     */
+    public static function getPredicateFunction(Arg $predicate_arg): Option
+    {
+        return Option::some($predicate_arg)
+            ->map(fn(Arg $arg) => $arg->value)
+            ->filter(fn(Expr $expr) => $expr instanceof FunctionLike);
     }
 }

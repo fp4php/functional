@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeRefinement;
 
-use Psalm\Type;
+use Psalm\Type\Union;
 
 final class CollectionTypeParams
 {
     public function __construct(
-        public Type\Union $key_type,
-        public Type\Union $val_type,
+        public Union $key_type,
+        public Union $val_type,
     ) { }
 }
