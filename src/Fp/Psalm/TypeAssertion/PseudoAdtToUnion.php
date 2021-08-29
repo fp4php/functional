@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeAssertion;
 
-use Psalm\Type;
+use PhpParser\Node\Expr\MethodCall;
 use Psalm\NodeTypeProvider;
-use PhpParser\Node;
 use Fp\Functional\Option\Option;
+use Psalm\Type\Union;
 
 interface PseudoAdtToUnion
 {
     /**
-     * @psalm-return Option<Type\Union>
+     * @psalm-return Option<Union>
      */
-    public function getUnion(NodeTypeProvider $type_provider, Node\Expr\MethodCall $from_assertion_method): Option;
+    public function getUnion(NodeTypeProvider $type_provider, MethodCall $from_assertion_method): Option;
 }

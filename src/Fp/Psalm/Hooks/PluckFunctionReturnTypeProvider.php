@@ -9,9 +9,7 @@ use Fp\Psalm\Psalm;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
-use Psalm\StatementsSource;
 use Psalm\Type;
-use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralString;
@@ -19,7 +17,6 @@ use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 use ReflectionNamedType;
 
-use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
 use function Fp\Collection\at;
 use function Fp\Collection\head;

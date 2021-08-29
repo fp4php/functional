@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\TypeAssertion;
 
-use PhpParser\Node;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
 use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 use Fp\Functional\Option\Option;
+
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
 use function Fp\Evidence\proveTrue;
@@ -43,13 +47,13 @@ final class TypeAssertion
 
     /**
      * @psalm-param non-empty-array<string> $assertion_methods
-     * @psalm-return Option<Node\Expr\MethodCall>
+     * @psalm-return Option<MethodCall>
      */
-    private static function getAssertionMethodCall(Node\Expr $expr, array $assertion_methods): Option
+    private static function getAssertionMethodCall(Expr $expr, array $assertion_methods): Option
     {
         return Option::do(function() use ($expr, $assertion_methods) {
-            $method_call = yield proveOf($expr, Node\Expr\MethodCall::class);
-            $method_identifier = yield proveOf($method_call->name, Node\Identifier::class);
+            $method_call = yield proveOf($expr, MethodCall::class);
+            $method_identifier = yield proveOf($method_call->name, Identifier::class);
 
             yield proveTrue(
                 in_array($method_identifier->name, $assertion_methods, true)
@@ -62,10 +66,10 @@ final class TypeAssertion
     /**
      * @psalm-return Option<string>
      */
-    private static function getVariableName(Node\Expr\MethodCall $method_call): Option
+    private static function getVariableName(MethodCall $method_call): Option
     {
         return Option::do(function() use ($method_call) {
-            $variable = yield proveOf($method_call->var, Node\Expr\Variable::class);
+            $variable = yield proveOf($method_call->var, Variable::class);
             $name = yield proveString($variable->name);
 
             return '$' . $name;
