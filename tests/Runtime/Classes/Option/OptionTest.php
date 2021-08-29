@@ -151,4 +151,10 @@ final class OptionTest extends TestCase
 
         $this->assertEquals(null, $none);
     }
+
+    public function testCond(): void
+    {
+        $this->assertEquals('some', Option::cond(true, 'some')->get());
+        $this->assertNull(Option::cond(false, 'some')->get());
+    }
 }

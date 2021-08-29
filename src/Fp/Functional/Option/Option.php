@@ -461,4 +461,28 @@ abstract class Option
             ? Either::right($this->value)
             : Either::left($left());
     }
+
+    /**
+     * Fabric method.
+     *
+     * REPL:
+     * >>> Option::cond(true, 1)
+     * => Some(1)
+     * >>> Option::cond(false, 1)
+     * => None
+     *
+     * Create {@see Some} from value if given condition is true
+     * Create {@see None} if given condition is false
+     *
+     * @psalm-pure
+     * @psalm-template AI
+     * @psalm-param AI $some
+     * @psalm-return Option<AI>
+     */
+    public static function cond(bool $condition, mixed $some): Option
+    {
+        return $condition
+            ? self::some($some)
+            : self::none();
+    }
 }
