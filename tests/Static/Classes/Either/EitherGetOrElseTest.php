@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Static\Classes\Either;
 
-use Tests\Mock\Foo;
 use Tests\PhpBlockTestCase;
 
 final class EitherGetOrElseTest extends PhpBlockTestCase
@@ -121,7 +120,7 @@ final class EitherGetOrElseTest extends PhpBlockTestCase
                 /** @var non-empty-list<bool>|non-empty-array<string, int> $input22 */
                 $input22 = null;
                 /** @psalm-trace $result22 */
-                $result22 = Fp\Functional\Either\Either::right($input22)->getOrElse(fn() => ["x"]);
+                $result22 = Fp\Functional\Either\Either::right($input22)->getOrCall(fn() => ["x"]);
             ',
             'int',
             '1|2',

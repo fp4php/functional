@@ -29,19 +29,36 @@ abstract class Either
      * => 0
      *
      * @psalm-template F
-     * @psalm-param F|(pure-callable(): F) $fallback
+     * @psalm-param F $fallback
      * @psalm-return R|F
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        if ($this->isRight()) {
-            return $this->value;
-        }
-
-        /** @psalm-var F */
-        return is_callable($fallback)
-            ? call_user_func($fallback)
+        return $this->isRight()
+            ? $this->value
             : $fallback;
+    }
+
+    /**
+     * Unwrap "the box" and get contained success value
+     * or given fallback call result for case when
+     * there is error value in the box.
+     *
+     * REPL:
+     * >>> Either::right(1)->getOrCall(fn() => 0)
+     * => 1
+     * >>> Either::left('error')->getOrCall(fn() => 0)
+     * => 0
+     *
+     * @psalm-template F
+     * @psalm-param callable(): F $fallback
+     * @psalm-return R|F
+     */
+    public function getOrCall(callable $fallback): mixed
+    {
+        return $this->isRight()
+            ? $this->value
+            : $fallback();
     }
 
     /**
