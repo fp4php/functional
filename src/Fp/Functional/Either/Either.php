@@ -79,7 +79,7 @@ abstract class Either
     {
         return $this->isRight()
             ? $this
-            : call_user_func($fallback);
+            : $fallback();
     }
 
     /**
@@ -104,12 +104,9 @@ abstract class Either
      */
     public function fold(callable $ifRight, callable $ifLeft): mixed
     {
-        if ($this->isRight()) {
-            return call_user_func($ifRight, $this->value);
-        } else {
-            /** @var Left<L> $this */
-            return call_user_func($ifLeft, $this->value);
-        }
+        return $this->isRight()
+            ? $ifRight($this->value)
+            : $ifLeft($this->value);
     }
 
     /**
@@ -132,15 +129,9 @@ abstract class Either
      */
     public function map(callable $callback): Either
     {
-        if ($this->isLeft()) {
-            return new Left($this->value);
-        }
-
-        /**
-         * @var Right<R> $this
-         */
-
-        return new Right(call_user_func($callback, $this->value));
+        return $this->isLeft()
+            ? new Left($this->value)
+            : new Right($callback($this->value));
     }
 
     /**
@@ -191,15 +182,9 @@ abstract class Either
      */
     public function flatMap(callable $callback): Either
     {
-        if ($this->isLeft()) {
-            return new Left($this->value);
-        }
-
-        /**
-         * @var Right<R> $this
-         */
-
-        return call_user_func($callback, $this->value);
+        return $this->isLeft()
+            ? new Left($this->value)
+            : $callback($this->value);
     }
 
     /**
@@ -289,7 +274,9 @@ abstract class Either
      */
     public function toOption(): Option
     {
-        return $this->isRight() ? Option::some($this->value) : Option::none();
+        return $this->isRight()
+            ? Option::some($this->value)
+            : Option::none();
     }
 
     /**
@@ -305,15 +292,9 @@ abstract class Either
      */
     public function toValidated(): Validated
     {
-        if ($this->isRight()) {
-            return Validated::valid($this->value);
-        }
-
-        /**
-         * @var Left<L> $this
-         */
-
-        return Validated::invalid($this->value);
+        return $this->isRight()
+            ? Validated::valid($this->value)
+            : Validated::invalid($this->value);
     }
 
     /**
@@ -424,11 +405,7 @@ abstract class Either
      * @psalm-return Either<LI, RI>
      * @psalm-pure
      */
-    public static function cond(
-        bool $condition,
-        mixed $right,
-        mixed $left,
-    ): Either
+    public static function cond(bool $condition, mixed $right, mixed $left): Either
     {
         return $condition
             ? Right::of($right)
