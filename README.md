@@ -133,7 +133,7 @@ function div(int $a, int $b): Option {
 $emptyCollection
     ->first(fn(int $elem) => $elem > 0)
     ->map(fn(int $elem) => $elem + 1)
-    ->flatMap(fn(int $elem): float => div($elem, $elem - 1))
+    ->flatMap(fn(int $elem) => div($elem, $elem - 1))
     ->getOrElse(0)
 ```
 
