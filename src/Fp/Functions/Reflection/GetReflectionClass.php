@@ -6,21 +6,21 @@ namespace Fp\Reflection;
 
 use Fp\Functional\Either\Either;
 use ReflectionClass;
-use ReflectionException;
+use Throwable;
 
 /**
  * Returns class reflection or Left on exception
  *
  * REPL:
  * >>> getReflectionClass(Foo::class);
- * => Either<ReflectionException, ReflectionClass>
+ * => Either<Throwable, ReflectionClass>
  *
  *
  * @template T of object
  *
  * @psalm-param T|class-string<T> $objectOrClass
  *
- * @psalm-return Either<ReflectionException, ReflectionClass>
+ * @psalm-return Either<Throwable, ReflectionClass>
  */
 function getReflectionClass(object|string $objectOrClass): Either
 {

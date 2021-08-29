@@ -246,17 +246,15 @@ abstract class Either
      * >>> Either::try(fn() => throw new Exception('handled and converted to Left'));
      * => Left(Exception('handled and converted to Left'))
      *
-     * @psalm-template TLI of Throwable
      * @psalm-template TRI
      * @psalm-param callable(): TRI $callback
-     * @psalm-return Either<TLI, TRI>
+     * @psalm-return Either<Throwable, TRI>
      */
     public static function try(callable $callback): Either
     {
         try {
-            return Right::of(call_user_func($callback));
+            return Right::of($callback());
         } catch (Throwable $exception) {
-            /** @var Left<TLI> */
             return Left::of($exception);
         }
     }

@@ -7,20 +7,21 @@ namespace Fp\Reflection;
 use Fp\Functional\Either\Either;
 use ReflectionException;
 use ReflectionProperty;
+use Throwable;
 
 /**
  * Returns property reflection or Left on exception
  *
  * REPL:
  * >>> getReflectionProperty(Foo::class, 'a');
- * => Either<ReflectionException, ReflectionProperty>
+ * => Either<Throwable, ReflectionProperty>
  *
  *
  * @template T of object
  *
  * @psalm-param T|class-string<T> $class
  *
- * @psalm-return Either<ReflectionException, ReflectionProperty>
+ * @psalm-return Either<Throwable, ReflectionProperty>
  */
 function getReflectionProperty(object|string $class, string $property): Either
 {
