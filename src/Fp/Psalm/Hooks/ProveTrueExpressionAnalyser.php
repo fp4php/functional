@@ -1,7 +1,5 @@
 <?php
 
-/** @noinspection PhpInternalEntityUsedInspection */
-
 declare(strict_types=1);
 
 namespace Fp\Psalm\Hooks;
@@ -63,7 +61,9 @@ final class ProveTrueExpressionAnalyser implements AfterExpressionAnalysisInterf
         }
 
         $visitor = new class extends NodeVisitorAbstract {
-            /** @var array<array-key, Node\Arg> */
+            /**
+             * @var array<array-key, Node\Arg>
+             */
             public ?array $proveTrueArgs = null;
 
             public function leaveNode(Node $node): void

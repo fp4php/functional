@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Fp\Psalm;
 
 use Fp\Psalm\Hooks\EitherAssertionAnalysis;
-use Fp\Psalm\Hooks\EitherGetOrElseMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\CollectionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\OptionFilterMethodReturnTypeProvider;
-use Fp\Psalm\Hooks\OptionGetOrElseMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\OptionAssertionAnalysis;
 use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\PartitionFunctionReturnTypeProvider;
@@ -20,6 +18,9 @@ use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
 
+/**
+ * Plugin entrypoint
+ */
 class FunctionalPlugin implements PluginEntryPointInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
@@ -33,17 +34,11 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(PartialFunctionReturnTypeProvider::class);
         $register(PartitionFunctionReturnTypeProvider::class);
         $register(PluckFunctionReturnTypeProvider::class);
-
         $register(CollectionFilterMethodReturnTypeProvider::class);
         $register(OptionFilterMethodReturnTypeProvider::class);
-
-        $register(OptionGetOrElseMethodReturnTypeProvider::class);
-        $register(EitherGetOrElseMethodReturnTypeProvider::class);
-
         $register(OptionAssertionAnalysis::class);
         $register(EitherAssertionAnalysis::class);
         $register(ValidatedAssertionAnalysis::class);
-
         $register(ProveTrueExpressionAnalyser::class);
     }
 }
