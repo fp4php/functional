@@ -1,17 +1,17 @@
 # Collection
 
-- #### any
+- #### exists
   Returns true if there is collection element which satisfies the condition and false otherwise
 
   ```php
-  any([1, 2, 3], fn(int $value) => $value === 2); // true
+  exists([1, 2, 3], fn(int $value) => $value === 2); // true
   ```
 
-- #### anyOf
+- #### existsOf
   Returns true if there is collection element of given class and false otherwise
 
   ```php
-  anyOf([new Foo(), 2, 3], Foo::class); // true
+  existsOf([new Foo(), 2, 3], Foo::class); // true
   ```
 
 - #### at
@@ -43,18 +43,6 @@
 
   ```php
   everyOf([1, new Foo()], Foo::class); // false
-  ```
-
-- #### exists
-  Find if there is collection element which satisfies the condition.
-  The condition can be an element value or predicate
-
-  ```php
-  exists([1, 2], fn(int $v): bool => $v === 1); // true
-  ```
-
-  ```php
-  exists([1, 2], 1); // true
   ```
 
 - #### filter

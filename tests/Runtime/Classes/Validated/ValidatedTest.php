@@ -12,12 +12,10 @@ use Fp\Functional\Validated\Invalid;
 use Fp\Functional\Validated\Valid;
 use Fp\Functional\Validated\Validated;
 use PHPUnit\Framework\TestCase;
-
 use Tests\Mock\FooInput;
-
 use Tests\Mock\FooInputValidator;
 
-use function Fp\Collection\reduceNel;
+use function Fp\Collection\reduce;
 
 final class ValidatedTest extends TestCase
 {
@@ -58,10 +56,10 @@ final class ValidatedTest extends TestCase
             '"b" must be greater than 2020, "c" must be true',
             $invalid->fold(
                 fn(FooInput $input) => $input,
-                fn(array $invalidNel) => reduceNel(
+                fn(array $invalidNel) => reduce(
                     $invalidNel,
                     fn(string $acc, string $err) => $acc . ', ' .  $err
-                ),
+                )->getUnsafe(),
             )
         );
 
@@ -69,10 +67,10 @@ final class ValidatedTest extends TestCase
             $validInput,
             $valid->fold(
                 fn(FooInput $input) => $input,
-                fn(array $invalidNel) => reduceNel(
+                fn(array $invalidNel) => reduce(
                     $invalidNel,
                     fn(string $acc, string $err) => $acc . ', ' .  $err
-                ),
+                )->getUnsafe(),
             )
         );
     }
