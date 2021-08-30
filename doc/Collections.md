@@ -13,22 +13,22 @@
 
 # Hierarchy
 
-  - #### empty collections
-    
+-   #### empty collections
+
         Collection<TV> -> Seq<TV> -> LinearSeq<TV> -> LinkedList<TV>
-        
+
         Collection<TV> -> Seq<TV> -> IndexedSeq<TV> -> ArrayList<TV>
-        
+
         Collection<TV> -> Set<TV> -> HashSet<TV>
-        
+
         Collection<TV> -> Map<TK, TV> -> HashMap<TK, TV>
 
-  - #### non-empty collections
-    
+-   #### non-empty collections
+
         NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyLinearSeq<TV> -> NonEmptyLinkedList<TV>
-        
+
         NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyIndexedSeq<TV> -> NonEmptyArrayList<TV>
-        
+
         NonEmptyCollection<TV> -> NonEmptySet<TV> -> NonEmptyHashSet<TV>
 
 # ArrayList
@@ -218,8 +218,8 @@ $collection
 
 Collection of unique elements.
 
-Object comparison by default uses spl\_object\_hash function. If you
-want to override default comparison behaviour then you need to implement
+Object comparison by default uses spl_object_hash function. If you want
+to override default comparison behaviour then you need to implement
 HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
