@@ -266,4 +266,17 @@ final class ArrayListOpsTest extends TestCase
         $this->assertEquals([[1, [$f1, $f3]], [2, [$f2]], [3, [$f4]]], $res2);
         $this->assertEquals([[1, [1, 1]], [2, [2]], [3, [3]]], $res3);
     }
+
+    public function testSorted(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            ArrayList::collect([3, 2, 1])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+        );
+
+        $this->assertEquals(
+            [3, 2, 1],
+            ArrayList::collect([3, 2, 1])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+        );
+    }
 }

@@ -305,4 +305,18 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
     {
         return new self($this->arrayList->unique($callback));
     }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return self<TV>
+     */
+    public function sorted(callable $cmp): self
+    {
+        $sorted = $this->toArray();
+
+        usort($sorted, $cmp);
+
+        return new self(new ArrayList($sorted));
+    }
 }

@@ -74,6 +74,19 @@ final class NonEmptyArrayListTest extends TestCase
 
     public function testCount(): void
     {
-        $this->assertEquals(3, NonEmptyArrayList::collect([1, 2, 3])->count());
+        $this->assertEquals(3, NonEmptyArrayList::collectNonEmpty([1, 2, 3])->count());
+    }
+
+    public function testSorted(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyArrayList::collectNonEmpty([3, 2, 1])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+        );
+
+        $this->assertEquals(
+            [3, 2, 1],
+            NonEmptyArrayList::collectNonEmpty([3, 2, 1])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+        );
     }
 }

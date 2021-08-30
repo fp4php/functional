@@ -337,4 +337,18 @@ final class ArrayList extends AbstractIndexedSeq
 
         return new self($buffer);
     }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return self<TV>
+     */
+    public function sorted(callable $cmp): self
+    {
+        $sorted = $this->toArray();
+
+        usort($sorted, $cmp);
+
+        return new self($sorted);
+    }
 }

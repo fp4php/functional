@@ -411,4 +411,18 @@ interface SeqOps
      * @psalm-return Map<TKO, Seq<TV>>
      */
     public function groupBy(callable $callback): Map;
+
+    /**
+     * Sort collection
+     *
+     * REPL:
+     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+     * => [1, 2, 3]
+     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+     * => [3, 2, 1]
+     *
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return Seq<TV>
+     */
+    public function sorted(callable $cmp): Seq;
 }

@@ -316,4 +316,18 @@ abstract class LinkedList extends AbstractLinearSeq
 
         return self::collect($source());
     }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return self<TV>
+     */
+    public function sorted(callable $cmp): self
+    {
+        $sorted = $this->toArray();
+
+        usort($sorted, $cmp);
+
+        return self::collect($sorted);
+    }
 }

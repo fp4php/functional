@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Doc;
 
-use Fp\Collections\LinkedList;
+use Fp\Collections\ArrayList;
+use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Symfony\Component\Process\Process;
 
@@ -14,9 +15,9 @@ class DocLinker
 {
     /**
      * @param string $path
-     * @return list<AbstractMdHeader>
+     * @return Seq<AbstractMdHeader>
      */
-    private function parseHeaders(string $path): array
+    private function parseHeaders(string $path): Seq
     {
         $parser = new MdParser([]);
         $lines = file($path);
@@ -37,7 +38,7 @@ class DocLinker
             $parser = $parser->combineOne($header);
         }
 
-        return $parser->getHeaders();
+        return ArrayList::collect($parser->getHeaders());
     }
 
     public function link(string $pattern): void
@@ -52,7 +53,8 @@ class DocLinker
             Process::fromShellCommandline($commandLine)->run();
             $contents = file_get_contents($to);
 
-            $refMap = LinkedList::collect($this->parseHeaders($to))
+            $refMap = $this
+                ->parseHeaders($to)
                 ->map(function(AbstractMdHeader $header) {
                     $headerTitle = $header->title;
                     $headerRef = str_replace(' ', '-', $headerTitle);

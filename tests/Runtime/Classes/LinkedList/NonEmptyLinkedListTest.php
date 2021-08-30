@@ -76,4 +76,17 @@ final class NonEmptyLinkedListTest extends TestCase
     {
         $this->assertEquals(3, NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->count());
     }
+
+    public function testSorted(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyLinkedList::collectNonEmpty([3, 2, 1])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+        );
+
+        $this->assertEquals(
+            [3, 2, 1],
+            NonEmptyLinkedList::collectNonEmpty([3, 2, 1])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+        );
+    }
 }

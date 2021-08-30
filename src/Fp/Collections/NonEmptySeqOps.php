@@ -317,4 +317,18 @@ interface NonEmptySeqOps
      * @psalm-return NonEmptySeq<TV>
      */
     public function unique(callable $callback): NonEmptySeq;
+
+    /**
+     * Sort collection
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+     * => [1, 2, 3]
+     * >>> NonEmptyLinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+     * => [3, 2, 1]
+     *
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return NonEmptySeq<TV>
+     */
+    public function sorted(callable $cmp): NonEmptySeq;
 }
