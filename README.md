@@ -29,6 +29,28 @@ $ vendor/bin/psalm-plugin enable Fp\\Psalm\\FunctionalPlugin
 
 ## Examples
 
+- Type assertions with Option monad
+```php
+/**
+ * Inferred type is Option<Foo> 
+ */ 
+$maybeFooMaybeNot = Option::do(function() use ($untrusted) {
+    $notNull           = yield Option::fromNullable($untrusted);
+    $array             = yield proveTrue(is_array($notNull)); // Inferred type is array<array-key, mixed> 
+    $list              = yield proveList($notNull); // Inferred type is list<mixed>
+    $nonEmptyList      = yield proveNonEmptyList($notNull); // Inferred type is non-empty-list<mixed>
+    $nonEmptyListOfFoo = yield proveNonEmptyListOf($nonEmptyList, Foo::class); // Inferred type is non-empty-list<Foo>
+    $firstFoo          = $nonEmptyListOfFoo[0]; // Inferred type is Foo
+
+    return $firstFoo; // I'm sure it's Foo object
+});
+
+/**
+ * Inferred type is Foo
+ */
+$foo = $maybeFooMaybeNot->getOrCall(fn() => new Foo(0))
+```
+
 - Type safety
 ```php
 /**
