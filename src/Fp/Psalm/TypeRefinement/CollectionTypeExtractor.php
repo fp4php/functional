@@ -27,7 +27,7 @@ final class CollectionTypeExtractor
      */
     public static function extract(Union $union): Option
     {
-        return Psalm::getSingeAtomic($union)
+        return Psalm::getUnionSingeAtomic($union)
             ->flatMap(fn($a) => self::fromList($a)
                 ->orElse(fn() => self::fromArrayOrIterable($a))
                 ->orElse(fn() => self::fromOption($a))

@@ -12,12 +12,12 @@ use Fp\Psalm\Hooks\PluckFunctionReturnTypeProvider;
  * REPL:
  * >>> pluck([['a' => 1], ['a' => 2]], 'a');
  * => [1, 2]
+ * >>> pluck([new Foo(1), new Foo(2)], 'a');
+ * => [1, 2]
  *
- * @deprecated use {@see map()} function
- * @psalm-param iterable<array-key, object|array> $collection
- * @psalm-return array
- * @psalm-suppress MixedAssignment
- *
+ * @psalm-template TK of array-key
+ * @psalm-template TV of object|array
+ * @psalm-param iterable<TK, TV> $collection
  * @see PluckFunctionReturnTypeProvider
  */
 function pluck(iterable $collection, string $key): array
@@ -25,12 +25,11 @@ function pluck(iterable $collection, string $key): array
     $aggregation = [];
 
     foreach ($collection as $index => $element) {
-        $value = match (true) {
-            (is_object($element)) => $element->{$key} ?? null,
-            (is_array($element)) => $element[$key] ?? null,
+        /** @psalm-suppress MixedAssignment */
+        $aggregation[$index] = match (true) {
+            is_array($element) => $element[$key] ?? null,
+            is_object($element) => $element->{$key} ?? null,
         };
-
-        $aggregation[$index] = $value;
     }
 
     return $aggregation;

@@ -24,7 +24,7 @@ final class PseudoAdtAtomicExtractor
     {
         return Option::do(function() use ($node, $provider, $adtClass) {
             $generic_object = yield Option::fromNullable($provider->getType($node))
-                ->flatMap(fn($type) => Psalm::getSingeAtomic($type))
+                ->flatMap(fn($type) => Psalm::getUnionSingeAtomic($type))
                 ->flatMap(fn($atomic) => proveOf($atomic, TGenericObject::class));
 
             yield proveTrue($adtClass === $generic_object->value);

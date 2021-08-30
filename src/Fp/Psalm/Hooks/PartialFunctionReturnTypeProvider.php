@@ -45,7 +45,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return head($event->getCallArgs())
-            ->flatMap(fn(Arg $head_arg) => Psalm::getArgType($head_arg, $event->getStatementsSource()))
+            ->flatMap(fn(Arg $head_arg) => Psalm::getArgUnion($head_arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $head_arg_type) => head(array_merge(
                 $head_arg_type->getClosureTypes(),
                 $head_arg_type->getCallableTypes(),
@@ -114,7 +114,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
             }
 
             $param_type = $param->type ?? Type::getMixed();
-            $arg_type = Psalm::getArgType($arg, $event->getStatementsSource());
+            $arg_type = Psalm::getArgUnion($arg, $event->getStatementsSource());
 
             if ($arg_type->isEmpty()) {
                 continue;

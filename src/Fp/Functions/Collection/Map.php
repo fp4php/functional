@@ -34,7 +34,7 @@ function map(iterable $collection, callable $callback): array
     $aggregation = [];
 
     foreach ($collection as $index => $element) {
-        $aggregation[$index] = call_user_func($callback, $element, $index);
+        $aggregation[$index] = $callback($element, $index);
     }
 
     return $aggregation;
