@@ -21,6 +21,6 @@ namespace Fp\Collection;
 function forAll(iterable $collection, callable $callback): void
 {
     foreach ($collection as $index => $element) {
-        call_user_func($callback, $element, $index);
+        $callback($element, $index);
     }
 }

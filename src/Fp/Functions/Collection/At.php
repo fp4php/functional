@@ -8,7 +8,7 @@ use ArrayAccess;
 use Fp\Functional\Option\Option;
 
 /**
- * Find element by it's key
+ * Find element by its key
  *
  * O(1) for arrays and classes which implement {@see ArrayAccess}
  * O(N) for other cases
@@ -32,7 +32,6 @@ function at(iterable $collection, int|string $key): Option
     if (is_array($collection) || $collection instanceof ArrayAccess) {
         return Option::fromNullable($collection[$key] ?? null);
     } else {
-        /** @psalm-suppress UnusedClosureParam */
         return first(
             $collection,
             fn(mixed $v, mixed $k) => $k === $key);

@@ -17,27 +17,17 @@ namespace Fp\Collection;
  *
  * @psalm-param iterable<TK, TV> $collection
  *
- * @psalm-return (
- *     $collection is list ? list<TV> : array<TK, TV>
- * )
+ * @psalm-return ($collection is list ? list<TV> : array<TK, TV>)
  */
 function butLast(iterable $collection): array
 {
     $aggregation = [];
-    $previousValue = null;
-    $previousIndex = null;
-    $toggle = false;
 
     foreach ($collection as $index => $element) {
-        if ($toggle) {
-            /** @psalm-suppress PossiblyNullArrayOffset */
-            $aggregation[$previousIndex] = $previousValue;
-        }
-
-        $previousIndex = $index;
-        $previousValue = $element;
-        $toggle = true;
+        $aggregation[$index] = $element;
     }
+
+    array_pop($aggregation);
 
     return $aggregation;
 }

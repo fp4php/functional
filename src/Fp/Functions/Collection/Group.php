@@ -33,7 +33,7 @@ function group(iterable $collection, callable $callback): array
     $groups = [];
 
     foreach ($collection as $index => $element) {
-        $groupKey = call_user_func($callback, $element, $index);
+        $groupKey = $callback($element, $index);
 
         if (!isset($groups[$groupKey])) {
             $groups[$groupKey] = [];

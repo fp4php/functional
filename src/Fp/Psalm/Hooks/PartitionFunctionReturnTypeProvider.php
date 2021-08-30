@@ -44,7 +44,7 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
         $partition_count = count(tail($args));
 
         return head($args)
-            ->flatMap(fn(Arg $head_arg) => Psalm::getArgType($head_arg, $source))
+            ->flatMap(fn(Arg $head_arg) => Psalm::getArgUnion($head_arg, $source))
             ->map(function(Union $head_arg_type) use ($partition_count) {
                 $atomic_types = map(
                     $head_arg_type->getAtomicTypes(),

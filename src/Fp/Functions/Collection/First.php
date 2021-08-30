@@ -32,7 +32,7 @@ function first(iterable $collection, ?callable $predicate = null): Option
     $first = null;
 
     foreach ($collection as $index => $element) {
-        if (call_user_func($predicate, $element, $index)) {
+        if ($predicate($element, $index)) {
             $first = $element;
             break;
         }
@@ -60,11 +60,9 @@ function first(iterable $collection, ?callable $predicate = null): Option
  */
 function firstOf(iterable $collection, string $fqcn, bool $invariant = false): Option
 {
-    /** @var Option<TVO> $first */
-    $first = first(
+    /** @var Option<TVO> */
+    return first(
         $collection,
         fn(mixed $v): bool => of($v, $fqcn, $invariant)
     );
-
-    return $first;
 }

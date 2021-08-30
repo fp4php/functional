@@ -37,7 +37,7 @@ function partition(iterable $collection, callable ...$predicates): array
 
     foreach ($collection as $index => $element) {
         foreach ($predicates as $partition => $callback) {
-            if (call_user_func($callback, $element, $index)) {
+            if ($callback($element, $index)) {
                 $partitions[$partition][] = $element;
                 continue 2;
             }
@@ -60,6 +60,7 @@ function partition(iterable $collection, callable ...$predicates): array
  * );
  * => array{list<Foo>, list<Bar>, list<Foo|Bar>}
  *
+ * @todo make general via psalm plugin
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

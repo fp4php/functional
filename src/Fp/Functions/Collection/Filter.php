@@ -29,7 +29,7 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
     $aggregation = [];
 
     foreach ($collection as $index => $element) {
-        if (call_user_func($predicate, $element, $index)) {
+        if ($predicate($element, $index)) {
             if ($preserveKeys) {
                 $aggregation[$index] = $element;
             } else {

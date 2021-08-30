@@ -28,7 +28,7 @@ function last(iterable $collection, ?callable $predicate = null): Option
     $last = null;
 
     foreach ($collection as $index => $element) {
-        if (is_null($predicate) || call_user_func($predicate, $element, $index)) {
+        if (is_null($predicate) || $predicate($element, $index)) {
             $last = $element;
         }
     }
