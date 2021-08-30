@@ -4,14 +4,6 @@
   - [compose](#compose)
   - [partial and partialLeft](#partial-and-partialLeft)
   - [partialRight](#partialRight)
-- [Cast](#Cast)
-  - [asArray](#asArray)
-  - [asBool](#asBool)
-  - [asFloat](#asFloat)
-  - [asInt](#asInt)
-  - [asList](#asList)
-  - [asNonEmptyArray](#asNonEmptyArray)
-  - [asNonEmptyList](#asNonEmptyList)
 - [Collection](#Collection)
   - [exists](#exists)
   - [existsOf](#existsOf)
@@ -41,6 +33,20 @@
   - [shift](#shift)
   - [tail](#tail)
   - [zip](#zip)
+- [Reflection](#Reflection)
+  - [getNamedTypes](#getNamedTypes)
+  - [getReflectionClass](#getReflectionClass)
+  - [getReflectionProperty](#getReflectionProperty)
+- [Json](#Json)
+  - [jsonDecode](#jsonDecode)
+- [Cast](#Cast)
+  - [asArray](#asArray)
+  - [asBool](#asBool)
+  - [asFloat](#asFloat)
+  - [asInt](#asInt)
+  - [asList](#asList)
+  - [asNonEmptyArray](#asNonEmptyArray)
+  - [asNonEmptyList](#asNonEmptyList)
 - [Evidence](#Evidence)
   - [proveArray](#proveArray)
   - [proveNonEmptyArray](#proveNonEmptyArray)
@@ -60,12 +66,6 @@
   - [proveFloat](#proveFloat)
   - [proveInt](#proveInt)
   - [proveOf](#proveOf)
-- [Json](#Json)
-  - [jsonDecode](#jsonDecode)
-- [Reflection](#Reflection)
-  - [getNamedTypes](#getNamedTypes)
-  - [getReflectionClass](#getReflectionClass)
-  - [getReflectionProperty](#getReflectionProperty)
 
 # Callable
 
@@ -114,81 +114,6 @@
     $result = partialRight($callback, true, "string");
     ```
 
-# Cast
-
--   #### asArray
-
-    Copy collection as array
-
-    ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
-
-    /** @var array<string, int> $result */
-    $result = asArray(getCollection());
-    ```
-
--   #### asBool
-
-    Try cast boolean like value. Returns None if cast is not possible
-
-    ``` php
-    /** @var Option<bool> $result */
-    $result = asBool('yes');
-    ```
-
--   #### asFloat
-
-    Try cast float like value. Returns None if cast is not possible
-
-    ``` php
-    /** @var Option<float> $result */
-    $result = asFloat('1.1');
-    ```
-
--   #### asInt
-
-    Try cast integer like value. Returns None if cast is not possible
-
-    ``` php
-    /** @var Option<int> $result */
-    $result = asInt(1);
-    ```
-
--   #### asList
-
-    Copy one or multiple collections as list
-
-    ``` php
-    $result = asList([1], ['prop' => 2], [3, 4]); // [1, 2, 3, 4]
-    ```
-
--   #### asNonEmptyArray
-
-    Try cast collection to new non-empty-array. Returns None if there is
-    no first collection element
-
-    ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
-
-    /** @var Option<non-empty-array<string, int>> $result */
-    $result = asNonEmptyArray(getCollection());
-    ```
-
--   #### asNonEmptyList
-
-    Try cast collection to new non-empty-list. Returns None if there is
-    no first collection element
-
-    ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
-
-    /** @var Option<non-empty-list<int>> $result */
-    $result = asNonEmptyList(getCollection());
-    ```
-
 # Collection
 
 -   #### exists
@@ -211,7 +136,7 @@
 
 -   #### at
 
-    Find element by it's key
+    Find element by its key
 
     O(1) for arrays and classes which implement ArrayAccess. O(N) for
     other cases
@@ -474,7 +399,7 @@
 
 -   #### zip
 
-    Returns a iterable collection formed from this iterable collection
+    Returns an iterable collection formed from this iterable collection
     and another iterable collection by combining corresponding elements
     in pairs.
 
@@ -483,6 +408,122 @@
 
     ``` php
     zip([1, 2, 3], ['a', 'b']); // [[1, 'a'], [2, 'b']]
+    ```
+
+# Reflection
+
+-   #### getNamedTypes
+
+    Returns property types by property reflection
+
+    ``` php
+    $fooProp = new ReflectionProperty(Foo::class, 'a');
+
+    /** @var list<ReflectionNamedType> $result */
+    $result = getNamedTypes($fooProp); 
+    ```
+
+-   #### getReflectionClass
+
+    Returns class reflection or Left on exception
+
+    ``` php
+    /** @var Either<ReflectionException, ReflectionClass> $result */
+    $result = getReflectionClass(Foo::class); 
+    ```
+
+-   #### getReflectionProperty
+
+    Returns property reflection or Left on exception
+
+    ``` php
+    /** @var Either<ReflectionException, ReflectionProperty> $result */
+    $result = getReflectionProperty(Foo::class, 'a'); 
+    ```
+
+# Json
+
+-   #### jsonDecode
+
+    Decode json string into associative array. Returns Left on error
+
+    ``` php
+    jsonDecode('{"a": [{"b": true}]}')->get(); // ['a' => [['b' => true]]] 
+    ```
+
+# Cast
+
+-   #### asArray
+
+    Copy collection as array
+
+    ``` php
+    /** @psalm-return iterable<string, int> */
+    function getCollection(): array { return []; }
+
+    /** @var array<string, int> $result */
+    $result = asArray(getCollection());
+    ```
+
+-   #### asBool
+
+    Try cast boolean like value. Returns None if cast is not possible
+
+    ``` php
+    /** @var Option<bool> $result */
+    $result = asBool('yes');
+    ```
+
+-   #### asFloat
+
+    Try cast float like value. Returns None if cast is not possible
+
+    ``` php
+    /** @var Option<float> $result */
+    $result = asFloat('1.1');
+    ```
+
+-   #### asInt
+
+    Try cast integer like value. Returns None if cast is not possible
+
+    ``` php
+    /** @var Option<int> $result */
+    $result = asInt(1);
+    ```
+
+-   #### asList
+
+    Copy one or multiple collections as list
+
+    ``` php
+    $result = asList([1], ['prop' => 2], [3, 4]); // [1, 2, 3, 4]
+    ```
+
+-   #### asNonEmptyArray
+
+    Try cast collection to new non-empty-array. Returns None if there is
+    no first collection element
+
+    ``` php
+    /** @psalm-return iterable<string, int> */
+    function getCollection(): array { return []; }
+
+    /** @var Option<non-empty-array<string, int>> $result */
+    $result = asNonEmptyArray(getCollection());
+    ```
+
+-   #### asNonEmptyList
+
+    Try cast collection to new non-empty-list. Returns None if there is
+    no first collection element
+
+    ``` php
+    /** @psalm-return iterable<string, int> */
+    function getCollection(): array { return []; }
+
+    /** @var Option<non-empty-list<int>> $result */
+    $result = asNonEmptyList(getCollection());
     ```
 
 # Evidence
@@ -677,45 +718,4 @@
     ``` php
     /** @var Option<Foo> $result */
     $result = proveOf(new Bar(), Foo::class);
-    ```
-
-# Json
-
--   #### jsonDecode
-
-    Decode json string into associative array. Returns Left on error
-
-    ``` php
-    jsonDecode('{"a": [{"b": true}]}')->get(); // ['a' => [['b' => true]]] 
-    ```
-
-# Reflection
-
--   #### getNamedTypes
-
-    Returns property types by property reflection
-
-    ``` php
-    $fooProp = new ReflectionProperty(Foo::class, 'a');
-
-    /** @var list<ReflectionNamedType> $result */
-    $result = getNamedTypes($fooProp); 
-    ```
-
--   #### getReflectionClass
-
-    Returns class reflection or Left on exception
-
-    ``` php
-    /** @var Either<ReflectionException, ReflectionClass> $result */
-    $result = getReflectionClass(Foo::class); 
-    ```
-
--   #### getReflectionProperty
-
-    Returns property reflection or Left on exception
-
-    ``` php
-    /** @var Either<ReflectionException, ReflectionProperty> $result */
-    $result = getReflectionProperty(Foo::class, 'a'); 
     ```

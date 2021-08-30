@@ -1,9 +1,23 @@
 # Examples
 
+- #### Type assertions with Option
+  ```php
+  $foo = Option::do(function() use ($untrusted) {
+          $notNull           = yield Option::fromNullable($untrusted);
+          $array             = yield proveTrue(is_array($notNull));
+          $list              = yield proveList($notNull);
+          $nonEmptyList      = yield proveNonEmptyList($notNull);
+          $nonEmptyListOfFoo = yield proveNonEmptyListOf($nonEmptyList, Foo::class);
+          $firstFoo          = $nonEmptyListOfFoo[0];
+  
+          return $firstFoo; // I'm sure it's Foo object
+      })->getOrCall(fn() => new Foo(0));
+  ```
+
 - #### Filter chaining
   ```php
       /**
-       * @psalm-return Option<Union>
+       * @return Option<Union>
        */
       function getUnionTypeParam(Union $union): Option
       {
@@ -12,16 +26,16 @@
               yield proveTrue(1 === count($atomics));
               $atomic = yield head($atomics);
   
-              return yield self::filterTIterableValueTypeParam($atomic)
-                  ->orElse(fn() => self::filterTArrayValueTypeParam($atomic))
-                  ->orElse(fn() => self::filterTListValueTypeParam($atomic))
-                  ->orElse(fn() => self::filterTGenericObjectValueTypeParam($atomic))
-                  ->orElse(fn() => self::filterTKeyedArrayValueTypeParam($atomic));
+              return yield self::filterTIterableTypeParam($atomic)
+                  ->orElse(fn() => self::filterTArrayTypeParam($atomic))
+                  ->orElse(fn() => self::filterTListTypeParam($atomic))
+                  ->orElse(fn() => self::filterTGenericObjectTypeParam($atomic))
+                  ->orElse(fn() => self::filterTKeyedArrayTypeParam($atomic));
           });
       }
   
       /**
-       * @psalm-return Option<Union>
+       * @return Option<Union>
        */
       function filterTIterableTypeParam(Atomic $atomic): Option
       {
@@ -31,7 +45,7 @@
       }
   
       /**
-       * @psalm-return Option<Union>
+       * @return Option<Union>
        */
       function filterTArrayTypeParam(Atomic $atomic): Option
       {
@@ -41,7 +55,7 @@
       }
   
       /**
-       * @psalm-return Option<Union>
+       * @return Option<Union>
        */
       function filterTListTypeParam(Atomic $atomic): Option
       {
@@ -51,7 +65,7 @@
       }
   
       /**
-       * @psalm-return Option<Union>
+       * @return Option<Union>
        */
       function filterTKeyedArrayTypeParam(Atomic $atomic): Option
       {
@@ -61,7 +75,7 @@
       }
   
       /**
-       * @psalm-return Option<Union>
+       * @return Option<Union>
        */
       function filterTGenericObjectTypeParam(Atomic $atomic): Option
       {

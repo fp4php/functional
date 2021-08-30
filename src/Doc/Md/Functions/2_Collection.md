@@ -15,7 +15,7 @@
   ```
 
 - #### at
-  Find element by it's key
+  Find element by its key
 
   O(1) for arrays and classes which implement ArrayAccess. O(N) for other cases
 
@@ -243,7 +243,7 @@
   ```
 
 - #### zip
-  Returns a iterable collection formed from this iterable collection and another iterable collection by combining corresponding elements in pairs.
+  Returns an iterable collection formed from this iterable collection and another iterable collection by combining corresponding elements in pairs.
 
   If one of the two collections is longer than the other, its remaining elements are ignored.
 
