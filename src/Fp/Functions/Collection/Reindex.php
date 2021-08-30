@@ -26,7 +26,7 @@ function reindex(iterable $collection, callable $callback): array
     $aggregation = [];
 
     foreach ($collection as $index => $element) {
-        $aggregation[call_user_func($callback, $element, $index)] = $element;
+        $aggregation[$callback($element, $index)] = $element;
     }
 
     return $aggregation;

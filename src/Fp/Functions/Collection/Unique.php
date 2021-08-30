@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Collections\Seq;
-
 /**
  * Returns collection unique elements
  *
@@ -18,29 +16,21 @@ use Fp\Collections\Seq;
  * );
  * => [User(1), User(2)]
  *
- * @deprecated use {@see Set} or {@see Seq::unique()}
  * @psalm-template TK of array-key
- * @psalm-template TV of (object|scalar)
+ * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param null|(callable(TV): (int|string)) $callback returns element unique id
+ * @psalm-param callable(TV): array-key $callback returns element unique id
  *
  * @psalm-return list<TV>
  */
-function unique(iterable $collection, ?callable $callback = null): array
+function unique(iterable $collection, callable $callback): array
 {
-    if (is_null($callback)) {
-        $callback = fn(object|int|float|bool|string $element): string => match (true) {
-            is_object($element) => spl_object_hash($element),
-            default => (string) $element,
-        };
-    }
-
     $hashTable = [];
     $aggregation = [];
 
     foreach ($collection as $element) {
-        $elementHash = call_user_func($callback, $element);
+        $elementHash = $callback($element);
         $isPresent = isset($hashTable[$elementHash]);
 
         if (!$isPresent) {
