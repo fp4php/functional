@@ -6,39 +6,31 @@ namespace Doc;
 
 use Fp\Collections\ArrayList;
 use Fp\Collections\Seq;
-use Fp\Functional\Option\Option;
 use Symfony\Component\Process\Process;
-
-use function Fp\Collection\map;
 
 class DocLinker
 {
+    private function after(string $needle, string $haystack): string
+    {
+        return substr($haystack, (int) strpos($haystack, $needle) + strlen($needle)) ?: '';
+    }
+
     /**
      * @param string $path
      * @return Seq<AbstractMdHeader>
      */
     private function parseHeaders(string $path): Seq
     {
-        $parser = new MdParser([]);
-        $lines = file($path);
-        $headers = map($lines, function (string $line) {
-            $uLine = trim($line);
-            $after = fn(string $prefix): string => substr($uLine, (int) strpos($uLine, $prefix) + strlen($prefix));
-
-            return Option::fromNullable(match (true) {
-                str_contains($uLine, MdHeader4::prefix()) => MdHeader4::fromTitle($after(MdHeader4::prefix())),
-                str_contains($uLine, MdHeader3::prefix()) => MdHeader3::fromTitle($after(MdHeader3::prefix())),
-                str_contains($uLine, MdHeader2::prefix()) => MdHeader2::fromTitle($after(MdHeader2::prefix())),
-                str_contains($uLine, MdHeader1::prefix()) => MdHeader1::fromTitle($after(MdHeader1::prefix())),
+        return ArrayList::collect(file($path))
+            ->map(fn(string $line) => trim($line))
+            ->map(fn(string $line) => match (true) {
+                str_contains($line, MdHeader4::prefix()) => MdHeader4::fromTitle($this->after(MdHeader4::prefix(), $line)),
+                str_contains($line, MdHeader3::prefix()) => MdHeader3::fromTitle($this->after(MdHeader3::prefix(), $line)),
+                str_contains($line, MdHeader2::prefix()) => MdHeader2::fromTitle($this->after(MdHeader2::prefix(), $line)),
+                str_contains($line, MdHeader1::prefix()) => MdHeader1::fromTitle($this->after(MdHeader1::prefix(), $line)),
                 default => null,
-            });
-        });
-
-        foreach ($headers as $header) {
-            $parser = $parser->combineOne($header);
-        }
-
-        return ArrayList::collect($parser->getHeaders());
+            })
+            ->filterNotNull();
     }
 
     public function link(string $pattern): void
@@ -53,29 +45,29 @@ class DocLinker
             Process::fromShellCommandline($commandLine)->run();
             $contents = file_get_contents($to);
 
-            $refMap = $this
+            $refs = $this
                 ->parseHeaders($to)
-                ->map(function(AbstractMdHeader $header) {
-                    $headerTitle = $header->title;
-                    $headerRef = str_replace(' ', '-', $headerTitle);
-
-                    return match ($header::class) {
-                        MdHeader1::class => "- [$headerTitle](#$headerRef)" . PHP_EOL,
-                        MdHeader4::class => "  - [$headerTitle](#$headerRef)" . PHP_EOL,
-                        default => '',
-                    };
+                ->map(fn(AbstractMdHeader $header) => match ($header::class) {
+                    MdHeader1::class => sprintf("- [%s](#%s)\n", ...[
+                        $header->title,
+                        str_replace(' ', '-', $header->title)
+                    ]),
+                    MdHeader4::class => sprintf("  - [%s](#%s)\n", ...[
+                        $header->title,
+                        str_replace(' ', '-', $header->title)
+                    ]),
+                    default => '',
                 })
                 ->fold('', fn (string $acc, string $h) => $acc . $h);
 
             file_put_contents($to, implode(PHP_EOL, [
                 '# ' . basename($dir),
                 '**Contents**',
-                $refMap,
+                $refs,
                 $contents
             ]));
         }
 
         echo 'doc has been built' . PHP_EOL;
     }
-
 }
