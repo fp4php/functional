@@ -42,7 +42,7 @@ function proveBool(mixed $subject): Option
  */
 function proveTrue(mixed $subject): Option
 {
-    return Option::fromNullable(is_bool($subject) && true === $subject ? $subject : null);
+    return Option::fromNullable(true === $subject ? $subject : null);
 }
 
 /**
@@ -62,5 +62,5 @@ function proveTrue(mixed $subject): Option
  */
 function proveFalse(mixed $subject): Option
 {
-    return Option::fromNullable(is_bool($subject) && false === $subject ? $subject : null);
+    return Option::fromNullable(false === $subject ? $subject : null);
 }

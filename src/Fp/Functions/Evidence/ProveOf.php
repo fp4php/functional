@@ -28,10 +28,8 @@ use function Fp\of;
  */
 function proveOf(mixed $subject, string $fqcn, bool $invariant = false): Option
 {
-    /** @var Option<TVO> $option */
-    $option = of($subject, $fqcn, $invariant)
+    /** @var Option<TVO> */
+    return of($subject, $fqcn, $invariant)
         ? Option::some($subject)
         : Option::none();
-
-    return $option;
 }

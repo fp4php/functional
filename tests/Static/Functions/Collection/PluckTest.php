@@ -14,9 +14,17 @@ final class PluckTest extends PhpBlockTestCase
             use Tests\Mock\Foo;
             use function Fp\Collection\pluck;
             
-            $result = pluck([new Foo(1), new Foo(2)], "a");
+            /** @psalm-trace $res1 */
+            $res1 = pluck([new Foo(1), new Foo(2)], "a");
+            
+            /** @psalm-trace $res2 */
+            $res2 = pluck([["a" => 1], ["a" => 2]], "a");
         ';
 
-        $this->assertBlockTypes($phpBlock, 'array<array-key, int>');
+        $this->assertBlockTypes(
+            $phpBlock,
+            'array<0|1, int>',
+            'array<0|1, 1|2>',
+        );
     }
 }

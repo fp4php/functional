@@ -8,6 +8,7 @@ use Error;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Psalm;
+use Fp\Psalm\PsalmTypeParam;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -44,12 +45,12 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
      */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
-        throw new Error("asd");
         return Option::do(function () use ($event) {
-            $union = yield self::getTypes($event);
+            $arg_union = yield Psalm::getFirstArgUnion($event);
+            $target_union = yield self::getTypes($event);
             return new Union([new TArray([
-                Type::getArrayKey(),
-                $union,
+                PsalmTypeParam::getUnionKeyTypeParam($arg_union)->getOrElse(Type::getArrayKey()),
+                $target_union,
             ])]);
         })->get();
     }
@@ -90,7 +91,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
         return Option::do(function () use ($event) {
             $key = yield self::getKey($event);
             $collection_union = yield Psalm::getFirstArgUnion($event);
-            $collection_value_type_param = yield Psalm::getUnionValueTypeParam($collection_union);
+            $collection_value_type_param = yield PsalmTypeParam::getUnionValueTypeParam($collection_union);
             $collection_value_atomic = yield Psalm::getUnionSingeAtomic($collection_value_type_param);
             yield proveTrue($collection_value_atomic instanceof TKeyedArray);
             return yield at($collection_value_atomic->properties, $key);
@@ -104,7 +105,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     {
         return Option::do(function () use ($event) {
             $union = yield Psalm::getFirstArgUnion($event);
-            $type_param_union = yield Psalm::getUnionValueTypeParam($union);
+            $type_param_union = yield PsalmTypeParam::getUnionValueTypeParam($union);
             $type_param_atomic = yield Psalm::getUnionSingeAtomic($type_param_union);
             yield proveTrue($type_param_atomic instanceof TNamedObject);
 

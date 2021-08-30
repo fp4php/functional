@@ -94,43 +94,4 @@ class Psalm
             ));
         });
     }
-
-    /**
-     * @psalm-return Option<Union>
-     */
-    public static function getUnionValueTypeParam(Union $union): Option
-    {
-        return Option::do(function () use ($union) {
-            $atomic = yield Psalm::getUnionSingeAtomic($union);
-            $someAtomic = Option::some($atomic);
-
-            $filterTArray = $someAtomic
-                ->filter(fn(Atomic $a) => $a instanceof TArray)
-                ->map(fn(TArray $a) => $a->type_params[1]);
-
-            $filterTList = $someAtomic
-                ->filter(fn(Atomic $a) => $a instanceof TList)
-                ->map(fn(TList $a) => $a->type_param);
-
-            $filterTKeyedArray = $someAtomic
-                ->filter(fn(Atomic $a) => $a instanceof TKeyedArray)
-                ->map(fn(TKeyedArray $a) => $a->getGenericValueType());
-
-            $filterTGenericObject = $someAtomic
-                ->filter(fn(Atomic $a) => $a instanceof TGenericObject)
-                ->flatMap(fn(TGenericObject $a) => Option::fromNullable(match (true) {
-                    is_a($a->value, Seq::class, true) => $a->type_params[0],
-                    is_a($a->value, Set::class, true) => $a->type_params[0],
-                    is_a($a->value, Map::class, true) => $a->type_params[1],
-                    is_a($a->value, NonEmptySeq::class, true) => $a->type_params[0],
-                    is_a($a->value, NonEmptySet::class, true) => $a->type_params[0],
-                    default => null
-                }));
-
-            return yield $filterTArray
-                ->orElse(fn() => $filterTList)
-                ->orElse(fn() => $filterTKeyedArray)
-                ->orElse(fn() => $filterTGenericObject);
-        });
-    }
 }
