@@ -12,6 +12,8 @@ namespace Fp\Collection;
  * >>> any([1, 2, 3], fn(int $value) => $value === 2);
  * => true
  *
+ * @deprecated use {@see exists()}
+ *
  * @psalm-template TK of array-key
  * @psalm-template TV
  *
@@ -32,6 +34,8 @@ function any(iterable $collection, callable $predicate): bool
  * REPL:
  * >>> anyOf([new Foo(), 2, 3], Foo::class);
  * => true
+ *
+ * @deprecated use {@see existsOf()}
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
