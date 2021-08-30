@@ -6,12 +6,12 @@
    * Inferred type is Option<Foo> 
    */ 
   $maybeFooMaybeNot = Option::do(function() use ($untrusted) {
-      $notNull           = yield Option::fromNullable($untrusted);
-      $array             = yield proveTrue(is_array($notNull)); // Inferred type is array<array-key, mixed> 
-      $list              = yield proveList($notNull); // Inferred type is list<mixed>
-      $nonEmptyList      = yield proveNonEmptyList($notNull); // Inferred type is non-empty-list<mixed>
+      $notNull = yield Option::fromNullable($untrusted);
+      yield proveTrue(is_array($notNull)); // Inferred type is array<array-key, mixed> 
+      $list = yield proveList($notNull); // Inferred type is list<mixed>
+      $nonEmptyList = yield proveNonEmptyList($list); // Inferred type is non-empty-list<mixed>
       $nonEmptyListOfFoo = yield proveNonEmptyListOf($nonEmptyList, Foo::class); // Inferred type is non-empty-list<Foo>
-      $firstFoo          = $nonEmptyListOfFoo[0]; // Inferred type is Foo
+      $firstFoo = $nonEmptyListOfFoo[0]; // Inferred type is Foo
   
       return $firstFoo; // I'm sure it's Foo object
   });
