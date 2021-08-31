@@ -39,9 +39,12 @@ function proveString(mixed $potential): Option
  *
  * @psalm-return Option<class-string>
  */
-function proveClassString(string $potential): Option
+function proveClassString(mixed $potential): Option
 {
-    return Option::fromNullable(class_exists($potential) ? $potential : null);
+    return Option::do(function () use ($potential) {
+        $fqcn = yield proveString($potential);
+        return yield Option::fromNullable(class_exists($fqcn) ? $fqcn : null);
+    });
 }
 
 /**
@@ -75,9 +78,12 @@ function proveNonEmptyString(mixed $subject): Option
  *
  * @psalm-return Option<callable-string>
  */
-function proveCallableString(string $subject): Option
+function proveCallableString(mixed $subject): Option
 {
-    return Option::fromNullable(is_callable($subject) ? $subject : null);
+    return Option::do(function () use ($subject) {
+        $string = yield proveString($subject);
+        return yield Option::fromNullable(is_callable($string) ? $string : null);
+    });
 }
 
 
