@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hooks;
 
-use Error;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Psalm;
