@@ -29,7 +29,7 @@ $ vendor/bin/psalm-plugin enable Fp\\Psalm\\FunctionalPlugin
 
 ## Examples
 
-- Type assertions with Option monad
+- Type assertions with Option monad via [PHP generators](https://www.php.net/manual/en/language.generators.syntax.php) based [do-notation](https://en.wikibooks.org/wiki/Haskell/do_notation) implementation
 ```php
 /**
  * Inferred type is Option<Foo> 
