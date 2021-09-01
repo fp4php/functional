@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use ArrayIterator;
 use Error;
+use Fp\Functional\Option\Option;
 use Generator;
 use Iterator;
 
@@ -66,6 +67,21 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     public static function collectNonEmpty(iterable $source): self
     {
         return self::collectUnsafe($source);
+    }
+
+    /**
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return Option<self<TVI>>
+     */
+    public static function collectOption(iterable $source): Option
+    {
+        try {
+            return Option::some(self::collect($source));
+        } catch (EmptyCollectionException) {
+            return Option::none();
+        }
     }
 
     /**
