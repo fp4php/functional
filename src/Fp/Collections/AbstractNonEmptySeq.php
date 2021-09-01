@@ -42,6 +42,14 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     abstract public static function collectNonEmpty(iterable $source): self;
 
     /**
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return Option<self<TVI>>
+     */
+    abstract public static function collectOption(iterable $source): Option;
+
+    /**
      * @inheritDoc
      * @return Iterator<int, TV>
      */

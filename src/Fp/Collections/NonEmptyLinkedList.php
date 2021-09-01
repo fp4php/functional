@@ -73,6 +73,21 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
     }
 
     /**
+     * @psalm-pure
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return Option<self<TVI>>
+     */
+    public static function collectOption(iterable $source): Option
+    {
+        try {
+            return Option::some(self::collect($source));
+        } catch (EmptyCollectionException) {
+            return Option::none();
+        }
+    }
+
+    /**
      * @inheritDoc
      * @return Iterator<int, TV>
      */
