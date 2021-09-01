@@ -44,6 +44,16 @@ final class NonEmptyLinkedListTest extends TestCase
         );
     }
 
+    public function testCollectOption(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyLinkedList::collectOption([1, 2, 3])->getUnsafe()->toArray(),
+        );
+
+        $this->assertNull(NonEmptyLinkedList::collectOption([])->get());
+    }
+
     public function testCasts(): void
     {
         $this->assertEquals(

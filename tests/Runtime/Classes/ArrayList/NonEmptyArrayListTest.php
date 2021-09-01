@@ -44,6 +44,16 @@ final class NonEmptyArrayListTest extends TestCase
         );
     }
 
+    public function testCollectOption(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyArrayList::collectOption([1, 2, 3])->getUnsafe()->toArray(),
+        );
+
+        $this->assertNull(NonEmptyArrayList::collectOption([])->get());
+    }
+
     public function testCasts(): void
     {
         $this->assertEquals(

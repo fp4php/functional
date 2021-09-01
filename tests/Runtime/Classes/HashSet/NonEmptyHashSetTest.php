@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\HashSet;
 
 use Fp\Collections\EmptyCollectionException;
+use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,16 @@ final class NonEmptyHashSetTest extends TestCase
             [1, 2, 3],
             NonEmptyHashSet::collectNonEmpty([1, 2, 3])->toArray(),
         );
+    }
+
+    public function testCollectOption(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyHashSet::collectOption([1, 2, 3])->getUnsafe()->toArray(),
+        );
+
+        $this->assertNull(NonEmptyHashSet::collectOption([])->get());
     }
 
     public function testCasts(): void
