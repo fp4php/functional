@@ -46,6 +46,15 @@ class Psalm
     }
 
     /**
+     * @psalm-return Option<Atomic>
+     */
+    public static function getArgSingleAtomic(Arg $arg, StatementsSource $source): Option
+    {
+        return self::getArgUnion($arg, $source)
+            ->flatMap(fn(Union $union) => self::getUnionSingeAtomic($union));
+    }
+
+    /**
      * @psalm-return Option<FunctionLike>
      */
     public static function getArgFunctionLike(Arg $predicate_arg): Option
@@ -80,6 +89,14 @@ class Psalm
                 $event instanceof FunctionReturnTypeProviderEvent => $event->getStatementsSource(),
             });
         });
+    }
+
+    /**
+     * @psalm-return Option<Atomic>
+     */
+    public static function getFirstArgSingleAtomic(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $event): Option
+    {
+        return self::getFirstArgUnion($event)->flatMap(fn(Union $union) => self::getUnionSingeAtomic($union));
     }
 
     /**

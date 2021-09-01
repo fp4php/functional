@@ -53,7 +53,7 @@ final class PartitionTest extends PhpBlockTestCase
 
         $this->assertBlockTypes(
             $phpBlock,
-            'array{list<Foo>, list<Bar|Foo>}'
+            'array{0:list<Foo>, 1:list<Bar|Foo>}'
         );
     }
 
@@ -76,7 +76,7 @@ final class PartitionTest extends PhpBlockTestCase
 
         $this->assertBlockTypes(
             $phpBlock,
-            'array{list<Foo>, list<Bar>, list<Foo>, list<Bar|Foo>}'
+            'array{0:list<Foo>, 1:list<Bar>, 2:list<Foo>, 3:list<Bar|Foo>}'
         );
     }
 
@@ -106,7 +106,7 @@ final class PartitionTest extends PhpBlockTestCase
 
         $this->assertBlockTypes(
             $phpBlock,
-            'array{list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Foo>, list<Bar>, list<Bar|Foo>}'
+            'array{0:list<Foo>, 1:list<Bar>, 2:list<Foo>, 3:list<Bar>, 4:list<Foo>, 5:list<Bar>, 6:list<Foo>, 7:list<Bar>, 8:list<Foo>, 9:list<Bar>, 10:list<Bar|Foo>}'
         );
     }
 }

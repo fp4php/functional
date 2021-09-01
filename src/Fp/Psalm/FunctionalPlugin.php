@@ -11,6 +11,7 @@ use Fp\Psalm\Hooks\OptionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hooks\OptionAssertionAnalysis;
 use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\PartitionFunctionReturnTypeProvider;
+use Fp\Psalm\Hooks\PartitionOfFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\PluckFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\ProveTrueExpressionAnalyser;
 use Fp\Psalm\Hooks\ValidatedAssertionAnalysis;
@@ -33,6 +34,7 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(FilterFunctionReturnTypeProvider::class);
         $register(PartialFunctionReturnTypeProvider::class);
         $register(PartitionFunctionReturnTypeProvider::class);
+        $register(PartitionOfFunctionReturnTypeProvider::class);
         $register(PluckFunctionReturnTypeProvider::class);
         $register(CollectionFilterMethodReturnTypeProvider::class);
         $register(OptionFilterMethodReturnTypeProvider::class);

@@ -69,7 +69,11 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
                 );
             })
             ->flatMap(fn(array $partitions) => asNonEmptyArray($partitions))
-            ->map(fn(array $non_empty_partitions) => new Union([new TKeyedArray($non_empty_partitions)]))
+            ->map(function (array $non_empty_partitions) {
+                $tuple = new TKeyedArray($non_empty_partitions);
+                $tuple->is_list = true;
+                return new Union([$tuple]);
+            })
             ->get();
     }
 }
