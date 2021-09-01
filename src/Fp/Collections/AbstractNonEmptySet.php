@@ -116,19 +116,13 @@ abstract class AbstractNonEmptySet implements NonEmptySet
      * @inheritDoc
      * @return HashSet<TV>
      */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
+    abstract public function toHashSet(): HashSet;
 
     /**
      * @inheritDoc
      * @return NonEmptyHashSet<TV>
      */
-    public function toNonEmptyHashSet(): NonEmptyHashSet
-    {
-        return NonEmptyHashSet::collectUnsafe($this);
-    }
+    abstract public function toNonEmptyHashSet(): NonEmptyHashSet;
 
     /**
      * @inheritDoc

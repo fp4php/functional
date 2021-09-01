@@ -85,10 +85,7 @@ abstract class AbstractSet implements Set
      * @inheritDoc
      * @return HashSet<TV>
      */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
+    abstract public function toHashSet(): HashSet;
 
     /**
      * @inheritDoc

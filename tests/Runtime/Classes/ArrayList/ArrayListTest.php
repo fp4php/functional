@@ -31,6 +31,11 @@ final class ArrayListTest extends TestCase
 
         $this->assertEquals(
             [1, 2, 3],
+            ArrayList::collect([1, 2, 3])->toArrayList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
             ArrayList::collect([1, 2, 3])->toHashSet()->toArray(),
         );
     }

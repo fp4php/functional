@@ -61,6 +61,11 @@ final class HashSetTest extends TestCase
 
         $this->assertEquals(
             [1, 2, 3],
+            HashSet::collect([1, 2, 3, 3])->toArrayList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
             HashSet::collect([1, 2, 3, 3])->toHashSet()->toArray(),
         );
     }

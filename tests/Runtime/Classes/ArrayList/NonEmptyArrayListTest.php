@@ -63,6 +63,16 @@ final class NonEmptyArrayListTest extends TestCase
 
         $this->assertEquals(
             [1, 2, 3],
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toArrayList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toNonEmptyArrayList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
             NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toHashSet()->toArray(),
         );
 

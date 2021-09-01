@@ -34,6 +34,11 @@ final class LinkedListTest extends TestCase
 
         $this->assertEquals(
             [1, 2, 3],
+            LinkedList::collect([1, 2, 3])->toArrayList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [1, 2, 3],
             LinkedList::collect([1, 2, 3])->toHashSet()->toArray(),
         );
     }
