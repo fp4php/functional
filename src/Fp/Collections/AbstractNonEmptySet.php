@@ -87,11 +87,29 @@ abstract class AbstractNonEmptySet implements NonEmptySet
 
     /**
      * @inheritDoc
+     * @return ArrayList<TV>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return ArrayList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
      * @return NonEmptyLinkedList<TV>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
     {
         return NonEmptyLinkedList::collectUnsafe($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyArrayList<TV>
+     */
+    public function toNonEmptyArrayList(): NonEmptyArrayList
+    {
+        return NonEmptyArrayList::collectUnsafe($this);
     }
 
     /**

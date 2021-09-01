@@ -92,53 +92,19 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
 
     /**
      * @inheritDoc
-     * @return non-empty-list<TV>
+     * @return ArrayList<TV>
      */
-    public function toArray(): array
+    public function toArrayList(): ArrayList
     {
-        $buffer = [$this->head()];
-
-        foreach ($this->tail() as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
+        return $this->arrayList;
     }
 
     /**
-     * @inheritDoc
-     * @return LinkedList<TV>
+     * @return NonEmptyArrayList<TV>
      */
-    public function toLinkedList(): LinkedList
+    public function toNonEmptyArrayList(): NonEmptyArrayList
     {
-        return LinkedList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return NonEmptyLinkedList<TV>
-     */
-    public function toNonEmptyLinkedList(): NonEmptyLinkedList
-    {
-        return new NonEmptyLinkedList($this->head(), LinkedList::collect($this->tail()));
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return NonEmptyHashSet<TV>
-     */
-    public function toNonEmptyHashSet(): NonEmptyHashSet
-    {
-        return NonEmptyHashSet::collectUnsafe($this);
+        return $this;
     }
 
     /**

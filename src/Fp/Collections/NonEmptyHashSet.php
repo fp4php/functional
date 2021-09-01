@@ -79,6 +79,24 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
 
     /**
      * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return $this->set;
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyHashSet<TV>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-param TV $element
      */
     public function contains(mixed $element): bool

@@ -91,21 +91,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
 
     /**
      * @inheritDoc
-     * @return non-empty-list<TV>
-     */
-    public function toArray(): array
-    {
-        $buffer = [$this->head];
-
-        foreach ($this->tail as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @inheritDoc
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -119,25 +104,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
     {
-        return new self($this->head, $this->tail);
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return NonEmptyHashSet<TV>
-     */
-    public function toNonEmptyHashSet(): NonEmptyHashSet
-    {
-        return NonEmptyHashSet::collectUnsafe($this);
+        return $this;
     }
 
     /**

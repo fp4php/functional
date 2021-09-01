@@ -74,6 +74,15 @@ abstract class AbstractSeq implements Seq
 
     /**
      * @inheritDoc
+     * @return ArrayList<TV>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return ArrayList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet

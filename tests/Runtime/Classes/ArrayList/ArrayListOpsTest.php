@@ -241,22 +241,22 @@ final class ArrayListOpsTest extends TestCase
 
     public function testGroupBy(): void
     {
-        $foos = [
+        $fooList = [
             $f1 = new Foo(1), $f2 = new Foo(2),
             $f3 = new Foo(1), $f4 = new Foo(3)
         ];
 
-        $res1 = ArrayList::collect($foos)
+        $res1 = ArrayList::collect($fooList)
             ->groupBy(fn(Foo $foo) => $foo)
             ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
-        $res2 = ArrayList::collect($foos)
+        $res2 = ArrayList::collect($fooList)
             ->groupBy(fn(Foo $foo) => $foo->a)
             ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
-        $res3 = ArrayList::collect($foos)
+        $res3 = ArrayList::collect($fooList)
             ->map(fn(Foo $foo) => $foo->a)
             ->groupBy(fn(int $a) => $a)
             ->map(fn($entry) => $entry->value->toArray())

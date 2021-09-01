@@ -236,22 +236,22 @@ final class LinkedListOpsTest extends TestCase
 
     public function testGroupBy(): void
     {
-        $foos = [
+        $fooList = [
             $f1 = new Foo(1), $f2 = new Foo(2),
             $f3 = new Foo(1), $f4 = new Foo(3)
         ];
 
-        $res1 = LinkedList::collect($foos)
+        $res1 = LinkedList::collect($fooList)
             ->groupBy(fn(Foo $foo) => $foo)
             ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
-        $res2 = LinkedList::collect($foos)
+        $res2 = LinkedList::collect($fooList)
             ->groupBy(fn(Foo $foo) => $foo->a)
             ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
-        $res3 = LinkedList::collect($foos)
+        $res3 = LinkedList::collect($fooList)
             ->map(fn(Foo $foo) => $foo->a)
             ->groupBy(fn(int $a) => $a)
             ->map(fn($entry) => $entry->value->toArray())

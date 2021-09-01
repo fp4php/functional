@@ -49,6 +49,15 @@ final class HashSet extends AbstractSet
 
     /**
      * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-param TV $element
      */
     public function contains(mixed $element): bool

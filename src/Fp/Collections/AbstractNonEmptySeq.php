@@ -48,6 +48,74 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     abstract public function getIterator(): Iterator;
 
     /**
+     * @inheritDoc
+     * @return non-empty-list<TV>
+     */
+    public function toArray(): array
+    {
+        $buffer = [$this->head()];
+
+        foreach ($this->tail() as $elem) {
+            $buffer[] = $elem;
+        }
+
+        return $buffer;
+    }
+
+    /**
+     * @inheritDoc
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return ArrayList<TV>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return ArrayList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectUnsafe($this);
+    }
+
+    /**
+     * @return NonEmptyArrayList<TV>
+     */
+    public function toNonEmptyArrayList(): NonEmptyArrayList
+    {
+        return NonEmptyArrayList::collectUnsafe($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyHashSet<TV>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet
+    {
+        return NonEmptyHashSet::collectUnsafe($this);
+    }
+
+    /**
      * Alias for {@see NonEmptySeq::at()}
      *
      * @psalm-return Option<TV>

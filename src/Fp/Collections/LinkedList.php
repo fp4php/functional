@@ -48,6 +48,15 @@ abstract class LinkedList extends AbstractLinearSeq
 
     /**
      * @inheritDoc
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      * @template TVI
      * @psalm-param TVI $elem
      * @psalm-return self<TV|TVI>

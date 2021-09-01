@@ -21,6 +21,11 @@ interface SeqCasts
     public function toLinkedList(): LinkedList;
 
     /**
+     * @return ArrayList<TV>
+     */
+    public function toArrayList(): ArrayList;
+
+    /**
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet;
