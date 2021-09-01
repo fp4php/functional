@@ -319,6 +319,22 @@ interface NonEmptySeqOps
     public function unique(callable $callback): NonEmptySeq;
 
     /**
+     * Group elements
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collect([1, 1, 3])
+     * >>>     ->groupBy(fn($e) => $e)
+     * >>>     ->map(fn(Seq $e) => $e->toArray())
+     * >>>     ->toArray();
+     * => [[1, [1, 1]], [3, [3]]]
+     *
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return Map<TKO, NonEmptySeq<TV>>
+     */
+    public function groupBy(callable $callback): Map;
+
+    /**
      * Sort collection
      *
      * REPL:

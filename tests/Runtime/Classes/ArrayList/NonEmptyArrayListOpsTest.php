@@ -203,4 +203,32 @@ final class NonEmptyArrayListOpsTest extends TestCase
             NonEmptyArrayList::collectNonEmpty([$foo1, $foo1, $foo2])->unique(fn(Foo $e) => $e->a)->toArray()
         );
     }
+
+    public function testGroupBy(): void
+    {
+        $fooList = [
+            $f1 = new Foo(1), $f2 = new Foo(2),
+            $f3 = new Foo(1), $f4 = new Foo(3)
+        ];
+
+        $res1 = NonEmptyArrayList::collectNonEmpty($fooList)
+            ->groupBy(fn(Foo $foo) => $foo)
+            ->map(fn($entry) => $entry->value->toArray())
+            ->toArray();
+
+        $res2 = NonEmptyArrayList::collectNonEmpty($fooList)
+            ->groupBy(fn(Foo $foo) => $foo->a)
+            ->map(fn($entry) => $entry->value->toArray())
+            ->toArray();
+
+        $res3 = NonEmptyArrayList::collectNonEmpty($fooList)
+            ->map(fn(Foo $foo) => $foo->a)
+            ->groupBy(fn(int $a) => $a)
+            ->map(fn($entry) => $entry->value->toArray())
+            ->toArray();
+
+        $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);
+        $this->assertEquals([[1, [$f1, $f3]], [2, [$f2]], [3, [$f4]]], $res2);
+        $this->assertEquals([[1, [1, 1]], [2, [2]], [3, [3]]], $res3);
+    }
 }

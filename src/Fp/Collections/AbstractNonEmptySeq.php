@@ -227,4 +227,29 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     {
         return $this->last(fn() => true)->getUnsafe();
     }
+
+    /**
+     * @inheritDoc
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return Map<TKO, NonEmptySeq<TV>>
+     */
+    public function groupBy(callable $callback): Map
+    {
+        $buffer = new HashMapBuffer();
+
+        foreach ($this as $elem) {
+            $key = $callback($elem);
+
+            /** @psalm-var Option<NonEmptySeq<TV>> $optionalGroup */
+            $optionalGroup = $buffer->get($key);
+
+            $buffer->update($key, $optionalGroup->fold(
+                fn(NonEmptySeq $group): NonEmptySeq => $group->prepended($elem),
+                fn(): NonEmptySeq => new NonEmptyLinkedList($elem, Nil::getInstance())
+            ));
+        }
+
+        return $buffer->toHashMap();
+    }
 }
