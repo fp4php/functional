@@ -164,6 +164,7 @@ class PsalmTypeParam
                 is_a($a->value, Map::class, true) => $a->type_params[1],
                 is_a($a->value, NonEmptySeq::class, true) => $a->type_params[0],
                 is_a($a->value, NonEmptySet::class, true) => $a->type_params[0],
+                is_a($a->value, Option::class, true) => $a->type_params[0],
                 default => null
             }));
     }

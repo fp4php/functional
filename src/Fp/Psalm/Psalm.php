@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
-use Fp\Collections\Collection;
-use Fp\Collections\Map;
+use Fp\Collections\ArrayList;
+use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
-use Fp\Collections\Seq;
-use Fp\Collections\Set;
 use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -18,12 +17,11 @@ use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
 use Psalm\Type\Atomic;
-use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
-use Psalm\Type\Atomic\TGenericObject;
-use Psalm\Type\Atomic\TKeyedArray;
-use Psalm\Type\Atomic\TList;
+use Psalm\Type\Atomic\TLiteralFloat;
+use Psalm\Type\Atomic\TLiteralInt;
+use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Union;
 
 use function Fp\Cast\asList;
@@ -110,5 +108,41 @@ class Psalm
                 $union->getCallableTypes()
             ));
         });
+    }
+
+    /**
+     * @psalm-return Option<NonEmptySet<int|float|string>>
+     */
+    public static function getUnionLiteralValues(Union $union): Option
+    {
+        $literalValues = ArrayList::collect($union->getLiteralStrings())
+            ->appendedAll($union->getLiteralFloats())
+            ->appendedAll($union->getLiteralInts())
+            ->map(fn(TLiteralString|TLiteralFloat|TLiteralInt $literal) => $literal->value);
+
+        return NonEmptyHashSet::collectOption($literalValues);
+    }
+
+    /**
+     * @psalm-return Option<int|float|string>
+     */
+    public static function getUnionSingleLiteralValue(Union $union): Option
+    {
+        $someUnion = Option::some($union);
+
+        return $someUnion
+            ->filter(fn(Union $union) => $union->isSingleStringLiteral())
+            ->orElse(function () use ($someUnion) {
+                return $someUnion->filter(
+                    fn(Union $union) => $union->isSingleFloatLiteral()
+                );
+            })
+            ->orElse(function () use ($someUnion) {
+                return $someUnion->filter(
+                    fn(Union $union) => $union->isSingleIntLiteral()
+                );
+            })
+            ->flatMap(fn(Union $type) => self::getUnionLiteralValues($type))
+            ->map(fn(NonEmptySet $literals) => $literals->head());
     }
 }
