@@ -107,17 +107,18 @@ abstract class AbstractMap implements Map
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV, TK): bool $predicate
+     * @psalm-param callable(Entry<TK, TV>): bool $predicate
      */
     public function every(callable $predicate): bool
     {
         $result = true;
 
-        foreach ($this as [$key, $value]) {
-            if (!$predicate($value, $key)) {
+        foreach ($this->generateEntries() as $entry) {
+            if (!$predicate($entry)) {
                 $result = false;
                 break;
             }
+            unset($entry);
         }
 
         return $result;

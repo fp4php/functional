@@ -31,9 +31,9 @@ final class HashMapOpsTest extends TestCase
     {
         $hm = HashMap::collectIterable(['a' => 0, 'b' => 1]);
 
-        $this->assertTrue($hm->every(fn($i) => $i >= 0));
-        $this->assertFalse($hm->every(fn($i) => $i > 0));
-        $this->assertTrue($hm->every(fn($i, $k) => in_array($k, ['a', 'b'])));
+        $this->assertTrue($hm->every(fn($entry) => $entry->value >= 0));
+        $this->assertFalse($hm->every(fn($entry) => $entry->value > 0));
+        $this->assertTrue($hm->every(fn($entry) => in_array($entry->key, ['a', 'b'])));
     }
 
     public function testFilter(): void

@@ -74,12 +74,12 @@ interface MapOps
      * false otherwise
      *
      * REPL:
-     * >>> HashMap::collect([['a', 1], ['b', 2]])->every(fn($elem) => $elem > 0)
+     * >>> HashMap::collect([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 0)
      * => true
-     * >>> HashMap::collect([['a', 1], ['b', 2]])->every(fn($elem) => $elem > 1)
+     * >>> HashMap::collect([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 1)
      * => false
      *
-     * @psalm-param callable(TV, TK): bool $predicate
+     * @psalm-param callable(Entry<TK, TV>): bool $predicate
      */
     public function every(callable $predicate): bool;
 
