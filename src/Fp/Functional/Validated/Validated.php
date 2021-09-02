@@ -24,10 +24,10 @@ abstract class Validated
      *
      * @psalm-param EE $value
      *
-     * @psalm-return Invalid<EE>
+     * @psalm-return Validated<EE, empty>
      * @psalm-pure
      */
-    public static function invalid(mixed $value): Invalid
+    public static function invalid(mixed $value): Validated
     {
         return new Invalid($value);
     }
@@ -37,10 +37,10 @@ abstract class Validated
      *
      * @psalm-param AA $value
      *
-     * @psalm-return Valid<AA>
+     * @psalm-return Validated<empty, AA>
      * @psalm-pure
      */
-    public static function valid(mixed $value): Valid
+    public static function valid(mixed $value): Validated
     {
         return new Valid($value);
     }
