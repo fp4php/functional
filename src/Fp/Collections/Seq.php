@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Iterator;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -13,5 +15,9 @@ namespace Fp\Collections;
  */
 interface Seq extends Collection, SeqOps, SeqCasts
 {
-
+    /**
+     * @inheritDoc
+     * @return Iterator<TV>
+     */
+    public function getIterator(): Iterator;
 }

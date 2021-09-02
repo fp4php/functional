@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Iterator;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -13,5 +15,9 @@ namespace Fp\Collections;
  */
 interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps, NonEmptySeqCasts
 {
-
+    /**
+     * @inheritDoc
+     * @return Iterator<TV>
+     */
+    public function getIterator(): Iterator;
 }
