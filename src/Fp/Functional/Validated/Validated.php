@@ -35,7 +35,7 @@ abstract class Validated
     /**
      * @psalm-template AA
      *
-     * @psalm-param Semigroup<AA> $semi
+     * @psalm-param AA $value
      *
      * @psalm-return Valid<AA>
      * @psalm-pure
