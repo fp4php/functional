@@ -78,7 +78,6 @@
             "src/Fp/Functions/Evidence/ProveOf.php",
             "src/Fp/Functions/Evidence/ProveString.php",
             "src/Fp/Functions/Json/JsonDecode.php",
-            "src/Fp/Functions/Reflection/GetNamedTypes.php",
             "src/Fp/Functions/Reflection/GetReflectionClass.php",
             "src/Fp/Functions/Reflection/GetReflectionProperty.php",
             "src/Fp/Functions/String/RegExpMatch.php",

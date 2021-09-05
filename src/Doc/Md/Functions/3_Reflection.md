@@ -1,15 +1,5 @@
 # Reflection
 
-- #### getNamedTypes
-  Returns property types by property reflection
-
-  ```php
-  $fooProp = new ReflectionProperty(Foo::class, 'a');
-  
-  /** @var list<ReflectionNamedType> $result */
-  $result = getNamedTypes($fooProp); 
-  ```
-
 - #### getReflectionClass
   Returns class reflection or Left on exception
 

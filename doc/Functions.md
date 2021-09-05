@@ -34,7 +34,6 @@
   - [tail](#tail)
   - [zip](#zip)
 - [Reflection](#Reflection)
-  - [getNamedTypes](#getNamedTypes)
   - [getReflectionClass](#getReflectionClass)
   - [getReflectionProperty](#getReflectionProperty)
 - [Json](#Json)
@@ -411,17 +410,6 @@
     ```
 
 # Reflection
-
--   #### getNamedTypes
-
-    Returns property types by property reflection
-
-    ``` php
-    $fooProp = new ReflectionProperty(Foo::class, 'a');
-
-    /** @var list<ReflectionNamedType> $result */
-    $result = getNamedTypes($fooProp); 
-    ```
 
 -   #### getReflectionClass
 

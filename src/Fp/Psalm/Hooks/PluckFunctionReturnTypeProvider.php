@@ -19,12 +19,15 @@ use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 use ReflectionNamedType;
 
+use ReflectionProperty;
+
+use ReflectionUnionType;
+
 use function Fp\Collection\firstOf;
 use function Fp\Collection\at;
 use function Fp\Collection\second;
 use function Fp\Evidence\proveClassString;
 use function Fp\Evidence\proveTrue;
-use function Fp\Reflection\getNamedTypes;
 use function Fp\Reflection\getReflectionProperty;
 
 class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
@@ -72,7 +75,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
             $fqcn = yield self::getClassName($event);
             $key = yield self::getKey($event);
             $property_reflection = yield getReflectionProperty($fqcn, $key)->toOption();
-            $named_types = getNamedTypes($property_reflection);
+            $named_types = self::getNamedTypes($property_reflection);
 
             $type_string = yield ArrayList::collect($named_types)
                 ->map(fn(ReflectionNamedType $nt) => $nt->getName())
@@ -121,5 +124,28 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
             ->flatMap(fn(Arg $arg): Option => Psalm::getArgUnion($arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $key) => firstOf($key->getAtomicTypes(), TLiteralString::class))
             ->map(fn(TLiteralString $literal) => $literal->value);
+    }
+
+    /**
+     * Returns property types by property reflection
+     *
+     * REPL:
+     * >>> $fooProp = new ReflectionProperty(Foo::class, 'a');
+     * >>> getNamedTypes($fooProp);
+     * => list<ReflectionNamedType>
+     *
+     * @param ReflectionProperty $property
+     *
+     * @return list<ReflectionNamedType>
+     */
+    private static function getNamedTypes(ReflectionProperty $property): array
+    {
+        $type = $property->getType();
+
+        return match (true) {
+            ($type instanceof ReflectionNamedType) => [$type],
+            ($type instanceof ReflectionUnionType) => $type->getTypes(),
+            default => [],
+        };
     }
 }
