@@ -18,4 +18,6 @@
     NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyIndexedSeq<TV> -> NonEmptyArrayList<TV>
     
     NonEmptyCollection<TV> -> NonEmptySet<TV> -> NonEmptyHashSet<TV>
+    
+    NonEmptyCollection<TV> -> NonEmptyMap<TK, TV> -> NonEmptyHashMap<TK, TV>
     ```

@@ -7,8 +7,6 @@ Collection of unique elements.
 Object comparison by default uses ```spl_object_hash``` function. If you want to override default comparison behaviour then you need to implement HashContract interface for your classes which objects will be used as elements in HashSet.
 
 ```php
-use Fp\Collections\HashSet;
-
 class Foo implements HashContract
 {
     public function __construct(public int $a, public bool $b = true)

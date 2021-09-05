@@ -9,6 +9,7 @@
 - [HashSet](#HashSet)
 - [NonEmptyArrayList](#NonEmptyArrayList)
 - [NonEmptyLinkedList](#NonEmptyLinkedList)
+- [NonEmptyHashMap](#NonEmptyHashMap)
 - [NonEmptyHashSet](#NonEmptyHashSet)
 
 # Hierarchy
@@ -31,6 +32,8 @@
 
         NonEmptyCollection<TV> -> NonEmptySet<TV> -> NonEmptyHashSet<TV>
 
+        NonEmptyCollection<TV> -> NonEmptyMap<TK, TV> -> NonEmptyHashMap<TK, TV>
+
 # ArrayList
 
 `IndexedSeq<TV>` interface implementation.
@@ -39,9 +42,6 @@ Collection with O(1) `Seq::at()` and `IndexedSeq::__invoke()`
 operations.
 
 ``` php
-use Tests\Mock\Foo;
-use Fp\Collections\ArrayList;
-
 $collection = ArrayList::collect([
     new Foo(1), new Foo(2) 
     new Foo(3), new Foo(4),
@@ -61,9 +61,6 @@ $collection
 Collection with O(1) prepend operation.
 
 ``` php
-use Tests\Mock\Foo;
-use Fp\Collections\LinkedList;
-
 $collection = LinkedList::collect([
     new Foo(1), new Foo(2) 
     new Foo(3), new Foo(4),
@@ -88,8 +85,6 @@ implement HashContract interface for your classes which objects will be
 used as keys in HashMap.
 
 ``` php
-use Fp\Collections\HashMap;
-
 class Foo implements HashContract
 {
     public function __construct(public int $a, public bool $b = true)
@@ -117,7 +112,7 @@ $collection = HashMap::collect([
 $collection(new Foo(2))->getOrElse(0); // 2
 
 $collection
-    ->map(fn($elem) => $elem + 1)
+    ->map(fn(Entry $entry) => $entry->value + 1)
     ->filter(fn(Entry $entry) => $entry->value > 2)
     ->reindex(fn(Entry $entry) => $entry->key->a)
     ->fold(0, fn(int $acc, Entry $entry) => $acc + $entry->value); // 3+4+5=12 
@@ -135,8 +130,6 @@ HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
 ``` php
-use Fp\Collections\HashSet;
-
 class Foo implements HashContract
 {
     public function __construct(public int $a, public bool $b = true)
@@ -179,9 +172,6 @@ Collection with O(1) `NonEmptySeq::at()` and
 `NonEmptyIndexedSeq::__invoke()` operations.
 
 ``` php
-use Tests\Mock\Foo;
-use Fp\Collections\NonEmptyArrayList;
-
 $collection = NonEmptyArrayList::collect([
     new Foo(1), new Foo(2) 
     new Foo(3), new Foo(4),
@@ -199,9 +189,6 @@ $collection
 Collection with O(1) prepend operation.
 
 ``` php
-use Tests\Mock\Foo;
-use Fp\Collections\NonEmptyLinkedList;
-
 $collection = NonEmptyLinkedList::collect([
     new Foo(1), new Foo(2) 
     new Foo(3), new Foo(4),
@@ -210,6 +197,50 @@ $collection = NonEmptyLinkedList::collect([
 $collection
     ->map(fn(Foo $elem) => $elem->a)
     ->reduce(fn($acc, $elem) => $acc + $elem); // 10
+```
+
+# NonEmptyHashMap
+
+`NonEmptyMap<TK, TV>` interface implementation.
+
+Key-value storage. It's possible to store objects as keys.
+
+Object keys comparison by default uses `spl_object_hash` function. If
+you want to override default comparison behaviour then you need to
+implement HashContract interface for your classes which objects will be
+used as keys in HashMap.
+
+``` php
+class Foo implements HashContract
+{
+    public function __construct(public int $a, public bool $b = true)
+    {
+    }
+
+    public function equals(mixed $rhs): bool
+    {
+        return $rhs instanceof self
+            && $this->a === $rhs->a
+            && $this->b === $rhs->b;
+    }
+
+    public function hashCode(): string
+    {
+        return md5(implode(',', [$this->a, $this->b]));
+    }
+}
+
+$collection = NonEmptyHashMap::collectNonEmpty([
+    [new Foo(1), 1], [new Foo(2), 2],
+    [new Foo(3), 3], [new Foo(4), 4]
+]);
+
+$collection(new Foo(2))->getOrElse(0); // 2
+
+$collection
+    ->map(fn(Entry $entry) => $entry->value + 1)
+    ->reindex(fn(Entry $entry) => $entry->key->a)
+    ->toArray(); // [[1, 2], [2, 3], [3, 4], [4, 5]]
 ```
 
 # NonEmptyHashSet
@@ -224,8 +255,6 @@ HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
 ``` php
-use Fp\Collections\NonEmptyHashSet;
-
 class Foo implements HashContract
 {
     public function __construct(public int $a, public bool $b = true)

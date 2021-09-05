@@ -1,6 +1,6 @@
-# HashMap
+# NonEmptyHashMap
 
-```Map<TK, TV>``` interface implementation.
+```NonEmptyMap<TK, TV>``` interface implementation.
 
 Key-value storage.
 It's possible to store objects as keys.
@@ -27,7 +27,7 @@ class Foo implements HashContract
     }
 }
 
-$collection = HashMap::collect([
+$collection = NonEmptyHashMap::collectNonEmpty([
     [new Foo(1), 1], [new Foo(2), 2],
     [new Foo(3), 3], [new Foo(4), 4]
 ]);
@@ -36,8 +36,7 @@ $collection(new Foo(2))->getOrElse(0); // 2
 
 $collection
     ->map(fn(Entry $entry) => $entry->value + 1)
-    ->filter(fn(Entry $entry) => $entry->value > 2)
     ->reindex(fn(Entry $entry) => $entry->key->a)
-    ->fold(0, fn(int $acc, Entry $entry) => $acc + $entry->value); // 3+4+5=12 
+    ->toArray(); // [[1, 2], [2, 3], [3, 4], [4, 5]]
 ```
 

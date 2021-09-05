@@ -6,9 +6,6 @@ Collection with O(1) ```NonEmptySeq::at()``` and ```NonEmptyIndexedSeq::__invoke
 
 
 ```php
-use Tests\Mock\Foo;
-use Fp\Collections\NonEmptyArrayList;
-
 $collection = NonEmptyArrayList::collect([
     new Foo(1), new Foo(2) 
     new Foo(3), new Foo(4),

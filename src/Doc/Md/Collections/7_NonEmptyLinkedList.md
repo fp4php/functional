@@ -5,9 +5,6 @@
 Collection with O(1) prepend operation.
 
 ```php
-use Tests\Mock\Foo;
-use Fp\Collections\NonEmptyLinkedList;
-
 $collection = NonEmptyLinkedList::collect([
     new Foo(1), new Foo(2) 
     new Foo(3), new Foo(4),
