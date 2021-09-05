@@ -19,6 +19,9 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 
+use function Fp\of;
+use function Fp\classOf;
+
 /**
  * Psalm helper methods
  *
@@ -107,8 +110,8 @@ class PsalmTypeParam
         return Option::some($atomic)
             ->filter(fn(Atomic $a) => $a instanceof TGenericObject)
             ->flatMap(fn(TGenericObject $a) => Option::fromNullable(match (true) {
-                is_a($a->value, Map::class, true) => $a->type_params[1],
-                is_a($a->value, NonEmptyMap::class, true) => $a->type_params[1],
+                classOf($a->value, Map::class) => $a->type_params[1],
+                classOf($a->value, NonEmptyMap::class) => $a->type_params[1],
                 default => null
             }));
     }
@@ -161,13 +164,13 @@ class PsalmTypeParam
         return Option::some($atomic)
             ->filter(fn(Atomic $a) => $a instanceof TGenericObject)
             ->flatMap(fn(TGenericObject $a) => Option::fromNullable(match (true) {
-                is_a($a->value, Seq::class, true) => $a->type_params[0],
-                is_a($a->value, Set::class, true) => $a->type_params[0],
-                is_a($a->value, Map::class, true) => $a->type_params[1],
-                is_a($a->value, NonEmptyMap::class, true) => $a->type_params[1],
-                is_a($a->value, NonEmptySeq::class, true) => $a->type_params[0],
-                is_a($a->value, NonEmptySet::class, true) => $a->type_params[0],
-                is_a($a->value, Option::class, true) => $a->type_params[0],
+                classOf($a->value, Seq::class) => $a->type_params[0],
+                classOf($a->value, Set::class) => $a->type_params[0],
+                classOf($a->value, Map::class) => $a->type_params[1],
+                classOf($a->value, NonEmptyMap::class) => $a->type_params[1],
+                classOf($a->value, NonEmptySeq::class) => $a->type_params[0],
+                classOf($a->value, NonEmptySet::class) => $a->type_params[0],
+                classOf($a->value, Option::class) => $a->type_params[0],
                 default => null
             }));
     }

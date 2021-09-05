@@ -41,10 +41,7 @@ function proveString(mixed $potential): Option
  */
 function proveClassString(mixed $potential): Option
 {
-    return Option::do(function () use ($potential) {
-        $fqcn = yield proveString($potential);
-        return yield Option::fromNullable(class_exists($fqcn) ? $fqcn : null);
-    });
+    return proveString($potential)->filter(fn($fqcn) => class_exists($fqcn) || interface_exists($fqcn));
 }
 
 /**
@@ -80,10 +77,7 @@ function proveNonEmptyString(mixed $subject): Option
  */
 function proveCallableString(mixed $subject): Option
 {
-    return Option::do(function () use ($subject) {
-        $string = yield proveString($subject);
-        return yield Option::fromNullable(is_callable($string) ? $string : null);
-    });
+    return proveString($subject)->filter(fn($string) => is_callable($string));
 }
 
 

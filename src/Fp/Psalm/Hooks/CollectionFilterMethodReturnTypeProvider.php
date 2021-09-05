@@ -39,6 +39,7 @@ use Psalm\Type\Union;
 use function Fp\Collection\first;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
+use function Fp\classOf;
 
 final class CollectionFilterMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
@@ -140,7 +141,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     {
         $class_name = str_replace('NonEmpty', '', $event->getFqClasslikeName());
 
-        $template_params = is_a($class_name, Map::class, true) || is_a($class_name, NonEmptyMap::class, true)
+        $template_params = classOf($class_name, Map::class) || classOf($class_name, NonEmptyMap::class)
             ? [$result->collection_key_type, $result->collection_value_type]
             : [$result->collection_value_type];
 

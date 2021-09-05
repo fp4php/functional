@@ -20,6 +20,8 @@ use Psalm\Type\Atomic\TIterable;
 use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 
+use function Fp\classOf;
+
 /**
  * @psalm-type CollectionTypeParameters = array{Union, Union}
  */
@@ -79,7 +81,7 @@ final class CollectionTypeExtractor
     {
         return Option::some($atomic)
             ->filter(fn($a) => $a instanceof TGenericObject)
-            ->filter(fn($a) => is_a($a->value, Seq::class, true) || is_a($a->value, NonEmptySeq::class, true))
+            ->filter(fn($a) => classOf($a->value, Seq::class) || classOf($a->value, NonEmptySeq::class))
             ->filter(fn($a) => 1 === count($a->type_params))
             ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[1]));
     }
@@ -91,7 +93,7 @@ final class CollectionTypeExtractor
     {
         return Option::some($atomic)
             ->filter(fn($a) => $a instanceof TGenericObject)
-            ->filter(fn($a) => is_a($a->value, Set::class, true) || is_a($a->value, NonEmptySet::class, true))
+            ->filter(fn($a) => classOf($a->value, Set::class) || classOf($a->value, NonEmptySet::class))
             ->filter(fn($a) => 1 === count($a->type_params))
             ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[1]));
     }
@@ -103,7 +105,7 @@ final class CollectionTypeExtractor
     {
         return Option::some($atomic)
             ->filter(fn($a) => $a instanceof TGenericObject)
-            ->filter(fn($a) => is_a($a->value, Map::class, true) || is_a($a->value, NonEmptyMap::class, true))
+            ->filter(fn($a) => classOf($a->value, Map::class) || classOf($a->value, NonEmptyMap::class))
             ->filter(fn($a) => 2 === count($a->type_params))
             ->map(fn($a) => new CollectionTypeParams($a->type_params[0], $a->type_params[1]));
     }

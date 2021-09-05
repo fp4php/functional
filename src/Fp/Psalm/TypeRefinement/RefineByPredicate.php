@@ -18,6 +18,7 @@ use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Type\Reconciler;
 use Psalm\Type\Union;
 
+use function Fp\classOf;
 use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
 use function Fp\Collection\second;
@@ -106,8 +107,8 @@ final class RefineByPredicate
      */
     private static function getPredicateKeyArgumentName(RefinementContext $context): Option
     {
-        $refine_for_map = is_a($context->refine_for, Map::class, true)
-            || is_a($context->refine_for, NonEmptyMap::class, true);
+        $refine_for_map = classOf($context->refine_for, Map::class)
+            || classOf($context->refine_for, NonEmptyMap::class);
 
         $key_arg = $refine_for_map
             ? first($context->predicate->getParams())
@@ -131,7 +132,7 @@ final class RefineByPredicate
         return first($context->predicate->getParams())
             ->flatMap(fn($value_param) => proveOf($value_param->var, Node\Expr\Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
-            ->map(fn($name) => is_a($context->refine_for, Map::class, true) || is_a($context->refine_for, NonEmptyMap::class, true)
+            ->map(fn($name) => classOf($context->refine_for, Map::class) || classOf($context->refine_for, NonEmptyMap::class)
                 ? ('$' . $name . '->value')
                 : ('$' . $name));
     }
