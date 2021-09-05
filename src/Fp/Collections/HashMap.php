@@ -140,6 +140,29 @@ final class HashMap extends AbstractMap
     }
 
     /**
+     * @inheritDoc
+     * @template TVO
+     * @param callable(Entry<TK, TV>): Option<TVO> $callback
+     * @return self<TK, TVO>
+     */
+    public function filterMap(callable $callback): self
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this->generateEntries() as $entry) {
+                $result = $callback($entry);
+
+                if ($result->isSome()) {
+                    yield [$entry->key, $result->get()];
+                }
+
+                unset($entry);
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
      * @experimental
      * @psalm-template TKO
      * @psalm-template TVO

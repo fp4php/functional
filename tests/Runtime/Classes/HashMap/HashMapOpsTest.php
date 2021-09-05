@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\HashMap;
 
 use Fp\Collections\HashMap;
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Foo;
 
@@ -40,6 +41,16 @@ final class HashMapOpsTest extends TestCase
     {
         $hm = HashMap::collectIterable(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]);
         $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toArray());
+    }
+
+    public function testFilterMap(): void
+    {
+        $this->assertEquals(
+            [['b', 1], ['c', 2]],
+            HashMap::collect([['a', 'zero'], ['b', '1'], ['c', '2']])
+                ->filterMap(fn($e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
+                ->toArray()
+        );
     }
 
     public function testFlatMap(): void

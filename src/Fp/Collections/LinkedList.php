@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Generator;
 use Iterator;
+use Fp\Functional\Option\Option;
 
 use function Fp\of;
 
@@ -138,6 +139,27 @@ abstract class LinkedList extends AbstractLinearSeq
             foreach ($this as $element) {
                 if ($predicate($element)) {
                     yield $element;
+                }
+            }
+        };
+
+        return self::collect($source());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param callable(TV): Option<TVO> $callback
+     * @psalm-return self<TVO>
+     */
+    public function filterMap(callable $callback): self
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this as $element) {
+                $result = $callback($element);
+
+                if ($result->isSome()) {
+                    yield $result->get();
                 }
             }
         };

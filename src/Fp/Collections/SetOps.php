@@ -147,6 +147,24 @@ interface SetOps
     public function filterNotNull(): Set;
 
     /**
+     * A combined {@see Set::map} and {@see Set::filter}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * REPL:
+     * >>> HashSet::collect(['zero', '1', '2'])
+     * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
+     * >>>     ->toArray()
+     * => [1, 2]
+     *
+     * @psalm-template TVO
+     * @psalm-param callable(TV): Option<TVO> $callback
+     * @psalm-return Set<TVO>
+     */
+    public function filterMap(callable $callback): Set;
+
+    /**
      * Find first element which satisfies the condition
      *
      * REPL:

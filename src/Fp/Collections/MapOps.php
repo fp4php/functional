@@ -96,6 +96,24 @@ interface MapOps
     public function filter(callable $predicate): Map;
 
     /**
+     * A combined {@see MapOps::map} and {@see MapOps::filter}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * REPL:
+     * >>> HashMap::collect([['a', 'zero'], ['b', '1'], ['c', '2']])
+     * >>>     ->filterMap(fn(Entry $e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
+     * >>>     ->toArray()
+     * => [['b', 1], ['c', 2]]
+     *
+     * @psalm-template TVO
+     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
+     * @psalm-return Map<TK, TVO>
+     */
+    public function filterMap(callable $callback): Map;
+
+    /**
      * Map collection and flatten the result
      *
      * REPL:
