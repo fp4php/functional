@@ -108,6 +108,16 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
 
     /**
      * @inheritDoc
+     * @return non-empty-list<TV>
+     */
+    public function toArray(): array
+    {
+        /** @var non-empty-list<TV> */
+        return $this->arrayList->elements;
+    }
+
+    /**
+     * @inheritDoc
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList

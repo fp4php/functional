@@ -57,6 +57,15 @@ final class ArrayList extends AbstractIndexedSeq
 
     /**
      * @inheritDoc
+     * @return list<TV>
+     */
+    public function toArray(): array
+    {
+        return $this->elements;
+    }
+
+    /**
+     * @inheritDoc
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList
