@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm;
 
 use Fp\Collections\Map;
+use Fp\Collections\NonEmptyMap;
 use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
@@ -107,6 +108,7 @@ class PsalmTypeParam
             ->filter(fn(Atomic $a) => $a instanceof TGenericObject)
             ->flatMap(fn(TGenericObject $a) => Option::fromNullable(match (true) {
                 is_a($a->value, Map::class, true) => $a->type_params[1],
+                is_a($a->value, NonEmptyMap::class, true) => $a->type_params[1],
                 default => null
             }));
     }
@@ -162,6 +164,7 @@ class PsalmTypeParam
                 is_a($a->value, Seq::class, true) => $a->type_params[0],
                 is_a($a->value, Set::class, true) => $a->type_params[0],
                 is_a($a->value, Map::class, true) => $a->type_params[1],
+                is_a($a->value, NonEmptyMap::class, true) => $a->type_params[1],
                 is_a($a->value, NonEmptySeq::class, true) => $a->type_params[0],
                 is_a($a->value, NonEmptySet::class, true) => $a->type_params[0],
                 is_a($a->value, Option::class, true) => $a->type_params[0],

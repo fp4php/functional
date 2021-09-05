@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Fp\Psalm\TypeRefinement;
 
 use Fp\Collections\Map;
+use Fp\Collections\NonEmptyMap;
+use Fp\Collections\NonEmptySeq;
+use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Functional\Option\Option;
@@ -76,7 +79,7 @@ final class CollectionTypeExtractor
     {
         return Option::some($atomic)
             ->filter(fn($a) => $a instanceof TGenericObject)
-            ->filter(fn($a) => is_a($a->value, Seq::class, true))
+            ->filter(fn($a) => is_a($a->value, Seq::class, true) || is_a($a->value, NonEmptySeq::class, true))
             ->filter(fn($a) => 1 === count($a->type_params))
             ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[1]));
     }
@@ -88,7 +91,7 @@ final class CollectionTypeExtractor
     {
         return Option::some($atomic)
             ->filter(fn($a) => $a instanceof TGenericObject)
-            ->filter(fn($a) => is_a($a->value, Set::class, true))
+            ->filter(fn($a) => is_a($a->value, Set::class, true) || is_a($a->value, NonEmptySet::class, true))
             ->filter(fn($a) => 1 === count($a->type_params))
             ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[1]));
     }
@@ -100,7 +103,7 @@ final class CollectionTypeExtractor
     {
         return Option::some($atomic)
             ->filter(fn($a) => $a instanceof TGenericObject)
-            ->filter(fn($a) => is_a($a->value, Map::class, true))
+            ->filter(fn($a) => is_a($a->value, Map::class, true) || is_a($a->value, NonEmptyMap::class, true))
             ->filter(fn($a) => 2 === count($a->type_params))
             ->map(fn($a) => new CollectionTypeParams($a->type_params[0], $a->type_params[1]));
     }

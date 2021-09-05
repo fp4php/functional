@@ -6,6 +6,8 @@ namespace Fp\Psalm\Hooks;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\Map;
+use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyMap;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use Fp\Psalm\Psalm;
@@ -28,7 +30,12 @@ final class MapGetMethodReturnTypeProvider implements MethodReturnTypeProviderIn
 
     public static function getClassLikeNames(): array
     {
-        return [Map::class, HashMap::class];
+        return [
+            Map::class,
+            HashMap::class,
+            NonEmptyMap::class,
+            NonEmptyHashMap::class,
+        ];
     }
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union

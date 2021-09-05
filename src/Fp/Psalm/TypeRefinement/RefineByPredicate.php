@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\TypeRefinement;
 
 use Fp\Collections\Map;
+use Fp\Collections\NonEmptyMap;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
@@ -105,7 +106,8 @@ final class RefineByPredicate
      */
     private static function getPredicateKeyArgumentName(RefinementContext $context): Option
     {
-        $refine_for_map = is_a($context->refine_for, Map::class, true);
+        $refine_for_map = is_a($context->refine_for, Map::class, true)
+            || is_a($context->refine_for, NonEmptyMap::class, true);
 
         $key_arg = $refine_for_map
             ? first($context->predicate->getParams())
@@ -129,7 +131,7 @@ final class RefineByPredicate
         return first($context->predicate->getParams())
             ->flatMap(fn($value_param) => proveOf($value_param->var, Node\Expr\Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
-            ->map(fn($name) => is_a($context->refine_for, Map::class, true)
+            ->map(fn($name) => is_a($context->refine_for, Map::class, true) || is_a($context->refine_for, NonEmptyMap::class, true)
                 ? ('$' . $name . '->value')
                 : ('$' . $name));
     }

@@ -10,8 +10,10 @@ use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
 use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\NonEmptyMap;
 use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
@@ -52,6 +54,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     {
         return [
             HashMap::class,
+            NonEmptyHashMap::class,
             LinkedList::class,
             NonEmptyLinkedList::class,
             ArrayList::class,
@@ -63,6 +66,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
             Set::class,
             NonEmptySet::class,
             Map::class,
+            NonEmptyMap::class,
         ];
     }
 
@@ -136,7 +140,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     {
         $class_name = str_replace('NonEmpty', '', $event->getFqClasslikeName());
 
-        $template_params = is_a($class_name, Map::class, true)
+        $template_params = is_a($class_name, Map::class, true) || is_a($class_name, NonEmptyMap::class, true)
             ? [$result->collection_key_type, $result->collection_value_type]
             : [$result->collection_value_type];
 
