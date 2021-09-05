@@ -38,6 +38,11 @@ final class ArrayListTest extends TestCase
             [1, 2, 3],
             ArrayList::collect([1, 2, 3])->toHashSet()->toArray(),
         );
+
+        $this->assertEquals(
+            [[1, 1], [2, 2], [3, 3]],
+            ArrayList::collect([1, 2, 3])->toHashMap(fn($e) => [$e, $e])->toArray(),
+        );
     }
 
     public function testCount(): void

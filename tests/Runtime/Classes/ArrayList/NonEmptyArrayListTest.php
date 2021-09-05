@@ -90,6 +90,16 @@ final class NonEmptyArrayListTest extends TestCase
             [1, 2, 3],
             NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toNonEmptyHashSet()->toArray(),
         );
+
+        $this->assertEquals(
+            [[1, 1], [2, 2], [3, 3]],
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toHashMap(fn($e) => [$e, $e])->toArray(),
+        );
+
+        $this->assertEquals(
+            [[1, 1], [2, 2], [3, 3]],
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toNonEmptyHashMap(fn($e) => [$e, $e])->toArray(),
+        );
     }
 
     public function testCount(): void

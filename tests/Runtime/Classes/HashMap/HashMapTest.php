@@ -38,7 +38,17 @@ final class HashMapTest extends TestCase
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
+            HashMap::collect([['a', 1], ['b', 2]])->toArrayList()->toArray(),
+        );
+
+        $this->assertEquals(
+            [['a', 1], ['b', 2]],
             HashMap::collect([['a', 1], ['b', 2]])->toHashSet()->toArray(),
+        );
+
+        $this->assertEquals(
+            [['a', 1], ['b', 2]],
+            HashMap::collect([['a', 1], ['b', 2]])->toHashMap()->toArray(),
         );
     }
 
