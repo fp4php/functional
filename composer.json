@@ -67,7 +67,6 @@
             "src/Fp/Functions/Collection/Reverse.php",
             "src/Fp/Functions/Collection/Second.php",
             "src/Fp/Functions/Collection/Shift.php",
-            "src/Fp/Functions/Collection/Any.php",
             "src/Fp/Functions/Collection/Tail.php",
             "src/Fp/Functions/Collection/Unique.php",
             "src/Fp/Functions/Collection/Zip.php",
