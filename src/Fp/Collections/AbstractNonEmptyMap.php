@@ -58,6 +58,19 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
 
     /**
      * REPL:
+     * >>> NonEmptyHashMap::collectOption([['a', 1], ['b', 2]])->get()
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     *
+     * @psalm-pure
+     * @template TKI
+     * @template TVI
+     * @param iterable<array{TKI, TVI}> $source
+     * @return Option<self<TKI, TVI>>
+     */
+    abstract public static function collectOption(iterable $source): Option;
+
+    /**
+     * REPL:
      * >>> NonEmptyHashMap::collectIterable(['a' => 1, 'b' => 2])
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
      *

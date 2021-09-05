@@ -44,4 +44,20 @@ interface NonEmptySetCasts
      * @return NonEmptyHashSet<TV>
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet;
+
+    /**
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return HashMap<TKI, TVI>
+     */
+    public function toHashMap(callable $callback): HashMap;
+
+    /**
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return NonEmptyHashMap<TKI, TVI>
+     */
+    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap;
 }

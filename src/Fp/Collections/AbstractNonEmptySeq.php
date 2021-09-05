@@ -143,6 +143,24 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return NonEmptyHashMap<TKI, TVI>
+     */
+    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this as $elem) {
+                yield $callback($elem);
+            }
+        };
+
+        return NonEmptyHashMap::collectUnsafe($source());
+    }
+
+    /**
      * Alias for {@see NonEmptySeq::at()}
      *
      * @psalm-return Option<TV>

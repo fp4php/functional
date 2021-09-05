@@ -21,7 +21,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @internal
      * @param HashMap<TK, TV> $hashMap
      */
-    public function __construct(private HashMap $hashMap)
+    private function __construct(private HashMap $hashMap)
     {
     }
 
@@ -79,6 +79,23 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
     public static function collectNonEmpty(iterable $source): self
     {
         return self::collectUnsafe($source);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-pure
+     * @template TKI
+     * @template TVI
+     * @param iterable<array{TKI, TVI}> $source
+     * @return Option<self<TKI, TVI>>
+     */
+    public static function collectOption(iterable $source): Option
+    {
+        try {
+            return Option::some(self::collect($source));
+        } catch (EmptyCollectionException) {
+            return Option::none();
+        }
     }
 
     /**

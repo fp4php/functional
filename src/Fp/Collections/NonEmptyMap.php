@@ -10,11 +10,11 @@ use Iterator;
  * @template TK
  * @template-covariant TV
  * @psalm-immutable
- * @extends Collection<array{TK, TV}>
+ * @extends NonEmptyCollection<array{TK, TV}>
  * @extends NonEmptyMapOps<TK, TV>
  * @extends NonEmptyMapCasts<TK, TV>
  */
-interface NonEmptyMap extends Collection, NonEmptyMapOps, NonEmptyMapCasts
+interface NonEmptyMap extends NonEmptyCollection, NonEmptyMapOps, NonEmptyMapCasts
 {
     /**
      * @inheritDoc
