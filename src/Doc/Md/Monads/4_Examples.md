@@ -1,6 +1,7 @@
 # Examples
 
 - #### Type assertions with Option
+Type assertions with Option monad via [PHP generators](https://www.php.net/manual/en/language.generators.syntax.php) based [do-notation](https://en.wikibooks.org/wiki/Haskell/do_notation) implementation
   ```php
   /**
    * Inferred type is Option<Foo> 
@@ -23,6 +24,7 @@
   ```
 
 - #### Filter chaining
+Build complex filters with small Option-based blocks
   ```php
   /**
    * @return Option<Union>
@@ -90,11 +92,11 @@
       return Option::some($atomic)
           ->filter(fn(Atomic $a) => $a instanceof TGenericObject)
           ->flatMap(fn(TGenericObject $a) => Option::fromNullable(match (true) {
-              is_a($a->value, Seq::class, true) => $a->type_params[0],
-              is_a($a->value, Set::class, true) => $a->type_params[0],
-              is_a($a->value, Map::class, true) => $a->type_params[1],
-              is_a($a->value, NonEmptySeq::class, true) => $a->type_params[0],
-              is_a($a->value, NonEmptySet::class, true) => $a->type_params[0],
+              classOf($a->value, Seq::class) => $a->type_params[0],
+              classOf($a->value, Set::class) => $a->type_params[0],
+              classOf($a->value, Map::class) => $a->type_params[1],
+              classOf($a->value, NonEmptySeq::class) => $a->type_params[0],
+              classOf($a->value, NonEmptySet::class) => $a->type_params[0],
               default => null
           }));
   }
