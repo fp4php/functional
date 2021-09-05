@@ -176,6 +176,27 @@ final class ArrayList extends AbstractIndexedSeq
 
     /**
      * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param callable(TV): Option<TVO> $callback
+     * @psalm-return self<TVO>
+     */
+    public function filterMap(callable $callback): self
+    {
+        $buffer = [];
+
+        foreach ($this->elements as $element) {
+            $result = $callback($element);
+
+            if ($result->isSome()) {
+                $buffer[] = $result->get();
+            }
+        }
+
+        return new self($buffer);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return self<TV>
      */
     public function filterNotNull(): self

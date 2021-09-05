@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\HashSet;
 
 use Fp\Collections\NonEmptyHashSet;
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -70,6 +71,16 @@ final class NonEmptyHashSetOpsTest extends TestCase
         $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toArray());
         $this->assertEquals([1], NonEmptyHashSet::collectNonEmpty([1, null])->filterNotNull()->toArray());
 
+    }
+
+    public function testFilterMap(): void
+    {
+        $this->assertEquals(
+            [1, 2],
+            NonEmptyHashSet::collectNonEmpty(['zero', '1', '2'])
+                ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
+                ->toArray()
+        );
     }
 
     public function testFirstsAndLasts(): void

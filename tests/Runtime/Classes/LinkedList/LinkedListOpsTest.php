@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\LinkedList;
 
 use Fp\Collections\LinkedList;
+use Fp\Collections\NonEmptyLinkedList;
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -78,6 +80,16 @@ final class LinkedListOpsTest extends TestCase
     {
         $linkedList = LinkedList::collect([new Foo(1), 1, new Foo(1)]);
         $this->assertEquals([1], $linkedList->filter(fn($i) => $i === 1)->toArray());
+    }
+
+    public function testFilterMap(): void
+    {
+        $this->assertEquals(
+            [1, 2],
+            NonEmptyLinkedList::collectNonEmpty(['zero', '1', '2'])
+                ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
+                ->toArray()
+        );
     }
 
     public function testFilterNotNull(): void

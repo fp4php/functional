@@ -136,6 +136,25 @@ interface NonEmptySetOps
     public function filter(callable $predicate): Set;
 
     /**
+     * A combined {@see NonEmptySet::map} and {@see NonEmptySet::filter}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     * Also, NonEmpty* prefix will be lost.
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collectNonEmpty(['zero', '1', '2'])
+     * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
+     * >>>     ->toArray()
+     * => [1, 2]
+     *
+     * @psalm-template TVO
+     * @psalm-param callable(TV): Option<TVO> $callback
+     * @psalm-return Set<TVO>
+     */
+    public function filterMap(callable $callback): Set;
+
+    /**
      * Exclude null elements
      *
      * REPL:

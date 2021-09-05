@@ -198,6 +198,17 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
 
     /**
      * @inheritDoc
+     * @template TVO
+     * @param callable(TV): Option<TVO> $callback
+     * @return LinkedList<TVO>
+     */
+    public function filterMap(callable $callback): LinkedList
+    {
+        return $this->toLinkedList()->filterMap($callback);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return LinkedList<TV>
      */
     public function filterNotNull(): LinkedList

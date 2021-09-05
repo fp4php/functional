@@ -218,6 +218,17 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
 
     /**
      * @inheritDoc
+     * @template TVO
+     * @param callable(TV): Option<TVO> $callback
+     * @return ArrayList<TVO>
+     */
+    public function filterMap(callable $callback): ArrayList
+    {
+        return $this->arrayList->filterMap($callback);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return ArrayList<TV>
      */
     public function filterNotNull(): ArrayList

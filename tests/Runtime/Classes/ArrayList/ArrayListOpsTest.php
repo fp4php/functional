@@ -6,6 +6,7 @@ namespace Tests\Runtime\Classes\ArrayList;
 
 use Fp\Collections\ArrayList;
 use Fp\Collections\Seq;
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -83,6 +84,16 @@ final class ArrayListOpsTest extends TestCase
     {
         $linkedList = ArrayList::collect([new Foo(1), 1, new Foo(1)]);
         $this->assertEquals([1], $linkedList->filter(fn($i) => $i === 1)->toArray());
+    }
+
+    public function testFilterMap(): void
+    {
+        $this->assertEquals(
+            [1, 2],
+            ArrayList::collect(['zero', '1', '2'])
+                ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
+                ->toArray()
+        );
     }
 
     public function testFilterNotNull(): void

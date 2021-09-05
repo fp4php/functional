@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\HashMap;
 
 use Fp\Collections\NonEmptyHashMap;
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Foo;
 
@@ -42,6 +43,15 @@ final class NonEmptyHashMapOpsTest extends TestCase
         $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toArray());
     }
 
+    public function testFilterMap(): void
+    {
+        $this->assertEquals(
+            [['b', 1], ['c', 2]],
+            NonEmptyHashMap::collectNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
+                ->filterMap(fn($e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
+                ->toArray()
+        );
+    }
 
     public function testMap(): void
     {

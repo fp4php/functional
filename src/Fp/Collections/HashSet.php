@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Option\Option;
 use Generator;
 
 /**
@@ -129,6 +130,27 @@ final class HashSet extends AbstractSet
     public function filterNotNull(): self
     {
         return $this->filter(fn($elem) => null !== $elem);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param callable(TV): Option<TVO> $callback
+     * @psalm-return self<TVO>
+     */
+    public function filterMap(callable $callback): self
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this as $element) {
+                $result = $callback($element);
+
+                if ($result->isSome()) {
+                    yield $result->get();
+                }
+            }
+        };
+
+        return self::collect($source());
     }
 
     /**

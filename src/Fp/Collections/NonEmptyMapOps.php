@@ -96,6 +96,25 @@ interface NonEmptyMapOps
     public function filter(callable $predicate): Map;
 
     /**
+     * A combined {@see NonEmptyHashMap::map} and {@see NonEmptyHashMap::filter}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     * Also, NonEmpty* prefix will be lost.
+     *
+     * REPL:
+     * >>> NonEmptyHashMap::collectNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
+     * >>>     ->filterMap(fn(Entry $e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
+     * >>>     ->toArray()
+     * => [['b', 1], ['c', 2]]
+     *
+     * @psalm-template TVO
+     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
+     * @psalm-return Map<TK, TVO>
+     */
+    public function filterMap(callable $callback): Map;
+
+    /**
      * Produces a new collection of elements by mapping each element in collection
      * through a transformation function (callback)
      *
