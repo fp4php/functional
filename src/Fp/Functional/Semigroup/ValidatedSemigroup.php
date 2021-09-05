@@ -29,7 +29,6 @@ class ValidatedSemigroup extends Semigroup
     }
 
     /**
-     *
      * @psalm-param Validated<E, A> $lhs
      * @psalm-param Validated<E, A> $rhs
      *

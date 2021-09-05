@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\Semigroup;
 
+use Fp\Functional\Monoid\ListMonoid;
+use Fp\Functional\Monoid\Monoid;
+use Fp\Functional\Semigroup\LhsSemigroup;
 use Fp\Functional\Semigroup\NonEmptyArraySemigroup;
+use Fp\Functional\Semigroup\NonEmptyListSemigroup;
+use Fp\Functional\Semigroup\RhsSemigroup;
 use Fp\Functional\Semigroup\Semigroup;
+use Fp\Functional\Semigroup\ValidatedSemigroup;
 use Fp\Functional\Validated\Invalid;
 use Fp\Functional\Validated\Valid;
 use Fp\Functional\Validated\Validated;
@@ -24,7 +30,9 @@ final class SemigroupTest extends TestCase
 
     public function testNonEmptyListSemigroup(): void
     {
-        $semigroup = Semigroup::nonEmptyListInstance('int');
+        /** @var Semigroup<non-empty-list<int>> $semigroup */
+        $semigroup = new NonEmptyListSemigroup();
+
         $this->assertEquals(
             [1, 2],
             $semigroup->combine([1], [2])
@@ -33,7 +41,9 @@ final class SemigroupTest extends TestCase
 
     public function testListSemigroup(): void
     {
-        $semigroup = Semigroup::listInstance('int');
+        /** @var Monoid<list<int>> $semigroup */
+        $semigroup = new ListMonoid();
+
         $this->assertEquals(
             [1, 2],
             $semigroup->combine([1], [2])
@@ -46,7 +56,9 @@ final class SemigroupTest extends TestCase
 
     public function testLhsSemigroup(): void
     {
-        $semigroup = Semigroup::lhsInstance('int');
+        /** @var Semigroup<int> $semigroup */
+        $semigroup = new LhsSemigroup();
+
         $this->assertEquals(
             1,
             $semigroup->combine(1, 2)
@@ -55,7 +67,9 @@ final class SemigroupTest extends TestCase
 
     public function testRhsSemigroup(): void
     {
-        $semigroup = Semigroup::rhsInstance('int');
+        /** @var Semigroup<int> $semigroup */
+        $semigroup = new RhsSemigroup();
+
         $this->assertEquals(
             2,
             $semigroup->combine(1, 2)
@@ -64,10 +78,13 @@ final class SemigroupTest extends TestCase
 
     public function testValidatedSemigroup(): void
     {
-        $validInstance = Semigroup::listInstance('int');
-        $invalidInstance = Semigroup::listInstance('string');
+        /** @psalm-var Monoid<list<int>> $validInstance */
+        $validInstance = new ListMonoid();
 
-        $semigroup = Semigroup::validatedInstance(
+        /** @psalm-var Monoid<list<string>> $invalidInstance */
+        $invalidInstance = new ListMonoid();
+
+        $semigroup = new ValidatedSemigroup(
             $validInstance,
             $invalidInstance
         );

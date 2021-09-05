@@ -93,7 +93,7 @@ final class GroupTest extends PhpBlockTestCase
         $this->assertBlockTypes($phpBlock, 'array<non-empty-string, array<non-empty-string, string>>');
     }
 
-    public function testWithArrayAndGroupKeyAsTypeAlias()
+    public function testWithArrayAndGroupKeyAsTypeAlias(): void
     {
         $phpBlock = /** @lang InjectablePHP */ '
             /** 

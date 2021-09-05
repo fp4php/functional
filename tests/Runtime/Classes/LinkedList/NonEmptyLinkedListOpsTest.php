@@ -59,7 +59,7 @@ final class NonEmptyLinkedListOpsTest extends TestCase
 
     public function testExists(): void
     {
-        /** @var NonEmptyLinkedList<mixed> $linkedList */
+        /** @psalm-var NonEmptyLinkedList<mixed> $linkedList */
         $linkedList = NonEmptyLinkedList::collectNonEmpty([new Foo(1), 1, new Foo(1)]);
 
         $this->assertTrue($linkedList->exists(fn($i) => $i === 1));
@@ -98,7 +98,7 @@ final class NonEmptyLinkedListOpsTest extends TestCase
 
     public function testFirst(): void
     {
-        /** @var NonEmptyLinkedList<mixed> $linkedList */
+        /** @psalm-var NonEmptyLinkedList<mixed> $linkedList */
         $linkedList = NonEmptyLinkedList::collectNonEmpty([new Foo(1), 2, 1, 3]);
 
         $this->assertEquals(1, $linkedList->first(fn($e) => 1 === $e)->get());
@@ -165,12 +165,12 @@ final class NonEmptyLinkedListOpsTest extends TestCase
 
     public function testReduce(): void
     {
-        /** @var NonEmptyLinkedList<string> $list */
+        /** @psalm-var NonEmptyLinkedList<string> $list */
         $list = NonEmptyLinkedList::collectNonEmpty(['1', '2', '3']);
 
         $this->assertEquals(
             '123',
-            $list->reduce(fn($acc, $e) => $acc . $e)
+            $list->reduce(fn(string $acc, $e) => $acc . $e)
         );
     }
 

@@ -40,7 +40,7 @@ final class MonoidTest extends TestCase
 
     public function testListMonoid(): void
     {
-        $monoid = Monoid::listInstance();
+        $monoid = new ListMonoid();
 
         $this->assertEquals(
             $monoid->empty(),

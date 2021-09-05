@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Mock;
 
+use Fp\Functional\Semigroup\LhsSemigroup;
+use Fp\Functional\Semigroup\NonEmptyListSemigroup;
 use Fp\Functional\Semigroup\Semigroup;
 use Fp\Functional\Semigroup\ValidatedSemigroup;
 use Fp\Functional\Validated\Validated;
@@ -18,14 +20,17 @@ class FooInputValidator
      */
     private Semigroup $semigroup;
 
-    /**
-     * @psalm-return Validated<non-empty-list<string>, FooInput>
-     */
     public function __construct()
     {
+        /** @var Semigroup<FooInput> $lhsSemigroup */
+        $lhsSemigroup = new LhsSemigroup();
+
+        /** @var Semigroup<non-empty-list<string>> $nonEmptyListSemigroup */
+        $nonEmptyListSemigroup = new NonEmptyListSemigroup();
+
         $this->semigroup = new ValidatedSemigroup(
-            Semigroup::lhsInstance(FooInput::class),
-            Semigroup::nonEmptyListInstance('string')
+            $lhsSemigroup,
+            $nonEmptyListSemigroup
         );
     }
 

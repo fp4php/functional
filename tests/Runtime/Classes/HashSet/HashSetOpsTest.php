@@ -13,7 +13,7 @@ final class HashSetOpsTest extends TestCase
 {
     public function testContains(): void
     {
-        /** @var HashSet<int> $hs */
+        /** @psalm-var HashSet<int> $hs */
         $hs = HashSet::collect([1, 2, 2]);
 
         $this->assertTrue($hs->contains(1));
@@ -27,7 +27,7 @@ final class HashSetOpsTest extends TestCase
 
     public function testUpdatedAndRemoved(): void
     {
-        /** @var HashSet<int> $hs */
+        /** @psalm-var HashSet<int> $hs */
         $hs = HashSet::collect([1, 2, 2])->updated(3)->removed(1);
 
         $this->assertEquals([2, 3], $hs->toArray());
@@ -49,7 +49,7 @@ final class HashSetOpsTest extends TestCase
 
     public function testExists(): void
     {
-        /** @var HashSet<object|scalar> $hs */
+        /** @psalm-var HashSet<object|scalar> $hs */
         $hs = HashSet::collect([new Foo(1), 1, 1, new Foo(1)]);
 
         $this->assertTrue($hs->exists(fn($i) => $i === 1));
@@ -106,12 +106,12 @@ final class HashSetOpsTest extends TestCase
 
     public function testReduce(): void
     {
-        /** @var HashSet<string> $list */
+        /** @psalm-var HashSet<string> $list */
         $list = HashSet::collect(['1', '2', '3']);
 
         $this->assertEquals(
             '123',
-            $list->reduce(fn($acc, $e) => $acc . $e)->get()
+            $list->reduce(fn(string $acc, $e) => $acc . $e)->get()
         );
     }
 

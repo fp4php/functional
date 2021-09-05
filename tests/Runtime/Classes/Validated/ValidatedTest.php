@@ -119,6 +119,5 @@ final class ValidatedTest extends TestCase
         $this->assertInstanceOf(None::class, $none);
 
         $this->assertEquals(1, $some->get());
-        $this->assertNull($none->get());
     }
 }
