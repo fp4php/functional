@@ -28,7 +28,7 @@ class PartitionOfFunctionReturnTypeProvider implements FunctionReturnTypeProvide
     public static function getFunctionIds(): array
     {
         return [
-            'fp\collection\partitionof',
+            strtolower('Fp\Collection\partitionOf'),
         ];
     }
 

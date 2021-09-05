@@ -38,7 +38,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     public static function getFunctionIds(): array
     {
         return [
-            'fp\collection\pluck',
+            strtolower('Fp\Collection\pluck'),
         ];
     }
 

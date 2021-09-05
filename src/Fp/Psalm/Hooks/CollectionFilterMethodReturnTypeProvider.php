@@ -42,13 +42,13 @@ use function Fp\Evidence\proveTrue;
 
 final class CollectionFilterMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
-    public const FILTER = 'filter';
-    public const FILTER_NOT_NULL = 'filternotnull';
-
-    public const ALLOWED_METHODS = [
-        self::FILTER,
-        self::FILTER_NOT_NULL,
-    ];
+    public static function getMethodNames(): array
+    {
+        return [
+            'filter',
+            strtolower('filterNotNull'),
+        ];
+    }
 
     public static function getClassLikeNames(): array
     {
@@ -73,7 +73,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         $reconciled = Option::do(function() use ($event) {
-            yield proveTrue(in_array($event->getMethodNameLowercase(), self::ALLOWED_METHODS, true));
+            yield proveTrue(in_array($event->getMethodNameLowercase(), self::getMethodNames()));
 
             $source          = yield proveOf($event->getSource(), StatementsAnalyzer::class);
             $predicate_arg   = yield self::extractPredicateArg($event);
@@ -118,7 +118,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     public static function mockNotNullPredicateArg(MethodReturnTypeProviderEvent $event): Option
     {
         return Option::do(function () use ($event) {
-            yield proveTrue(self::FILTER_NOT_NULL === $event->getMethodNameLowercase());
+            yield proveTrue(strtolower('filterNotNull') === $event->getMethodNameLowercase());
 
             $var = new Variable('$elem');
             $expr = new Isset_([$var]);

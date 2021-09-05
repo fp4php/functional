@@ -22,7 +22,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
 {
     public static function getFunctionIds(): array
     {
-        return ['fp\collection\filter'];
+        return [strtolower('Fp\Collection\filter')];
     }
 
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Type\Union

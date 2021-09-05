@@ -23,7 +23,7 @@ final class ProveTrueExpressionAnalyser implements AfterExpressionAnalysisInterf
 {
     public static function getFunctionIds(): array
     {
-        return ['fp\evidence\provetrue'];
+        return [strtolower('Fp\Evidence\proveTrue')];
     }
 
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool

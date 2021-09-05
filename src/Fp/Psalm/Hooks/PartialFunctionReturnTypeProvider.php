@@ -33,9 +33,9 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
     public static function getFunctionIds(): array
     {
         return [
-            'fp\callable\partial',
-            'fp\callable\partialleft',
-            'fp\callable\partialright',
+            strtolower('Fp\Callable\partial'),
+            strtolower('Fp\Callable\partialLeft'),
+            strtolower('Fp\Callable\partialRight'),
         ];
     }
 
