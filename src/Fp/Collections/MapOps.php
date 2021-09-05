@@ -86,10 +86,6 @@ interface MapOps
     /**
      * Filter collection by condition
      *
-     * Predicate argument order is reversed. It's value, then key.
-     * The reason is the most cases do not use key at all.
-     * And you can omit this key from your closure params.
-     *
      * REPL:
      * >>> HashMap::collect([['a', 1], ['b', 2]])->filter(fn(Entry $e) => $e->value > 1)->toArray()
      * => [['b', 2]]
