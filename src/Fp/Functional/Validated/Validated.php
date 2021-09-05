@@ -100,14 +100,14 @@ abstract class Validated
     public function fold(callable $ifValid, callable $ifInvalid): mixed
     {
         if ($this->isValid()) {
-            return call_user_func($ifValid, $this->value);
+            return $ifValid($this->value);
         }
 
         /**
          * @var Invalid<E> $this
          */
 
-        return call_user_func($ifInvalid, $this->value);
+        return $ifInvalid($this->value);
     }
 
     /**

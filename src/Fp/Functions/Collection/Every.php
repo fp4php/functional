@@ -27,7 +27,7 @@ function every(iterable $collection, callable $predicate): bool
     $result = true;
 
     foreach ($collection as $index => $element) {
-        if (!call_user_func($predicate, $element, $index)) {
+        if (!$predicate($element, $index)) {
             $result = false;
             break;
         }
