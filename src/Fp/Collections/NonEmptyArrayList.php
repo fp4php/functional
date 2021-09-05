@@ -17,9 +17,10 @@ use Iterator;
 final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
 {
     /**
+     * @internal
      * @param ArrayList<TV> $arrayList
      */
-    private function __construct(public ArrayList $arrayList)
+    public function __construct(public ArrayList $arrayList)
     {
     }
 

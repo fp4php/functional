@@ -21,7 +21,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @internal
      * @param HashMap<TK, TV> $hashMap
      */
-    private function __construct(private HashMap $hashMap)
+    public function __construct(private HashMap $hashMap)
     {
     }
 

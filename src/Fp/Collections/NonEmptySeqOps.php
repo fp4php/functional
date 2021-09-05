@@ -330,9 +330,9 @@ interface NonEmptySeqOps
      *
      * @template TKO
      * @psalm-param callable(TV): TKO $callback
-     * @psalm-return Map<TKO, NonEmptySeq<TV>>
+     * @psalm-return NonEmptyMap<TKO, NonEmptySeq<TV>>
      */
-    public function groupBy(callable $callback): Map;
+    public function groupBy(callable $callback): NonEmptyMap;
 
     /**
      * Sort collection

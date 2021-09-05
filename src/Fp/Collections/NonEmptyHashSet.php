@@ -18,9 +18,10 @@ use Iterator;
 final class NonEmptyHashSet extends AbstractNonEmptySet
 {
     /**
+     * @internal
      * @param HashSet<TV> $set
      */
-    private function __construct(private HashSet $set)
+    public function __construct(private HashSet $set)
     {
     }
 
