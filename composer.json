@@ -75,6 +75,7 @@
             "src/Fp/Functions/Evidence/ProveFloat.php",
             "src/Fp/Functions/Evidence/ProveInt.php",
             "src/Fp/Functions/Evidence/ProveList.php",
+            "src/Fp/Functions/Evidence/ProveObject.php",
             "src/Fp/Functions/Evidence/ProveOf.php",
             "src/Fp/Functions/Evidence/ProveString.php",
             "src/Fp/Functions/Json/JsonDecode.php",
