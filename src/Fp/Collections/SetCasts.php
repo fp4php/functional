@@ -29,4 +29,12 @@ interface SetCasts
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet;
+
+    /**
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return HashMap<TKI, TVI>
+     */
+    public function toHashMap(callable $callback): HashMap;
 }

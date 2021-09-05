@@ -31,7 +31,7 @@ final class MapGetMethodReturnTypeProvider implements MethodReturnTypeProviderIn
         return [Map::class, HashMap::class];
     }
 
-    public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Type\Union
+    public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         $return_type = Option::do(function() use ($event) {
             yield proveTrue(in_array($event->getMethodNameLowercase(), self::ALLOWED_METHODS, true));

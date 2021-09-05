@@ -72,6 +72,14 @@ final class HashMap extends AbstractMap
     }
 
     /**
+     * @return HashMap<TK, TV>
+     */
+    public function toHashMap(): HashMap
+    {
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      * @param TK $key
      * @return Option<TV>

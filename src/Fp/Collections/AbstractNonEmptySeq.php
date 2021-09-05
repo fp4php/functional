@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Generator;
 use Iterator;
 
 use function Fp\of;
@@ -121,6 +122,24 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     public function toNonEmptyHashSet(): NonEmptyHashSet
     {
         return NonEmptyHashSet::collectUnsafe($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return HashMap<TKI, TVI>
+     */
+    public function toHashMap(callable $callback): HashMap
+    {
+        $source = function () use ($callback): Generator {
+            foreach ($this as $elem) {
+                yield $callback($elem);
+            }
+        };
+
+        return HashMap::collect($source());
     }
 
     /**

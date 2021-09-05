@@ -12,14 +12,28 @@ use Iterator;
  * @psalm-immutable
  * @template TK
  * @template-covariant TV
- * @implements Map<TK, TV>
+ * @implements NonEmptyMap<TK, TV>
  */
-abstract class AbstractMap implements Map
+abstract class AbstractNonEmptyMap implements NonEmptyMap
 {
     /**
      * REPL:
-     * >>> HashMap::collect([['a', 1], ['b', 2]])
-     * => HashMap('a' -> 1, 'b' -> 2)
+     * >>> NonEmptyHashMap::collect([['a', 1], ['b', 2]])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     *
+     * @psalm-pure
+     * @template TKI
+     * @template TVI
+     * @param iterable<array{TKI, TVI}> $source
+     * @return self<TKI, TVI>
+     * @throws EmptyCollectionException
+     */
+    abstract public static function collect(iterable $source): self;
+
+    /**
+     * REPL:
+     * >>> NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
      *
      * @psalm-pure
      * @template TKI
@@ -27,12 +41,39 @@ abstract class AbstractMap implements Map
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collectUnsafe(iterable $source): self;
 
     /**
      * REPL:
-     * >>> HashMap::collectIterable(['a' => 1, 'b' => 2])
-     * => HashMap('a' -> 1, 'b' -> 2)
+     * >>> NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     *
+     * @psalm-pure
+     * @template TKI
+     * @template TVI
+     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @return self<TKI, TVI>
+     */
+    abstract public static function collectNonEmpty(iterable $source): self;
+
+    /**
+     * REPL:
+     * >>> NonEmptyHashMap::collectIterable(['a' => 1, 'b' => 2])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     *
+     * @psalm-pure
+     * @template TKI of array-key
+     * @template TVI
+     * @param iterable<TKI, TVI> $source
+     * @return self<TKI, TVI>
+     * @throws EmptyCollectionException
+     */
+    abstract public static function collectIterable(iterable $source): self;
+
+    /**
+     * REPL:
+     * >>> NonEmptyHashMap::collectIterableUnsafe(['a' => 1, 'b' => 2])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
      *
      * @psalm-pure
      * @template TKI of array-key
@@ -40,7 +81,7 @@ abstract class AbstractMap implements Map
      * @param iterable<TKI, TVI> $source
      * @return self<TKI, TVI>
      */
-    abstract public static function collectIterable(iterable $source): self;
+    abstract public static function collectIterableUnsafe(iterable $source): self;
 
     /**
      * @inheritDoc
@@ -64,17 +105,11 @@ abstract class AbstractMap implements Map
 
     /**
      * @inheritDoc
-     * @return list<array{TK, TV}>
+     * @return non-empty-list<array{TK, TV}>
      */
     public function toArray(): array
     {
-        $buffer = [];
-
-        foreach ($this as $pair) {
-            $buffer[] = $pair;
-        }
-
-        return $buffer;
+        return $this->toNonEmptyArrayList()->toArray();
     }
 
     /**
@@ -87,11 +122,27 @@ abstract class AbstractMap implements Map
     }
 
     /**
+     * @return NonEmptyLinkedList<array{TK, TV}>
+     */
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectUnsafe($this->generatePairs());
+    }
+
+    /**
      * @return ArrayList<array{TK, TV}>
      */
     public function toArrayList(): ArrayList
     {
         return ArrayList::collect($this->generatePairs());
+    }
+
+    /**
+     * @return NonEmptyArrayList<array{TK, TV}>
+     */
+    public function toNonEmptyArrayList(): NonEmptyArrayList
+    {
+        return NonEmptyArrayList::collectUnsafe($this->generatePairs());
     }
 
     /**
@@ -104,9 +155,22 @@ abstract class AbstractMap implements Map
     }
 
     /**
+     * @return NonEmptyHashSet<array{TK, TV}>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet
+    {
+        return NonEmptyHashSet::collectUnsafe($this->generatePairs());
+    }
+
+    /**
      * @return HashMap<TK, TV>
      */
     abstract public function toHashMap(): HashMap;
+
+    /**
+     * @return NonEmptyHashMap<TK, TV>
+     */
+    abstract public function toNonEmptyHashMap(): NonEmptyHashMap;
 
     /**
      * @inheritDoc
@@ -135,25 +199,6 @@ abstract class AbstractMap implements Map
         }
 
         return $result;
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $init initial accumulator value
-     * @psalm-param callable(TVI, Entry<TK, TV>): TVI $callback (accumulator, current element): new accumulator
-     * @psalm-return TVI
-     */
-    public function fold(mixed $init, callable $callback): mixed
-    {
-        $acc = $init;
-
-        foreach ($this->generateEntries() as $entry) {
-            $acc = $callback($acc, $entry);
-            unset($entry);
-        }
-
-        return $acc;
     }
 
     /**

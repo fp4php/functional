@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Psalm\Hooks\ToHashMapMethodReturnTypeProvider;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -29,4 +31,12 @@ interface SeqCasts
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet;
+
+    /**
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return HashMap<TKI, TVI>
+     */
+    public function toHashMap(callable $callback): HashMap;
 }
