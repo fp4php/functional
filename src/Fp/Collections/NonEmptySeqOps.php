@@ -150,6 +150,25 @@ interface NonEmptySeqOps
     public function filter(callable $predicate): Seq;
 
     /**
+     * A combined {@see NonEmptySeq::map} and {@see NonEmptySeq::filter}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     * Also, NonEmpty* prefix will be lost.
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collectNonEmpty(['zero', '1', '2'])
+     * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
+     * >>>     ->toArray()
+     * => [1, 2]
+     *
+     * @psalm-template TVO
+     * @psalm-param callable(TV): Option<TVO> $callback
+     * @psalm-return Seq<TVO>
+     */
+    public function filterMap(callable $callback): Seq;
+
+    /**
      * Exclude null elements
      *
      * REPL:

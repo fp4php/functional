@@ -204,6 +204,17 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
     /**
      * @inheritDoc
      * @template TVO
+     * @param callable(Entry<TK, TV>): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function filterMap(callable $callback): HashMap
+    {
+        return $this->hashMap->filterMap($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVO
      * @psalm-param callable(Entry<TK, TV>): TVO $callback
      * @psalm-return self<TK, TVO>
      */

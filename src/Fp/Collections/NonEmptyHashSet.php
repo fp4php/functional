@@ -163,6 +163,17 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
 
     /**
      * @inheritDoc
+     * @template TVO
+     * @param callable(TV): Option<TVO> $callback
+     * @return Set<TVO>
+     */
+    public function filterMap(callable $callback): Set
+    {
+        return $this->set->filterMap($callback);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return Set<TV>
      */
     public function filterNotNull(): Set

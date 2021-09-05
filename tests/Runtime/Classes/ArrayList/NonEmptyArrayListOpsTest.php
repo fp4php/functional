@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes\ArrayList;
 
 use Fp\Collections\NonEmptyArrayList;
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -82,6 +83,16 @@ final class NonEmptyArrayListOpsTest extends TestCase
     {
         $linkedList = NonEmptyArrayList::collectNonEmpty([new Foo(1), 1, new Foo(1)]);
         $this->assertEquals([1], $linkedList->filter(fn($i) => $i === 1)->toArray());
+    }
+
+    public function testFilterMap(): void
+    {
+        $this->assertEquals(
+            [1, 2],
+            NonEmptyArrayList::collectNonEmpty(['zero', '1', '2'])
+                ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
+                ->toArray()
+        );
     }
 
     public function testFilterNotNull(): void
