@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Collections\HashMap;
+use Generator;
+
 /**
  * Returns collection unique elements
  *
@@ -26,18 +29,11 @@ namespace Fp\Collection;
  */
 function unique(iterable $collection, callable $callback): array
 {
-    $hashTable = [];
-    $aggregation = [];
-
-    foreach ($collection as $element) {
-        $elementHash = $callback($element);
-        $isPresent = isset($hashTable[$elementHash]);
-
-        if (!$isPresent) {
-            $aggregation[] = $element;
-            $hashTable[$elementHash] = true;
+    $source = function () use ($callback, $collection): Generator {
+        foreach ($collection as $elem) {
+            yield $callback($elem) => $elem;
         }
-    }
+    };
 
-    return $aggregation;
+    return HashMap::collectIterable($source())->values()->toArray();
 }

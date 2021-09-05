@@ -23,5 +23,16 @@ use Fp\Functional\Option\Option;
  */
 function second(iterable $collection): Option
 {
-    return head(tail($collection));
+    $i = 0;
+    $second = null;
+
+    foreach ($collection as $elem) {
+        if (1 === $i) {
+            $second = $elem;
+            break;
+        }
+        $i++;
+    }
+
+    return Option::fromNullable($second);
 }
