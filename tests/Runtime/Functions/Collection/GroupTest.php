@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
-use function Fp\Collection\group;
+use function Fp\Collection\groupBy;
 
 final class GroupTest extends TestCase
 {
@@ -15,7 +15,7 @@ final class GroupTest extends TestCase
 
         $this->assertEquals(
             ['y' => ['a' => 1, 'c' => 3], 'x' => ['b' => 2, 'd' => 4]],
-            group(
+            groupBy(
                 $c,
                 fn(int $v, string $k) => ($v % 2 === 0) ? 'x' : 'y'
             )

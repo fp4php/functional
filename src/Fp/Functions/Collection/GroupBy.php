@@ -24,11 +24,11 @@ namespace Fp\Collection;
  *
  * @psalm-return (
  *		$collection is non-empty-array
- *          ? non-empty-array<TKG, array<TK, TV>>
+ *          ? non-empty-array<TKG, non-empty-array<TK, TV>>
  *          : array<TKG, array<TK, TV>>
  * )
  */
-function group(iterable $collection, callable $callback): array
+function groupBy(iterable $collection, callable $callback): array
 {
     $groups = [];
 
