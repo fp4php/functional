@@ -91,15 +91,15 @@ final class HashMapOpsTest extends TestCase
             [['2', '2'], ['3', '3']],
             $hm->map(fn($e) => $e->key)->toArray()
         );
-    }
 
-    public function testReindex(): void
-    {
-        $hm = HashMap::collect([['2', 22], ['3', 33]]);
+        $this->assertEquals(
+            [['2', '2'], ['3', '3']],
+            $hm->mapValues(fn($e) => $e->key)->toArray()
+        );
 
         $this->assertEquals(
             [[22, 22], [33, 33]],
-            $hm->reindex(fn($e) => $e->value)->toArray()
+            $hm->mapKeys(fn($e) => $e->value)->toArray()
         );
     }
 

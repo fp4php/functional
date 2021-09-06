@@ -191,6 +191,17 @@ final class HashMap extends AbstractMap
      */
     public function map(callable $callback): self
     {
+        return $this->mapValues($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVO
+     * @psalm-param callable(Entry<TK, TV>): TVO $callback
+     * @psalm-return self<TK, TVO>
+     */
+    public function mapValues(callable $callback): self
+    {
         $source = function () use ($callback): Generator {
             foreach ($this->generateEntries() as $entry) {
                 yield [$entry->key, $callback($entry)];
@@ -207,7 +218,7 @@ final class HashMap extends AbstractMap
      * @psalm-param callable(Entry<TK, TV>): TKO $callback
      * @psalm-return self<TKO, TV>
      */
-    public function reindex(callable $callback): self
+    public function mapKeys(callable $callback): self
     {
         $source = function () use ($callback): Generator {
             foreach ($this->generateEntries() as $entry) {
