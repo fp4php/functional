@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
+use Fp\Psalm\Hooks\ConditionallyPureFunctionsAnalysis;
 use Fp\Psalm\Hooks\EitherAssertionAnalysis;
 use Fp\Psalm\Hooks\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hooks\CollectionFilterMethodReturnTypeProvider;
@@ -44,5 +45,6 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(ValidatedAssertionAnalysis::class);
         $register(ProveTrueExpressionAnalyser::class);
         $register(MapGetMethodReturnTypeProvider::class);
+        $register(ConditionallyPureFunctionsAnalysis::class);
     }
 }
