@@ -17,20 +17,20 @@ namespace Fp\Collection;
  *
  * @psalm-param iterable<TK, TV> $collection
  *
- * @psalm-return array<TK, TV>
+ * @psalm-return list<TV>
  */
 function tail(iterable $collection): array
 {
-    $resultCollection = [];
+    $buffer = [];
     $toggle = false;
 
-    foreach ($collection as $index => $element) {
+    foreach ($collection as $element) {
         if ($toggle) {
-            $resultCollection[$index] = $element;
+            $buffer[] = $element;
         }
 
         $toggle = true;
     }
 
-    return $resultCollection;
+    return $buffer;
 }

@@ -12,6 +12,6 @@ final class TailTest extends TestCase
 {
     public function testTail(): void
     {
-        $this->assertEquals([1 => 2, 2 => 3, 3 => 4], tail([1, 2, 3, 4]));
+        $this->assertEquals([2, 3, 4], tail([1, 2, 3, 4]));
     }
 }

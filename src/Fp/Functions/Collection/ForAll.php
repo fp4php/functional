@@ -16,7 +16,7 @@ namespace Fp\Collection;
  * @psalm-template TV
  *
  * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK) $callback
+ * @psalm-param callable(TV, TK): void $callback
  */
 function forAll(iterable $collection, callable $callback): void
 {
