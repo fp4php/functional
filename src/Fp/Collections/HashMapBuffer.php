@@ -22,7 +22,6 @@ final class HashMapBuffer
      */
     private HashTable $hashTable;
 
-    private bool $closed = false;
     private bool $empty = true;
 
     public function __construct()
@@ -35,8 +34,6 @@ final class HashMapBuffer
      */
     public function get(mixed $key): Option
     {
-        $this->assertIsOpen();
-
         $hash = (string) HashComparator::computeHash($key);
         $elem = null;
 
@@ -57,8 +54,6 @@ final class HashMapBuffer
      */
     public function update(mixed $key, mixed $value): self
     {
-        $this->assertIsOpen();
-
         $hash = (string) HashComparator::computeHash($key);
 
         if (!isset($this->hashTable->table[$hash])) {
@@ -87,22 +82,11 @@ final class HashMapBuffer
      */
     public function toHashMap(): HashMap
     {
-        $this->assertIsOpen();
-
-        $this->closed = true;
-
         return new HashMap($this->hashTable);
     }
 
     public function isEmpty():bool
     {
         return $this->empty;
-    }
-
-    private function assertIsOpen(): void
-    {
-        if ($this->closed) {
-            throw new Error(self::class . ' already closed');
-        }
     }
 }
