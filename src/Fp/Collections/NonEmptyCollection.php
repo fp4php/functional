@@ -16,6 +16,7 @@ use IteratorAggregate;
 interface NonEmptyCollection extends IteratorAggregate, Countable
 {
     /**
+     * @mutation-free
      * @inheritDoc
      * @return Iterator<TV>
      */

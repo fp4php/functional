@@ -24,10 +24,10 @@ abstract class AbstractSeq implements Seq
      *
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureGenerator<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collect(array|Collection|NonEmptyCollection|PureGenerator $source): self;
 
     /**
      * @inheritDoc

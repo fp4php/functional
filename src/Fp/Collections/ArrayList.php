@@ -30,20 +30,21 @@ final class ArrayList extends AbstractIndexedSeq
     /**
      * @inheritDoc
      * @psalm-pure
-     * @template TKI
      * @template TVI
-     * @param iterable<TKI, TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureGenerator<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(iterable $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureGenerator $source): self
     {
-        $buffer = [];
+        $pureGenerator = $source instanceof PureGenerator
+            ? $source
+            : PureGenerator::of(function () use ($source): Generator {
+                foreach ($source as $value) {
+                    yield $value;
+                }
+            });
 
-        foreach ($source as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return new self($buffer);
+        return new self($pureGenerator->toList());
     }
 
     /**
@@ -100,7 +101,7 @@ final class ArrayList extends AbstractIndexedSeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        $source = function() use ($suffix): Generator {
+        return self::collect(PureGenerator::of(function() use ($suffix) {
             foreach ($this->elements as $prefixElem) {
                 yield $prefixElem;
             }
@@ -108,9 +109,7 @@ final class ArrayList extends AbstractIndexedSeq
             foreach ($suffix as $suffixElem) {
                 yield $suffixElem;
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -132,7 +131,7 @@ final class ArrayList extends AbstractIndexedSeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        $source = function() use ($prefix): Generator {
+        return self::collect(PureGenerator::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -140,9 +139,7 @@ final class ArrayList extends AbstractIndexedSeq
             foreach ($this->elements as $suffixElem) {
                 yield $suffixElem;
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -386,6 +383,7 @@ final class ArrayList extends AbstractIndexedSeq
     {
         $sorted = $this->toArray();
 
+        /** @psalm-suppress ImpureFunctionCall */
         usort($sorted, $cmp);
 
         return new self($sorted);

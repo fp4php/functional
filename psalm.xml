@@ -18,16 +18,6 @@
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
-        <ImpureFunctionCall errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Collections"/>
-            </errorLevel>
-        </ImpureFunctionCall>
-        <ImpureMethodCall errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Collections"/>
-            </errorLevel>
-        </ImpureMethodCall>
         <UnusedVariable errorLevel="suppress">
             <errorLevel type="suppress">
                 <directory name="src/Fp/Functions"/>

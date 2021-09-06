@@ -60,6 +60,21 @@ final class PureGenerator implements IteratorAggregate
 
     /**
      * @psalm-pure
+     * @return LinkedList<T>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        $buffer = new LinkedListBuffer();
+
+        foreach ($this as $elem) {
+            $buffer->append($elem);
+        }
+
+        return $buffer->toLinkedList();
+    }
+
+    /**
+     * @psalm-pure
      * @return Generator<T>
      */
     public function getIterator(): Generator
