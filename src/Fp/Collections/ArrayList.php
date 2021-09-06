@@ -31,20 +31,12 @@ final class ArrayList extends AbstractIndexedSeq
      * @inheritDoc
      * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureGenerator<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(array|Collection|NonEmptyCollection|PureGenerator $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $pureGenerator = $source instanceof PureGenerator
-            ? $source
-            : PureGenerator::of(function () use ($source): Generator {
-                foreach ($source as $value) {
-                    yield $value;
-                }
-            });
-
-        return new self($pureGenerator->toList());
+        return new self(PureIterable::of(fn() => $source)->toList());
     }
 
     /**
@@ -101,7 +93,7 @@ final class ArrayList extends AbstractIndexedSeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collect(PureGenerator::of(function() use ($suffix) {
+        return self::collect(PureIterable::of(function() use ($suffix) {
             foreach ($this->elements as $prefixElem) {
                 yield $prefixElem;
             }
@@ -131,7 +123,7 @@ final class ArrayList extends AbstractIndexedSeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collect(PureGenerator::of(function() use ($prefix) {
+        return self::collect(PureIterable::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }

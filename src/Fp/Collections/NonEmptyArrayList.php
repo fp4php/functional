@@ -27,34 +27,35 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
      */
-    public static function collect(iterable $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $isEmpty = true;
-        $buffer = [];
+        $pureGenerator = PureIterable::of(function() use ($source) {
+            $isEmpty = true;
 
-        foreach ($source as $elem) {
-            $isEmpty = false;
-            $buffer[] = $elem;
-        }
+            foreach ($source as $elem) {
+                $isEmpty = false;
+                yield $elem;
+            }
 
-        if ($isEmpty) {
-            throw new EmptyCollectionException("Non empty collection must contain at least one element");
-        }
+            if ($isEmpty) {
+                throw new EmptyCollectionException("Non empty collection must contain at least one element");
+            }
+        });
 
-        return new self(new ArrayList($buffer));
+        return new self(new ArrayList($pureGenerator->toList()));
     }
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
         try {
             return self::collect($source);
@@ -66,10 +67,10 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collectNonEmpty(iterable $source): self
+    public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self
     {
         return self::collectUnsafe($source);
     }
@@ -77,10 +78,10 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return Option<self<TVI>>
      */
-    public static function collectOption(iterable $source): Option
+    public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option
     {
         try {
             return Option::some(self::collect($source));
@@ -152,7 +153,7 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        $source = function() use ($suffix): Generator {
+        return self::collectUnsafe(PureIterable::of(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -160,9 +161,7 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
             foreach ($suffix as $suffixElem) {
                 yield $suffixElem;
             }
-        };
-
-        return self::collectUnsafe($source());
+        }));
     }
 
     /**
@@ -184,7 +183,7 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        $source = function() use ($prefix): Generator {
+        return self::collectUnsafe(PureIterable::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -192,9 +191,7 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
             foreach ($this as $suffixElem) {
                 yield $suffixElem;
             }
-        };
-
-        return self::collectUnsafe($source());
+        }));
     }
 
     /**
@@ -318,6 +315,7 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
     {
         $sorted = $this->toArray();
 
+        /** @psalm-suppress ImpureFunctionCall */
         usort($sorted, $cmp);
 
         return new self(new ArrayList($sorted));

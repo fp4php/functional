@@ -20,35 +20,35 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collectUnsafe(iterable $source): self;
+    abstract public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collectNonEmpty(iterable $source): self;
+    abstract public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return Option<self<TVI>>
      */
-    abstract public static function collectOption(iterable $source): Option;
+    abstract public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option;
 
     /**
      * @inheritDoc

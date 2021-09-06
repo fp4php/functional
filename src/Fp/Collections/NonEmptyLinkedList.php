@@ -27,11 +27,11 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
      */
-    public static function collect(iterable $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
         $collected = LinkedList::collect($source);
 
@@ -49,10 +49,10 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
         try {
             return self::collect($source);
@@ -64,10 +64,10 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collectNonEmpty(iterable $source): self
+    public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self
     {
         return self::collectUnsafe($source);
     }
@@ -75,10 +75,10 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return Option<self<TVI>>
      */
-    public static function collectOption(iterable $source): Option
+    public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option
     {
         try {
             return Option::some(self::collect($source));
@@ -141,7 +141,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        $source = function() use ($suffix): Generator {
+        return self::collectUnsafe(PureIterable::of(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -149,9 +149,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
             foreach ($suffix as $suffixElem) {
                 yield $suffixElem;
             }
-        };
-
-        return self::collectUnsafe($source());
+        }));
     }
 
     /**
@@ -173,7 +171,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        $source = function() use ($prefix): Generator {
+        return self::collectUnsafe(PureIterable::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -181,9 +179,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
             foreach ($this as $suffixElem) {
                 yield $suffixElem;
             }
-        };
-
-        return self::collectUnsafe($source());
+        }));
     }
 
     /**
@@ -296,6 +292,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
     {
         $sorted = $this->toArray();
 
+        /** @psalm-suppress ImpureFunctionCall */
         usort($sorted, $cmp);
 
         return self::collectUnsafe($sorted);

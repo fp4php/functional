@@ -23,20 +23,12 @@ abstract class LinkedList extends AbstractLinearSeq
      * @inheritDoc
      * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureGenerator<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(array|Collection|NonEmptyCollection|PureGenerator $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $pureGenerator = $source instanceof PureGenerator
-            ? $source
-            : PureGenerator::of(function () use ($source): Generator {
-                foreach ($source as $value) {
-                    yield $value;
-                }
-            });
-
-        return $pureGenerator->toLinkedList();
+        return PureIterable::of(fn() => $source)->toLinkedList();
     }
 
     /**
@@ -65,7 +57,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function appended(mixed $elem): self
     {
-        return self::collect(PureGenerator::of(function () use ($elem) {
+        return self::collect(PureIterable::of(function () use ($elem) {
             foreach ($this as $item) {
                 yield $item;
             }
@@ -82,7 +74,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collect(PureGenerator::of(function() use ($suffix) {
+        return self::collect(PureIterable::of(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -112,7 +104,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collect(PureGenerator::of(function() use ($prefix) {
+        return self::collect(PureIterable::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -130,7 +122,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function filter(callable $predicate): self
     {
-        return self::collect(PureGenerator::of(function () use ($predicate) {
+        return self::collect(PureIterable::of(function () use ($predicate) {
             foreach ($this as $element) {
                 if ($predicate($element)) {
                     yield $element;
@@ -147,7 +139,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(PureGenerator::of(function () use ($callback) {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -188,7 +180,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(PureGenerator::of(function () use ($callback) {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -207,7 +199,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function map(callable $callback): self
     {
-        return self::collect(PureGenerator::of(function () use ($callback) {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
             }
@@ -264,7 +256,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function takeWhile(callable $predicate): self
     {
-        return self::collect(PureGenerator::of(function () use ($predicate) {
+        return self::collect(PureIterable::of(function () use ($predicate) {
             foreach ($this as $element) {
                 if (!$predicate($element)) {
                     break;
@@ -282,7 +274,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function dropWhile(callable $predicate): self
     {
-        return self::collect(PureGenerator::of(function () use ($predicate) {
+        return self::collect(PureIterable::of(function () use ($predicate) {
             foreach ($this as $element) {
                 if ($predicate($element)) {
                     continue;
@@ -299,7 +291,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function take(int $length): self
     {
-        return self::collect(PureGenerator::of(function () use ($length) {
+        return self::collect(PureIterable::of(function () use ($length) {
             foreach ($this as $i => $element) {
                 if ($i === $length) {
                     break;
@@ -316,7 +308,7 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public function drop(int $length): self
     {
-        return self::collect(PureGenerator::of(function () use ($length) {
+        return self::collect(PureIterable::of(function () use ($length) {
             foreach ($this as $i => $element) {
                 if ($i < $length) {
                     continue;

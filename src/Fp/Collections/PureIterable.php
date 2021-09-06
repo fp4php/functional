@@ -9,7 +9,7 @@ use Generator;
 use IteratorAggregate;
 
 /**
- * Conditionally pure internal generator
+ * Conditionally pure internal iterable
  *
  * @internal
  * @template T
@@ -17,7 +17,7 @@ use IteratorAggregate;
  * @implements IteratorAggregate<T>
  * @psalm-suppress ImpureVariable, ImpureFunctionCall, ImpureMethodCall
  */
-final class PureGenerator implements IteratorAggregate
+final class PureIterable implements IteratorAggregate
 {
     /**
      * @psalm-allow-private-mutation $drained
@@ -26,16 +26,16 @@ final class PureGenerator implements IteratorAggregate
     private bool $drained = false;
 
     /**
-     * @psalm-param Generator<T> $emitter
+     * @psalm-param iterable<T> $emitter
      */
-    public function __construct(private Generator $emitter)
+    public function __construct(private iterable $emitter)
     {
     }
 
     /**
      * @psalm-pure
      * @template TI
-     * @param callable(): Generator<TI> $emitter
+     * @param callable(): iterable<TI> $emitter
      * @return self<TI>
      */
     public static function of(callable $emitter): self
