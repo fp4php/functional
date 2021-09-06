@@ -222,10 +222,10 @@ abstract class AbstractSeq implements Seq
 
     /**
      * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $init initial accumulator value
-     * @psalm-param callable(TVI, TV): TVI $callback (accumulator, current element): new accumulator
-     * @psalm-return TVI
+     * @template TA
+     * @psalm-param TA $init initial accumulator value
+     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
+     * @psalm-return TA
      */
     public function fold(mixed $init, callable $callback): mixed
     {
@@ -240,9 +240,9 @@ abstract class AbstractSeq implements Seq
 
     /**
      * @inheritDoc
-     * @template TVI
-     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
-     * @psalm-return Option<TV|TVI>
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
+     * @psalm-return Option<TV|TA>
      */
     public function reduce(callable $callback): Option
     {

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-
-use function Fp\Cast\asNonEmptyList;
 
 /**
  * Reduce multiple elements into one
@@ -22,17 +20,14 @@ use function Fp\Cast\asNonEmptyList;
  *
  * @template TK of array-key
  * @template TV
- * @template TVI
+ * @template TA
  *
  * @param iterable<TK, TV> $collection
- * @param callable(TV|TVI, TV): (TV|TVI) $callback (accumulator, current value): new accumulator
+ * @param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
  *
- * @return Option<TV|TVI>
+ * @return Option<TV|TA>
  */
 function reduce(iterable $collection, callable $callback): Option
 {
-    return Option::do(function () use ($collection, $callback) {
-        $nel = yield asNonEmptyList($collection);
-        return NonEmptyArrayList::collectNonEmpty($nel)->reduce($callback);
-    });
+    return ArrayList::collect($collection)->reduce($callback);
 }

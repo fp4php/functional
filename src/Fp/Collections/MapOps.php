@@ -145,10 +145,10 @@ interface MapOps
      * >>> $collection->fold(1, fn(int $acc, Entry $cur): int => $acc + $cur->value])
      * => 6
      *
-     * @template TVI
-     * @psalm-param TVI $init initial accumulator value
-     * @psalm-param callable(TVI, Entry<TK, TV>): TVI $callback (accumulator, current element): new accumulator
-     * @psalm-return TVI
+     * @template TA
+     * @psalm-param TA $init initial accumulator value
+     * @psalm-param callable(TA, Entry<TK, TV>): TA $callback (accumulator, current element): new accumulator
+     * @psalm-return TA
      */
     public function fold(mixed $init, callable $callback): mixed;
 

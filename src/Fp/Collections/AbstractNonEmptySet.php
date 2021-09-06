@@ -283,9 +283,9 @@ abstract class AbstractNonEmptySet implements NonEmptySet
 
     /**
      * @inheritDoc
-     * @template TVI
-     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback
-     * @psalm-return (TV|TVI)
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
+     * @psalm-return (TV|TA)
      */
     public function reduce(callable $callback): mixed
     {

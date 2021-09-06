@@ -297,9 +297,9 @@ interface NonEmptySeqOps
      * >>> NonEmptyLinkedList::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)
      * => '12'
      *
-     * @template TVI
-     * @psalm-param callable(TV|TVI, TV): (TV|TVI) $callback (accumulator, current value): new accumulator
-     * @psalm-return (TV|TVI)
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
+     * @psalm-return (TV|TA)
      */
     public function reduce(callable $callback): mixed;
 

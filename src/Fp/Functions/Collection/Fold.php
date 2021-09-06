@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Collections\ArrayList;
+
 /**
  * Fold many elements into one
  *
@@ -17,21 +19,15 @@ namespace Fp\Collection;
  *
  * @template TK of array-key
  * @template TV
- * @template TA of TV
+ * @template TA
  *
  * @param TA $init initial accumulator value
  * @param iterable<TK, TV> $collection
  * @param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
  *
- * @return TV
+ * @return TA
  */
 function fold(mixed $init, iterable $collection, callable $callback): mixed
 {
-    $acc = $init;
-
-    foreach ($collection as $element) {
-        $acc = $callback($acc, $element);
-    }
-
-    return $acc;
+    return ArrayList::collect($collection)->fold($init, $callback);
 }
