@@ -30,25 +30,27 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      * @throws EmptyCollectionException
      */
-    public static function collect(iterable $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $isEmpty = true;
-        $buffer = new HashMapBuffer();
+        $hashMapOption = PureThunk::of(function() use ($source) {
+            $buffer = new HashMapBuffer();
 
-        foreach ($source as [$key, $value]) {
-            $buffer->update($key, $value);
-            $isEmpty = false;
-        }
+            foreach ($source as [$key, $value]) {
+                $buffer->update($key, $value);
+            }
 
-        if ($isEmpty) {
-            throw new EmptyCollectionException("Non empty collection must contain at least one element");
-        }
+            return Option::cond(!$buffer->isEmpty(), $buffer->toHashMap());
+        })();
 
-        return new self($buffer->toHashMap());
+        $nonEmptyHashMap = $hashMapOption
+            ->map(fn(HashMap $hashMap) => new self($hashMap))
+            ->get();
+
+        return $nonEmptyHashMap ?? throw new EmptyCollectionException("Non empty collection must contain at least one element");
     }
 
     /**
@@ -56,10 +58,10 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
         try {
             return self::collect($source);
@@ -73,10 +75,10 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    public static function collectNonEmpty(iterable $source): self
+    public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self
     {
         return self::collectUnsafe($source);
     }
@@ -86,51 +88,15 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return Option<self<TKI, TVI>>
      */
-    public static function collectOption(iterable $source): Option
+    public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option
     {
         try {
             return Option::some(self::collect($source));
         } catch (EmptyCollectionException) {
             return Option::none();
-        }
-    }
-
-    /**
-     * @psalm-pure
-     * @template TKI of array-key
-     * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
-     * @throws EmptyCollectionException
-     */
-    public static function collectIterable(iterable $source): self
-    {
-        $pairSource = function() use ($source): Generator {
-            foreach ($source as $key => $value) {
-                yield [$key, $value];
-            }
-        };
-
-        return self::collect($pairSource());
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-pure
-     * @template TKI of array-key
-     * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
-     */
-    public static function collectIterableUnsafe(iterable $source): self
-    {
-        try {
-            return self::collectIterable($source);
-        } catch (EmptyCollectionException $e) {
-            throw new Error(previous: $e);
         }
     }
 
@@ -231,14 +197,12 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function mapValues(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collectUnsafe(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$entry->key, $callback($entry)];
                 unset($entry);
             }
-        };
-
-        return self::collectUnsafe($source());
+        }));
     }
 
     /**
@@ -249,14 +213,12 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function mapKeys(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collectUnsafe(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$callback($entry), $entry->value];
                 unset($entry);
             }
-        };
-
-        return self::collectUnsafe($source());
+        }));
     }
 
     /**

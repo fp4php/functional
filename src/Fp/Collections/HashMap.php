@@ -27,36 +27,20 @@ final class HashMap extends AbstractMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    public static function collect(iterable $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $buffer = new HashMapBuffer();
+        return PureThunk::of(function () use ($source) {
+            $buffer = new HashMapBuffer();
 
-        foreach ($source as [$key, $value]) {
-            $buffer->update($key, $value);
-        }
-
-        return $buffer->toHashMap();
-    }
-
-    /**
-     * @psalm-pure
-     * @template TKI of array-key
-     * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
-     */
-    public static function collectIterable(iterable $source): self
-    {
-        $pairSource = function() use ($source): Generator {
-            foreach ($source as $idx => $elem) {
-                yield [$idx, $elem];
+            foreach ($source as [$key, $value]) {
+                $buffer->update($key, $value);
             }
-        };
 
-        return self::collect($pairSource());
+            return $buffer->toHashMap();
+        })();
     }
 
     /**
@@ -86,15 +70,20 @@ final class HashMap extends AbstractMap
      */
     public function get(mixed $key): Option
     {
-        $elem = null;
+        return PureThunk::of(function () use ($key) {
+            $elem = null;
 
-        foreach ($this->findBucketByKey($key)->getOrElse([]) as [$k, $v]) {
-            if (HashComparator::hashEquals($key, $k)) {
-                $elem = $v;
+            /** @var list<array{TK, TV}> $bucket */
+            $bucket = $this->findBucketByKey($key)->getOrElse([]);
+
+            foreach ($bucket as [$k, $v]) {
+                if (HashComparator::hashEquals($key, $k)) {
+                    $elem = $v;
+                }
             }
-        }
 
-        return Option::fromNullable($elem);
+            return Option::fromNullable($elem);
+        })();
     }
 
     /**
@@ -127,16 +116,14 @@ final class HashMap extends AbstractMap
      */
     public function filter(callable $predicate): self
     {
-        $source = function () use ($predicate): Generator {
+        return self::collect(PureIterable::of(function () use ($predicate) {
             foreach ($this->generateEntries() as $entry) {
                 if ($predicate($entry)) {
                     yield $entry->toArray();
                 }
                 unset($entry);
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -147,7 +134,7 @@ final class HashMap extends AbstractMap
      */
     public function filterMap(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 $result = $callback($entry);
 
@@ -157,9 +144,7 @@ final class HashMap extends AbstractMap
 
                 unset($entry);
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -171,16 +156,14 @@ final class HashMap extends AbstractMap
      */
     public function flatMap(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 foreach ($callback($entry) as $p) {
                     yield $p;
                 }
                 unset($entry);
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -202,14 +185,12 @@ final class HashMap extends AbstractMap
      */
     public function mapValues(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$entry->key, $callback($entry)];
                 unset($entry);
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -220,14 +201,12 @@ final class HashMap extends AbstractMap
      */
     public function mapKeys(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$callback($entry), $entry->value];
                 unset($entry);
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -254,7 +233,9 @@ final class HashMap extends AbstractMap
      */
     private function findBucketByKey(mixed $key): Option
     {
-        $hash = (string) HashComparator::computeHash($key);
-        return Option::fromNullable($this->hashTable->table[$hash] ?? null);
+        return PureThunk::of(function () use ($key) {
+            $hash = (string) HashComparator::computeHash($key);
+            return Option::fromNullable($this->hashTable->table[$hash] ?? null);
+        })();
     }
 }

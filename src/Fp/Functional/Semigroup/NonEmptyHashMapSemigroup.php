@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Semigroup;
 
 use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\PureIterable;
 use Generator;
 
 /**
@@ -26,15 +27,13 @@ class NonEmptyHashMapSemigroup extends Semigroup
      */
     public function combine(mixed $lhs, mixed $rhs): NonEmptyHashMap
     {
-        $source = function () use ($rhs, $lhs): Generator {
+        return NonEmptyHashMap::collectUnsafe(PureIterable::of(function () use ($rhs, $lhs) {
             foreach ($lhs as $pair) {
                 yield $pair;
             }
             foreach ($rhs as $pair) {
                 yield $pair;
             }
-        };
-
-        return NonEmptyHashMap::collectUnsafe($source());
+        }));
     }
 }

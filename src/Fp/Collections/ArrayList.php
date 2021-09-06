@@ -36,7 +36,15 @@ final class ArrayList extends AbstractIndexedSeq
      */
     public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        return new self(PureIterable::of(fn() => $source)->toList());
+        return new self(PureThunk::of(function() use ($source) {
+            $buffer = [];
+
+            foreach ($source as $elem) {
+                $buffer[] = $elem;
+            }
+
+            return $buffer;
+        })());
     }
 
     /**

@@ -24,14 +24,14 @@ abstract class AbstractSet implements Set
      *
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * @inheritDoc
-     * @return Iterator<int, TV>
+     * @return Iterator<TV>
      */
     abstract public function getIterator(): Iterator;
 
@@ -97,13 +97,11 @@ abstract class AbstractSet implements Set
      */
     public function toHashMap(callable $callback): HashMap
     {
-        $source = function () use ($callback): Generator {
+        return HashMap::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
-        };
-
-        return HashMap::collect($source());
+        }));
     }
 
     /**

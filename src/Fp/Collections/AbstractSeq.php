@@ -100,13 +100,11 @@ abstract class AbstractSeq implements Seq
      */
     public function toHashMap(callable $callback): HashMap
     {
-        $source = function () use ($callback): Generator {
+        return HashMap::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
-        };
-
-        return HashMap::collect($source());
+        }));
     }
 
     /**
@@ -318,17 +316,19 @@ abstract class AbstractSeq implements Seq
      */
     public function groupBy(callable $callback): Map
     {
-        $buffer = new HashMapBuffer();
+        return PureThunk::of(function () use ($callback) {
+            $buffer = new HashMapBuffer();
 
-        foreach ($this as $elem) {
-            $key = $callback($elem);
+            foreach ($this as $elem) {
+                $key = $callback($elem);
 
-            /** @var Seq<TV> $group */
-            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
+                /** @var Seq<TV> $group */
+                $group = $buffer->get($key)->getOrElse(Nil::getInstance());
 
-            $buffer->update($key, $group->prepended($elem));
-        }
+                $buffer->update($key, $group->prepended($elem));
+            }
 
-        return $buffer->toHashMap();
+            return $buffer->toHashMap();
+        })();
     }
 }

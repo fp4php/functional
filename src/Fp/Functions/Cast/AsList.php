@@ -35,3 +35,33 @@ function asList(iterable ...$collections): array
 
     return $aggregate;
 }
+
+/**
+ * Copy one or multiple collections as list of key-value pairs
+ *
+ * REPL:
+ * >>> asListOfPairs(['a' => 1, 'b' => 2]);
+ * => [['a', 1], ['b', 2]]
+ *
+ *
+ * @psalm-template TK
+ * @psalm-template TV
+ *
+ * @psalm-param iterable<TK, TV> $collection
+ *
+ * @psalm-return (
+ *     $collection is non-empty-array
+ *         ? non-empty-list<array{TK, TV}>
+ *         : list<array{TK, TV}>
+ * )
+ */
+function asListOfPairs(iterable $collection): array
+{
+    $buffer = [];
+
+    foreach ($collection as $key => $value) {
+        $buffer[] = [$key, $value];
+    }
+
+    return $buffer;
+}

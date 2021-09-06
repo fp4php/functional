@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Monoid;
 
 use Fp\Collections\HashMap;
+use Fp\Collections\PureIterable;
 use Generator;
 
 /**
@@ -34,16 +35,14 @@ class HashMapMonoid extends Monoid
      */
     public function combine(mixed $lhs, mixed $rhs): HashMap
     {
-        $source = function () use ($rhs, $lhs): Generator {
+        return HashMap::collect(PureIterable::of(function () use ($rhs, $lhs) {
             foreach ($lhs as $pair) {
                 yield $pair;
             }
             foreach ($rhs as $pair) {
                 yield $pair;
             }
-        };
-
-        return HashMap::collect($source());
+        }));
     }
 }
 

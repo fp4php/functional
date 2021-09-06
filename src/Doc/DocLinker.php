@@ -21,7 +21,10 @@ class DocLinker
      */
     private function parseHeaders(string $path): Seq
     {
-        return ArrayList::collect(file($path))
+        /** @var list<string> $lines */
+        $lines = file($path);
+
+        return ArrayList::collect($lines)
             ->map(fn(string $line) => trim($line))
             ->map(fn(string $line) => match (true) {
                 str_contains($line, MdHeader4::prefix()) => MdHeader4::fromTitle($this->after(MdHeader4::prefix(), $line)),

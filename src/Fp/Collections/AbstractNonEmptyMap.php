@@ -24,11 +24,11 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      * @throws EmptyCollectionException
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * REPL:
@@ -38,10 +38,10 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    abstract public static function collectUnsafe(iterable $source): self;
+    abstract public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * REPL:
@@ -51,10 +51,10 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    abstract public static function collectNonEmpty(iterable $source): self;
+    abstract public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * REPL:
@@ -64,37 +64,10 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
      * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
      * @return Option<self<TKI, TVI>>
      */
-    abstract public static function collectOption(iterable $source): Option;
-
-    /**
-     * REPL:
-     * >>> NonEmptyHashMap::collectIterable(['a' => 1, 'b' => 2])
-     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
-     *
-     * @psalm-pure
-     * @template TKI of array-key
-     * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
-     * @throws EmptyCollectionException
-     */
-    abstract public static function collectIterable(iterable $source): self;
-
-    /**
-     * REPL:
-     * >>> NonEmptyHashMap::collectIterableUnsafe(['a' => 1, 'b' => 2])
-     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
-     *
-     * @psalm-pure
-     * @template TKI of array-key
-     * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
-     */
-    abstract public static function collectIterableUnsafe(iterable $source): self;
+    abstract public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option;
 
     /**
      * @inheritDoc
@@ -215,44 +188,52 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
     }
 
     /**
-     * @return Generator<array{TK, TV}>
+     * @return PureIterable<array{TK, TV}>
      */
-    protected function generatePairs(): Generator
+    protected function generatePairs(): PureIterable
     {
-        foreach ($this as $pair) {
-            yield $pair;
-        }
+        return PureIterable::of(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        });
     }
 
     /**
-     * @return Generator<Entry<TK, TV>>
+     * @return PureIterable<Entry<TK, TV>>
      */
-    protected function generateEntries(): Generator
+    protected function generateEntries(): PureIterable
     {
-        foreach ($this as [$key, $value]) {
-            yield new Entry($key, $value);
-        }
+        return PureIterable::of(function () {
+            foreach ($this as [$key, $value]) {
+                yield new Entry($key, $value);
+            }
+        });
     }
 
     /**
-     * @return Generator<TK>
+     * @return PureIterable<TK>
      */
-    public function generateKeys(): Generator
+    public function generateKeys(): PureIterable
     {
-        foreach ($this as $pair) {
-            yield $pair[0];
-        }
+        return PureIterable::of(function () {
+            foreach ($this as $pair) {
+                yield $pair[0];
+            }
+        });
     }
 
     /**
-     * @return Generator<int, TV>
+     * @return PureIterable<TV>
      */
-    public function generateValues(): Generator
+    public function generateValues(): PureIterable
     {
-        $i = 0;
+        return PureIterable::of(function () {
+            $i = 0;
 
-        foreach ($this as $pair) {
-            yield $i++ => $pair[1];
-        }
+            foreach ($this as $pair) {
+                yield $i++ => $pair[1];
+            }
+        });
     }
 }

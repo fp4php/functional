@@ -28,29 +28,33 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
      */
-    public static function collect(iterable $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $collected = LinkedList::collect($source);
+        return new self(HashSet::collect(PureIterable::of(function () use ($source) {
+            $isEmpty = true;
 
-        if ($collected instanceof Nil) {
-            throw new EmptyCollectionException("Non empty collection must contain at least one element");
-        }
+            foreach ($source as $elem) {
+                yield $elem;
+                $isEmpty = false;
+            }
 
-        /** @var self<TVI> */
-        return new self(HashSet::collect($collected));
+            if ($isEmpty) {
+                throw new EmptyCollectionException("Non empty collection must contain at least one element");
+            }
+        })));
     }
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
         try {
             return self::collect($source);
@@ -62,10 +66,10 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     /**
      * @psalm-pure
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptySet<TVI>|NonEmptySeq<TVI> $source
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collectNonEmpty(iterable $source): self
+    public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self
     {
         return self::collectUnsafe($source);
     }
@@ -73,10 +77,10 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return Option<self<TVI>>
      */
-    public static function collectOption(iterable $source): Option
+    public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option
     {
         try {
             return Option::some(self::collect($source));
@@ -87,7 +91,7 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
 
     /**
      * @inheritDoc
-     * @return Iterator<int, TV>
+     * @return Iterator<TV>
      */
     public function getIterator(): Iterator
     {
@@ -189,12 +193,10 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
      */
     public function map(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collectUnsafe(PureIterable::of(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
             }
-        };
-
-        return self::collectUnsafe($source());
+        }));
     }
 }

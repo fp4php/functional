@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Generator;
+use Iterator;
 
 /**
  * @template-covariant TV
@@ -25,27 +26,21 @@ final class HashSet extends AbstractSet
      * @inheritDoc
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(iterable $source): self
+    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $pairs = LinkedList::collect($source)->map(fn(mixed $elem) => [$elem, $elem]);
-
-        /**
-         * Inference isn't working in generic context
-         * @var self<TVI>
-         */
-        return new self(HashMap::collect($pairs));
+        return new self(ArrayList::collect($source)->toHashMap(fn(mixed $elem) => [$elem, $elem]));
     }
 
     /**
      * @inheritDoc
-     * @return Generator<int, TV>
+     * @return Iterator<TV>
      */
-    public function getIterator(): Generator
+    public function getIterator(): Iterator
     {
-        return $this->map->generateValues();
+        return $this->map->generateValues()->getIterator();
     }
 
     /**
@@ -93,7 +88,7 @@ final class HashSet extends AbstractSet
      */
     public function tail(): self
     {
-        $source = function (): Generator {
+        return self::collect(PureIterable::of(function () {
             $toggle = true;
 
             foreach ($this as $elem) {
@@ -104,9 +99,7 @@ final class HashSet extends AbstractSet
 
                 yield $elem;
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -140,7 +133,7 @@ final class HashSet extends AbstractSet
      */
     public function filterMap(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -148,9 +141,7 @@ final class HashSet extends AbstractSet
                     yield $result->get();
                 }
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -161,7 +152,7 @@ final class HashSet extends AbstractSet
      */
     public function flatMap(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -169,9 +160,7 @@ final class HashSet extends AbstractSet
                     yield $item;
                 }
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 
     /**
@@ -182,12 +171,10 @@ final class HashSet extends AbstractSet
      */
     public function map(callable $callback): self
     {
-        $source = function () use ($callback): Generator {
+        return self::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
             }
-        };
-
-        return self::collect($source());
+        }));
     }
 }

@@ -13,7 +13,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 {
     public function testGet(): void
     {
-        $hm = NonEmptyHashMap::collectIterableUnsafe(['a' => 1, 'b' => 2]);
+        $hm = NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]]);
 
         $this->assertEquals(2, $hm->get('b')->get());
         $this->assertEquals(2, $hm('b')->get());
@@ -21,7 +21,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testUpdatedAndRemoved(): void
     {
-        $hm = NonEmptyHashMap::collectIterableUnsafe(['a' => 1, 'b' => 2]);
+        $hm = NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]]);
         $hm = $hm->updated('c', 3);
         $hm = $hm->removed('a');
 
@@ -30,7 +30,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testEvery(): void
     {
-        $hm = NonEmptyHashMap::collectIterableUnsafe(['a' => 0, 'b' => 1]);
+        $hm = NonEmptyHashMap::collectUnsafe([['a', 0], ['b', 1]]);
 
         $this->assertTrue($hm->every(fn($entry) => $entry->value >= 0));
         $this->assertFalse($hm->every(fn($entry) => $entry->value > 0));
@@ -39,7 +39,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testFilter(): void
     {
-        $hm = NonEmptyHashMap::collectIterableUnsafe(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]);
+        $hm = NonEmptyHashMap::collectUnsafe([['a', new Foo(1)], ['b', 1], ['c',  new Foo(2)]]);
         $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toArray());
     }
 

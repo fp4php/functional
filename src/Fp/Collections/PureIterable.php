@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Closure;
 use Error;
 use Generator;
 use IteratorAggregate;
@@ -15,7 +16,6 @@ use IteratorAggregate;
  * @template T
  * @psalm-immutable
  * @implements IteratorAggregate<T>
- * @psalm-suppress ImpureVariable, ImpureFunctionCall, ImpureMethodCall
  */
 final class PureIterable implements IteratorAggregate
 {
@@ -26,67 +26,36 @@ final class PureIterable implements IteratorAggregate
     private bool $drained = false;
 
     /**
-     * @psalm-param iterable<T> $emitter
+     * @psalm-param Closure(): iterable<T> $emitter
      */
-    public function __construct(private iterable $emitter)
+    public function __construct(private Closure $emitter)
     {
     }
 
     /**
      * @psalm-pure
      * @template TI
-     * @param callable(): iterable<TI> $emitter
+     * @param Closure(): iterable<TI> $emitter
      * @return self<TI>
      */
-    public static function of(callable $emitter): self
+    public static function of(Closure $emitter): self
     {
-       return new self($emitter());
+       return new self($emitter);
     }
 
     /**
-     * @psalm-pure
-     * @return list<T>
-     */
-    public function toList(): array
-    {
-        $buffer = [];
-
-        foreach ($this as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @psalm-pure
-     * @return LinkedList<T>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        $buffer = new LinkedListBuffer();
-
-        foreach ($this as $elem) {
-            $buffer->append($elem);
-        }
-
-        return $buffer->toLinkedList();
-    }
-
-    /**
-     * @psalm-pure
      * @return Generator<T>
      */
     public function getIterator(): Generator
     {
         if ($this->drained) {
-            throw new Error(self::class . ' is already drained');
+            throw new Error(self::class . ' is not pure');
+        } else {
+            $this->drained = true;
         }
 
-        foreach ($this->emitter as $elem) {
+        foreach (($this->emitter)() as $elem) {
             yield $elem;
         }
-
-        $this->drained = true;
     }
 }

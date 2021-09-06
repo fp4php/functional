@@ -20,35 +20,35 @@ abstract class AbstractNonEmptySet implements NonEmptySet
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      * @throws EmptyCollectionException
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collectUnsafe(iterable $source): self;
+    abstract public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptySet<TVI>|NonEmptySeq<TVI> $source
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collectNonEmpty(iterable $source): self;
+    abstract public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self;
 
     /**
      * @psalm-pure
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
      * @return Option<self<TVI>>
      */
-    abstract public static function collectOption(iterable $source): Option;
+    abstract public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option;
 
     /**
      * @inheritDoc
@@ -142,13 +142,11 @@ abstract class AbstractNonEmptySet implements NonEmptySet
      */
     public function toHashMap(callable $callback): HashMap
     {
-        $source = function () use ($callback): Generator {
+        return HashMap::collect(PureIterable::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
-        };
-
-        return HashMap::collect($source());
+        }));
     }
 
     /**
@@ -160,13 +158,11 @@ abstract class AbstractNonEmptySet implements NonEmptySet
      */
     public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
     {
-        $source = function () use ($callback): Generator {
+        return NonEmptyHashMap::collectUnsafe(PureIterable::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
-        };
-
-        return NonEmptyHashMap::collectUnsafe($source());
+        }));
     }
 
     /**

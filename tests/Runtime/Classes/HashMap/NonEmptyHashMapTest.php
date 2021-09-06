@@ -32,11 +32,7 @@ final class NonEmptyHashMapTest extends TestCase
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            Option::try(fn() => NonEmptyHashMap::collectIterable(['a' => 1, 'b' => 2])->toArray())->get(),
-        );
-
-        $this->assertNull(
-            Option::try(fn() => NonEmptyHashMap::collectIterable([])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]])->toArray())->get(),
         );
 
         $this->assertNull(
@@ -44,7 +40,11 @@ final class NonEmptyHashMapTest extends TestCase
         );
 
         $this->assertNull(
-            Option::try(fn() => NonEmptyHashMap::collectIterableUnsafe([])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectUnsafe([])->toArray())->get(),
+        );
+
+        $this->assertNull(
+            Option::try(fn() => NonEmptyHashMap::collectUnsafe([])->toArray())->get(),
         );
     }
 

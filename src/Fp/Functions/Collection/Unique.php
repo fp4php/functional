@@ -7,6 +7,8 @@ namespace Fp\Collection;
 use Fp\Collections\HashMap;
 use Generator;
 
+use function Fp\Cast\asListOfPairs;
+
 /**
  * Returns collection unique elements
  *
@@ -35,5 +37,5 @@ function unique(iterable $collection, callable $callback): array
         }
     };
 
-    return HashMap::collectIterable($source())->values()->toArray();
+    return HashMap::collect(asListOfPairs($source()))->values()->toArray();
 }

@@ -28,7 +28,15 @@ abstract class LinkedList extends AbstractLinearSeq
      */
     public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        return PureIterable::of(fn() => $source)->toLinkedList();
+        return PureThunk::of(function() use ($source) {
+            $buffer = new LinkedListBuffer();
+
+            foreach ($source as $elem) {
+                $buffer->append($elem);
+            }
+
+            return $buffer->toLinkedList();
+        })();
     }
 
     /**

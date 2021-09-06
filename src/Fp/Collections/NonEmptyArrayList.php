@@ -33,20 +33,21 @@ final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
      */
     public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
     {
-        $pureGenerator = PureIterable::of(function() use ($source) {
-            $isEmpty = true;
+        $elements = PureThunk::of(function() use ($source) {
+            $buffer = [];
 
             foreach ($source as $elem) {
-                $isEmpty = false;
-                yield $elem;
+                $buffer[] = $elem;
             }
 
-            if ($isEmpty) {
-                throw new EmptyCollectionException("Non empty collection must contain at least one element");
-            }
-        });
+            return $buffer;
+        })();
 
-        return new self(new ArrayList($pureGenerator->toList()));
+        if (!isset($elements[0])) {
+            throw new EmptyCollectionException("Non empty collection must contain at least one element");
+        }
+
+        return new self(new ArrayList($elements));
     }
 
     /**

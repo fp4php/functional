@@ -7,6 +7,8 @@ namespace Fp\Collection;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 
+use function Fp\Cast\asList;
+
 /**
  * Reduce multiple elements into one
  * Returns None for empty collection
@@ -29,5 +31,5 @@ use Fp\Functional\Option\Option;
  */
 function reduce(iterable $collection, callable $callback): Option
 {
-    return ArrayList::collect($collection)->reduce($callback);
+    return ArrayList::collect(asList($collection))->reduce($callback);
 }
