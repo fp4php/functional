@@ -9,10 +9,14 @@ use Fp\Psalm\Psalm;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
+use Psalm\Codebase;
+use Psalm\Internal\Type\Comparator\UnionTypeComparator;
 use Psalm\IssueBuffer;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 use Psalm\StatementsSource;
+use Psalm\Type\Atomic\TCallable;
+use Psalm\Type\Union;
 use function Fp\Collection\exists;
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveOf;
@@ -53,7 +57,7 @@ final class ConditionallyPureFunctionsAnalysis implements AfterExpressionAnalysi
             $func_call = yield proveOf($event->getExpr(), FuncCall::class)
                 ->filter(fn($call) => self::isConditionallyPure($call));
 
-            if (self::hasImpureArg($event->getStatementsSource(), $func_call)) {
+            if (self::hasImpureArg($event->getCodebase(), $event->getStatementsSource(), $func_call)) {
                 return;
             }
 
@@ -88,14 +92,36 @@ final class ConditionallyPureFunctionsAnalysis implements AfterExpressionAnalysi
     }
 
     /**
-     * All iterable or mixed args are impure.
+     * All iterable, impure-callable or mixed args are impure.
      */
-    private static function hasImpureArg(StatementsSource $source, FuncCall $func_call): bool
+    private static function hasImpureArg(Codebase $codebase, StatementsSource $source, FuncCall $func_call): bool
     {
         $arg_type_has_iterable = fn(Arg $arg): bool => Psalm::getArgUnion($arg, $source)
-            ->map(fn($arg_type) => $arg_type->hasIterable())
+            ->map(fn($arg_type) => self::isArgTypeImpure($codebase, $arg_type))
             ->getOrElse(true);
 
         return exists($func_call->args, $arg_type_has_iterable);
+    }
+
+    private static function isArgTypeImpure(Codebase $codebase, Union $arg_type): bool
+    {
+        if ($arg_type->hasIterable()) {
+            return true;
+        }
+
+        if ($arg_type->hasCallableType() && !self::isPureCallable($codebase, $arg_type)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static function isPureCallable(Codebase $codebase, Union $callable_type): bool
+    {
+        $pure_callable_type = new Union([
+            new TCallable(is_pure: true),
+        ]);
+
+        return UnionTypeComparator::isContainedBy($codebase, $callable_type, $pure_callable_type);
     }
 }
