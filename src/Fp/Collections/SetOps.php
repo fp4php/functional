@@ -314,4 +314,17 @@ interface SetOps
      * @psalm-return Set<TV>
      */
     public function tap(callable $callback): Set;
+
+    /**
+     * Check if this set is subset of another set
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2]))
+     * => true
+     * >>> HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2, 3]))
+     * => true
+     * >>> HashSet::collect([1, 2, 3])->subsetOf(HashSet::collect([1, 2]))
+     * => false
+     */
+    public function subsetOf(Set|NonEmptySet $superset): bool;
 }

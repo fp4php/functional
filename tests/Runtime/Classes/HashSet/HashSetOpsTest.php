@@ -144,4 +144,23 @@ final class HashSetOpsTest extends TestCase
                 ->toArray()
         );
     }
+
+    public function testSubsetOf(): void
+    {
+        $this->assertTrue(
+            HashSet::collect([])->subsetOf(HashSet::collect([]))
+        );
+        $this->assertTrue(
+            HashSet::collect([])->subsetOf(HashSet::collect([1, 2, 3]))
+        );
+        $this->assertTrue(
+            HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2]))
+        );
+        $this->assertTrue(
+            HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2, 3]))
+        );
+        $this->assertFalse(
+            HashSet::collect([1, 2, 3])->subsetOf(HashSet::collect([1, 2]))
+        );
+    }
 }

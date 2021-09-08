@@ -285,4 +285,21 @@ abstract class AbstractSet implements Set
     {
         return $this->last(fn() => true);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function subsetOf(Set|NonEmptySet $superset): bool
+    {
+        $isSubset = true;
+
+        foreach ($this as $elem) {
+            if (!$superset($elem)) {
+                $isSubset = false;
+                break;
+            }
+        }
+
+        return $isSubset;
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\HashSet;
 
+use Fp\Collections\HashSet;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
@@ -124,6 +125,22 @@ final class NonEmptyHashSetOpsTest extends TestCase
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
                 ->toArray()
+        );
+    }
+
+    public function testSubsetOf(): void
+    {
+        $this->assertFalse(
+            NonEmptyHashSet::collectNonEmpty([1, 2])->subsetOf(HashSet::collect([]))
+        );
+        $this->assertTrue(
+            NonEmptyHashSet::collectNonEmpty([1, 2])->subsetOf(NonEmptyHashSet::collectNonEmpty([1, 2]))
+        );
+        $this->assertTrue(
+            NonEmptyHashSet::collectNonEmpty([1, 2])->subsetOf(NonEmptyHashSet::collectNonEmpty([1, 2, 3]))
+        );
+        $this->assertFalse(
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->subsetOf(NonEmptyHashSet::collectNonEmpty([1, 2]))
         );
     }
 }

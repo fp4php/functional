@@ -289,4 +289,17 @@ interface NonEmptySetOps
      * @psalm-return NonEmptySet<TV>
      */
     public function tap(callable $callback): NonEmptySet;
+
+    /**
+     * Check if this set is subset of another set
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([1, 2])->subsetOf(NonEmptyHashSet::collect([1, 2]))
+     * => true
+     * >>> NonEmptyHashSet::collect([1, 2])->subsetOf(NonEmptyHashSet::collect([1, 2, 3]))
+     * => true
+     * >>> NonEmptyHashSet::collect([1, 2, 3])->subsetOf(NonEmptyHashSet::collect([1, 2]))
+     * => false
+     */
+    public function subsetOf(Set|NonEmptySet $superset): bool;
 }
