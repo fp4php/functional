@@ -98,7 +98,7 @@ final class ArrayList extends AbstractIndexedSeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collect(PureIterable::of(function() use ($suffix) {
+        return self::collect(IterableOnce::of(function() use ($suffix) {
             foreach ($this->elements as $prefixElem) {
                 yield $prefixElem;
             }
@@ -128,7 +128,7 @@ final class ArrayList extends AbstractIndexedSeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collect(PureIterable::of(function() use ($prefix) {
+        return self::collect(IterableOnce::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -384,5 +384,19 @@ final class ArrayList extends AbstractIndexedSeq
         usort($sorted, $cmp);
 
         return new self($sorted);
+    }
+
+    /**
+     * @inheritDoc
+     * @param callable(TV): void $callback
+     * @psalm-return self<TV>
+     */
+    public function tap(callable $callback): self
+    {
+        foreach ($this as $elem) {
+            $callback($elem);
+        }
+
+        return $this;
     }
 }

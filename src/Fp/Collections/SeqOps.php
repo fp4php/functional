@@ -443,4 +443,19 @@ interface SeqOps
      * @psalm-return Seq<TV>
      */
     public function sorted(callable $cmp): Seq;
+
+    /**
+     * Call a function for every collection element
+     *
+     * REPL:
+     * >>> LinkedList::collect([new Foo(1), new Foo(2)])
+     * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+     * >>>     ->map(fn(Foo $foo) => $foo->a)
+     * >>>     ->toArray()
+     * => [2, 3]
+     *
+     * @param callable(TV): void $callback
+     * @psalm-return Seq<TV>
+     */
+    public function tap(callable $callback): Seq;
 }

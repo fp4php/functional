@@ -115,4 +115,15 @@ final class NonEmptyHashSetOpsTest extends TestCase
             NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
         );
     }
+
+    public function testTap(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            NonEmptyHashSet::collectNonEmpty([new Foo(1), new Foo(2)])
+                ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+                ->map(fn(Foo $foo) => $foo->a)
+                ->toArray()
+        );
+    }
 }

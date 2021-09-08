@@ -129,7 +129,7 @@ abstract class AbstractNonEmptySet implements NonEmptySet
      */
     public function toHashMap(callable $callback): HashMap
     {
-        return HashMap::collectPairs(PureIterable::of(function () use ($callback) {
+        return HashMap::collectPairs(IterableOnce::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
@@ -145,7 +145,7 @@ abstract class AbstractNonEmptySet implements NonEmptySet
      */
     public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsUnsafe(PureIterable::of(function () use ($callback) {
+        return NonEmptyHashMap::collectPairsUnsafe(IterableOnce::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }

@@ -4,24 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\LinkedList;
 
-use Fp\Collections\EmptyCollectionException;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Foo;
 
 final class NonEmptyLinkedListTest extends TestCase
 {
-    /**
-     * @throws EmptyCollectionException
-     */
     public function testCollect(): void
     {
         $this->assertEquals(
             [1, 2, 3],
-            NonEmptyLinkedList::collect([1, 2, 3])->toArray(),
+            NonEmptyLinkedList::collect([1, 2, 3])->getUnsafe()->toArray(),
         );
 
-        $catch = Option::try(fn() => NonEmptyLinkedList::collect([]));
+        $catch = Option::try(fn() => NonEmptyLinkedList::collectUnsafe([]));
         $this->assertTrue($catch->isNone());
     }
 
@@ -48,10 +45,10 @@ final class NonEmptyLinkedListTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            NonEmptyLinkedList::collectOption([1, 2, 3])->getUnsafe()->toArray(),
+            NonEmptyLinkedList::collect([1, 2, 3])->getUnsafe()->toArray(),
         );
 
-        $this->assertNull(NonEmptyLinkedList::collectOption([])->get());
+        $this->assertNull(NonEmptyLinkedList::collect([])->get());
     }
 
     public function testCasts(): void
@@ -117,6 +114,17 @@ final class NonEmptyLinkedListTest extends TestCase
         $this->assertEquals(
             [3, 2, 1],
             NonEmptyLinkedList::collectNonEmpty([3, 2, 1])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+        );
+    }
+
+    public function testTap(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            NonEmptyLinkedList::collectNonEmpty([new Foo(1), new Foo(2)])
+                ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+                ->map(fn(Foo $foo) => $foo->a)
+                ->toArray()
         );
     }
 }

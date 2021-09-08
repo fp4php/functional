@@ -242,4 +242,15 @@ final class NonEmptyArrayListOpsTest extends TestCase
         $this->assertEquals([[1, [$f1, $f3]], [2, [$f2]], [3, [$f4]]], $res2);
         $this->assertEquals([[1, [1, 1]], [2, [2]], [3, [3]]], $res3);
     }
+
+    public function testTap(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            NonEmptyArrayList::collectNonEmpty([new Foo(1), new Foo(2)])
+                ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+                ->map(fn(Foo $foo) => $foo->a)
+                ->toArray()
+        );
+    }
 }

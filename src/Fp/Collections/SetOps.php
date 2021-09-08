@@ -299,4 +299,19 @@ interface SetOps
      * @psalm-return Set<TVO>
      */
     public function map(callable $callback): Set;
+
+    /**
+     * Call a function for every collection element
+     *
+     * REPL:
+     * >>> HashSet::collect([new Foo(1), new Foo(2)])
+     * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+     * >>>     ->map(fn(Foo $foo) => $foo->a)
+     * >>>     ->toArray()
+     * => [2, 3]
+     *
+     * @param callable(TV): void $callback
+     * @psalm-return Set<TV>
+     */
+    public function tap(callable $callback): Set;
 }

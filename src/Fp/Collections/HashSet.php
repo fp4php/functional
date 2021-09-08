@@ -87,7 +87,7 @@ final class HashSet extends AbstractSet
      */
     public function tail(): self
     {
-        return self::collect(PureIterable::of(function () {
+        return self::collect(IterableOnce::of(function () {
             $toggle = true;
 
             foreach ($this as $elem) {
@@ -132,7 +132,7 @@ final class HashSet extends AbstractSet
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(PureIterable::of(function () use ($callback) {
+        return self::collect(IterableOnce::of(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -151,7 +151,7 @@ final class HashSet extends AbstractSet
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(PureIterable::of(function () use ($callback) {
+        return self::collect(IterableOnce::of(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -170,11 +170,25 @@ final class HashSet extends AbstractSet
      */
     public function map(callable $callback): self
     {
-        return self::collect(PureIterable::of(function () use ($callback) {
+        return self::collect(IterableOnce::of(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
             }
         }));
+    }
+
+    /**
+     * @inheritDoc
+     * @param callable(TV): void $callback
+     * @psalm-return self<TV>
+     */
+    public function tap(callable $callback): self
+    {
+        foreach ($this as $elem) {
+            $callback($elem);
+        }
+
+        return $this;
     }
 
     public function isEmpty():bool

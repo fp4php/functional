@@ -366,4 +366,19 @@ interface NonEmptySeqOps
      * @psalm-return NonEmptySeq<TV>
      */
     public function sorted(callable $cmp): NonEmptySeq;
+
+    /**
+     * Call a function for every collection element
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collect([new Foo(1), new Foo(2)])
+     * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+     * >>>     ->map(fn(Foo $foo) => $foo->a)
+     * >>>     ->toArray()
+     * => [2, 3]
+     *
+     * @param callable(TV): void $callback
+     * @psalm-return NonEmptySeq<TV>
+     */
+    public function tap(callable $callback): NonEmptySeq;
 }

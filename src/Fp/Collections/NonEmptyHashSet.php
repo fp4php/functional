@@ -158,10 +158,24 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(PureIterable::of(function () use ($callback) {
+        return self::collectUnsafe(IterableOnce::of(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
             }
         }));
+    }
+
+    /**
+     * @inheritDoc
+     * @param callable(TV): void $callback
+     * @psalm-return self<TV>
+     */
+    public function tap(callable $callback): self
+    {
+        foreach ($this as $elem) {
+            $callback($elem);
+        }
+
+        return $this;
     }
 }

@@ -96,7 +96,7 @@ abstract class AbstractSet implements Set
      */
     public function toHashMap(callable $callback): HashMap
     {
-        return HashMap::collectPairs(PureIterable::of(function () use ($callback) {
+        return HashMap::collectPairs(IterableOnce::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }

@@ -11,36 +11,37 @@ use IteratorAggregate;
 
 /**
  * Conditionally pure internal iterable
+ * Can be iterated only once
  *
  * @internal
  * @template T
  * @psalm-immutable
  * @implements IteratorAggregate<T>
  */
-final class PureIterable implements IteratorAggregate
+final class IterableOnce implements IteratorAggregate
 {
     /**
      * @psalm-allow-private-mutation $drained
      * @var bool
      */
-    private bool $drained = false;
+    private bool $iterated = false;
 
     /**
-     * @psalm-param Closure(): iterable<T> $emitter
+     * @psalm-param Closure(): iterable<T> $iterableThunk
      */
-    public function __construct(private Closure $emitter)
+    public function __construct(private Closure $iterableThunk)
     {
     }
 
     /**
      * @psalm-pure
      * @template TI
-     * @param Closure(): iterable<TI> $emitter
+     * @param Closure(): iterable<TI> $iterableThunk
      * @return self<TI>
      */
-    public static function of(Closure $emitter): self
+    public static function of(Closure $iterableThunk): self
     {
-       return new self($emitter);
+       return new self($iterableThunk);
     }
 
     /**
@@ -48,13 +49,13 @@ final class PureIterable implements IteratorAggregate
      */
     public function getIterator(): Generator
     {
-        if ($this->drained) {
-            throw new Error(self::class . ' is not pure');
+        if ($this->iterated) {
+            throw new Error(self::class . ' must be iterated only once');
         } else {
-            $this->drained = true;
+            $this->iterated = true;
         }
 
-        foreach (($this->emitter)() as $elem) {
+        foreach (($this->iterableThunk)() as $elem) {
             yield $elem;
         }
     }

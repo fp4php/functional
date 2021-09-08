@@ -120,7 +120,7 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
      */
     public function toHashMap(callable $callback): HashMap
     {
-        return HashMap::collectPairs(PureIterable::of(function () use ($callback) {
+        return HashMap::collectPairs(IterableOnce::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
@@ -136,7 +136,7 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
      */
     public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsUnsafe(PureIterable::of(function () use ($callback) {
+        return NonEmptyHashMap::collectPairsUnsafe(IterableOnce::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
@@ -329,25 +329,26 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
      * @template TKO
      * @psalm-param callable(TV): TKO $callback
      * @psalm-return NonEmptyMap<TKO, NonEmptySeq<TV>>
+     * @psalm-suppress ImpureMethodCall
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        return PureThunk::of(function () use ($callback) {
-            $buffer = new HashMapBuffer();
+        $buffer = new HashMapBuffer();
 
-            foreach ($this as $elem) {
-                $key = $callback($elem);
+        foreach ($this as $elem) {
+            $key = $callback($elem);
 
-                /** @psalm-var Option<NonEmptySeq<TV>> $optionalGroup */
-                $optionalGroup = $buffer->get($key);
+            /**
+             * @psalm-var Option<NonEmptySeq<TV>> $optionalGroup
+             */
+            $optionalGroup = $buffer->get($key);
 
-                $buffer->update($key, $optionalGroup->fold(
-                    fn(NonEmptySeq $group): NonEmptySeq => $group->prepended($elem),
-                    fn(): NonEmptySeq => new NonEmptyLinkedList($elem, Nil::getInstance())
-                ));
-            }
+            $buffer->update($key, $optionalGroup->fold(
+                fn(NonEmptySeq $group): NonEmptySeq => $group->prepended($elem),
+                fn(): NonEmptySeq => new NonEmptyLinkedList($elem, Nil::getInstance())
+            ));
+        }
 
-            return new NonEmptyHashMap($buffer->toHashMap());
-        })();
+        return new NonEmptyHashMap($buffer->toHashMap());
     }
 }

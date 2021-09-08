@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Semigroup;
 
 use Fp\Collections\NonEmptyHashSet;
-use Fp\Collections\PureIterable;
+use Fp\Collections\IterableOnce;
 use Generator;
 
 /**
@@ -26,7 +26,7 @@ class NonEmptyHashSetSemigroup extends Semigroup
      */
     public function combine(mixed $lhs, mixed $rhs): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(PureIterable::of(function () use ($rhs, $lhs): Generator {
+        return NonEmptyHashSet::collectUnsafe(IterableOnce::of(function () use ($rhs, $lhs): Generator {
             foreach ($lhs as $elem) {
                 yield $elem;
             }

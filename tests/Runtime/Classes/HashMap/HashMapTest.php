@@ -9,8 +9,6 @@ use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
-use function Fp\Cast\asListOfPairs;
-
 final class HashMapTest extends TestCase
 {
     public function testCollect(): void
@@ -22,7 +20,7 @@ final class HashMapTest extends TestCase
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collectPairs(asListOfPairs(['a' => 1, 'b' => 2]))->toArray(),
+            HashMap::collect(['a' => 1, 'b' => 2])->toArray(),
         );
     }
 

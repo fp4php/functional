@@ -108,7 +108,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collectUnsafe(PureIterable::of(function() use ($suffix) {
+        return self::collectUnsafe(IterableOnce::of(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -138,7 +138,7 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collectUnsafe(PureIterable::of(function() use ($prefix) {
+        return self::collectUnsafe(IterableOnce::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -263,5 +263,19 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
         usort($sorted, $cmp);
 
         return self::collectUnsafe($sorted);
+    }
+
+    /**
+     * @inheritDoc
+     * @param callable(TV): void $callback
+     * @psalm-return self<TV>
+     */
+    public function tap(callable $callback): self
+    {
+        foreach ($this as $elem) {
+            $callback($elem);
+        }
+
+        return $this;
     }
 }

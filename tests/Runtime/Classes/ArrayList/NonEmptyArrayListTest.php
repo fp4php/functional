@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\ArrayList;
 
-use Fp\Collections\EmptyCollectionException;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 
 final class NonEmptyArrayListTest extends TestCase
 {
-    /**
-     * @throws EmptyCollectionException
-     */
     public function testCollect(): void
     {
         $this->assertEquals(
             [1, 2, 3],
-            NonEmptyArrayList::collect([1, 2, 3])->toArray(),
+            NonEmptyArrayList::collect([1, 2, 3])->getUnsafe()->toArray(),
         );
 
-        $catch = Option::try(fn() => NonEmptyArrayList::collect([]));
+        $catch = Option::try(fn() => NonEmptyArrayList::collectUnsafe([]));
         $this->assertTrue($catch->isNone());
     }
 
@@ -48,10 +44,10 @@ final class NonEmptyArrayListTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            NonEmptyArrayList::collectOption([1, 2, 3])->getUnsafe()->toArray(),
+            NonEmptyArrayList::collect([1, 2, 3])->getUnsafe()->toArray(),
         );
 
-        $this->assertNull(NonEmptyArrayList::collectOption([])->get());
+        $this->assertNull(NonEmptyArrayList::collect([])->get());
     }
 
     public function testCasts(): void

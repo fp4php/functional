@@ -274,4 +274,19 @@ interface NonEmptySetOps
      * @psalm-return NonEmptySet<TVO>
      */
     public function map(callable $callback): NonEmptySet;
+
+    /**
+     * Call a function for every collection element
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collect([new Foo(1), new Foo(2)])
+     * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+     * >>>     ->map(fn(Foo $foo) => $foo->a)
+     * >>>     ->toArray()
+     * => [2, 3]
+     *
+     * @param callable(TV): void $callback
+     * @psalm-return NonEmptySet<TV>
+     */
+    public function tap(callable $callback): NonEmptySet;
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Monoid;
 
 use Fp\Collections\HashSet;
-use Fp\Collections\PureIterable;
+use Fp\Collections\IterableOnce;
 use Generator;
 
 /**
@@ -34,7 +34,7 @@ class HashSetMonoid extends Monoid
      */
     public function combine(mixed $lhs, mixed $rhs): HashSet
     {
-        return HashSet::collect(PureIterable::of(function () use ($rhs, $lhs) {
+        return HashSet::collect(IterableOnce::of(function () use ($rhs, $lhs) {
             foreach ($lhs as $elem) {
                 yield $elem;
             }

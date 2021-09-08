@@ -32,7 +32,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public static function collect(iterable $source): Option
     {
-        return self::collectPairs(PureIterable::of(function () use ($source) {
+        return self::collectPairs(IterableOnce::of(function () use ($source) {
             foreach ($source as $key => $value) {
                 yield [$key, $value];
             }
@@ -192,7 +192,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function mapValues(callable $callback): self
     {
-        return self::collectPairsUnsafe(PureIterable::of(function () use ($callback) {
+        return self::collectPairsUnsafe(IterableOnce::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$entry->key, $callback($entry)];
                 unset($entry);
@@ -208,7 +208,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function mapKeys(callable $callback): self
     {
-        return self::collectPairsUnsafe(PureIterable::of(function () use ($callback) {
+        return self::collectPairsUnsafe(IterableOnce::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$callback($entry), $entry->value];
                 unset($entry);

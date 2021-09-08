@@ -9,13 +9,11 @@ use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Foo;
 
-use function Fp\Cast\asListOfPairs;
-
 final class HashMapOpsTest extends TestCase
 {
     public function testGet(): void
     {
-        $hm = HashMap::collectPairs(asListOfPairs(['a' => 1, 'b' => 2]));
+        $hm = HashMap::collect(['a' => 1, 'b' => 2]);
 
         $this->assertEquals(2, $hm->get('b')->get());
         $this->assertEquals(2, $hm('b')->get());
@@ -23,7 +21,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testUpdatedAndRemoved(): void
     {
-        $hm = HashMap::collectPairs(asListOfPairs(['a' => 1, 'b' => 2]));
+        $hm = HashMap::collect(['a' => 1, 'b' => 2]);
         $hm = $hm->updated('c', 3);
         $hm = $hm->removed('a');
 
@@ -32,7 +30,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testEvery(): void
     {
-        $hm = HashMap::collectPairs(asListOfPairs(['a' => 0, 'b' => 1]));
+        $hm = HashMap::collect(['a' => 0, 'b' => 1]);
 
         $this->assertTrue($hm->every(fn($entry) => $entry->value >= 0));
         $this->assertFalse($hm->every(fn($entry) => $entry->value > 0));
@@ -41,7 +39,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testFilter(): void
     {
-        $hm = HashMap::collectPairs(asListOfPairs(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]));
+        $hm = HashMap::collect(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]);
         $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toArray());
     }
 

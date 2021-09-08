@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Functional;
 
-use Fp\Collections\PureThunk;
-
 class Unit
 {
     private static ?self $instance = null;
@@ -16,13 +14,12 @@ class Unit
 
     /**
      * @psalm-pure
+     * @psalm-suppress ImpureMethodCall, ImpureStaticProperty
      */
     public static function getInstance(): self
     {
-        return PureThunk::of(function () {
-            return is_null(self::$instance)
-                ? self::$instance = new self()
-                : self::$instance;
-        })();
+        return is_null(self::$instance)
+            ? self::$instance = new self()
+            : self::$instance;;
     }
 }
