@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Collections\HashMap;
-use Generator;
-
-use function Fp\Cast\asListOfPairs;
+use Fp\Collections\IterableOnce;
 
 /**
  * Returns collection unique elements
@@ -31,11 +29,11 @@ use function Fp\Cast\asListOfPairs;
  */
 function unique(iterable $collection, callable $callback): array
 {
-    $source = function () use ($callback, $collection): Generator {
+    $hashMap = HashMap::collect(IterableOnce::of(function () use ($collection, $callback) {
         foreach ($collection as $elem) {
             yield $callback($elem) => $elem;
         }
-    };
+    }));
 
-    return HashMap::collect($source())->values()->toArray();
+    return $hashMap->values()->toArray();
 }

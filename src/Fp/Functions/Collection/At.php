@@ -29,12 +29,9 @@ use Fp\Functional\Option\Option;
  */
 function at(iterable $collection, int|string $key): Option
 {
-    if (is_array($collection) || $collection instanceof ArrayAccess) {
-        return Option::fromNullable($collection[$key] ?? null);
-    } else {
-        return first(
-            $collection,
-            fn(mixed $v, mixed $k) => $k === $key);
-    }
+    return Option::some($collection)
+        ->filter(fn($coll) => is_array($coll) || $coll instanceof ArrayAccess)
+        ->map(fn($coll) => $coll[$key] ?? null)
+        ->orElse(fn() => first($collection, fn(mixed $v, mixed $k) => $k === $key));
 }
 
