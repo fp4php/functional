@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Generator;
 use Iterator;
 
 use function Fp\of;
@@ -18,37 +17,25 @@ use function Fp\of;
 abstract class AbstractNonEmptySeq implements NonEmptySeq
 {
     /**
-     * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
-     * @return self<TVI>
-     * @throws EmptyCollectionException
-     */
-    abstract public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self;
-
-    /**
-     * @psalm-pure
-     * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
-     * @return self<TVI>
-     */
-    abstract public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self;
-
-    /**
-     * @psalm-pure
-     * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
-     * @return self<TVI>
-     */
-    abstract public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self;
-
-    /**
-     * @psalm-pure
-     * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
+     * @param iterable<TVI> $source
      * @return Option<self<TVI>>
      */
-    abstract public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option;
+    abstract public static function collect(iterable $source): Option;
+
+    /**
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return self<TVI>
+     */
+    abstract public static function collectUnsafe(iterable $source): self;
+
+    /**
+     * @template TVI
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @return self<TVI>
+     */
+    abstract public static function collectNonEmpty(array|NonEmptyCollection $source): self;
 
     /**
      * @inheritDoc

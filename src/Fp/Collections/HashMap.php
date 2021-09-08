@@ -17,20 +17,19 @@ final class HashMap extends AbstractMap
 {
     /**
      * @internal
-     * @param HashTable<TK, TV> $hashTable
+     * @psalm-param HashTable<TK, TV> $hashTable
      */
-    public function __construct(private HashTable $hashTable)
+    public function __construct(private HashTable $hashTable, private bool $empty)
     {
     }
 
     /**
-     * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
+     * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
+    public static function collect(iterable $source): self
     {
         return PureThunk::of(function () use ($source) {
             $buffer = new HashMapBuffer();
@@ -225,6 +224,11 @@ final class HashMap extends AbstractMap
     public function values(): Seq
     {
         return ArrayList::collect($this->generateValues());
+    }
+
+    public function isEmpty():bool
+    {
+        return $this->empty;
     }
 
     /**

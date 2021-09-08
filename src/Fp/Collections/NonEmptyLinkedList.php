@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Error;
 use Fp\Functional\Option\Option;
-use Generator;
 use Iterator;
 
 /**
@@ -25,66 +23,35 @@ final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
     }
 
     /**
-     * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
-     * @return self<TVI>
-     * @throws EmptyCollectionException
-     */
-    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
-    {
-        $collected = LinkedList::collect($source);
-
-        if ($collected instanceof Cons) {
-            /** @var Cons<TVI> $collected */
-            $head = $collected->head;
-            $tail = $collected->tail;
-        } else {
-            throw new EmptyCollectionException("Non empty collection must contain at least one element");
-        }
-
-        return new NonEmptyLinkedList($head, $tail);
-    }
-
-    /**
-     * @psalm-pure
-     * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
-     * @return self<TVI>
-     */
-    public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self
-    {
-        try {
-            return self::collect($source);
-        } catch (EmptyCollectionException $e) {
-            throw new Error(previous: $e);
-        }
-    }
-
-    /**
-     * @psalm-pure
-     * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
-     * @return self<TVI>
-     */
-    public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self
-    {
-        return self::collectUnsafe($source);
-    }
-
-    /**
-     * @psalm-pure
-     * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
+     * @param iterable<TVI> $source
      * @return Option<self<TVI>>
      */
-    public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option
+    public static function collect(iterable $source): Option
     {
-        try {
-            return Option::some(self::collect($source));
-        } catch (EmptyCollectionException) {
-            return Option::none();
-        }
+        return Option::some(LinkedList::collect($source))
+            ->filter(fn($list) => $list instanceof Cons)
+            ->map(fn(Cons $cons) => new NonEmptyLinkedList($cons->head, $cons->tail));
+    }
+
+    /**
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return self<TVI>
+     */
+    public static function collectUnsafe(iterable $source): self
+    {
+        return self::collect($source)->getUnsafe();
+    }
+
+    /**
+     * @template TVI
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @return self<TVI>
+     */
+    public static function collectNonEmpty(array|NonEmptyCollection $source): self
+    {
+        return self::collectUnsafe($source);
     }
 
     /**

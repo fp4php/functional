@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Error;
 use Fp\Functional\Option\Option;
-use Generator;
 use Iterator;
 
 /**
@@ -27,77 +25,46 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
 
     /**
      * @inheritDoc
-     * @psalm-pure
      * @template TKI
      * @template TVI
-     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
-     * @throws EmptyCollectionException
-     */
-    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
-    {
-        $hashMapOption = PureThunk::of(function() use ($source) {
-            $buffer = new HashMapBuffer();
-
-            foreach ($source as [$key, $value]) {
-                $buffer->update($key, $value);
-            }
-
-            return Option::cond(!$buffer->isEmpty(), $buffer->toHashMap());
-        })();
-
-        $nonEmptyHashMap = $hashMapOption
-            ->map(fn(HashMap $hashMap) => new self($hashMap))
-            ->get();
-
-        return $nonEmptyHashMap ?? throw new EmptyCollectionException("Non empty collection must contain at least one element");
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-pure
-     * @template TKI
-     * @template TVI
-     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
-     */
-    public static function collectUnsafe(array|Collection|NonEmptyCollection|PureIterable $source): self
-    {
-        try {
-            return self::collect($source);
-        } catch (EmptyCollectionException $e) {
-            throw new Error(previous: $e);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-pure
-     * @template TKI
-     * @template TVI
-     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
-     */
-    public static function collectNonEmpty(array|NonEmptyCollection|PureIterable $source): self
-    {
-        return self::collectUnsafe($source);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-pure
-     * @template TKI
-     * @template TVI
-     * @param array<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>|PureIterable<array{TKI, TVI}> $source
+     * @param iterable<array{TKI, TVI}> $source
      * @return Option<self<TKI, TVI>>
      */
-    public static function collectOption(array|Collection|NonEmptyCollection|PureIterable $source): Option
+    public static function collect(iterable $source): Option
     {
-        try {
-            return Option::some(self::collect($source));
-        } catch (EmptyCollectionException) {
-            return Option::none();
+        $buffer = new HashMapBuffer();
+
+        foreach ($source as [$key, $value]) {
+            $buffer->update($key, $value);
         }
+
+        $hashMap = $buffer->toHashMap();
+
+        return Option::cond(!$hashMap->isEmpty(), new self($hashMap));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param iterable<array{TKI, TVI}> $source
+     * @return self<TKI, TVI>
+     */
+    public static function collectUnsafe(iterable $source): self
+    {
+        return self::collect($source)->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @return self<TKI, TVI>
+     */
+    public static function collectNonEmpty(array|NonEmptyCollection $source): self
+    {
+        return self::collectUnsafe($source);
     }
 
     /**
@@ -144,7 +111,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function updated(mixed $key, mixed $value): self
     {
-        return self::collectNonEmpty([...$this->toArray(), [$key, $value]]);
+        return self::collectUnsafe([...$this->toArray(), [$key, $value]]);
     }
 
     /**

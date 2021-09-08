@@ -24,12 +24,11 @@ final class HashSet extends AbstractSet
 
     /**
      * @inheritDoc
-     * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
+     * @param iterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
+    public static function collect(iterable $source): self
     {
         return new self(ArrayList::collect($source)->toHashMap(fn(mixed $elem) => [$elem, $elem]));
     }
@@ -40,7 +39,7 @@ final class HashSet extends AbstractSet
      */
     public function getIterator(): Iterator
     {
-        return $this->map->generateValues()->getIterator();
+        return $this->map->generateValues();
     }
 
     /**
@@ -176,5 +175,10 @@ final class HashSet extends AbstractSet
                 yield $callback($element);
             }
         }));
+    }
+
+    public function isEmpty():bool
+    {
+        return $this->map->isEmpty();
     }
 }

@@ -120,7 +120,7 @@ class Psalm
             ->appendedAll($union->getLiteralInts())
             ->map(fn(TLiteralString|TLiteralFloat|TLiteralInt $literal) => $literal->value);
 
-        return NonEmptyHashSet::collectOption($literalValues);
+        return NonEmptyHashSet::collect($literalValues);
     }
 
     /**

@@ -22,12 +22,11 @@ abstract class AbstractSet implements Set
      * >>> HashSet::collect([1, 2])
      * => HashSet(1, 2)
      *
-     * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
+     * @param iterable<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self;
+    abstract public static function collect(iterable $source): self;
 
     /**
      * @inheritDoc

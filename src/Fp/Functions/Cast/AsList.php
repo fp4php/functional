@@ -37,7 +37,7 @@ function asList(iterable ...$collections): array
 }
 
 /**
- * Copy one or multiple collections as list of key-value pairs
+ * Copy collection as list of key-value pairs
  *
  * REPL:
  * >>> asListOfPairs(['a' => 1, 'b' => 2]);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Error;
 use Fp\Functional\Option\Option;
 
 /**
@@ -82,11 +81,6 @@ final class HashMapBuffer
      */
     public function toHashMap(): HashMap
     {
-        return new HashMap($this->hashTable);
-    }
-
-    public function isEmpty():bool
-    {
-        return $this->empty;
+        return new HashMap($this->hashTable, $this->empty);
     }
 }
