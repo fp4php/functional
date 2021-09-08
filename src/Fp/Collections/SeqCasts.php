@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Psalm\Hooks\ToHashMapMethodReturnTypeProvider;
-
 /**
  * @psalm-immutable
  * @template-covariant TV

@@ -69,7 +69,7 @@ interface SeqOps
      * Returns None if there is no such collection element.
      *
      * REPL:
-     * >>> ArrayList::collect([1, 2])->at(1)->get()
+     * >>> ArrayList::collect([1, 2])(1)->get()
      * => 2
      *
      * Alias for {@see Seq::at()}
@@ -83,7 +83,7 @@ interface SeqOps
      * Returns None if there is no such collection element
      *
      * REPL:
-     * >>> LinkedList::collect([1, 2])->at(1)->get()
+     * >>> ArrayList::collect([1, 2])->at(1)->get()
      * => 2
      *
      * @psalm-return Option<TV>
