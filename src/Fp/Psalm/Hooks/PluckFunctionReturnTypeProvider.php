@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hooks;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\HashMap;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Psalm;
 use Fp\Psalm\PsalmTypeParam;
@@ -18,13 +19,10 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 use ReflectionNamedType;
-
 use ReflectionProperty;
-
 use ReflectionUnionType;
 
 use function Fp\Collection\firstOf;
-use function Fp\Collection\at;
 use function Fp\Collection\second;
 use function Fp\Evidence\proveClassString;
 use function Fp\Evidence\proveTrue;
@@ -96,7 +94,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
             $collection_value_type_param = yield PsalmTypeParam::getUnionValueTypeParam($collection_union);
             $collection_value_atomic = yield Psalm::getUnionSingeAtomic($collection_value_type_param);
             yield proveTrue($collection_value_atomic instanceof TKeyedArray);
-            return yield at($collection_value_atomic->properties, $key);
+            return yield HashMap::collect($collection_value_atomic->properties)($key);
         });
     }
 
