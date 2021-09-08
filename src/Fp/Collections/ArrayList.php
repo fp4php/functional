@@ -29,22 +29,19 @@ final class ArrayList extends AbstractIndexedSeq
 
     /**
      * @inheritDoc
-     * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
+     * @param iterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
+    public static function collect(iterable $source): self
     {
-        return new self(PureThunk::of(function() use ($source) {
-            $buffer = [];
+        $buffer = [];
 
-            foreach ($source as $elem) {
-                $buffer[] = $elem;
-            }
+        foreach ($source as $elem) {
+            $buffer[] = $elem;
+        }
 
-            return $buffer;
-        })());
+        return new self($buffer);
     }
 
     /**

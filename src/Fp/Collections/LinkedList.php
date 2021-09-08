@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Generator;
 use Iterator;
 use Fp\Functional\Option\Option;
 
@@ -21,22 +20,19 @@ abstract class LinkedList extends AbstractLinearSeq
 {
     /**
      * @inheritDoc
-     * @psalm-pure
      * @template TVI
-     * @param array<TVI>|Collection<TVI>|NonEmptyCollection<TVI>|PureIterable<TVI> $source
+     * @param iterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(array|Collection|NonEmptyCollection|PureIterable $source): self
+    public static function collect(iterable $source): self
     {
-        return PureThunk::of(function() use ($source) {
-            $buffer = new LinkedListBuffer();
+        $buffer = new LinkedListBuffer();
 
-            foreach ($source as $elem) {
-                $buffer->append($elem);
-            }
+        foreach ($source as $elem) {
+            $buffer->append($elem);
+        }
 
-            return $buffer->toLinkedList();
-        })();
+        return $buffer->toLinkedList();
     }
 
     /**
@@ -340,5 +336,19 @@ abstract class LinkedList extends AbstractLinearSeq
         usort($sorted, $cmp);
 
         return self::collect($sorted);
+    }
+
+    /**
+     * @inheritDoc
+     * @param callable(TV): void $callback
+     * @psalm-return self<TV>
+     */
+    public function tap(callable $callback): self
+    {
+        foreach ($this as $elem) {
+            $callback($elem);
+        }
+
+        return $this;
     }
 }
