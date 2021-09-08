@@ -14,9 +14,9 @@ use function Fp\of;
  *
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractLinearSeq<TV>
+ * @extends AbstractSeq<TV>
  */
-abstract class LinkedList extends AbstractLinearSeq
+abstract class LinkedList extends AbstractSeq
 {
     /**
      * @inheritDoc

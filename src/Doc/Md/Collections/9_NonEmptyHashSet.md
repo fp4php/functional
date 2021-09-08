@@ -35,7 +35,17 @@ $collection
     ->map(fn(Foo $elem) => $elem->a)
     ->reduce(fn($acc, $elem) => $acc + $elem); // 10
     
-// Check if set contains given element 
+/**
+ * Check if set contains given element 
+ */
 $collection(new Foo(2)); // true
+
+/**
+ * Check if one set is contained in another set 
+ */
+$collection->subsetOf(NonEmptyHashSet::collect([
+    new Foo(1), new Foo(2), new Foo(3), 
+    new Foo(4), new Foo(5), new Foo(6),
+])); // true
 ```
 

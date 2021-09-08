@@ -16,9 +16,9 @@ use function Fp\of;
  *
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractIndexedSeq<TV>
+ * @extends AbstractSeq<TV>
  */
-final class ArrayList extends AbstractIndexedSeq
+final class ArrayList extends AbstractSeq
 {
     /**
      * @param list<TV> $elements

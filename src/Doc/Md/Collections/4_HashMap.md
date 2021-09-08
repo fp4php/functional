@@ -27,7 +27,7 @@ class Foo implements HashContract
     }
 }
 
-$collection = HashMap::collect([
+$collection = HashMap::collectPairs([
     [new Foo(1), 1], [new Foo(2), 2],
     [new Foo(3), 3], [new Foo(4), 4]
 ]);

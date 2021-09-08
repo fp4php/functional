@@ -16,9 +16,9 @@
 
 -   #### empty collections
 
-        Collection<TV> -> Seq<TV> -> LinearSeq<TV> -> LinkedList<TV>
+        Collection<TV> -> Seq<TV> -> LinkedList<TV>
 
-        Collection<TV> -> Seq<TV> -> IndexedSeq<TV> -> ArrayList<TV>
+        Collection<TV> -> Seq<TV> -> ArrayList<TV>
 
         Collection<TV> -> Set<TV> -> HashSet<TV>
 
@@ -26,9 +26,9 @@
 
 -   #### non-empty collections
 
-        NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyLinearSeq<TV> -> NonEmptyLinkedList<TV>
+        NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyLinkedList<TV>
 
-        NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyIndexedSeq<TV> -> NonEmptyArrayList<TV>
+        NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyArrayList<TV>
 
         NonEmptyCollection<TV> -> NonEmptySet<TV> -> NonEmptyHashSet<TV>
 
@@ -36,10 +36,9 @@
 
 # ArrayList
 
-`IndexedSeq<TV>` interface implementation.
+`Seq<TV>` interface implementation.
 
-Collection with O(1) `Seq::at()` and `IndexedSeq::__invoke()`
-operations.
+Collection with O(1) `Seq::at()` and `Seq::__invoke()` operations.
 
 ``` php
 $collection = ArrayList::collect([
@@ -56,7 +55,7 @@ $collection
 
 # LinkedList
 
-`LinearSeq<TV>` interface implementation.
+`Seq<TV>` interface implementation.
 
 Collection with O(1) prepend operation.
 
@@ -104,7 +103,7 @@ class Foo implements HashContract
     }
 }
 
-$collection = HashMap::collect([
+$collection = HashMap::collectPairs([
     [new Foo(1), 1], [new Foo(2), 2],
     [new Foo(3), 3], [new Foo(4), 4]
 ]);
@@ -160,16 +159,26 @@ $collection
     ->reduce(fn($acc, $elem) => $acc + $elem)
     ->getOrElse(0); // 9
 
-// Check if set contains given element 
+/**
+ * Check if set contains given element
+ */ 
 $collection(new Foo(2)); // true
+
+/**
+ * Check if one set is contained in another set 
+ */
+$collection->subsetOf(HashSet::collect([
+    new Foo(1), new Foo(2), new Foo(3), 
+    new Foo(4), new Foo(5), new Foo(6),
+])); // true
 ```
 
 # NonEmptyArrayList
 
-`NonEmptyIndexedSeq<TV>` interface implementation.
+`NonEmptySeq<TV>` interface implementation.
 
-Collection with O(1) `NonEmptySeq::at()` and
-`NonEmptyIndexedSeq::__invoke()` operations.
+Collection with O(1) `NonEmptySeq::at()` and `NonEmptySeq::__invoke()`
+operations.
 
 ``` php
 $collection = NonEmptyArrayList::collect([
@@ -230,7 +239,7 @@ class Foo implements HashContract
     }
 }
 
-$collection = NonEmptyHashMap::collectNonEmpty([
+$collection = NonEmptyHashMap::collectPairsNonEmpty([
     [new Foo(1), 1], [new Foo(2), 2],
     [new Foo(3), 3], [new Foo(4), 4]
 ]);
@@ -283,6 +292,16 @@ $collection
     ->map(fn(Foo $elem) => $elem->a)
     ->reduce(fn($acc, $elem) => $acc + $elem); // 10
     
-// Check if set contains given element 
+/**
+ * Check if set contains given element 
+ */
 $collection(new Foo(2)); // true
+
+/**
+ * Check if one set is contained in another set 
+ */
+$collection->subsetOf(NonEmptyHashSet::collect([
+    new Foo(1), new Foo(2), new Foo(3), 
+    new Foo(4), new Foo(5), new Foo(6),
+])); // true
 ```

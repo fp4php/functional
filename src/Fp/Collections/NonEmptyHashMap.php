@@ -55,6 +55,18 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @inheritDoc
      * @template TKI
      * @template TVI
+     * @param non-empty-array<TKI, TVI> $source
+     * @return self<TKI, TVI>
+     */
+    public static function collectNonEmpty(array $source): self
+    {
+        return self::collectUnsafe($source);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
      * @param iterable<array{TKI, TVI}> $source
      * @return Option<self<TKI, TVI>>
      */

@@ -10,9 +10,9 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractNonEmptyIndexedSeq<TV>
+ * @extends AbstractNonEmptySeq<TV>
  */
-final class NonEmptyArrayList extends AbstractNonEmptyIndexedSeq
+final class NonEmptyArrayList extends AbstractNonEmptySeq
 {
     /**
      * @internal

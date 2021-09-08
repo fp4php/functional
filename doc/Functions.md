@@ -8,7 +8,6 @@
   - [exists](#exists)
   - [existsOf](#existsOf)
   - [at](#at)
-  - [butLast](#butLast)
   - [every](#every)
   - [everyOf](#everyOf)
   - [filter](#filter)
@@ -143,14 +142,6 @@
     ``` php
     /** @var Option<Foo|int> $result */
     $result = at([new Foo(), 2, 3], 1);
-    ```
-
--   #### butLast
-
-    Returns every collection elements except last one
-
-    ``` php
-    butLast(['a' => 1, 2, 3]); // ['a' => 1, 2]
     ```
 
 -   #### every

@@ -1,8 +1,8 @@
 # ArrayList
 
-```IndexedSeq<TV>``` interface implementation.
+```Seq<TV>``` interface implementation.
 
-Collection with O(1) ```Seq::at()``` and ```IndexedSeq::__invoke()``` operations.
+Collection with O(1) ```Seq::at()``` and ```Seq::__invoke()``` operations.
 
 ```php
 $collection = ArrayList::collect([

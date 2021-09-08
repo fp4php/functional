@@ -42,6 +42,18 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
 
     /**
      * REPL:
+     * >>> NonEmptyHashMap::collectNonEmpty(['a' =>  1, 'b' => 2])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     *
+     * @template TKI
+     * @template TVI
+     * @param non-empty-array<TKI, TVI> $source
+     * @return self<TKI, TVI>
+     */
+    abstract public static function collectNonEmpty(array $source): self;
+
+    /**
+     * REPL:
      * >>> NonEmptyHashMap::collectPairs([['a', 1], ['b', 2]])
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
      *

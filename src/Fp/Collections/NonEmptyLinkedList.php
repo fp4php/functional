@@ -10,9 +10,9 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractNonEmptyLinearSeq<TV>
+ * @extends AbstractNonEmptySeq<TV>
  */
-final class NonEmptyLinkedList extends AbstractNonEmptyLinearSeq
+final class NonEmptyLinkedList extends AbstractNonEmptySeq
 {
     /**
      * @param TV $head

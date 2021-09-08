@@ -36,6 +36,11 @@ final class NonEmptyHashMapTest extends TestCase
 
         $this->assertEquals(
             [['a', 1]],
+            NonEmptyHashMap::collectNonEmpty(['a' => 1])->toArray()
+        );
+
+        $this->assertEquals(
+            [['a', 1]],
             NonEmptyHashMap::collect(['a' => 1])->get()?->toArray()
         );
 

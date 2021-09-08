@@ -1,8 +1,8 @@
 # NonEmptyArrayList
 
-```NonEmptyIndexedSeq<TV>``` interface implementation.
+```NonEmptySeq<TV>``` interface implementation.
 
-Collection with O(1) ```NonEmptySeq::at()``` and ```NonEmptyIndexedSeq::__invoke()``` operations.
+Collection with O(1) ```NonEmptySeq::at()``` and ```NonEmptySeq::__invoke()``` operations.
 
 
 ```php
