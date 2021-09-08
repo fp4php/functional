@@ -18,7 +18,19 @@ abstract class AbstractMap implements Map
 {
     /**
      * REPL:
-     * >>> HashMap::collect([['a', 1], ['b', 2]])
+     * >>> HashMap::collect(['a' =>  1, 'b' => 2])
+     * => HashMap('a' -> 1, 'b' -> 2)
+     *
+     * @template TKI
+     * @template TVI
+     * @param iterable<TKI, TVI> $source
+     * @return self<TKI, TVI>
+     */
+    abstract public static function collect(iterable $source): self;
+
+    /**
+     * REPL:
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])
      * => HashMap('a' -> 1, 'b' -> 2)
      *
      * @template TKI
@@ -26,7 +38,7 @@ abstract class AbstractMap implements Map
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collectPairs(iterable $source): self;
 
     /**
      * @inheritDoc

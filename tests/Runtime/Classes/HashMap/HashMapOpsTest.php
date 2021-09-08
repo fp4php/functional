@@ -15,7 +15,7 @@ final class HashMapOpsTest extends TestCase
 {
     public function testGet(): void
     {
-        $hm = HashMap::collect(asListOfPairs(['a' => 1, 'b' => 2]));
+        $hm = HashMap::collectPairs(asListOfPairs(['a' => 1, 'b' => 2]));
 
         $this->assertEquals(2, $hm->get('b')->get());
         $this->assertEquals(2, $hm('b')->get());
@@ -23,7 +23,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testUpdatedAndRemoved(): void
     {
-        $hm = HashMap::collect(asListOfPairs(['a' => 1, 'b' => 2]));
+        $hm = HashMap::collectPairs(asListOfPairs(['a' => 1, 'b' => 2]));
         $hm = $hm->updated('c', 3);
         $hm = $hm->removed('a');
 
@@ -32,7 +32,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testEvery(): void
     {
-        $hm = HashMap::collect(asListOfPairs(['a' => 0, 'b' => 1]));
+        $hm = HashMap::collectPairs(asListOfPairs(['a' => 0, 'b' => 1]));
 
         $this->assertTrue($hm->every(fn($entry) => $entry->value >= 0));
         $this->assertFalse($hm->every(fn($entry) => $entry->value > 0));
@@ -41,7 +41,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testFilter(): void
     {
-        $hm = HashMap::collect(asListOfPairs(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]));
+        $hm = HashMap::collectPairs(asListOfPairs(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]));
         $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toArray());
     }
 
@@ -49,7 +49,7 @@ final class HashMapOpsTest extends TestCase
     {
         $this->assertEquals(
             [['b', 1], ['c', 2]],
-            HashMap::collect([['a', 'zero'], ['b', '1'], ['c', '2']])
+            HashMap::collectPairs([['a', 'zero'], ['b', '1'], ['c', '2']])
                 ->filterMap(fn($e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
                 ->toArray()
         );
@@ -57,7 +57,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testFlatMap(): void
     {
-        $hm = HashMap::collect([['2', 2], ['5', 5]]);
+        $hm = HashMap::collectPairs([['2', 2], ['5', 5]]);
 
         $this->assertEquals(
             [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]],
@@ -77,7 +77,7 @@ final class HashMapOpsTest extends TestCase
     public function testFold(): void
     {
         /** @var HashMap<string, int> $hm */
-        $hm = HashMap::collect([['2', 2], ['3', 3]]);
+        $hm = HashMap::collectPairs([['2', 2], ['3', 3]]);
 
         $this->assertEquals(
             6,
@@ -87,7 +87,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testMap(): void
     {
-        $hm = HashMap::collect([['2', 22], ['3', 33]]);
+        $hm = HashMap::collectPairs([['2', 22], ['3', 33]]);
 
         $this->assertEquals(
             [['2', '2'], ['3', '3']],
@@ -107,7 +107,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testKeys(): void
     {
-        $hm = HashMap::collect([['a', 22], ['b', 33]]);
+        $hm = HashMap::collectPairs([['a', 22], ['b', 33]]);
 
         $this->assertEquals(
             ['a', 'b'],
@@ -117,7 +117,7 @@ final class HashMapOpsTest extends TestCase
 
     public function testValues(): void
     {
-        $hm = HashMap::collect([['a', 22], ['b', 33]]);
+        $hm = HashMap::collectPairs([['a', 22], ['b', 33]]);
 
         $this->assertEquals(
             [22, 33],

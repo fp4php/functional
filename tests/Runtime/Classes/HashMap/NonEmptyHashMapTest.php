@@ -14,11 +14,11 @@ final class NonEmptyHashMapTest extends TestCase
     {
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            Option::try(fn() => NonEmptyHashMap::collect([['a', 1], ['b', 2]])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectPairs([['a', 1], ['b', 2]])->toArray())->get(),
         );
 
         $this->assertNull(
-            Option::try(fn() => NonEmptyHashMap::collect([])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectPairs([])->toArray())->get(),
         );
 
         $this->assertEquals(
@@ -32,19 +32,19 @@ final class NonEmptyHashMapTest extends TestCase
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            Option::try(fn() => NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectPairsUnsafe([['a', 1], ['b', 2]])->toArray())->get(),
         );
 
         $this->assertNull(
-            Option::try(fn() => NonEmptyHashMap::collectUnsafe([])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectPairsUnsafe([])->toArray())->get(),
         );
 
         $this->assertNull(
-            Option::try(fn() => NonEmptyHashMap::collectUnsafe([])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectPairsUnsafe([])->toArray())->get(),
         );
 
         $this->assertNull(
-            Option::try(fn() => NonEmptyHashMap::collectUnsafe([])->toArray())->get(),
+            Option::try(fn() => NonEmptyHashMap::collectPairsUnsafe([])->toArray())->get(),
         );
     }
 
@@ -52,47 +52,47 @@ final class NonEmptyHashMapTest extends TestCase
     {
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toLinkedList()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toLinkedList()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toNonEmptyLinkedList()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toNonEmptyLinkedList()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toArrayList()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toArrayList()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toNonEmptyArrayList()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toNonEmptyArrayList()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toHashSet()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toHashSet()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toNonEmptyHashSet()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toNonEmptyHashSet()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toHashMap()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toHashMap()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->toNonEmptyHashMap()->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->toNonEmptyHashMap()->toArray(),
         );
     }
 
@@ -100,12 +100,12 @@ final class NonEmptyHashMapTest extends TestCase
     {
         $this->assertEquals(
             2,
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])->count(),
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->count(),
         );
 
         $this->assertCount(
             2,
-            NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])
         );
     }
 }

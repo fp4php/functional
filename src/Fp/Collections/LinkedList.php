@@ -250,7 +250,7 @@ abstract class LinkedList extends AbstractLinearSeq
             return [$callback($elem), $elem];
         });
 
-        return self::collect(HashMap::collect($pairs)->values());
+        return self::collect(HashMap::collectPairs($pairs)->values());
     }
 
     /**

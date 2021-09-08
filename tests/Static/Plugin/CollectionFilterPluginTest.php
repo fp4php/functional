@@ -26,7 +26,7 @@ final class CollectionFilterPluginTest extends PhpBlockTestCase
                     ->filter(fn($e) => null !== $e);
                     
                 /** @psalm-trace $r4 */
-                $r4 = \Fp\Collections\HashMap::collect([["a", 1], ["b", null], ["c", 2]])
+                $r4 = \Fp\Collections\HashMap::collectPairs([["a", 1], ["b", null], ["c", 2]])
                     ->filter(fn($e) => null !== $e->value && $e->key !== "c");
                     
                 /** @psalm-trace $r5 */
@@ -48,7 +48,7 @@ final class CollectionFilterPluginTest extends PhpBlockTestCase
                 $set = \Fp\Collections\LinkedList::collect([1, null, 2]);
                 
                 /** @var \Fp\Collections\Map<"a"|"b"|"c", 1|null|2> $map */ 
-                $map = \Fp\Collections\HashMap::collect([["a", 1], ["b", null], ["c", 2]]);
+                $map = \Fp\Collections\HashMap::collectPairs([["a", 1], ["b", null], ["c", 2]]);
                 
                 /** @var \Fp\Collections\NonEmptySeq<1|null|2> $nonEmptySeq */ 
                 $nonEmptySeq = \Fp\Collections\NonEmptyLinkedList::collectNonEmpty([1, null, 2]);

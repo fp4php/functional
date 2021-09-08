@@ -202,7 +202,7 @@ final class SemigroupTest extends TestCase
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            $semigroup->combine(NonEmptyHashMap::collectNonEmpty([['a', 1]]), NonEmptyHashMap::collectNonEmpty([['b', 2]]))->toArray()
+            $semigroup->combine(NonEmptyHashMap::collectPairsNonEmpty([['a', 1]]), NonEmptyHashMap::collectPairsNonEmpty([['b', 2]]))->toArray()
         );
     }
 }

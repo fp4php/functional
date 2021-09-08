@@ -22,7 +22,7 @@ class HashMapMonoid extends Monoid
      */
     public function empty(): HashMap
     {
-        return HashMap::collect([]);
+        return HashMap::collectPairs([]);
     }
 
     /**
@@ -35,7 +35,7 @@ class HashMapMonoid extends Monoid
      */
     public function combine(mixed $lhs, mixed $rhs): HashMap
     {
-        return HashMap::collect(PureIterable::of(function () use ($rhs, $lhs) {
+        return HashMap::collectPairs(PureIterable::of(function () use ($rhs, $lhs) {
             foreach ($lhs as $pair) {
                 yield $pair;
             }

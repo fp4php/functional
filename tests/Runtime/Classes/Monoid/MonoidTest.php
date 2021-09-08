@@ -141,12 +141,12 @@ final class MonoidTest extends TestCase
 
         $this->assertEquals(
             [['a', 1]],
-            $monoid->combine(HashMap::collect([['a', 1]]), $monoid->empty())->toArray()
+            $monoid->combine(HashMap::collectPairs([['a', 1]]), $monoid->empty())->toArray()
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            $monoid->combine(HashMap::collect([['a', 1]]), HashMap::collect([['b', 2]]))->toArray()
+            $monoid->combine(HashMap::collectPairs([['a', 1]]), HashMap::collectPairs([['b', 2]]))->toArray()
         );
     }
 }

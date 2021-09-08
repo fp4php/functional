@@ -27,10 +27,38 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @inheritDoc
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
+     * @param iterable<TKI, TVI> $source
      * @return Option<self<TKI, TVI>>
      */
     public static function collect(iterable $source): Option
+    {
+        return self::collectPairs(PureIterable::of(function () use ($source) {
+            foreach ($source as $key => $value) {
+                yield [$key, $value];
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param iterable<TKI, TVI> $source
+     * @return self<TKI, TVI>
+     */
+    public static function collectUnsafe(iterable $source): self
+    {
+        return self::collect($source)->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param iterable<array{TKI, TVI}> $source
+     * @return Option<self<TKI, TVI>>
+     */
+    public static function collectPairs(iterable $source): Option
     {
         $buffer = new HashMapBuffer();
 
@@ -50,9 +78,9 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectPairsUnsafe(iterable $source): self
     {
-        return self::collect($source)->getUnsafe();
+        return self::collectPairs($source)->getUnsafe();
     }
 
     /**
@@ -62,9 +90,9 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    public static function collectNonEmpty(array|NonEmptyCollection $source): self
+    public static function collectPairsNonEmpty(array|NonEmptyCollection $source): self
     {
-        return self::collectUnsafe($source);
+        return self::collectPairsUnsafe($source);
     }
 
     /**
@@ -111,7 +139,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function updated(mixed $key, mixed $value): self
     {
-        return self::collectUnsafe([...$this->toArray(), [$key, $value]]);
+        return self::collectPairsUnsafe([...$this->toArray(), [$key, $value]]);
     }
 
     /**
@@ -164,7 +192,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function mapValues(callable $callback): self
     {
-        return self::collectUnsafe(PureIterable::of(function () use ($callback) {
+        return self::collectPairsUnsafe(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$entry->key, $callback($entry)];
                 unset($entry);
@@ -180,7 +208,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function mapKeys(callable $callback): self
     {
-        return self::collectUnsafe(PureIterable::of(function () use ($callback) {
+        return self::collectPairsUnsafe(PureIterable::of(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$callback($entry), $entry->value];
                 unset($entry);

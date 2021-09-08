@@ -18,7 +18,31 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
 {
     /**
      * REPL:
-     * >>> NonEmptyHashMap::collect([['a', 1], ['b', 2]])
+     * >>> NonEmptyHashMap::collect(['a' =>  1, 'b' => 2])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     *
+     * @template TKI
+     * @template TVI
+     * @param iterable<TKI, TVI> $source
+     * @return Option<self<TKI, TVI>>
+     */
+    abstract public static function collect(iterable $source): Option;
+
+    /**
+     * REPL:
+     * >>> NonEmptyHashMap::collectUnsafe(['a' =>  1, 'b' => 2])
+     * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     *
+     * @template TKI
+     * @template TVI
+     * @param iterable<TKI, TVI> $source
+     * @return self<TKI, TVI>
+     */
+    abstract public static function collectUnsafe(iterable $source): self;
+
+    /**
+     * REPL:
+     * >>> NonEmptyHashMap::collectPairs([['a', 1], ['b', 2]])
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
      *
      * @template TKI
@@ -26,11 +50,11 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
      * @param iterable<array{TKI, TVI}> $source
      * @return Option<self<TKI, TVI>>
      */
-    abstract public static function collect(iterable $source): Option;
+    abstract public static function collectPairs(iterable $source): Option;
 
     /**
      * REPL:
-     * >>> NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]])
+     * >>> NonEmptyHashMap::collectPairsUnsafe([['a', 1], ['b', 2]])
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
      *
      * @template TKI
@@ -38,11 +62,11 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    abstract public static function collectUnsafe(iterable $source): self;
+    abstract public static function collectPairsUnsafe(iterable $source): self;
 
     /**
      * REPL:
-     * >>> NonEmptyHashMap::collectNonEmpty([['a', 1], ['b', 2]])
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
      *
      * @template TKI
@@ -50,7 +74,7 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
      * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
-    abstract public static function collectNonEmpty(array|NonEmptyCollection $source): self;
+    abstract public static function collectPairsNonEmpty(array|NonEmptyCollection $source): self;
 
     /**
      * @inheritDoc

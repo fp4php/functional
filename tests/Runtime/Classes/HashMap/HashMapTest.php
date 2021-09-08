@@ -17,12 +17,12 @@ final class HashMapTest extends TestCase
     {
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collect([['a', 1], ['b', 2]])->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collect(asListOfPairs(['a' => 1, 'b' => 2]))->toArray(),
+            HashMap::collectPairs(asListOfPairs(['a' => 1, 'b' => 2]))->toArray(),
         );
     }
 
@@ -30,35 +30,35 @@ final class HashMapTest extends TestCase
     {
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collect([['a', 1], ['b', 2]])->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collect([['a', 1], ['b', 2]])->toLinkedList()->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toLinkedList()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collect([['a', 1], ['b', 2]])->toArrayList()->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toArrayList()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collect([['a', 1], ['b', 2]])->toHashSet()->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashSet()->toArray(),
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collect([['a', 1], ['b', 2]])->toHashMap()->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashMap()->toArray(),
         );
     }
 
     public function testContract(): void
     {
         $bar = new Bar(1);
-        $hm = HashMap::collect([[$bar, 'v1'], [new Foo(2), 'v2']]);
-        $hm1 = HashMap::collect([[[new Foo(1), new Foo(2)], 'v1']]);
+        $hm = HashMap::collectPairs([[$bar, 'v1'], [new Foo(2), 'v2']]);
+        $hm1 = HashMap::collectPairs([[[new Foo(1), new Foo(2)], 'v1']]);
 
         $this->assertEquals(
             'v2',
@@ -80,8 +80,8 @@ final class HashMapTest extends TestCase
 
     public function testCollisions(): void
     {
-        $hm = HashMap::collect([[1, 'v1'], [true, 'v2'], ['1', 'v3']]);
-        $hm1 = HashMap::collect([[0, 'v1'], [false, 'v2'], ['', 'v3']]);
+        $hm = HashMap::collectPairs([[1, 'v1'], [true, 'v2'], ['1', 'v3']]);
+        $hm1 = HashMap::collectPairs([[0, 'v1'], [false, 'v2'], ['', 'v3']]);
 
         $this->assertEquals('v1', $hm(1)->get());
         $this->assertEquals('v2', $hm(true)->get());
@@ -94,6 +94,6 @@ final class HashMapTest extends TestCase
 
     public function testCount(): void
     {
-        $this->assertEquals(2, HashMap::collect([[1, 1], [2, 2]])->count());
+        $this->assertEquals(2, HashMap::collectPairs([[1, 1], [2, 2]])->count());
     }
 }

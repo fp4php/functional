@@ -33,10 +33,10 @@ final class MapGetMethodReturnTypeProviderTest extends PhpBlockTestCase
                             ->toArray();
                 
                         /** @psalm-trace $some */
-                        $some = \Fp\Collections\HashMap::collect($pairs)->get(self::TYPE_1);
+                        $some = \Fp\Collections\HashMap::collectPairs($pairs)->get(self::TYPE_1);
                 
                         /** @psalm-trace $option */
-                        $option = \Fp\Collections\HashMap::collect($pairs)->get(123.3);
+                        $option = \Fp\Collections\HashMap::collectPairs($pairs)->get(123.3);
                     }
                 }
             ',

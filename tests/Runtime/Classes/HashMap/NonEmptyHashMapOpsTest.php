@@ -13,7 +13,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 {
     public function testGet(): void
     {
-        $hm = NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]]);
+        $hm = NonEmptyHashMap::collectPairsUnsafe([['a', 1], ['b', 2]]);
 
         $this->assertEquals(2, $hm->get('b')->get());
         $this->assertEquals(2, $hm('b')->get());
@@ -21,7 +21,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testUpdatedAndRemoved(): void
     {
-        $hm = NonEmptyHashMap::collectUnsafe([['a', 1], ['b', 2]]);
+        $hm = NonEmptyHashMap::collectPairsUnsafe([['a', 1], ['b', 2]]);
         $hm = $hm->updated('c', 3);
         $hm = $hm->removed('a');
 
@@ -30,7 +30,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testEvery(): void
     {
-        $hm = NonEmptyHashMap::collectUnsafe([['a', 0], ['b', 1]]);
+        $hm = NonEmptyHashMap::collectPairsUnsafe([['a', 0], ['b', 1]]);
 
         $this->assertTrue($hm->every(fn($entry) => $entry->value >= 0));
         $this->assertFalse($hm->every(fn($entry) => $entry->value > 0));
@@ -39,7 +39,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testFilter(): void
     {
-        $hm = NonEmptyHashMap::collectUnsafe([['a', new Foo(1)], ['b', 1], ['c',  new Foo(2)]]);
+        $hm = NonEmptyHashMap::collectPairsUnsafe([['a', new Foo(1)], ['b', 1], ['c',  new Foo(2)]]);
         $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toArray());
     }
 
@@ -47,7 +47,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
     {
         $this->assertEquals(
             [['b', 1], ['c', 2]],
-            NonEmptyHashMap::collectNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
+            NonEmptyHashMap::collectPairsNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
                 ->filterMap(fn($e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
                 ->toArray()
         );
@@ -55,7 +55,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testMap(): void
     {
-        $hm = NonEmptyHashMap::collectNonEmpty([['2', 22], ['3', 33]]);
+        $hm = NonEmptyHashMap::collectPairsNonEmpty([['2', 22], ['3', 33]]);
 
         $this->assertEquals(
             [['2', '2'], ['3', '3']],
@@ -75,7 +75,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testKeys(): void
     {
-        $hm = NonEmptyHashMap::collectNonEmpty([['a', 22], ['b', 33]]);
+        $hm = NonEmptyHashMap::collectPairsNonEmpty([['a', 22], ['b', 33]]);
 
         $this->assertEquals(
             ['a', 'b'],
@@ -85,7 +85,7 @@ final class NonEmptyHashMapOpsTest extends TestCase
 
     public function testValues(): void
     {
-        $hm = NonEmptyHashMap::collectNonEmpty([['a', 22], ['b', 33]]);
+        $hm = NonEmptyHashMap::collectPairsNonEmpty([['a', 22], ['b', 33]]);
 
         $this->assertEquals(
             [22, 33],

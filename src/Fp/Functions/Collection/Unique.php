@@ -37,5 +37,5 @@ function unique(iterable $collection, callable $callback): array
         }
     };
 
-    return HashMap::collect(asListOfPairs($source()))->values()->toArray();
+    return HashMap::collect($source())->values()->toArray();
 }

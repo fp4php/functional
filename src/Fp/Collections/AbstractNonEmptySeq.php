@@ -120,7 +120,7 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
      */
     public function toHashMap(callable $callback): HashMap
     {
-        return HashMap::collect(PureIterable::of(function () use ($callback) {
+        return HashMap::collectPairs(PureIterable::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
@@ -136,7 +136,7 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
      */
     public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(PureIterable::of(function () use ($callback) {
+        return NonEmptyHashMap::collectPairsUnsafe(PureIterable::of(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }

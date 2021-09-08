@@ -290,7 +290,7 @@ final class ArrayList extends AbstractIndexedSeq
             return [$callback($elem), $elem];
         });
 
-        return self::collect(HashMap::collect($pairs)->values());
+        return self::collect(HashMap::collectPairs($pairs)->values());
     }
 
     /**

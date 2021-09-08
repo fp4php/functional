@@ -27,7 +27,7 @@ class NonEmptyHashMapSemigroup extends Semigroup
      */
     public function combine(mixed $lhs, mixed $rhs): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(PureIterable::of(function () use ($rhs, $lhs) {
+        return NonEmptyHashMap::collectPairsUnsafe(PureIterable::of(function () use ($rhs, $lhs) {
             foreach ($lhs as $pair) {
                 yield $pair;
             }
