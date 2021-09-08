@@ -90,11 +90,11 @@ class Foo implements HashContract
     {
     }
 
-    public function equals(mixed $rhs): bool
+    public function equals(mixed $that): bool
     {
-        return $rhs instanceof self
-            && $this->a === $rhs->a
-            && $this->b === $rhs->b;
+        return $that instanceof self
+            && $this->a === $that->a
+            && $this->b === $that->b;
     }
 
     public function hashCode(): string
@@ -135,11 +135,11 @@ class Foo implements HashContract
     {
     }
 
-    public function equals(mixed $rhs): bool
+    public function equals(mixed $that): bool
     {
-        return $rhs instanceof self
-            && $this->a === $rhs->a
-            && $this->b === $rhs->b;
+        return $that instanceof self
+            && $this->a === $that->a
+            && $this->b === $that->b;
     }
 
     public function hashCode(): string
@@ -226,11 +226,11 @@ class Foo implements HashContract
     {
     }
 
-    public function equals(mixed $rhs): bool
+    public function equals(mixed $that): bool
     {
-        return $rhs instanceof self
-            && $this->a === $rhs->a
-            && $this->b === $rhs->b;
+        return $that instanceof self
+            && $this->a === $that->a
+            && $this->b === $that->b;
     }
 
     public function hashCode(): string
@@ -270,11 +270,11 @@ class Foo implements HashContract
     {
     }
 
-    public function equals(mixed $rhs): bool
+    public function equals(mixed $that): bool
     {
-        return $rhs instanceof self
-            && $this->a === $rhs->a
-            && $this->b === $rhs->b;
+        return $that instanceof self
+            && $this->a === $that->a
+            && $this->b === $that->b;
     }
 
     public function hashCode(): string

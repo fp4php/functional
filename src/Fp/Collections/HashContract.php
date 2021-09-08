@@ -6,6 +6,6 @@ namespace Fp\Collections;
 
 interface HashContract
 {
-    public function equals(mixed $rhs): bool;
+    public function equals(mixed $that): bool;
     public function hashCode(): string;
 }
