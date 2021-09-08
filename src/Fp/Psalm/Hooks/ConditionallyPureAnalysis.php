@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hooks;
 
+use Fp\Collections\ArrayList;
+use Fp\Collections\HashMap;
+use Fp\Collections\HashSet;
+use Fp\Collections\LinkedList;
+use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyHashSet;
+use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Psalm;
 use PhpParser\Node\Arg;
@@ -13,6 +21,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use Psalm\Codebase;
+use Psalm\Context;
 use Psalm\Internal\Type\Comparator\UnionTypeComparator;
 use Psalm\IssueBuffer;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
@@ -61,12 +70,36 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
         'Fp\Collection\tail',
         'Fp\Collection\unique',
         'Fp\Collection\zip',
+        LinkedList::class.'::collect',
+        ArrayList::class.'::collect',
+        HashSet::class.'::collect',
+        HashMap::class.'::collect',
+        HashMap::class.'::collectPairs',
+        NonEmptyLinkedList::class.'::collect',
+        NonEmptyLinkedList::class.'::collectUnsafe',
+        NonEmptyLinkedList::class.'::collectNonEmpty',
+        NonEmptyLinkedList::class.'::collectOption',
+        NonEmptyArrayList::class.'::collect',
+        NonEmptyArrayList::class.'::collectUnsafe',
+        NonEmptyArrayList::class.'::collectNonEmpty',
+        NonEmptyArrayList::class.'::collectOption',
+        NonEmptyHashSet::class.'::collect',
+        NonEmptyHashSet::class.'::collectUnsafe',
+        NonEmptyHashSet::class.'::collectNonEmpty',
+        NonEmptyHashSet::class.'::collectOption',
+        NonEmptyHashMap::class.'::collect',
+        NonEmptyHashMap::class.'::collectUnsafe',
+        NonEmptyHashMap::class.'::collectOption',
+        NonEmptyHashMap::class.'::collectPairs',
+        NonEmptyHashMap::class.'::collectPairsUnsafe',
+        NonEmptyHashMap::class.'::collectPairsOption',
+        NonEmptyHashMap::class.'::collectPairsNonEmpty',
     ];
 
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {
         Option::do(function() use ($event) {
-            $call_info = yield self::getCallInfo($event->getExpr());
+            $call_info = yield self::getCallInfo($event->getExpr(), $event->getContext());
 
             if (!self::isConditionallyPure($call_info['call_name'])) {
                 return;
@@ -112,10 +145,10 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
     /**
      * @return Option<CallInfo>
      */
-    public static function getCallInfo(Expr $expr): Option
+    public static function getCallInfo(Expr $expr, Context $context): Option
     {
         return self::getFunctionCallInfo($expr)
-            ->orElse(fn() => self::getStaticMethodCallInfo($expr));
+            ->orElse(fn() => self::getStaticMethodCallInfo($expr, $context));
     }
 
     /**
@@ -139,13 +172,15 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
     /**
      * @return Option<CallInfo>
      */
-    public static function getStaticMethodCallInfo(Expr $expr): Option
+    public static function getStaticMethodCallInfo(Expr $expr, Context $context): Option
     {
-        return Option::do(function() use ($expr) {
+        return Option::do(function() use ($expr, $context) {
             $static_call = yield proveOf($expr, StaticCall::class);
 
             $class_name = yield proveOf($static_call->class, Name::class)
-                ->flatMap(fn($name) => proveString($name->getAttribute('resolvedName')));
+                ->filter(fn(Name $name) => !$name->isSpecialClassName())
+                ->flatMap(fn($name) => proveString($name->getAttribute('resolvedName')))
+                ->orElse(fn() => Option::fromNullable($context->self));
 
             $method_name = yield proveOf($static_call->name, Identifier::class)
                 ->map(fn($id) => $id->name);
