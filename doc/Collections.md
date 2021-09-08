@@ -14,24 +14,24 @@
 
 # Hierarchy
 
--   #### empty collections
-
+  - #### empty collections
+    
         Collection<TV> -> Seq<TV> -> LinkedList<TV>
-
+        
         Collection<TV> -> Seq<TV> -> ArrayList<TV>
-
+        
         Collection<TV> -> Set<TV> -> HashSet<TV>
-
+        
         Collection<TV> -> Map<TK, TV> -> HashMap<TK, TV>
 
--   #### non-empty collections
-
+  - #### non-empty collections
+    
         NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyLinkedList<TV>
-
+        
         NonEmptyCollection<TV> -> NonEmptySeq<TV> -> NonEmptyArrayList<TV>
-
+        
         NonEmptyCollection<TV> -> NonEmptySet<TV> -> NonEmptyHashSet<TV>
-
+        
         NonEmptyCollection<TV> -> NonEmptyMap<TK, TV> -> NonEmptyHashMap<TK, TV>
 
 # ArrayList
@@ -111,9 +111,9 @@ $collection = HashMap::collectPairs([
 $collection(new Foo(2))->getOrElse(0); // 2
 
 $collection
-    ->map(fn(Entry $entry) => $entry->value + 1)
+    ->mapValues(fn(Entry $entry) => $entry->value + 1)
     ->filter(fn(Entry $entry) => $entry->value > 2)
-    ->reindex(fn(Entry $entry) => $entry->key->a)
+    ->mapKeys(fn(Entry $entry) => $entry->key->a)
     ->fold(0, fn(int $acc, Entry $entry) => $acc + $entry->value); // 3+4+5=12 
 ```
 
@@ -247,8 +247,8 @@ $collection = NonEmptyHashMap::collectPairsNonEmpty([
 $collection(new Foo(2))->getOrElse(0); // 2
 
 $collection
-    ->map(fn(Entry $entry) => $entry->value + 1)
-    ->reindex(fn(Entry $entry) => $entry->key->a)
+    ->mapValues(fn(Entry $entry) => $entry->value + 1)
+    ->mapKeys(fn(Entry $entry) => $entry->key->a)
     ->toArray(); // [[1, 2], [2, 3], [3, 4], [4, 5]]
 ```
 
@@ -258,8 +258,8 @@ $collection
 
 Collection of unique elements.
 
-Object comparison by default uses spl_object_hash function. If you want
-to override default comparison behaviour then you need to implement
+Object comparison by default uses spl\_object\_hash function. If you
+want to override default comparison behaviour then you need to implement
 HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
