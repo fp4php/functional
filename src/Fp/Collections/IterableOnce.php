@@ -21,7 +21,7 @@ use IteratorAggregate;
 final class IterableOnce implements IteratorAggregate
 {
     /**
-     * @psalm-allow-private-mutation $drained
+     * @psalm-allow-private-mutation $iterated
      * @var bool
      */
     private bool $iterated = false;
