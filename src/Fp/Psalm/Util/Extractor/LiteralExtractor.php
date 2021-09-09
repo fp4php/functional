@@ -32,6 +32,39 @@ trait LiteralExtractor
     }
 
     /**
+     * @psalm-return Option<NonEmptySet<string>>
+     */
+    public static function getUnionStringLiteralValues(Union $union): Option
+    {
+        return Option::do(function() use ($union) {
+            $set = yield NonEmptyHashSet::collect($union->getLiteralStrings());
+            return $set->map(fn(TLiteralString $literal) => $literal->value);
+        });
+    }
+
+    /**
+     * @psalm-return Option<NonEmptySet<int>>
+     */
+    public static function getUnionIntLiteralValues(Union $union): Option
+    {
+        return Option::do(function() use ($union) {
+            $set = yield NonEmptyHashSet::collect($union->getLiteralInts());
+            return $set->map(fn(TLiteralInt $literal) => $literal->value);
+        });
+    }
+
+    /**
+     * @psalm-return Option<NonEmptySet<float>>
+     */
+    public static function getUnionFloatLiteralValues(Union $union): Option
+    {
+        return Option::do(function() use ($union) {
+            $set = yield NonEmptyHashSet::collect($union->getLiteralFloats());
+            return $set->map(fn(TLiteralFloat $literal) => $literal->value);
+        });
+    }
+
+    /**
      * @psalm-return Option<int|float|string>
      */
     public static function getUnionSingleLiteralValue(Union $union): Option
@@ -56,7 +89,7 @@ trait LiteralExtractor
     {
         return Option::some($union)
             ->filter(fn(Union $union) => $union->isSingleIntLiteral())
-            ->flatMap(fn(Union $type) => self::getUnionLiteralValues($type))
+            ->flatMap(fn(Union $type) => self::getUnionIntLiteralValues($type))
             ->map(fn(NonEmptySet $literals) => $literals->head());
     }
 
@@ -67,7 +100,7 @@ trait LiteralExtractor
     {
         return Option::some($union)
             ->filter(fn(Union $union) => $union->isSingleStringLiteral())
-            ->flatMap(fn(Union $type) => self::getUnionLiteralValues($type))
+            ->flatMap(fn(Union $type) => self::getUnionStringLiteralValues($type))
             ->map(fn(NonEmptySet $literals) => $literals->head());
     }
 
@@ -78,7 +111,7 @@ trait LiteralExtractor
     {
         return Option::some($union)
             ->filter(fn(Union $union) => $union->isSingleFloatLiteral())
-            ->flatMap(fn(Union $type) => self::getUnionLiteralValues($type))
+            ->flatMap(fn(Union $type) => self::getUnionFloatLiteralValues($type))
             ->map(fn(NonEmptySet $literals) => $literals->head());
     }
 }

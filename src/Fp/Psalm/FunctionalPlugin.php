@@ -6,8 +6,10 @@ namespace Fp\Psalm;
 
 use Fp\Psalm\Hook\Analysis\ConditionallyPureAnalysis;
 use Fp\Psalm\Hook\Analysis\EitherAssertionAnalysis;
+use Fp\Psalm\Hook\Analysis\MapGetMethodCallAnalysis;
 use Fp\Psalm\Hook\Analysis\OptionAssertionAnalysis;
 use Fp\Psalm\Hook\Analysis\ProveTrueExpressionAnalysis;
+use Fp\Psalm\Hook\Analysis\StaticStorageAnalysis;
 use Fp\Psalm\Hook\Analysis\ValidatedAssertionAnalysis;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
@@ -38,13 +40,17 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(PartitionFunctionReturnTypeProvider::class);
         $register(PartitionOfFunctionReturnTypeProvider::class);
         $register(PluckFunctionReturnTypeProvider::class);
+
         $register(CollectionFilterMethodReturnTypeProvider::class);
         $register(OptionFilterMethodReturnTypeProvider::class);
+        $register(MapGetMethodReturnTypeProvider::class);
+
         $register(OptionAssertionAnalysis::class);
         $register(EitherAssertionAnalysis::class);
         $register(ValidatedAssertionAnalysis::class);
         $register(ProveTrueExpressionAnalysis::class);
-        $register(MapGetMethodReturnTypeProvider::class);
         $register(ConditionallyPureAnalysis::class);
+        $register(StaticStorageAnalysis::class);
+        $register(MapGetMethodCallAnalysis::class);
     }
 }

@@ -46,8 +46,8 @@ final class MapGetMethodReturnTypeProvider implements MethodReturnTypeProviderIn
             $key_type_param      = yield first($type_params);
             $value_type_param    = yield second($type_params);
             $arg_union           = yield Psalm::getFirstArgUnion($event);
-            $type_param_literals = yield Psalm::getUnionLiteralValues($key_type_param);
             $arg_literal         = yield Psalm::getUnionSingleLiteralValue($arg_union);
+            $type_param_literals = yield Psalm::getUnionLiteralValues($key_type_param);
 
             yield proveTrue($type_param_literals->contains($arg_literal));
 

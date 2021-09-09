@@ -12,8 +12,9 @@ use Generator;
  * @template-covariant TV
  * @psalm-immutable
  * @extends AbstractMap<TK, TV>
+ * @implements StaticStorage<empty>
  */
-final class HashMap extends AbstractMap
+final class HashMap extends AbstractMap implements StaticStorage
 {
     /**
      * @internal
