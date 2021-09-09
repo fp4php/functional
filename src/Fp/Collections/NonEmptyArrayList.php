@@ -35,7 +35,7 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
             $buffer[] = $elem;
         }
 
-        return Option::cond(isset($buffer[0]), new self(new ArrayList($buffer)));
+        return Option::condLazy(isset($buffer[0]), fn() => new self(new ArrayList($buffer)));
     }
 
     /**

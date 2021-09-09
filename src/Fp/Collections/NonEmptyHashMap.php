@@ -80,7 +80,7 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
 
         $hashMap = $buffer->toHashMap();
 
-        return Option::cond(!$hashMap->isEmpty(), new self($hashMap));
+        return Option::condLazy(!$hashMap->isEmpty(), fn() => new self($hashMap));
     }
 
     /**

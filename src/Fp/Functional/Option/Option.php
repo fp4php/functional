@@ -490,7 +490,7 @@ abstract class Option
      *
      * @psalm-pure
      * @psalm-template AI
-     * @psalm-param callable(): AI $some
+     * @psalm-param pure-callable(): AI $some
      * @psalm-return Option<AI>
      */
     public static function condLazy(bool $condition, callable $some): Option

@@ -31,7 +31,7 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
     public static function collect(iterable $source): Option
     {
         $hashset = HashSet::collect($source);
-        return Option::cond(!$hashset->isEmpty(), new self($hashset));
+        return Option::condLazy(!$hashset->isEmpty(), fn() => new self($hashset));
     }
 
     /**
