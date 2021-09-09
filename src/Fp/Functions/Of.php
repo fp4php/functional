@@ -19,6 +19,7 @@ use function Fp\Evidence\proveObject;
  * @psalm-param class-string<TO> $fqcn
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
  * @psalm-assert-if-true TO $subject
+ * @psalm-pure
  */
 function of(mixed $subject, string $fqcn, bool $invariant = false): bool
 {
@@ -37,6 +38,7 @@ function of(mixed $subject, string $fqcn, bool $invariant = false): bool
  * @psalm-param class-string<TO> $fqcn
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
  * @psalm-assert-if-true TO $subject
+ * @psalm-pure
  */
 function objectOf(mixed $subject, string $fqcn, bool $invariant = false): bool
 {
@@ -60,6 +62,7 @@ function objectOf(mixed $subject, string $fqcn, bool $invariant = false): bool
  * @psalm-param class-string<TO> $fqcn
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
  * @psalm-assert-if-true class-string<TO> $subject
+ * @psalm-pure
  */
 function classOf(mixed $subject, string $fqcn, bool $invariant = false): bool
 {

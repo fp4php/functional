@@ -16,10 +16,9 @@ use Fp\Functional\Option\Option;
  * => Some<float>
  *
  * @psalm-template T
- *
  * @psalm-param T $potential
- *
  * @psalm-return Option<float>
+ * @psalm-pure
  */
 function proveFloat(mixed $potential): Option
 {

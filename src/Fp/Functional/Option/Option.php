@@ -162,6 +162,7 @@ abstract class Option
      */
     public function filterOf(string $fqcn, bool $invariant = false): Option
     {
+        /** @var Option<AA> */
         return $this->isSome() && objectOf($this->value, $fqcn, $invariant)
             ? self::some($this->value)
             : self::none();

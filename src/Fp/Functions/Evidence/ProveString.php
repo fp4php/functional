@@ -15,11 +15,9 @@ use Fp\Functional\Option\Option;
  * >>> proveString(1);
  * => None
  *
- *
+ * @psalm-pure
  * @psalm-template T
- *
  * @psalm-param T $potential
- *
  * @psalm-return Option<string>
  */
 function proveString(mixed $potential): Option
@@ -36,7 +34,7 @@ function proveString(mixed $potential): Option
  * >>> proveClassString('');
  * => None
  *
- *
+ * @psalm-pure
  * @psalm-return Option<class-string>
  */
 function proveClassString(mixed $potential): Option
@@ -53,7 +51,7 @@ function proveClassString(mixed $potential): Option
  * >>> proveNonEmptyString('');
  * => None
  *
- *
+ * @psalm-pure
  * @psalm-return Option<non-empty-string>
  */
 function proveNonEmptyString(mixed $subject): Option
@@ -72,7 +70,7 @@ function proveNonEmptyString(mixed $subject): Option
  * >>> proveCallableString('1');
  * => None
  *
- *
+ * @psalm-pure
  * @psalm-return Option<callable-string>
  */
 function proveCallableString(mixed $subject): Option
