@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hooks;
+namespace Fp\Psalm\Hook;
 
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
-use Fp\Psalm\Psalm;
 use Fp\Psalm\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\TypeRefinement\RefinementContext;
+use Fp\Psalm\Util\PSL;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
@@ -44,7 +44,7 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
                 val_type: $option_type_param,
             );
 
-            $predicate = yield Psalm::getArgFunctionLike($call_args[0]);
+            $predicate = yield PSL::getArgFunctionLike($call_args[0]);
 
             $refinement_context = new RefinementContext(
                 refine_for: $event->getFqClasslikeName(),

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hooks;
+namespace Fp\Psalm\Hook;
 
-use Fp\Psalm\Psalm;
 use Fp\Psalm\TypeRefinement\CollectionTypeExtractor;
+use Fp\Psalm\Util\PSL;
 use Psalm\Type;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -33,10 +33,10 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
             $call_args = $event->getCallArgs();
             yield proveTrue(count($call_args) >= 2);
 
-            $collection_type_params = yield Psalm::getFirstArgUnion($event)
+            $collection_type_params = yield PSL::getFirstArgUnion($event)
                 ->flatMap([CollectionTypeExtractor::class, 'extract']);
 
-            $predicate = yield Psalm::getArgFunctionLike($call_args[1]);
+            $predicate = yield PSL::getArgFunctionLike($call_args[1]);
 
             $refinement_context = new RefinementContext(
                 refine_for: 'fp\collection\filter',
@@ -86,8 +86,8 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
             return Option::some(self::listType($result));
         }
 
-        return Psalm::getArgUnion($call_args[2], $event->getStatementsSource())
-            ->flatMap(fn($type) => Psalm::getUnionSingeAtomic($type))
+        return PSL::getArgUnion($call_args[2], $event->getStatementsSource())
+            ->flatMap(fn($type) => PSL::getUnionSingeAtomic($type))
             ->map(fn($preserve_keys) => $preserve_keys::class === Type\Atomic\TFalse::class
                 ? self::listType($result)
                 : self::arrayType($result));

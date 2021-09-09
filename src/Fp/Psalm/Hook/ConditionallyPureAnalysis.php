@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hooks;
+namespace Fp\Psalm\Hook;
 
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
@@ -13,7 +13,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Psalm;
+use Fp\Psalm\Util\PSL;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
@@ -199,7 +199,7 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
      */
     private static function hasImpureArg(Codebase $codebase, StatementsSource $source, array $call_args): bool
     {
-        $arg_is_impure = fn(Arg $arg): bool => Psalm::getArgUnion($arg, $source)
+        $arg_is_impure = fn(Arg $arg): bool => PSL::getArgUnion($arg, $source)
             ->map(fn($arg_type) => self::isArgTypeImpure($codebase, $arg_type))
             ->getOrElse(true);
 

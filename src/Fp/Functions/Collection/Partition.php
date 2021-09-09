@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Psalm\Hooks\PartitionFunctionReturnTypeProvider;
-use Fp\Psalm\Hooks\PartitionOfFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\PartitionFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\PartitionOfFunctionReturnTypeProvider;
 
 use function Fp\of;
 

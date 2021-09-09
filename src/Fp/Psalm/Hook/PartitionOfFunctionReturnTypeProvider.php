@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hooks;
+namespace Fp\Psalm\Hook;
 
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Psalm;
-use Fp\Psalm\PsalmTypeParam;
+use Fp\Psalm\Util\PSL;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -39,12 +38,12 @@ class PartitionOfFunctionReturnTypeProvider implements FunctionReturnTypeProvide
     {
         return Option::do(function () use ($event) {
             $source = $event->getStatementsSource();
-            $collection_union = yield Psalm::getFirstArgUnion($event);
-            $collection_value_type_param = yield PsalmTypeParam::getUnionValueTypeParam($collection_union);
+            $collection_union = yield PSL::getFirstArgUnion($event);
+            $collection_value_type_param = yield PSL::getUnionValueTypeParam($collection_union);
 
             $partitions = ArrayList::collect($event->getCallArgs())
                 ->drop(2)
-                ->filterMap(fn(Arg $arg) => Psalm::getArgSingleAtomic($arg, $source))
+                ->filterMap(fn(Arg $arg) => PSL::getArgSingleAtomic($arg, $source))
                 ->filter(fn(Atomic $a) => $a instanceof TLiteralClassString)
                 ->map(fn(TLiteralClassString $cs) => new TNamedObject($cs->value))
                 ->map(fn(TNamedObject $no) => new TList(new Union([$no])))

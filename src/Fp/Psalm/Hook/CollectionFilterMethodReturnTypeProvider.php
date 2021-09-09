@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hooks;
+namespace Fp\Psalm\Hook;
 
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
@@ -18,8 +18,8 @@ use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
-use Fp\Psalm\Psalm;
 use Fp\Psalm\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\Util\PSL;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\Variable;
@@ -78,7 +78,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
 
             $source          = yield proveOf($event->getSource(), StatementsAnalyzer::class);
             $predicate_arg   = yield self::extractPredicateArg($event);
-            $predicate       = yield Psalm::getArgFunctionLike($predicate_arg);
+            $predicate       = yield PSL::getArgFunctionLike($predicate_arg);
             $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
 
             $collection_type_params = 2 === count($template_params)
