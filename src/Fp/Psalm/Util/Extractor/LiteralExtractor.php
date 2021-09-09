@@ -36,20 +36,48 @@ trait LiteralExtractor
      */
     public static function getUnionSingleLiteralValue(Union $union): Option
     {
-        $someUnion = Option::some($union);
+        return self::getUnionSingleIntOrStringLiteralValue($union)
+            ->orElse(fn() => self::getUnionSingleFloatLiteralValue($union));
+    }
 
-        return $someUnion
+    /**
+     * @psalm-return Option<int|string>
+     */
+    public static function getUnionSingleIntOrStringLiteralValue(Union $union): Option
+    {
+        return self::getUnionSingleIntLiteralValue($union)
+            ->orElse(fn() => self::getUnionSingleStringLiteralValue($union));
+    }
+
+    /**
+     * @psalm-return Option<int>
+     */
+    public static function getUnionSingleIntLiteralValue(Union $union): Option
+    {
+        return Option::some($union)
+            ->filter(fn(Union $union) => $union->isSingleIntLiteral())
+            ->flatMap(fn(Union $type) => self::getUnionLiteralValues($type))
+            ->map(fn(NonEmptySet $literals) => $literals->head());
+    }
+
+    /**
+     * @psalm-return Option<string>
+     */
+    public static function getUnionSingleStringLiteralValue(Union $union): Option
+    {
+        return Option::some($union)
             ->filter(fn(Union $union) => $union->isSingleStringLiteral())
-            ->orElse(function () use ($someUnion) {
-                return $someUnion->filter(
-                    fn(Union $union) => $union->isSingleFloatLiteral()
-                );
-            })
-            ->orElse(function () use ($someUnion) {
-                return $someUnion->filter(
-                    fn(Union $union) => $union->isSingleIntLiteral()
-                );
-            })
+            ->flatMap(fn(Union $type) => self::getUnionLiteralValues($type))
+            ->map(fn(NonEmptySet $literals) => $literals->head());
+    }
+
+    /**
+     * @psalm-return Option<float>
+     */
+    public static function getUnionSingleFloatLiteralValue(Union $union): Option
+    {
+        return Option::some($union)
+            ->filter(fn(Union $union) => $union->isSingleFloatLiteral())
             ->flatMap(fn(Union $type) => self::getUnionLiteralValues($type))
             ->map(fn(NonEmptySet $literals) => $literals->head());
     }

@@ -6,6 +6,7 @@ namespace Fp\Psalm\Util\Extractor;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node\Arg;
+use PhpParser\NodeAbstract;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
@@ -24,6 +25,14 @@ trait UnionExtractor
     public static function getArgUnion(Arg $arg, StatementsSource $source): Option
     {
         return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
+    }
+
+    /**
+     * @psalm-return Option<Union>
+     */
+    public static function getNodeUnion(NodeAbstract $node, StatementsSource $source): Option
+    {
+        return Option::fromNullable($source->getNodeTypeProvider()->getType($node));
     }
 
     /**
