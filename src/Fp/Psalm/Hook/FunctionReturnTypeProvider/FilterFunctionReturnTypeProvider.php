@@ -2,17 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook;
+namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\Psalm\TypeRefinement\CollectionTypeExtractor;
 use Fp\Psalm\Util\PSL;
-use Psalm\Type;
+use Fp\Psalm\Util\TypeRefinement\CollectionTypeExtractor;
+use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
+use Fp\Psalm\Util\TypeRefinement\RefinementContext;
+use Fp\Psalm\Util\TypeRefinement\RefinementResult;
+use Psalm\Type\Atomic\TArray;
+use Psalm\Type\Atomic\TFalse;
+use Psalm\Type\Atomic\TList;
+use Psalm\Type\Union;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
-use Fp\Psalm\TypeRefinement\RefineByPredicate;
-use Fp\Psalm\TypeRefinement\RefinementContext;
-use Fp\Psalm\TypeRefinement\RefinementResult;
 use Fp\Functional\Option\Option;
 
 use function Fp\Evidence\proveOf;
@@ -25,7 +28,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         return [strtolower('Fp\Collection\filter')];
     }
 
-    public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Type\Union
+    public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         $reconciled = Option::do(function() use ($event) {
             $source = yield proveOf($event->getStatementsSource(), StatementsAnalyzer::class);
@@ -57,25 +60,25 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         return $reconciled->get();
     }
 
-    private static function arrayType(RefinementResult $result): Type\Union
+    private static function arrayType(RefinementResult $result): Union
     {
-        return new Type\Union([
-            new Type\Atomic\TArray([
+        return new Union([
+            new TArray([
                 $result->collection_key_type,
                 $result->collection_value_type,
             ]),
         ]);
     }
 
-    private static function listType(RefinementResult $result): Type\Union
+    private static function listType(RefinementResult $result): Union
     {
-        return new Type\Union([
-            new Type\Atomic\TList($result->collection_value_type),
+        return new Union([
+            new TList($result->collection_value_type),
         ]);
     }
 
     /**
-     * @psalm-return Option<Type\Union>
+     * @psalm-return Option<Union>
      */
     private static function getReturnType(FunctionReturnTypeProviderEvent $event, RefinementResult $result): Option
     {
@@ -88,7 +91,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
 
         return PSL::getArgUnion($call_args[2], $event->getStatementsSource())
             ->flatMap(fn($type) => PSL::getUnionSingeAtomic($type))
-            ->map(fn($preserve_keys) => $preserve_keys::class === Type\Atomic\TFalse::class
+            ->map(fn($preserve_keys) => $preserve_keys::class === TFalse::class
                 ? self::listType($result)
                 : self::arrayType($result));
     }

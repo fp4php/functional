@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\TypeAssertion;
+namespace Fp\Psalm\Util\TypeAssertion;
 
 use PhpParser\Node\Expr\MethodCall;
 use Psalm\NodeTypeProvider;

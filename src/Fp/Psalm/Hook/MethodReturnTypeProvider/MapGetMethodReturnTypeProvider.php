@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook;
+namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\Map;

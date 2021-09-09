@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook;
+namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
@@ -18,8 +18,11 @@ use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
-use Fp\Psalm\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
+use Fp\Psalm\Util\TypeRefinement\RefinementContext;
+use Fp\Psalm\Util\TypeRefinement\RefinementResult;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\Variable;
@@ -29,9 +32,6 @@ use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
-use Fp\Psalm\TypeRefinement\RefineByPredicate;
-use Fp\Psalm\TypeRefinement\RefinementContext;
-use Fp\Psalm\TypeRefinement\RefinementResult;
 use Fp\Functional\Option\Option;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;

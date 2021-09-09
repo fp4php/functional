@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\TypeRefinement;
+namespace Fp\Psalm\Util\TypeRefinement;
 
 use PhpParser\Node\FunctionLike;
 use Psalm\Codebase;

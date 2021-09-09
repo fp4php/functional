@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook;
+namespace Fp\Psalm\Hook\Analysis;
 
-use Fp\Psalm\TypeAssertion\OptionToUnion;
-use Fp\Psalm\TypeAssertion\TypeAssertion;
+use Fp\Psalm\Util\TypeAssertion\OptionToUnion;
+use Fp\Psalm\Util\TypeAssertion\TypeAssertion;
 use Psalm\Plugin\EventHandler\AfterMethodCallAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 

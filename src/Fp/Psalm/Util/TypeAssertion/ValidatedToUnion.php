@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\TypeAssertion;
+namespace Fp\Psalm\Util\TypeAssertion;
 
 use Fp\Functional\Validated\Invalid;
 use Fp\Functional\Validated\Valid;

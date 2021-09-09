@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook;
+namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Psalm\Util\PSL;
 use PhpParser\Node\Arg;

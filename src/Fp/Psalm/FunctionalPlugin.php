@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
-use Fp\Psalm\Hook\ConditionallyPureAnalysis;
-use Fp\Psalm\Hook\EitherAssertionAnalysis;
-use Fp\Psalm\Hook\FilterFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\CollectionFilterMethodReturnTypeProvider;
-use Fp\Psalm\Hook\MapGetMethodReturnTypeProvider;
-use Fp\Psalm\Hook\OptionFilterMethodReturnTypeProvider;
-use Fp\Psalm\Hook\OptionAssertionAnalysis;
-use Fp\Psalm\Hook\PartialFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\PartitionFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\PartitionOfFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\PluckFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\ProveTrueExpressionAnalyser;
-use Fp\Psalm\Hook\ValidatedAssertionAnalysis;
+use Fp\Psalm\Hook\Analysis\ConditionallyPureAnalysis;
+use Fp\Psalm\Hook\Analysis\EitherAssertionAnalysis;
+use Fp\Psalm\Hook\Analysis\OptionAssertionAnalysis;
+use Fp\Psalm\Hook\Analysis\ProveTrueExpressionAnalysis;
+use Fp\Psalm\Hook\Analysis\ValidatedAssertionAnalysis;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionOfFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\MapGetMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
@@ -43,7 +43,7 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(OptionAssertionAnalysis::class);
         $register(EitherAssertionAnalysis::class);
         $register(ValidatedAssertionAnalysis::class);
-        $register(ProveTrueExpressionAnalyser::class);
+        $register(ProveTrueExpressionAnalysis::class);
         $register(MapGetMethodReturnTypeProvider::class);
         $register(ConditionallyPureAnalysis::class);
     }

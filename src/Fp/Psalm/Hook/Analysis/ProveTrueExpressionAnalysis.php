@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook;
+namespace Fp\Psalm\Hook\Analysis;
 
 use Fp\Functional\Option\Option;
 use PhpParser\Node;
@@ -19,7 +19,7 @@ use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 
 use function Fp\Evidence\proveOf;
 
-final class ProveTrueExpressionAnalyser implements AfterExpressionAnalysisInterface
+final class ProveTrueExpressionAnalysis implements AfterExpressionAnalysisInterface
 {
     public static function getFunctionIds(): array
     {

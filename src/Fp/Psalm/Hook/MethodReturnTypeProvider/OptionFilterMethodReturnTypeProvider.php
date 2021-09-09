@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook;
+namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
-use Fp\Psalm\TypeRefinement\CollectionTypeParams;
-use Fp\Psalm\TypeRefinement\RefineByPredicate;
-use Fp\Psalm\TypeRefinement\RefinementContext;
 use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
+use Fp\Psalm\Util\TypeRefinement\RefinementContext;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
@@ -28,7 +28,7 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
         return [Option::class, Some::class];
     }
 
-    public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Type\Union
+    public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         $return_type = Option::do(function() use ($event) {
             yield proveTrue('filter' === $event->getMethodNameLowercase());
