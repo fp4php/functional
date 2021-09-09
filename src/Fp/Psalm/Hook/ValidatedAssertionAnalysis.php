@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hooks;
+namespace Fp\Psalm\Hook;
 
 use Fp\Psalm\TypeAssertion\TypeAssertion;
 use Fp\Psalm\TypeAssertion\ValidatedToUnion;

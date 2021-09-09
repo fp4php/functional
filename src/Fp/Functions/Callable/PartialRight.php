@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Callable;
 
-use Fp\Psalm\Hooks\PartialFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\PartialFunctionReturnTypeProvider;
 
 /**
  * Partial application from last function argument

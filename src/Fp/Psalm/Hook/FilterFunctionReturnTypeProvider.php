@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hooks;
+namespace Fp\Psalm\Hook;
 
 use Fp\Psalm\Psalm;
 use Fp\Psalm\TypeRefinement\CollectionTypeExtractor;
