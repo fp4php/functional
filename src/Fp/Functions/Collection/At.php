@@ -31,7 +31,7 @@ function at(iterable $collection, int|string $key): Option
 {
     return Option::some($collection)
         ->filter(fn($coll) => is_array($coll) || $coll instanceof ArrayAccess)
-        ->map(fn(array|ArrayAccess $coll) => $coll[$key] ?? null)
+        ->flatMap(fn(array|ArrayAccess $coll) => Option::fromNullable($coll[$key] ?? null))
         ->orElse(fn() => first($collection, fn(mixed $v, mixed $k) => $k === $key));
 }
 

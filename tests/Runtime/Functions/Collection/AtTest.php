@@ -16,6 +16,8 @@ final class AtTest extends TestCase
     {
         $this->assertTrue(at(['a' => true], 'a')->get());
         $this->assertNull(at(['a' => true], 'b')->get());
+        $this->assertTrue(at([1, true], 1)->get());
+        $this->assertNull(at([1, true], 2)->get());
     }
 
     public function testAtWithIterable(): void
