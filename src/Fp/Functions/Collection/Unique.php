@@ -7,8 +7,6 @@ namespace Fp\Collection;
 use Fp\Collections\HashMap;
 use Generator;
 
-use function Fp\Cast\asListOfPairs;
-
 /**
  * Returns collection unique elements
  *

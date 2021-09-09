@@ -57,7 +57,7 @@ use function Fp\Collection\filterNotNull;
  *     callable(A): L
  * )))))))))
  *
- * @psalm-suppress all
+ * @psalm-suppress all todo
  */
 function compose(
     callable $aToB,

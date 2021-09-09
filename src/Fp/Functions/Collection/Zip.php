@@ -7,7 +7,7 @@ namespace Fp\Collection;
 use function Fp\Cast\asList;
 
 /**
- * Returns a iterable collection formed from this iterable collection
+ * Returns an iterable collection formed from this iterable collection
  * and another iterable collection by combining corresponding elements in pairs.
  *
  * If one of the two collections is longer than the other,

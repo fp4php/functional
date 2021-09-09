@@ -100,11 +100,11 @@
   // 'abc'
   ```
 
-- #### group
+- #### groupBy
   Group collection elements by key returned by function
 
   ```php
-  group( 
+  groupBy( 
     [1, 2, 3], 
     fn(int $v): int => $v
   ); 
