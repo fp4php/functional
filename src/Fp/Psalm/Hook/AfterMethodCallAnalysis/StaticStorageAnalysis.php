@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook\Analysis;
+namespace Fp\Psalm\Hook\AfterMethodCallAnalysis;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;

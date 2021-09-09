@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook\Analysis;
+namespace Fp\Psalm\Hook\AfterMethodCallAnalysis;
 
 use Fp\Psalm\Util\TypeAssertion\EitherToUnion;
 use Fp\Psalm\Util\TypeAssertion\TypeAssertion;

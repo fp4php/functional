@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
-use Fp\Psalm\Hook\Analysis\ConditionallyPureAnalysis;
-use Fp\Psalm\Hook\Analysis\EitherAssertionAnalysis;
-use Fp\Psalm\Hook\Analysis\MapGetMethodCallAnalysis;
-use Fp\Psalm\Hook\Analysis\OptionAssertionAnalysis;
-use Fp\Psalm\Hook\Analysis\ProveTrueExpressionAnalysis;
-use Fp\Psalm\Hook\Analysis\StaticStorageAnalysis;
-use Fp\Psalm\Hook\Analysis\ValidatedAssertionAnalysis;
+use Fp\Psalm\Hook\AfterExpressionAnalysis\ConditionallyPureAnalysis;
+use Fp\Psalm\Hook\AfterExpressionAnalysis\MapGetMethodCallAnalysis;
+use Fp\Psalm\Hook\AfterExpressionAnalysis\ProveTrueExpressionAnalysis;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\EitherAssertionAnalysis;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\OptionAssertionAnalysis;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\StaticStorageAnalysis;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\ValidatedAssertionAnalysis;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook\Analysis;
+namespace Fp\Psalm\Hook\AfterExpressionAnalysis;
 
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
