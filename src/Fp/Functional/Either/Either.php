@@ -393,9 +393,6 @@ abstract class Either
      * >>> Either::cond(false, 1, 'error')
      * => Left('error')
      *
-     * Create {@see Right} from value if given condition is true
-     * Create {@see Left} from value if given condition is false
-     *
      * @psalm-template LI
      * @psalm-template RI
      * @psalm-param LI $left
@@ -408,6 +405,32 @@ abstract class Either
         return $condition
             ? Right::of($right)
             : Left::of($left);
+    }
+
+    /**
+     * Fabric method.
+     *
+     * REPL:
+     * >>> Either::condLazy(true, fn() => 1, fn() => 'error')
+     * => Right(1)
+     * >>> Either::condLazy(false, fn() => 1, fn() => 'error')
+     * => Left('error')
+     *
+     * Create {@see Right} from callable return value if given condition is true
+     * Create {@see Left} from callable return value if given condition is false
+     *
+     * @psalm-template LI
+     * @psalm-template RI
+     * @psalm-param pure-callable(): LI $left
+     * @psalm-param pure-callable(): RI $right
+     * @psalm-return Either<LI, RI>
+     * @psalm-pure
+     */
+    public static function condLazy(bool $condition, callable $right, callable $left): Either
+    {
+        return $condition
+            ? Right::of($right())
+            : Left::of($left());
     }
 
     /**

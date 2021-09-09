@@ -88,6 +88,16 @@ final class ValidatedTest extends TestCase
         );
 
         $this->assertInstanceOf(
+            Valid::class,
+            Validated::condLazy(true, fn() => 1, fn() => 0)
+        );
+
+        $this->assertEquals(
+            1,
+            Validated::condLazy(true, fn() => 1, fn() => 0)->get()
+        );
+
+        $this->assertInstanceOf(
             Invalid::class,
             Validated::cond(false, 1, 0)
         );

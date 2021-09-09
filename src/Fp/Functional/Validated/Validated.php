@@ -69,12 +69,9 @@ abstract class Validated
     /**
      * @psalm-template EE
      * @psalm-template AA
-     *
-     * @psalm-param EE $left
-     * @psalm-param AA $right
-     *
+     * @psalm-param EE $invalid
+     * @psalm-param AA $valid
      * @psalm-return Validated<EE, AA>
-     *
      * @psalm-pure
      */
     public static function cond(
@@ -86,6 +83,25 @@ abstract class Validated
         return $condition
             ? self::valid($valid)
             : self::invalid($invalid);
+    }
+
+    /**
+     * @psalm-template EE
+     * @psalm-template AA
+     * @psalm-param pure-callable(): EE $invalid
+     * @psalm-param pure-callable(): AA $valid
+     * @psalm-return Validated<EE, AA>
+     * @psalm-pure
+     */
+    public static function condLazy(
+        bool $condition,
+        callable $valid,
+        callable $invalid,
+    ): Validated
+    {
+        return $condition
+            ? self::valid($valid())
+            : self::invalid($invalid());
     }
 
 

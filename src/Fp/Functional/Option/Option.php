@@ -463,7 +463,14 @@ abstract class Option
     }
 
     /**
-     * @deprecated use {@see Option::condLazy()}
+     * Fabric method.
+     *
+     * REPL:
+     * >>> Option::cond(true, 1)
+     * => Some(1)
+     * >>> Option::cond(false, 1)
+     * => None
+     *
      * @psalm-pure
      * @psalm-template AI
      * @psalm-param AI $some
