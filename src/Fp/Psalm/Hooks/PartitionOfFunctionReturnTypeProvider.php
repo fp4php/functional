@@ -44,8 +44,7 @@ class PartitionOfFunctionReturnTypeProvider implements FunctionReturnTypeProvide
 
             $partitions = ArrayList::collect($event->getCallArgs())
                 ->drop(2)
-                ->map(fn(Arg $arg) => Psalm::getArgSingleAtomic($arg, $source)->get())
-                ->filterNotNull()
+                ->filterMap(fn(Arg $arg) => Psalm::getArgSingleAtomic($arg, $source))
                 ->filter(fn(Atomic $a) => $a instanceof TLiteralClassString)
                 ->map(fn(TLiteralClassString $cs) => new TNamedObject($cs->value))
                 ->map(fn(TNamedObject $no) => new TList(new Union([$no])))
