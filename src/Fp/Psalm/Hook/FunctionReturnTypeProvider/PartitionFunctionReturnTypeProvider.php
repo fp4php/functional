@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\Psalm;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -41,7 +41,7 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
         $partition_count = count(tail($args));
 
         return head($args)
-            ->flatMap(fn(Arg $head_arg) => PSL::getArgUnion($head_arg, $source))
+            ->flatMap(fn(Arg $head_arg) => Psalm::getArgUnion($head_arg, $source))
             ->map(function(Union $head_arg_type) use ($partition_count) {
                 $atomic_types = map(
                     $head_arg_type->getAtomicTypes(),

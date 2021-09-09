@@ -15,7 +15,7 @@ use Fp\Psalm\Util\Extractor\UnionExtractor;
  *
  * @internal
  */
-class PSL
+class Psalm
 {
     use TypeParamExtractor;
     use AtomicExtractor;

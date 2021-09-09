@@ -7,7 +7,7 @@ namespace Fp\Psalm\Util\Extractor;
 use Fp\Collections\Map;
 use Fp\Collections\NonEmptyMap;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\Psalm;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TGenericObject;
@@ -28,7 +28,7 @@ trait TypeParamKeyExtractor
     public static function getUnionKeyTypeParam(Union $union): Option
     {
         return Option::do(function () use ($union) {
-            $atomic = yield PSL::getUnionSingeAtomic($union);
+            $atomic = yield Psalm::getUnionSingeAtomic($union);
 
             return yield self::filterTIterableKeyTypeParam($atomic)
                 ->orElse(fn() => self::filterTArrayKeyTypeParam($atomic))

@@ -12,7 +12,7 @@ use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\Psalm;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TGenericObject;
@@ -34,7 +34,7 @@ trait TypeParamValueExtractor
     public static function getUnionValueTypeParam(Union $union): Option
     {
         return Option::do(function () use ($union) {
-            $atomic = yield PSL::getUnionSingeAtomic($union);
+            $atomic = yield Psalm::getUnionSingeAtomic($union);
 
             return yield self::filterTIterableValueTypeParam($atomic)
                 ->orElse(fn() => self::filterTArrayValueTypeParam($atomic))

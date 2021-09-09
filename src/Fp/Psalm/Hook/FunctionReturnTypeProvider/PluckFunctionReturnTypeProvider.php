@@ -7,7 +7,7 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\Psalm;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -45,10 +45,10 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return Option::do(function () use ($event) {
-            $arg_union = yield PSL::getFirstArgUnion($event);
+            $arg_union = yield Psalm::getFirstArgUnion($event);
             $target_union = yield self::getTypes($event);
             return new Union([new TArray([
-                PSL::getUnionKeyTypeParam($arg_union)->getOrElse(Type::getArrayKey()),
+                Psalm::getUnionKeyTypeParam($arg_union)->getOrElse(Type::getArrayKey()),
                 $target_union,
             ])]);
         })->get();
@@ -89,9 +89,9 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     {
         return Option::do(function () use ($event) {
             $key = yield self::getKey($event);
-            $collection_union = yield PSL::getFirstArgUnion($event);
-            $collection_value_type_param = yield PSL::getUnionValueTypeParam($collection_union);
-            $collection_value_atomic = yield PSL::getUnionSingeAtomic($collection_value_type_param);
+            $collection_union = yield Psalm::getFirstArgUnion($event);
+            $collection_value_type_param = yield Psalm::getUnionValueTypeParam($collection_union);
+            $collection_value_atomic = yield Psalm::getUnionSingeAtomic($collection_value_type_param);
             yield proveTrue($collection_value_atomic instanceof TKeyedArray);
             return yield HashMap::collect($collection_value_atomic->properties)($key);
         });
@@ -103,9 +103,9 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     private static function getClassName(FunctionReturnTypeProviderEvent $event): Option
     {
         return Option::do(function () use ($event) {
-            $union = yield PSL::getFirstArgUnion($event);
-            $type_param_union = yield PSL::getUnionValueTypeParam($union);
-            $type_param_atomic = yield PSL::getUnionSingeAtomic($type_param_union);
+            $union = yield Psalm::getFirstArgUnion($event);
+            $type_param_union = yield Psalm::getUnionValueTypeParam($union);
+            $type_param_atomic = yield Psalm::getUnionSingeAtomic($type_param_union);
             yield proveTrue($type_param_atomic instanceof TNamedObject);
 
             return yield proveClassString($type_param_atomic->value);
@@ -118,7 +118,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     private static function getKey(FunctionReturnTypeProviderEvent $event): Option
     {
         return second($event->getCallArgs())
-            ->flatMap(fn(Arg $arg): Option => PSL::getArgUnion($arg, $event->getStatementsSource()))
+            ->flatMap(fn(Arg $arg): Option => Psalm::getArgUnion($arg, $event->getStatementsSource()))
             ->flatMap(fn(Union $key) => firstOf($key->getAtomicTypes(), TLiteralString::class))
             ->map(fn(TLiteralString $literal) => $literal->value);
     }

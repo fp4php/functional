@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Util\TypeAssertion;
 
-use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\Psalm;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Return_;
@@ -24,7 +24,7 @@ final class PseudoAdtAtomicExtractor
     {
         return Option::do(function() use ($node, $provider, $adtClass) {
             $generic_object = yield Option::fromNullable($provider->getType($node))
-                ->flatMap(fn($type) => PSL::getUnionSingeAtomic($type))
+                ->flatMap(fn($type) => Psalm::getUnionSingeAtomic($type))
                 ->flatMap(fn($atomic) => proveOf($atomic, TGenericObject::class));
 
             yield proveTrue($adtClass === $generic_object->value);

@@ -18,7 +18,7 @@ use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
-use Fp\Psalm\Util\PSL;
+use Fp\Psalm\Util\Psalm;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
@@ -78,7 +78,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
 
             $source          = yield proveOf($event->getSource(), StatementsAnalyzer::class);
             $predicate_arg   = yield self::extractPredicateArg($event);
-            $predicate       = yield PSL::getArgFunctionLike($predicate_arg);
+            $predicate       = yield Psalm::getArgFunctionLike($predicate_arg);
             $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
 
             $collection_type_params = 2 === count($template_params)
