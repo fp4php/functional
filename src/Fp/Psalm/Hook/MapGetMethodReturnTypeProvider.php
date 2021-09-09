@@ -10,7 +10,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyMap;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
-use Fp\Psalm\Psalm;
+use Fp\Psalm\Util\PSL;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TGenericObject;
@@ -45,9 +45,9 @@ final class MapGetMethodReturnTypeProvider implements MethodReturnTypeProviderIn
             $type_params         = yield Option::fromNullable($event->getTemplateTypeParameters());
             $key_type_param      = yield first($type_params);
             $value_type_param    = yield second($type_params);
-            $arg_union           = yield Psalm::getFirstArgUnion($event);
-            $type_param_literals = yield Psalm::getUnionLiteralValues($key_type_param);
-            $arg_literal         = yield Psalm::getUnionSingleLiteralValue($arg_union);
+            $arg_union           = yield PSL::getFirstArgUnion($event);
+            $type_param_literals = yield PSL::getUnionLiteralValues($key_type_param);
+            $arg_literal         = yield PSL::getUnionSingleLiteralValue($arg_union);
 
             yield proveTrue($type_param_literals->contains($arg_literal));
 

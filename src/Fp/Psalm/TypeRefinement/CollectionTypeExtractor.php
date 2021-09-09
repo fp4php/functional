@@ -11,7 +11,7 @@ use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Psalm;
+use Fp\Psalm\Util\PSL;
 use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
@@ -32,7 +32,7 @@ final class CollectionTypeExtractor
      */
     public static function extract(Union $union): Option
     {
-        return Psalm::getUnionSingeAtomic($union)
+        return PSL::getUnionSingeAtomic($union)
             ->flatMap(fn($a) => self::fromList($a)
                 ->orElse(fn() => self::fromArrayOrIterable($a))
                 ->orElse(fn() => self::fromOption($a))
