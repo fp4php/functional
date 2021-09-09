@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\Option;
 
+use Error;
 use Exception;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
@@ -155,6 +156,8 @@ final class OptionTest extends TestCase
     public function testCond(): void
     {
         $this->assertEquals('some', Option::cond(true, 'some')->get());
+        $this->assertEquals('some', Option::condLazy(true, fn() => 'some')->get());
+        $this->assertNull(Option::condLazy(false, fn() => throw new Error())->get());
         $this->assertNull(Option::cond(false, 'some')->get());
     }
 }

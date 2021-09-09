@@ -463,17 +463,7 @@ abstract class Option
     }
 
     /**
-     * Fabric method.
-     *
-     * REPL:
-     * >>> Option::cond(true, 1)
-     * => Some(1)
-     * >>> Option::cond(false, 1)
-     * => None
-     *
-     * Create {@see Some} from value if given condition is true
-     * Create {@see None} if given condition is false
-     *
+     * @deprecated use {@see Option::condLazy()}
      * @psalm-pure
      * @psalm-template AI
      * @psalm-param AI $some
@@ -483,6 +473,30 @@ abstract class Option
     {
         return $condition
             ? self::some($some)
+            : self::none();
+    }
+
+    /**
+     * Fabric method.
+     *
+     * REPL:
+     * >>> Option::condLazy(true, fn() => 1)
+     * => Some(1)
+     * >>> Option::condLazy(false, fn() => 1)
+     * => None
+     *
+     * Create {@see Some} from value if given condition is true
+     * Create {@see None} if given condition is false
+     *
+     * @psalm-pure
+     * @psalm-template AI
+     * @psalm-param callable(): AI $some
+     * @psalm-return Option<AI>
+     */
+    public static function condLazy(bool $condition, callable $some): Option
+    {
+        return $condition
+            ? self::some($some())
             : self::none();
     }
 }
