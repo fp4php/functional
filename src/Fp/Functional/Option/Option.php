@@ -11,6 +11,8 @@ use Fp\Functional\Either\Right;
 use Generator;
 use Throwable;
 
+use function Fp\objectOf;
+
 /**
  * Option monad
  *
@@ -136,6 +138,31 @@ abstract class Option
     public function filter(callable $callback): Option
     {
         return $this->isSome() && $callback($this->value)
+            ? self::some($this->value)
+            : self::none();
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Check if unwrapped value is of given class
+     * 4) If the value is of given class then return Some. Otherwise, None.
+     *
+     * REPL:
+     * >>> $res1 = Option::fromNullable(new Foo(1));
+     * => Some(Foo(1))
+     * >>> $res2 = $res1->filterOf(Foo::class);
+     * => Some(Foo(1))
+     * >>> $res3 = $res2->filterOf(Bar::class);
+     * => None
+     *
+     * @template AA
+     * @param class-string<AA> $fqcn
+     * @return Option<AA>
+     */
+    public function filterOf(string $fqcn, bool $invariant = false): Option
+    {
+        return $this->isSome() && objectOf($this->value, $fqcn, $invariant)
             ? self::some($this->value)
             : self::none();
     }
