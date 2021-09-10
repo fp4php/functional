@@ -12,6 +12,7 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\Stream;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Psalm;
 use PhpParser\Node\Arg;
@@ -90,6 +91,7 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
         NonEmptyHashMap::class.'::collectPairs',
         NonEmptyHashMap::class.'::collectPairsUnsafe',
         NonEmptyHashMap::class.'::collectPairsNonEmpty',
+        Stream::class.'::collect',
     ];
 
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool

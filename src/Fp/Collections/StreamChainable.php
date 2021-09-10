@@ -11,10 +11,8 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements Seq
- * @psalm-require-implements SeqCollector
  */
-trait SeqChainable
+trait StreamChainable
 {
     /**
      * @template TVO
@@ -298,40 +296,6 @@ trait SeqChainable
         }
 
         return $this;
-    }
-
-    /**
-     * @inheritDoc
-     * @experimental
-     * @psalm-param callable(TV): (int|string) $callback
-     * @psalm-return self<TV>
-     */
-    public function unique(callable $callback): self
-    {
-        $pairs = $this->map(function($elem) use ($callback) {
-            /** @var TV $elem */
-            return [$callback($elem), $elem];
-        });
-
-        return self::collect(HashMap::collectPairs($pairs)->values());
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return self<TV>
-     */
-    public function sorted(callable $cmp): self
-    {
-        $sorted = $this->toArray();
-
-        /**
-         * @todo implement stable pure sort
-         * @psalm-suppress ImpureFunctionCall, InvalidArgument
-         */
-        usort($sorted, $cmp);
-
-        return self::collect($sorted);
     }
 }
 

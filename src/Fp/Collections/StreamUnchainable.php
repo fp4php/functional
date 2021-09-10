@@ -11,9 +11,8 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements Seq
  */
-trait SeqUnchainable
+trait StreamUnchainable
 {
     /**
      * @inheritDoc
@@ -211,72 +210,6 @@ trait SeqUnchainable
     public function lastElement(): Option
     {
         return $this->last(fn() => true);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function __invoke(int $index): Option
-    {
-        return $this->at($index);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function at(int $index): Option
-    {
-        $first = null;
-
-        foreach ($this as $idx => $element) {
-            if ($idx === $index) {
-                $first = $element;
-                break;
-            }
-        }
-
-        return Option::fromNullable($first);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TKO
-     * @psalm-param callable(TV): TKO $callback
-     * @psalm-return Map<TKO, Seq<TV>>
-     * @psalm-suppress ImpureMethodCall
-     */
-    public function groupBy(callable $callback): Map
-    {
-        $buffer = new HashMapBuffer();
-
-        foreach ($this as $elem) {
-            /** @var TV $e */
-            $e = $elem;
-            $key = $callback($e);
-
-            /** @var Seq<TV> $group */
-            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
-
-            $buffer->update($key, $group->prepended($e));
-        }
-
-        return $buffer->toHashMap();
     }
 }
 
