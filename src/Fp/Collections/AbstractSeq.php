@@ -15,7 +15,7 @@ use function Fp\of;
  * @template-covariant TV
  * @implements Seq<TV>
  */
-abstract class AbstractSeq implements Seq
+abstract class AbstractSeq implements Seq, SeqCollector
 {
     /**
      * REPL:
