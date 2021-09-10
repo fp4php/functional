@@ -91,7 +91,7 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
         NonEmptyHashMap::class.'::collectPairs',
         NonEmptyHashMap::class.'::collectPairsUnsafe',
         NonEmptyHashMap::class.'::collectPairsNonEmpty',
-        Stream::class.'::collect',
+        Stream::class.'::emits',
     ];
 
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool

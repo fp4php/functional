@@ -11,6 +11,7 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
+ * @psalm-require-implements StreamEmitter
  */
 trait StreamChainable
 {
@@ -21,7 +22,7 @@ trait StreamChainable
      */
     public function map(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::emits(IterableOnce::of(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -39,7 +40,7 @@ trait StreamChainable
      */
     public function appended(mixed $elem): self
     {
-        return self::collect(IterableOnce::of(function () use ($elem) {
+        return self::emits(IterableOnce::of(function () use ($elem) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -56,7 +57,7 @@ trait StreamChainable
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collect(IterableOnce::of(function() use ($suffix) {
+        return self::emits(IterableOnce::of(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -75,7 +76,7 @@ trait StreamChainable
      */
     public function prepended(mixed $elem): self
     {
-        return self::collect(IterableOnce::of(function () use ($elem) {
+        return self::emits(IterableOnce::of(function () use ($elem) {
             yield $elem;
 
             foreach ($this as $prefixElem) {
@@ -92,7 +93,7 @@ trait StreamChainable
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collect(IterableOnce::of(function() use ($prefix) {
+        return self::emits(IterableOnce::of(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -110,7 +111,7 @@ trait StreamChainable
      */
     public function filter(callable $predicate): self
     {
-        return self::collect(IterableOnce::of(function () use ($predicate) {
+        return self::emits(IterableOnce::of(function () use ($predicate) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -130,7 +131,7 @@ trait StreamChainable
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::emits(IterableOnce::of(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -173,7 +174,7 @@ trait StreamChainable
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::emits(IterableOnce::of(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -192,7 +193,7 @@ trait StreamChainable
      */
     public function tail(): self
     {
-        return self::collect(IterableOnce::of(function () {
+        return self::emits(IterableOnce::of(function () {
             $isFirst = true;
 
             foreach ($this as $elem) {
@@ -213,7 +214,7 @@ trait StreamChainable
      */
     public function takeWhile(callable $predicate): self
     {
-        return self::collect(IterableOnce::of(function () use ($predicate) {
+        return self::emits(IterableOnce::of(function () use ($predicate) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -234,7 +235,7 @@ trait StreamChainable
      */
     public function dropWhile(callable $predicate): self
     {
-        return self::collect(IterableOnce::of(function () use ($predicate) {
+        return self::emits(IterableOnce::of(function () use ($predicate) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -254,7 +255,7 @@ trait StreamChainable
      */
     public function take(int $length): self
     {
-        return self::collect(IterableOnce::of(function () use ($length) {
+        return self::emits(IterableOnce::of(function () use ($length) {
             foreach ($this as $i => $elem) {
                 if ($i === $length) {
                     break;
@@ -271,7 +272,7 @@ trait StreamChainable
      */
     public function drop(int $length): self
     {
-        return self::collect(IterableOnce::of(function () use ($length) {
+        return self::emits(IterableOnce::of(function () use ($length) {
             foreach ($this as $i => $elem) {
                 if ($i < $length) {
                     continue;

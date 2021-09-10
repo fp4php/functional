@@ -15,9 +15,10 @@ use LogicException;
  * @template-covariant TV
  * @implements StreamOps<TV>
  * @implements StreamCasts<TV>
+ * @implements StreamEmitter<TV>
  * @implements IteratorAggregate<TV>
  */
-final class Stream implements StreamOps, StreamCasts, IteratorAggregate
+final class Stream implements StreamOps, StreamCasts, StreamEmitter, IteratorAggregate
 {
     /**
      * @use StreamChainable<TV>
@@ -53,7 +54,7 @@ final class Stream implements StreamOps, StreamCasts, IteratorAggregate
      * @param iterable<TVI> $source
      * @return self<TVI>
      */
-    public static function collect(iterable $source): self
+    public static function emits(iterable $source): self
     {
         return new self($source);
     }
