@@ -20,7 +20,7 @@ $ composer require whsv26/functional
 ```
 
 ### Enable psalm plugin (optional)
-To improve type inference for particular functions
+To improve type inference
 
 ```console
 $ vendor/bin/psalm-plugin enable Fp\\Psalm\\FunctionalPlugin
@@ -127,8 +127,10 @@ function div(int $a, int $b): Option {
 
 /**
  * It's possible there is no first collection element above zero
- * In this case the execution will short circuit (stop) 
- * And no Null Pointer Exception will be thrown
+ * or divisor is zero.
+ *
+ * In this case the execution will short circuit (stop)
+ * and no Null Pointer Exception will be thrown.
  */
 $emptyCollection
     ->first(fn(int $elem) => $elem > 0)
