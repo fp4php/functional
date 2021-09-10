@@ -13,14 +13,25 @@ use Iterator;
  *
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractSeq<TV>
+ * @implements Seq<TV>
+ * @implements SeqCollector<TV>
  */
-final class ArrayList extends AbstractSeq
+final class ArrayList implements Seq, SeqCollector
 {
     /**
      * @use SeqChainable<TV>
      */
     use SeqChainable;
+
+    /**
+     * @use SeqUnchainable<TV>
+     */
+    use SeqUnchainable;
+
+    /**
+     * @use SeqConvertible<TV>
+     */
+    use SeqConvertible;
 
     /**
      * @param list<TV> $elements

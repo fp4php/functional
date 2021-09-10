@@ -12,14 +12,25 @@ use Iterator;
  *
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractSeq<TV>
+ * @implements Seq<TV>
+ * @implements SeqCollector<TV>
  */
-abstract class LinkedList extends AbstractSeq
+abstract class LinkedList implements Seq, SeqCollector
 {
     /**
      * @use SeqChainable<TV>
      */
     use SeqChainable;
+
+    /**
+     * @use SeqUnchainable<TV>
+     */
+    use SeqUnchainable;
+
+    /**
+     * @use SeqConvertible<TV>
+     */
+    use SeqConvertible;
 
     /**
      * @inheritDoc

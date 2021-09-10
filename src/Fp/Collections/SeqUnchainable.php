@@ -5,35 +5,16 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Generator;
-use Iterator;
 
 use function Fp\of;
 
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements Seq<TV>
+ * @psalm-require-implements Seq
  */
-abstract class AbstractSeq implements Seq, SeqCollector
+trait SeqUnchainable
 {
-    /**
-     * REPL:
-     * >>> LinkedList::collect([1, 2])
-     * => LinkedList(1, 2)
-     *
-     * @template TVI
-     * @param iterable<TVI> $source
-     * @return self<TVI>
-     */
-    abstract public static function collect(iterable $source): self;
-
-    /**
-     * @inheritDoc
-     * @return Iterator<int, TV>
-     */
-    abstract public function getIterator(): Iterator;
-
     /**
      * @inheritDoc
      */
@@ -46,64 +27,6 @@ abstract class AbstractSeq implements Seq, SeqCollector
         }
 
         return $counter;
-    }
-
-    /**
-     * @inheritDoc
-     * @return list<TV>
-     */
-    public function toArray(): array
-    {
-        $buffer = [];
-
-        foreach ($this as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<TV>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return LinkedList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return ArrayList<TV>
-     */
-    public function toArrayList(): ArrayList
-    {
-        return ArrayList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TKI
-     * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
-     * @return HashMap<TKI, TVI>
-     */
-    public function toHashMap(callable $callback): HashMap
-    {
-        return HashMap::collectPairs(IterableOnce::of(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
     }
 
     /**
@@ -141,8 +64,11 @@ abstract class AbstractSeq implements Seq, SeqCollector
     {
         $result = true;
 
-        foreach ($this as $element) {
-            if (!$predicate($element)) {
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if (!$predicate($e)) {
                 $result = false;
                 break;
             }
@@ -168,7 +94,18 @@ abstract class AbstractSeq implements Seq, SeqCollector
      */
     public function exists(callable $predicate): bool
     {
-        return $this->first($predicate)->isSome();
+        $isExists = false;
+
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if ($predicate($e)) {
+                $isExists = true;
+                break;
+            }
+        }
+        return $isExists;
     }
 
     /**
@@ -194,9 +131,12 @@ abstract class AbstractSeq implements Seq, SeqCollector
     {
         $first = null;
 
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $first = $element;
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if ($predicate($e)) {
+                $first = $e;
                 break;
             }
         }
@@ -228,8 +168,10 @@ abstract class AbstractSeq implements Seq, SeqCollector
     {
         $acc = $init;
 
-        foreach ($this as $element) {
-            $acc = $callback($acc, $element);
+        foreach ($this as $elem) {
+            /** @var TV $cur */
+            $cur = $elem;
+            $acc = $callback($acc, $cur);
         }
 
         return $acc;
@@ -247,8 +189,10 @@ abstract class AbstractSeq implements Seq, SeqCollector
             /** @var TV $acc */
             $acc = $head;
 
-            foreach ($this->tail() as $element) {
-                $acc = $callback($acc, $element);
+            foreach ($this->tail() as $elem) {
+                /** @psalm-var TV $cur */
+                $cur = $elem;
+                $acc = $callback($acc, $cur);
             }
 
             return $acc;
@@ -280,9 +224,12 @@ abstract class AbstractSeq implements Seq, SeqCollector
     {
         $last = null;
 
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $last = $element;
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if ($predicate($e)) {
+                $last = $e;
             }
         }
 
@@ -319,14 +266,17 @@ abstract class AbstractSeq implements Seq, SeqCollector
         $buffer = new HashMapBuffer();
 
         foreach ($this as $elem) {
-            $key = $callback($elem);
+            /** @var TV $e */
+            $e = $elem;
+            $key = $callback($e);
 
             /** @var Seq<TV> $group */
             $group = $buffer->get($key)->getOrElse(Nil::getInstance());
 
-            $buffer->update($key, $group->prepended($elem));
+            $buffer->update($key, $group->prepended($e));
         }
 
         return $buffer->toHashMap();
     }
 }
+
