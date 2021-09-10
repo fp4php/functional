@@ -16,6 +16,20 @@ trait StreamUnchainable
 {
     /**
      * @inheritDoc
+     */
+    public function count(): int
+    {
+        $counter = 0;
+
+        foreach ($this as $ignored) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool

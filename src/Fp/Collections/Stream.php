@@ -6,7 +6,6 @@ namespace Fp\Collections;
 
 use ArrayIterator;
 use Iterator;
-use IteratorAggregate;
 use IteratorIterator;
 use LogicException;
 
@@ -16,9 +15,9 @@ use LogicException;
  * @implements StreamOps<TV>
  * @implements StreamCasts<TV>
  * @implements StreamEmitter<TV>
- * @implements IteratorAggregate<TV>
+ * @implements Collection<TV>
  */
-final class Stream implements StreamOps, StreamCasts, StreamEmitter, IteratorAggregate
+final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
 {
     /**
      * @use StreamChainable<TV>
@@ -43,9 +42,22 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, IteratorAgg
     /**
      * @param iterable<TV> $emitter
      */
-    public function __construct(private iterable $emitter)
+    private function __construct(private iterable $emitter)
     {
 
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param TVI $elem
+     * @return self<TVI>
+     */
+    public static function emit(mixed $elem): self
+    {
+        return new self(IterableOnce::of(function () use ($elem) {
+            yield $elem;
+        }));
     }
 
     /**
@@ -57,6 +69,47 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, IteratorAgg
     public static function emits(iterable $source): self
     {
         return new self($source);
+    }
+
+    /**
+     * Repeat this stream
+     *
+     * REPL:
+     * >>> Stream::emit(1)->repeat()
+     * => Stream(1, 1)
+     *
+     * @return self<TV>
+     */
+    public function repeat(): self
+    {
+        return $this->repeatN(1);
+    }
+
+    /**
+     * Repeat this stream
+     *
+     * REPL:
+     * >>> Stream::emit(1)->repeatN(3)
+     * => Stream(1, 1, 1)
+     *
+     * @return self<TV>
+     */
+    public function repeatN(int $times): self
+    {
+        return new self(IterableOnce::of(function () use ($times) {
+            /** @var Seq<TV> $buffer */
+            $buffer = ArrayList::collect($this);
+
+            foreach ($buffer as $elem) {
+                yield $elem;
+            }
+
+            for($i = 0; $i < $times - 1; $i++) {
+                foreach ($buffer as $elem) {
+                    yield $elem;
+                }
+            }
+        }));
     }
 
     /**
