@@ -18,6 +18,7 @@ use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
+use Fp\Collections\Stream;
 use Fp\Psalm\Util\Psalm;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
@@ -68,6 +69,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
             NonEmptySet::class,
             Map::class,
             NonEmptyMap::class,
+            Stream::class,
         ];
     }
 

@@ -403,4 +403,12 @@ interface StreamOps
      * @psalm-return Stream<TV>
      */
     public function lines(): Stream;
+
+    /**
+     * Run stream without care of the output
+     *
+     * REPL:
+     * >>> Stream::drain([1, 2])->drain()
+     */
+    public function drain(): void;
 }

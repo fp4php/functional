@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use ArrayIterator;
+use Error;
 use Generator;
 use Iterator;
 use IteratorIterator;
@@ -57,7 +58,7 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     {
         $this->closed = !$this->closed
             ? true
-            : throw new LogicException('Can not traverse closed stream');
+            : throw new Error('Can not traverse closed stream');
 
         return is_array($this->emitter)
             ? new ArrayIterator($this->emitter)
@@ -175,5 +176,14 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
         return $this->tap(function ($elem) {
             echo ((string) $elem) . PHP_EOL;
         });
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function drain(): void
+    {
+        foreach ($this as $ignored) { }
     }
 }

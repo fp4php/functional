@@ -157,18 +157,22 @@ trait StreamUnchainable
      */
     public function reduce(callable $callback): Option
     {
-        return $this->head()->map(function ($head) use ($callback) {
-            /** @var TV $acc */
-            $acc = $head;
+        $acc = null;
+        $isHead = true;
 
-            foreach ($this->tail() as $elem) {
-                /** @psalm-var TV $cur */
-                $cur = $elem;
-                $acc = $callback($acc, $cur);
+        foreach ($this as $elem) {
+            if ($isHead) {
+                $isHead = false;
+                $acc = $elem;
+                continue;
             }
 
-            return $acc;
-        });
+            /** @psalm-var TV $cur */
+            $cur = $elem;
+            $acc = $callback($acc, $cur);
+        }
+
+        return Option::fromNullable($acc);
     }
 
     /**

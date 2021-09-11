@@ -292,8 +292,10 @@ trait StreamChainable
     {
         return self::emits(IterableOnce::of(function () use ($callback) {
             foreach ($this as $elem) {
+                /** @var TV $e */
+                $e = $elem;
                 yield $elem;
-                $callback($elem);
+                $callback($e);
             }
         }));
     }
