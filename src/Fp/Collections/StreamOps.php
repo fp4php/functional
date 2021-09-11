@@ -391,4 +391,16 @@ interface StreamOps
      * @psalm-return Stream<TV|TVI>
      */
     public function intersperse(mixed $separator): Stream;
+
+    /**
+     * Writes this stream to the stdout synchronously
+     *
+     * REPL:
+     * >>> Stream::emits([1, 2])->lines()
+     * 1
+     * 2
+     *
+     * @psalm-return Stream<TV>
+     */
+    public function lines(): Stream;
 }

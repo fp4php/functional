@@ -149,4 +149,15 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
             }
         }));
     }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Stream<TV>
+     */
+    public function lines(): Stream
+    {
+        return $this->tap(function ($elem) {
+            echo ((string) $elem) . PHP_EOL;
+        });
+    }
 }
