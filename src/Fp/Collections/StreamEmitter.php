@@ -57,4 +57,12 @@ interface StreamEmitter
      * @return self<TV>
      */
     public function repeatN(int $times): self;
+
+    /**
+     * Discrete stream that every d emits elapsed duration since the start time of stream consumption.
+     * For example: awakeEvery(5) will return (approximately) 5s, 10s, 15s, and will lie dormant between emitted values.
+     *
+     * @return self<int>
+     */
+    public static function awakeEvery(int $seconds): self;
 }

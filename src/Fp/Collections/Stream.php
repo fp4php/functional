@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use ArrayIterator;
+use Generator;
 use Iterator;
 use IteratorIterator;
 use LogicException;
@@ -35,6 +36,7 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     use StreamConvertible;
 
     /**
+     * @todo
      * @psalm-readonly-allow-private-mutation $closed
      */
     private bool $closed = false;
@@ -87,12 +89,31 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     }
 
     /**
-     * Repeat this stream
-     *
-     * REPL:
-     * >>> Stream::emit(1)->repeat()
-     * => Stream(1, 1)
-     *
+     * @inheritDoc
+     * @return self<int>
+     */
+    public static function awakeEvery(int $seconds): self
+    {
+        $source = function () use ($seconds): Generator {
+            $elapsed = 0;
+            $prevTime = time();
+
+            while (true) {
+                sleep($seconds);
+
+                $curTime = time();
+                $elapsed += $curTime - $prevTime;
+                $prevTime = $curTime;
+
+                yield $elapsed;
+            }
+        };
+
+        return new self($source());
+    }
+
+    /**
+     * @inheritDoc
      * @return self<TV>
      */
     public function repeat(): self
@@ -101,12 +122,7 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     }
 
     /**
-     * Repeat this stream
-     *
-     * REPL:
-     * >>> Stream::emit(1)->repeatN(3)
-     * => Stream(1, 1, 1)
-     *
+     * @inheritDoc
      * @return self<TV>
      */
     public function repeatN(int $times): self
