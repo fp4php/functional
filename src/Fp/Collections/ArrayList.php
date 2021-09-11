@@ -14,9 +14,8 @@ use Iterator;
  * @psalm-immutable
  * @template-covariant TV
  * @implements Seq<TV>
- * @implements SeqCollector<TV>
  */
-final class ArrayList implements Seq, SeqCollector
+final class ArrayList implements Seq
 {
     /**
      * @use SeqChainable<TV>
@@ -90,28 +89,6 @@ final class ArrayList implements Seq, SeqCollector
     public function count(): int
     {
         return count($this->elements);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
-     */
-    public function appended(mixed $elem): self
-    {
-        return new self([...$this->elements, $elem]);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
-     */
-    public function prepended(mixed $elem): self
-    {
-        return new self([$elem, ...$this->elements]);
     }
 
     /**

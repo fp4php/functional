@@ -11,11 +11,6 @@ use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
 use Psalm\Type\Atomic;
-use Psalm\Type\Atomic\TArray;
-use Psalm\Type\Atomic\TGenericObject;
-use Psalm\Type\Atomic\TIterable;
-use Psalm\Type\Atomic\TKeyedArray;
-use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 
 use function Fp\Cast\asList;
@@ -49,50 +44,20 @@ trait SingleAtomicExtractor
     }
 
     /**
+     * @template T
+     * @psalm-param class-string<T> $fqcn
+     * @psalm-return Option<T>
+     */
+    public static function getUnionSingleAtomicOf(Union $union, string $fqcn, bool $invariant = false): Option
+    {
+        return self::getUnionSingeAtomic($union)->filterOf($fqcn, $invariant);
+    }
+
+    /**
      * @psalm-return Option<Atomic>
      */
     public static function getFirstArgSingleAtomic(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $event): Option
     {
         return Psalm::getFirstArgUnion($event)->flatMap(fn(Union $union) => self::getUnionSingeAtomic($union));
-    }
-
-    /**
-     * @psalm-return Option<TGenericObject>
-     */
-    public static function getUnionTGenericObjectSingleAtomic(Union $union): Option
-    {
-        return self::getUnionSingeAtomic($union)->filterOf(TGenericObject::class, true);
-    }
-
-    /**
-     * @psalm-return Option<TIterable>
-     */
-    public static function getUnionTIterableSingleAtomic(Union $union): Option
-    {
-        return self::getUnionSingeAtomic($union)->filterOf(TIterable::class, true);
-    }
-
-    /**
-     * @psalm-return Option<TArray>
-     */
-    public static function getUnionTArrayTypeSingleAtomic(Union $union): Option
-    {
-        return self::getUnionSingeAtomic($union)->filterOf(TArray::class, true);
-    }
-
-    /**
-     * @psalm-return Option<TKeyedArray>
-     */
-    public static function getUnionTKeyedArraySingleAtomic(Union $union): Option
-    {
-        return self::getUnionSingeAtomic($union)->filterOf(TKeyedArray::class, true);
-    }
-
-    /**
-     * @psalm-return Option<TList>
-     */
-    public static function getUnionTListSingleAtomic(Union $union): Option
-    {
-        return self::getUnionSingeAtomic($union)->filterOf(TList::class, true);
     }
 }

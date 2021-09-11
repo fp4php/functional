@@ -34,7 +34,7 @@ final class StaticStorageAnalysis implements AfterMethodCallAnalysisInterface
             $union = yield Psalm::getArgUnion($arg, $event->getStatementsSource());
 
             $candidate = yield Option::fromNullable($event->getReturnTypeCandidate());
-            $generic_object = yield Psalm::getUnionTGenericObjectSingleAtomic($candidate);
+            $generic_object = yield Psalm::getUnionSingleAtomicOf($candidate, TGenericObject::class);
             $generic_object->addIntersectionType(new TGenericObject(StaticStorage::class, [$union]));
         });
     }

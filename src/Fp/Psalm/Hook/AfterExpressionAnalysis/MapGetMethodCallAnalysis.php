@@ -14,6 +14,7 @@ use PhpParser\Node\Identifier;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 use Psalm\Type\Atomic\TGenericObject;
+use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
 use function Fp\classOf;
@@ -34,12 +35,12 @@ final class MapGetMethodCallAnalysis implements AfterExpressionAnalysisInterface
             yield proveTrue('get' === $call->name->name);
 
             $var_union = yield Psalm::getNodeUnion($call->var, $event->getStatementsSource());
-            $keyed_array = yield Psalm::getUnionTGenericObjectSingleAtomic($var_union)
+            $keyed_array = yield Psalm::getUnionSingleAtomicOf($var_union, TGenericObject::class)
                 ->filter(fn(TGenericObject $object) => classOf($object->value, HashMap::class))
                 ->flatMap(fn(TGenericObject $object) => Option::fromNullable($object->extra_types))
                 ->flatMap(fn($extra) => firstOf($extra, TGenericObject::class))
                 ->filter(fn(TGenericObject $object) => classOf($object->value, StaticStorage::class))
-                ->flatMap(fn(TGenericObject $object) => Psalm::getUnionTKeyedArraySingleAtomic($object->type_params[0]));
+                ->flatMap(fn(TGenericObject $object) => Psalm::getUnionSingleAtomicOf($object->type_params[0], TKeyedArray::class));
 
             $arg_union = yield Psalm::getArgUnion(yield head($call->args), $event->getStatementsSource());
             $key_literal = yield Psalm::getUnionSingleIntOrStringLiteralValue($arg_union);
