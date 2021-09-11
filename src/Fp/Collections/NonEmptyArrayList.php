@@ -10,10 +10,25 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractNonEmptySeq<TV>
+ * @implements NonEmptySeq<TV>
  */
-final class NonEmptyArrayList extends AbstractNonEmptySeq
+final class NonEmptyArrayList implements NonEmptySeq
 {
+    /**
+     * @use NonEmptySeqChainable<TV>
+     */
+    use NonEmptySeqChainable;
+
+    /**
+     * @use NonEmptySeqUnchainable<TV>
+     */
+    use NonEmptySeqUnchainable;
+
+    /**
+     * @use NonEmptySeqConvertible<TV>
+     */
+    use NonEmptySeqConvertible;
+
     /**
      * @internal
      * @param ArrayList<TV> $arrayList
@@ -104,66 +119,6 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return NonEmptySeq<TV|TVI>
-     */
-    public function appended(mixed $elem): NonEmptySeq
-    {
-        return new self($this->arrayList->appended($elem));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return self<TV|TVI>
-     */
-    public function appendedAll(iterable $suffix): self
-    {
-        return self::collectUnsafe(IterableOnce::of(function() use ($suffix) {
-            foreach ($this as $prefixElem) {
-                yield $prefixElem;
-            }
-
-            foreach ($suffix as $suffixElem) {
-                yield $suffixElem;
-            }
-        }));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return NonEmptySeq<TV|TVI>
-     */
-    public function prepended(mixed $elem): NonEmptySeq
-    {
-        return new self($this->arrayList->prepended($elem));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return self<TV|TVI>
-     */
-    public function prependedAll(iterable $prefix): self
-    {
-        return self::collectUnsafe(IterableOnce::of(function() use ($prefix) {
-            foreach ($prefix as $prefixElem) {
-                yield $prefixElem;
-            }
-
-            foreach ($this as $suffixElem) {
-                yield $suffixElem;
-            }
-        }));
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function at(int $index): Option
@@ -226,26 +181,6 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return self<TVO>
-     */
-    public function map(callable $callback): self
-    {
-        return new self($this->arrayList->map($callback));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return self<TV>
-     */
-    public function reverse(): self
-    {
-        return new self($this->arrayList->reverse());
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-return ArrayList<TV>
      */
     public function tail(): ArrayList
@@ -266,40 +201,48 @@ final class NonEmptyArrayList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV): (int|string) $callback returns element unique id
      * @psalm-return self<TV>
      */
-    public function unique(callable $callback): self
+    public function reverse(): self
     {
-        return new self($this->arrayList->unique($callback));
+        return new self($this->arrayList->reverse());
     }
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return self<TV>
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return ArrayList<TV>
      */
-    public function sorted(callable $cmp): self
+    public function takeWhile(callable $predicate): ArrayList
     {
-        $sorted = $this->toArray();
-
-        /** @psalm-suppress ImpureFunctionCall */
-        usort($sorted, $cmp);
-
-        return new self(new ArrayList($sorted));
+        return $this->arrayList->takeWhile($predicate);
     }
 
     /**
      * @inheritDoc
-     * @param callable(TV): void $callback
-     * @psalm-return self<TV>
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return ArrayList<TV>
      */
-    public function tap(callable $callback): self
+    public function dropWhile(callable $predicate): ArrayList
     {
-        foreach ($this as $elem) {
-            $callback($elem);
-        }
+        return $this->arrayList->dropWhile($predicate);
+    }
 
-        return $this;
+    /**
+     * @inheritDoc
+     * @psalm-return ArrayList<TV>
+     */
+    public function take(int $length): ArrayList
+    {
+        return $this->arrayList->take($length);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return ArrayList<TV>
+     */
+    public function drop(int $length): ArrayList
+    {
+        return $this->arrayList->drop($length);
     }
 }

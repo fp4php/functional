@@ -10,10 +10,25 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends AbstractNonEmptySeq<TV>
+ * @implements NonEmptySeq<TV>
  */
-final class NonEmptyLinkedList extends AbstractNonEmptySeq
+final class NonEmptyLinkedList implements NonEmptySeq
 {
+    /**
+     * @use NonEmptySeqChainable<TV>
+     */
+    use NonEmptySeqChainable;
+
+    /**
+     * @use NonEmptySeqUnchainable<TV>
+     */
+    use NonEmptySeqUnchainable;
+
+    /**
+     * @use NonEmptySeqConvertible<TV>
+     */
+    use NonEmptySeqConvertible;
+
     /**
      * @param TV $head
      * @param LinkedList<TV> $tail
@@ -91,66 +106,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
-     */
-    public function appended(mixed $elem): self
-    {
-        return self::collectUnsafe($this->toLinkedList()->appended($elem));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return self<TV|TVI>
-     */
-    public function appendedAll(iterable $suffix): self
-    {
-        return self::collectUnsafe(IterableOnce::of(function() use ($suffix) {
-            foreach ($this as $prefixElem) {
-                yield $prefixElem;
-            }
-
-            foreach ($suffix as $suffixElem) {
-                yield $suffixElem;
-            }
-        }));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
-     */
-    public function prepended(mixed $elem): self
-    {
-        return new self($elem, $this->toLinkedList());
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return self<TV|TVI>
-     */
-    public function prependedAll(iterable $prefix): self
-    {
-        return self::collectUnsafe(IterableOnce::of(function() use ($prefix) {
-            foreach ($prefix as $prefixElem) {
-                yield $prefixElem;
-            }
-
-            foreach ($this as $suffixElem) {
-                yield $suffixElem;
-            }
-        }));
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return LinkedList<TV>
      */
@@ -213,17 +168,6 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return self<TVO>
-     */
-    public function map(callable $callback): self
-    {
-        return self::collectUnsafe($this->toLinkedList()->map($callback));
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-return self<TV>
      */
     public function reverse(): self
@@ -242,40 +186,39 @@ final class NonEmptyLinkedList extends AbstractNonEmptySeq
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV): (int|string) $callback returns element unique id
-     * @psalm-return self<TV>
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return LinkedList<TV>
      */
-    public function unique(callable $callback): self
+    public function takeWhile(callable $predicate): LinkedList
     {
-        return self::collectUnsafe($this->toLinkedList()->unique($callback));
+        return $this->toLinkedList()->takeWhile($predicate);
     }
 
     /**
      * @inheritDoc
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return self<TV>
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return LinkedList<TV>
      */
-    public function sorted(callable $cmp): self
+    public function dropWhile(callable $predicate): LinkedList
     {
-        $sorted = $this->toArray();
-
-        /** @psalm-suppress ImpureFunctionCall */
-        usort($sorted, $cmp);
-
-        return self::collectUnsafe($sorted);
+        return $this->toLinkedList()->dropWhile($predicate);
     }
 
     /**
      * @inheritDoc
-     * @param callable(TV): void $callback
-     * @psalm-return self<TV>
+     * @psalm-return LinkedList<TV>
      */
-    public function tap(callable $callback): self
+    public function take(int $length): LinkedList
     {
-        foreach ($this as $elem) {
-            $callback($elem);
-        }
+        return $this->toLinkedList()->take($length);
+    }
 
-        return $this;
+    /**
+     * @inheritDoc
+     * @psalm-return LinkedList<TV>
+     */
+    public function drop(int $length): LinkedList
+    {
+        return $this->toLinkedList()->drop($length);
     }
 }

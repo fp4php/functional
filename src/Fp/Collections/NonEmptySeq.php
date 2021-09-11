@@ -12,8 +12,9 @@ use Iterator;
  * @extends NonEmptyCollection<TV>
  * @extends NonEmptySeqOps<TV>
  * @extends NonEmptySeqCasts<TV>
+ * @extends NonEmptySeqCollector<TV>
  */
-interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps, NonEmptySeqCasts
+interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps, NonEmptySeqCasts, NonEmptySeqCollector
 {
     /**
      * @inheritDoc

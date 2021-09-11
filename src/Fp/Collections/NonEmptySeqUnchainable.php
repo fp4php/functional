@@ -5,144 +5,16 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Iterator;
 
 use function Fp\of;
 
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements NonEmptySeq<TV>
+ * @psalm-require-implements NonEmptySeq
  */
-abstract class AbstractNonEmptySeq implements NonEmptySeq
+trait NonEmptySeqUnchainable
 {
-    /**
-     * @template TVI
-     * @param iterable<TVI> $source
-     * @return Option<self<TVI>>
-     */
-    abstract public static function collect(iterable $source): Option;
-
-    /**
-     * @template TVI
-     * @param iterable<TVI> $source
-     * @return self<TVI>
-     */
-    abstract public static function collectUnsafe(iterable $source): self;
-
-    /**
-     * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
-     * @return self<TVI>
-     */
-    abstract public static function collectNonEmpty(array|NonEmptyCollection $source): self;
-
-    /**
-     * @inheritDoc
-     * @return Iterator<int, TV>
-     */
-    abstract public function getIterator(): Iterator;
-
-    /**
-     * @inheritDoc
-     * @return non-empty-list<TV>
-     */
-    public function toArray(): array
-    {
-        $buffer = [$this->head()];
-
-        foreach ($this->tail() as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<TV>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return LinkedList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return ArrayList<TV>
-     */
-    public function toArrayList(): ArrayList
-    {
-        return ArrayList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return NonEmptyLinkedList<TV>
-     */
-    public function toNonEmptyLinkedList(): NonEmptyLinkedList
-    {
-        return NonEmptyLinkedList::collectUnsafe($this);
-    }
-
-    /**
-     * @return NonEmptyArrayList<TV>
-     */
-    public function toNonEmptyArrayList(): NonEmptyArrayList
-    {
-        return NonEmptyArrayList::collectUnsafe($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return NonEmptyHashSet<TV>
-     */
-    public function toNonEmptyHashSet(): NonEmptyHashSet
-    {
-        return NonEmptyHashSet::collectUnsafe($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TKI
-     * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
-     * @return HashMap<TKI, TVI>
-     */
-    public function toHashMap(callable $callback): HashMap
-    {
-        return HashMap::collectPairs(IterableOnce::of(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TKI
-     * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
-     * @return NonEmptyHashMap<TKI, TVI>
-     */
-    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
-    {
-        return NonEmptyHashMap::collectPairsUnsafe(IterableOnce::of(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
-    }
-
     /**
      * Alias for {@see NonEmptySeq::at()}
      *
@@ -179,8 +51,11 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     {
         $result = true;
 
-        foreach ($this as $element) {
-            if (!$predicate($element)) {
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if (!$predicate($e)) {
                 $result = false;
                 break;
             }
@@ -206,7 +81,18 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
      */
     public function exists(callable $predicate): bool
     {
-        return $this->first($predicate)->isSome();
+        $isExists = false;
+
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if ($predicate($e)) {
+                $isExists = true;
+                break;
+            }
+        }
+        return $isExists;
     }
 
     /**
@@ -232,9 +118,12 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     {
         $first = null;
 
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $first = $element;
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if ($predicate($e)) {
+                $first = $e;
                 break;
             }
         }
@@ -280,9 +169,12 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
     {
         $last = null;
 
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $last = $element;
+        foreach ($this as $elem) {
+            /** @var TV $e */
+            $e = $elem;
+
+            if ($predicate($e)) {
+                $last = $e;
             }
         }
 
@@ -297,10 +189,13 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
      */
     public function reduce(callable $callback): mixed
     {
+        /** @psalm-var TV $acc */
         $acc = $this->head();
 
-        foreach ($this->tail() as $element) {
-            $acc = $callback($acc, $element);
+        foreach ($this->tail() as $elem) {
+            /** @psalm-var TV $cur */
+            $cur = $elem;
+            $acc = $callback($acc, $cur);
         }
 
         return $acc;
@@ -336,7 +231,9 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
         $buffer = new HashMapBuffer();
 
         foreach ($this as $elem) {
-            $key = $callback($elem);
+            /** @var TV $e */
+            $e = $elem;
+            $key = $callback($e);
 
             /**
              * @psalm-var Option<NonEmptySeq<TV>> $optionalGroup
@@ -344,11 +241,12 @@ abstract class AbstractNonEmptySeq implements NonEmptySeq
             $optionalGroup = $buffer->get($key);
 
             $buffer->update($key, $optionalGroup->fold(
-                fn(NonEmptySeq $group): NonEmptySeq => $group->prepended($elem),
-                fn(): NonEmptySeq => new NonEmptyLinkedList($elem, Nil::getInstance())
+                fn(NonEmptySeq $group): NonEmptySeq => $group->prepended($e),
+                fn(): NonEmptySeq => new NonEmptyLinkedList($e, Nil::getInstance())
             ));
         }
 
         return new NonEmptyHashMap($buffer->toHashMap());
     }
 }
+

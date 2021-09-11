@@ -13,9 +13,8 @@ use Iterator;
  * @psalm-immutable
  * @template-covariant TV
  * @implements Seq<TV>
- * @implements SeqCollector<TV>
  */
-abstract class LinkedList implements Seq, SeqCollector
+abstract class LinkedList implements Seq
 {
     /**
      * @use SeqChainable<TV>
