@@ -236,15 +236,15 @@ trait StreamChainable
     public function dropWhile(callable $predicate): self
     {
         return self::emits(IterableOnce::of(function () use ($predicate) {
+            $toggle = true;
+
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
 
-                if ($predicate($e)) {
-                    continue;
+                if (!($toggle = $toggle && $predicate($e))) {
+                    yield $e;
                 }
-
-                yield $e;
             }
         }));
     }

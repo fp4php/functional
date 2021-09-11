@@ -25,7 +25,7 @@ final class PluckTest extends TestCase
             [null, null],
             pluck(
                 [new Foo(1), new Foo(3)],
-                'c'
+                'd'
             )
         );
     }

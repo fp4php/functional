@@ -231,8 +231,25 @@ final class LinkedListOpsTest extends TestCase
         );
 
         $this->assertEquals(
-            [2],
-            LinkedList::collect([0, 1, 2])->dropWhile(fn($e) => $e < 2)->toArray()
+            [2, 3, 4],
+            LinkedList::collect([0, 1, 2, 3, 4])->dropWhile(fn($e) => $e < 2)->toArray()
+        );
+
+        $fooList = [
+            new Foo(1, false, false),
+            new Foo(2, false, false),
+            new Foo(3, true, false),
+            new Foo(4, false, true),
+            new Foo(5, false, true),
+            new Foo(6, false, true),
+            new Foo(7, false, true),
+        ];
+        $this->assertEquals(
+            [1, 2, 3, 4, 5, 6, 7],
+            LinkedList::collect($fooList)
+                ->dropWhile(fn(Foo $foo) => $foo->b || $foo->c)
+                ->map(fn(Foo $foo) => $foo->a)
+                ->toArray()
         );
 
         $this->assertEquals(

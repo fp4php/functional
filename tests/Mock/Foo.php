@@ -11,7 +11,7 @@ use Fp\Collections\HashContract;
  */
 class Foo implements HashContract
 {
-    public function __construct(public int $a, public bool $b = true)
+    public function __construct(public int $a, public bool $b = true, public bool $c = true)
     {
     }
 
