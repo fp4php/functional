@@ -290,13 +290,12 @@ trait StreamChainable
      */
     public function tap(callable $callback): self
     {
-        foreach ($this as $elem) {
-            /** @var TV $e */
-            $e = $elem;
-            $callback($e);
-        }
-
-        return $this;
+        return self::emits(IterableOnce::of(function () use ($callback) {
+            foreach ($this as $elem) {
+                yield $elem;
+                $callback($elem);
+            }
+        }));
     }
 }
 
