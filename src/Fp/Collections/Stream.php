@@ -9,7 +9,6 @@ use Error;
 use Generator;
 use Iterator;
 use IteratorIterator;
-use LogicException;
 
 /**
  * @psalm-immutable
@@ -37,10 +36,9 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     use StreamConvertible;
 
     /**
-     * @todo
-     * @psalm-readonly-allow-private-mutation $closed
+     * @psalm-readonly-allow-private-mutation $drained
      */
-    private bool $closed = false;
+    private bool $drained = false;
 
     /**
      * @param iterable<TV> $emitter
@@ -56,9 +54,9 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
      */
     public function getIterator(): Iterator
     {
-        $this->closed = !$this->closed
+        $this->drained = !$this->drained
             ? true
-            : throw new Error('Can not traverse closed stream');
+            : throw new Error('Can not traverse already drained stream');
 
         return is_array($this->emitter)
             ? new ArrayIterator($this->emitter)
@@ -177,7 +175,6 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
             echo ((string) $elem) . PHP_EOL;
         });
     }
-
 
     /**
      * @inheritDoc

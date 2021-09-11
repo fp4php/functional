@@ -405,10 +405,14 @@ interface StreamOps
     public function lines(): Stream;
 
     /**
-     * Run stream without care of the output
+     * Run the stream.
+     *
+     * This is useful if you care only for side effects.
      *
      * REPL:
-     * >>> Stream::drain([1, 2])->drain()
+     * >>> Stream::drain([1, 2])->lines()->drain()
+     * 1
+     * 2
      */
     public function drain(): void;
 }

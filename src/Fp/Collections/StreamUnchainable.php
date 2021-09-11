@@ -167,9 +167,13 @@ trait StreamUnchainable
                 continue;
             }
 
+            /** @psalm-var TV|TA $a */
+            $a = $acc;
+
             /** @psalm-var TV $cur */
             $cur = $elem;
-            $acc = $callback($acc, $cur);
+
+            $acc = $callback($a, $cur);
         }
 
         return Option::fromNullable($acc);
