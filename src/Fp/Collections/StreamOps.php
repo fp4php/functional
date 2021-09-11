@@ -16,7 +16,7 @@ interface StreamOps
      * Add element to the stream end
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->appended(3)->toArray()
+     * >>> Stream::emits([1, 2])->appended(3)->toArray()
      * => [1, 2, 3]
      *
      * @template TVI
@@ -29,7 +29,7 @@ interface StreamOps
      * Add elements to the stream end
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->appendedAll([3, 4])->toArray()
+     * >>> Stream::emits([1, 2])->appendedAll([3, 4])->toArray()
      * => [1, 2, 3, 4]
      *
      * @template TVI
@@ -42,7 +42,7 @@ interface StreamOps
      * Add element to the stream start
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->prepended(0)->toArray()
+     * >>> Stream::emits([1, 2])->prepended(0)->toArray()
      * => [0, 1, 2]
      *
      * @template TVI
@@ -55,7 +55,7 @@ interface StreamOps
      * Add elements to the stream start
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->prependedAll(-1, 0)->toArray()
+     * >>> Stream::emits([1, 2])->prependedAll(-1, 0)->toArray()
      * => [-1, 0, 1, 2]
      *
      * @template TVI
@@ -69,9 +69,9 @@ interface StreamOps
      * and false otherwise
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->every(fn($elem) => $elem > 0)
+     * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 0)
      * => true
-     * >>> Stream::collect([1, 2])->every(fn($elem) => $elem > 1)
+     * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 1)
      * => false
      *
      * @psalm-param callable(TV): bool $predicate
@@ -83,9 +83,9 @@ interface StreamOps
      * false otherwise
      *
      * REPL:
-     * >>> Stream::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class)
+     * >>> Stream::emits([new Foo(1), new Foo(2)])->everyOf(Foo::class)
      * => true
-     * >>> Stream::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class)
+     * >>> Stream::emits([new Foo(1), new Bar(2)])->everyOf(Foo::class)
      * => false
      *
      * @psalm-template TVO
@@ -98,9 +98,9 @@ interface StreamOps
      * Find if there is element which satisfies the condition
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->exists(fn($elem) => 2 === $elem)
+     * >>> Stream::emits([1, 2])->exists(fn($elem) => 2 === $elem)
      * => true
-     * >>> Stream::collect([1, 2])->exists(fn($elem) => 3 === $elem)
+     * >>> Stream::emits([1, 2])->exists(fn($elem) => 3 === $elem)
      * => false
      *
      * @psalm-param callable(TV): bool $predicate
@@ -112,9 +112,9 @@ interface StreamOps
      * False otherwise
      *
      * REPL:
-     * >>> Stream::collect([1, new Foo(2)])->existsOf(Foo::class)
+     * >>> Stream::emits([1, new Foo(2)])->existsOf(Foo::class)
      * => true
-     * >>> Stream::collect([1, new Foo(2)])->existsOf(Bar::class)
+     * >>> Stream::emits([1, new Foo(2)])->existsOf(Bar::class)
      * => false
      *
      * @psalm-template TVO
@@ -129,7 +129,7 @@ interface StreamOps
      * false - exclude element from new stream.
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->filter(fn($elem) => $elem > 1)->toArray()
+     * >>> Stream::emits([1, 2])->filter(fn($elem) => $elem > 1)->toArray()
      * => [2]
      *
      * @psalm-param callable(TV): bool $predicate
@@ -141,7 +141,7 @@ interface StreamOps
      * Exclude null elements
      *
      * REPL:
-     * >>> Stream::collect([1, 2, null])->filterNotNull()->toArray()
+     * >>> Stream::emits([1, 2, null])->filterNotNull()->toArray()
      * => [1, 2]
      *
      * @psalm-return Stream<TV>
@@ -152,7 +152,7 @@ interface StreamOps
      * Filter elements of given class
      *
      * REPL:
-     * >>> Stream::collect([1, new Foo(2)])->filterOf(Foo::class)->toArray()
+     * >>> Stream::emits([1, new Foo(2)])->filterOf(Foo::class)->toArray()
      * => [Foo(2)]
      *
      * @psalm-template TVO
@@ -169,7 +169,7 @@ interface StreamOps
      * So the output type TVO can be different from the input type TV.
      *
      * REPL:
-     * >>> Stream::collect(['zero', '1', '2'])
+     * >>> Stream::emits(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
      * >>>     ->toArray()
      * => [1, 2]
@@ -184,7 +184,7 @@ interface StreamOps
      * Find first element which satisfies the condition
      *
      * REPL:
-     * >>> Stream::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
+     * >>> Stream::emits([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
      * => 2
      *
      * @psalm-param callable(TV): bool $predicate
@@ -196,7 +196,7 @@ interface StreamOps
      * Find first element of given class
      *
      * REPL:
-     * >>> Stream::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
+     * >>> Stream::emits([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
      * => Foo(2)
      *
      * @psalm-template TVO
@@ -210,7 +210,7 @@ interface StreamOps
      * Map stream and then flatten the result
      *
      * REPL:
-     * >>> Stream::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
+     * >>> Stream::emits([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
      * => [1, 2, 3, 4, 5, 6]
      *
      * @psalm-template TVO
@@ -223,7 +223,7 @@ interface StreamOps
      * Fold many elements into one
      *
      * REPL:
-     * >>> Stream::collect(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
+     * >>> Stream::emits(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
      * => '012'
      *
      * @template TA
@@ -238,7 +238,7 @@ interface StreamOps
      * Returns None for empty stream
      *
      * REPL:
-     * >>> Stream::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
+     * >>> Stream::emits(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
      * => '12'
      *
      * @template TA
@@ -251,7 +251,7 @@ interface StreamOps
      * Return first stream element
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->head()->get()
+     * >>> Stream::emits([1, 2])->head()->get()
      * => 1
      *
      * @psalm-return Option<TV>
@@ -262,7 +262,7 @@ interface StreamOps
      * Returns last stream element which satisfies the condition
      *
      * REPL:
-     * >>> Stream::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
+     * >>> Stream::emits([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
      * => 2
      *
      * @psalm-param callable(TV): bool $predicate
@@ -275,7 +275,7 @@ interface StreamOps
      * Alias for {@see SeqOps::head}
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->firstElement()->get()
+     * >>> Stream::emits([1, 2])->firstElement()->get()
      * => 1
      *
      * @psalm-return Option<TV>
@@ -286,7 +286,7 @@ interface StreamOps
      * Returns last stream element
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->lastElement()->get()
+     * >>> Stream::emits([1, 2])->lastElement()->get()
      * => 2
      *
      * @psalm-return Option<TV>
@@ -298,7 +298,7 @@ interface StreamOps
      * through a transformation function (callback)
      *
      * REPL:
-     * >>> Stream::collect([1, 2])->map(fn($elem) => (string) $elem)->toArray()
+     * >>> Stream::emits([1, 2])->map(fn($elem) => (string) $elem)->toArray()
      * => ['1', '2']
      *
      * @template TVO
@@ -311,7 +311,7 @@ interface StreamOps
      * Returns every stream element except first
      *
      * REPL:
-     * >>> Stream::collect([1, 2, 3])->tail()->toArray()
+     * >>> Stream::emits([1, 2, 3])->tail()->toArray()
      * => [2, 3]
      *
      * @psalm-return Stream<TV>
@@ -322,7 +322,7 @@ interface StreamOps
      * Take stream elements while predicate is true
      *
      * REPL:
-     * >>> Stream::collect([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray()
+     * >>> Stream::emits([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray()
      * => [1, 2]
      *
      * @psalm-param callable(TV): bool $predicate
@@ -334,7 +334,7 @@ interface StreamOps
      * Drop stream elements while predicate is true
      *
      * REPL:
-     * >>> Stream::collect([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray()
+     * >>> Stream::emits([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray()
      * => [3]
      *
      * @psalm-param callable(TV): bool $predicate
@@ -346,7 +346,7 @@ interface StreamOps
      * Take N stream elements
      *
      * REPL:
-     * >>> Stream::collect([1, 2, 3])->take(2)->toArray()
+     * >>> Stream::emits([1, 2, 3])->take(2)->toArray()
      * => [1, 2]
      *
      * @psalm-return Stream<TV>
@@ -357,7 +357,7 @@ interface StreamOps
      * Drop N stream elements
      *
      * REPL:
-     * >>> Stream::collect([1, 2, 3])->drop(2)->toArray()
+     * >>> Stream::emits([1, 2, 3])->drop(2)->toArray()
      * => [3]
      *
      * @psalm-return Stream<TV>
@@ -368,7 +368,7 @@ interface StreamOps
      * Call a function for every stream element
      *
      * REPL:
-     * >>> Stream::collect([new Foo(1), new Foo(2)])
+     * >>> Stream::emits([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
      * >>>     ->toArray()
@@ -378,4 +378,17 @@ interface StreamOps
      * @psalm-return Stream<TV>
      */
     public function tap(callable $callback): Stream;
+
+    /**
+     * Emits the specified separator between every pair of elements in the source stream.
+     *
+     * REPL:
+     * >>> Stream::emits([1, 2, 3])->intersperse(0)->toArray()
+     * => [1, 0, 2, 0, 3]
+     *
+     * @template TVI
+     * @param TVI $separator
+     * @psalm-return Stream<TV|TVI>
+     */
+    public function intersperse(mixed $separator): Stream;
 }

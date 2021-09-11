@@ -49,6 +49,21 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
 
     /**
      * @inheritDoc
+     * @return Iterator<int, TV>
+     */
+    public function getIterator(): Iterator
+    {
+        $this->closed = !$this->closed
+            ? true
+            : throw new LogicException('Can not traverse closed stream');
+
+        return is_array($this->emitter)
+            ? new ArrayIterator($this->emitter)
+            : new IteratorIterator($this->emitter);
+    }
+
+    /**
+     * @inheritDoc
      * @template TVI
      * @param TVI $elem
      * @return self<TVI>
@@ -114,16 +129,24 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
 
     /**
      * @inheritDoc
-     * @return Iterator<int, TV>
+     * @template TVI
+     * @param TVI $separator
+     * @psalm-return Stream<TV|TVI>
      */
-    public function getIterator(): Iterator
+    public function intersperse(mixed $separator): Stream
     {
-        $this->closed = !$this->closed
-            ? true
-            : throw new LogicException('Can not traverse closed stream');
+        return new self(IterableOnce::of(function () use ($separator) {
+            $isFirst = true;
 
-        return is_array($this->emitter)
-            ? new ArrayIterator($this->emitter)
-            : new IteratorIterator($this->emitter);
+            foreach ($this as $elem) {
+                if ($isFirst) {
+                    $isFirst = false;
+                } else {
+                    yield $separator;
+                }
+
+                yield $elem;
+            }
+        }));
     }
 }
