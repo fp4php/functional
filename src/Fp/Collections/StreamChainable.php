@@ -6,6 +6,8 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 
+use Generator;
+
 use function Fp\of;
 
 /**
@@ -298,6 +300,141 @@ trait StreamChainable
                 $callback($e);
             }
         }));
+    }
+
+
+    /**
+     * @inheritDoc
+     * @return self<TV>
+     */
+    public function repeat(): self
+    {
+        return $this->repeatN(1);
+    }
+
+    /**
+     * @inheritDoc
+     * @return self<TV>
+     */
+    public function repeatN(int $times): self
+    {
+        return new self(IterableOnce::of(function () use ($times) {
+            /** @var Seq<TV> $buffer */
+            $buffer = ArrayList::collect($this);
+
+            foreach ($buffer as $elem) {
+                yield $elem;
+            }
+
+            for($i = 0; $i < $times - 1; $i++) {
+                foreach ($buffer as $elem) {
+                    yield $elem;
+                }
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param TVI $separator
+     * @psalm-return self<TV|TVI>
+     */
+    public function intersperse(mixed $separator): self
+    {
+        return new self(IterableOnce::of(function () use ($separator) {
+            $isFirst = true;
+
+            foreach ($this as $elem) {
+                if ($isFirst) {
+                    $isFirst = false;
+                } else {
+                    yield $separator;
+                }
+
+                yield $elem;
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return self<TV>
+     */
+    public function lines(): self
+    {
+        return $this->tap(function ($elem) {
+            print_r($elem) . PHP_EOL;
+        });
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param Stream<TVI> $that
+     * @return self<TV|TVI>
+     */
+    public function interleave(Stream $that): self
+    {
+        return $this
+            ->zip($that)
+            ->flatMap(fn(array $pair) => self::emits($pair));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param Stream<TVI> $that
+     * @return self<array{TV, TVI}>
+     */
+    public function zip(Stream $that): self
+    {
+        /** @var Stream<array{TV, TVI}> */
+        return self::emits(IterableOnce::of(function () use ($that) {
+            $thisIter = $this->getIterator();
+            $thatIter = $that->getIterator();
+
+            $thisIter->rewind();
+            $thatIter->rewind();
+
+            while ($thisIter->valid() && $thatIter->valid()) {
+                $thisElem = $thisIter->current();
+                $thatElem = $thatIter->current();
+
+                yield [$thisElem, $thatElem];
+
+                $thisIter->next();
+                $thatIter->next();
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @return self<Seq<TV>>
+     */
+    public function chunks(int $size): self
+    {
+        $source = function () use ($size): Generator {
+            $chunk = [];
+            $i = 0;
+
+            foreach ($this as $elem) {
+                $i++;
+                $chunk[] = $elem;
+
+                if (0 === $i % $size) {
+                    yield new ArrayList($chunk);
+                    $chunk = [];
+                }
+            }
+
+            if (!empty($chunk)) {
+                yield new ArrayList($chunk);
+            }
+        };
+
+        return self::emits($source());
     }
 }
 

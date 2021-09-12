@@ -233,5 +233,13 @@ trait StreamUnchainable
     {
         return $this->last(fn() => true);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function drain(): void
+    {
+        foreach ($this as $ignored) { }
+    }
 }
 
