@@ -8,7 +8,7 @@ namespace Fp\Collections;
  * @psalm-immutable
  * @template-covariant TV
  */
-interface NonEmptySetCasts
+interface NonEmptySeqCastOps
 {
     /**
      * @return non-empty-list<TV>

@@ -11,10 +11,10 @@ use Iterator;
  * @template-covariant TV
  * @extends Collection<TV>
  * @extends SeqOps<TV>
- * @extends SeqCasts<TV>
+ * @extends SeqCastOps<TV>
  * @extends SeqCollector<TV>
  */
-interface Seq extends Collection, SeqOps, SeqCasts, SeqCollector
+interface Seq extends Collection, SeqOps, SeqCastOps, SeqCollector
 {
     /**
      * @inheritDoc

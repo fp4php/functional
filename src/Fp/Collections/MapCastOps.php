@@ -6,35 +6,33 @@ namespace Fp\Collections;
 
 /**
  * @psalm-immutable
+ * @template TK
  * @template-covariant TV
  */
-interface SetCasts
+interface MapCastOps
 {
     /**
-     * @return list<TV>
+     * @return list<array{TK, TV}>
      */
     public function toArray(): array;
 
     /**
-     * @return LinkedList<TV>
+     * @return LinkedList<array{TK, TV}>
      */
     public function toLinkedList(): LinkedList;
 
     /**
-     * @return ArrayList<TV>
+     * @return ArrayList<array{TK, TV}>
      */
     public function toArrayList(): ArrayList;
 
     /**
-     * @return HashSet<TV>
+     * @return HashSet<array{TK, TV}>
      */
     public function toHashSet(): HashSet;
 
     /**
-     * @template TKI
-     * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
-     * @return HashMap<TKI, TVI>
+     * @return HashMap<TK, TV>
      */
-    public function toHashMap(callable $callback): HashMap;
+    public function toHashMap(): HashMap;
 }
