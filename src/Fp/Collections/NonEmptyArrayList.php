@@ -25,9 +25,9 @@ final class NonEmptyArrayList implements NonEmptySeq
     use NonEmptySeqUnchainable;
 
     /**
-     * @use NonEmptySeqConvertible<TV>
+     * @use NonEmptySeqCastable<TV>
      */
-    use NonEmptySeqConvertible;
+    use NonEmptySeqCastable;
 
     /**
      * @internal

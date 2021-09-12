@@ -9,7 +9,7 @@ namespace Fp\Collections;
  * @template-covariant TV
  * @psalm-require-implements Seq
  */
-trait SeqConvertible
+trait SeqCastable
 {
     /**
      * @inheritDoc

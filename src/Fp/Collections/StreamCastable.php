@@ -8,7 +8,7 @@ namespace Fp\Collections;
  * @psalm-immutable
  * @template-covariant TV
  */
-trait StreamConvertible
+trait StreamCastable
 {
     /**
      * @inheritDoc

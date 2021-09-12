@@ -28,9 +28,9 @@ final class ArrayList implements Seq
     use SeqUnchainable;
 
     /**
-     * @use SeqConvertible<TV>
+     * @use SeqCastable<TV>
      */
-    use SeqConvertible;
+    use SeqCastable;
 
     /**
      * @param list<TV> $elements

@@ -30,9 +30,9 @@ final class Stream implements StreamOps, StreamEmitter, Collection
     use StreamUnchainable;
 
     /**
-     * @use StreamConvertible<TV>
+     * @use StreamCastable<TV>
      */
-    use StreamConvertible;
+    use StreamCastable;
 
     /**
      * @psalm-readonly-allow-private-mutation $drained
