@@ -12,6 +12,7 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
+ * @psalm-require-implements StreamChainableOps
  * @psalm-require-implements StreamEmitter
  */
 trait StreamChainable

@@ -11,23 +11,10 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
+ * @psalm-require-implements StreamUnchainableOps
  */
 trait StreamUnchainable
 {
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
-    }
-
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate

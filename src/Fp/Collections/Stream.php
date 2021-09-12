@@ -14,11 +14,10 @@ use IteratorIterator;
  * @psalm-immutable
  * @template-covariant TV
  * @implements StreamOps<TV>
- * @implements StreamCasts<TV>
  * @implements StreamEmitter<TV>
  * @implements Collection<TV>
  */
-final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
+final class Stream implements StreamOps, StreamEmitter, Collection
 {
     /**
      * @use StreamChainable<TV>
@@ -58,6 +57,20 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
         return is_array($this->emitter)
             ? new ArrayIterator($this->emitter)
             : new IteratorIterator($this->emitter);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function count(): int
+    {
+        $counter = 0;
+
+        foreach ($this as $ignored) {
+            $counter++;
+        }
+
+        return $counter;
     }
 
     /**
