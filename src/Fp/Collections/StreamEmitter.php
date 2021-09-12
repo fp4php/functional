@@ -70,7 +70,7 @@ interface StreamEmitter
      * Creates an infinite stream that always returns the supplied value
      *
      * REPL:
-     * >>> Stream::emit(1)->constant(0)->take(3)->toArray()
+     * >>> Stream::constant(0)->take(3)->toArray()
      * => [0, 0, 0]
      *
      * @template TVI
@@ -78,4 +78,18 @@ interface StreamEmitter
      * @return Stream<TVI>
      */
     public static function constant(mixed $const): Stream;
+
+    /**
+     * Creates int stream of given range
+     *
+     * REPL:
+     * >>> Stream::range(0, 10, 2)->toArray()
+     * => [0, 2, 4, 6, 8]
+     *
+     * @param positive-int $start
+     * @param positive-int $stopExclusive
+     * @param positive-int $by
+     * @return Stream<int>
+     */
+    public static function range(int $start, int $stopExclusive, int $by = 1): Stream;
 }

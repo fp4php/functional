@@ -122,4 +122,22 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
             }
         }));
     }
+
+    /**
+     * @inheritDoc
+     * @param positive-int $start
+     * @param positive-int $stopExclusive
+     * @param positive-int $by
+     * @return self<int>
+     */
+    public static function range(int $start, int $stopExclusive, int $by = 1): self
+    {
+        $source = function () use ($start, $stopExclusive, $by): Generator {
+            for ($i = $start; $i < $stopExclusive; $i += $by) {
+                yield $i;
+            }
+        };
+
+        return new self($source());
+    }
 }
