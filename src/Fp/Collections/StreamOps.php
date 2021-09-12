@@ -9,9 +9,9 @@ namespace Fp\Collections;
  * @template-covariant TV
  * @implements StreamChainableOps<TV>
  * @implements StreamUnchainableOps<TV>
- * @implements StreamCastOps<TV>
+ * @implements StreamCastableOps<TV>
  */
-interface StreamOps extends StreamChainableOps, StreamUnchainableOps, StreamCastOps
+interface StreamOps extends StreamChainableOps, StreamUnchainableOps, StreamCastableOps
 {
 
 }

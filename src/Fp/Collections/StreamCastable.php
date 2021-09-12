@@ -7,7 +7,7 @@ namespace Fp\Collections;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements StreamCastOps
+ * @psalm-require-implements StreamCastableOps
  */
 trait StreamCastable
 {

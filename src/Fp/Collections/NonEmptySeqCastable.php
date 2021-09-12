@@ -7,7 +7,7 @@ namespace Fp\Collections;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements NonEmptySeq
+ * @psalm-require-implements NonEmptySeqCastableOps
  */
 trait NonEmptySeqCastable
 {

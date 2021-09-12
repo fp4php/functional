@@ -8,7 +8,7 @@ namespace Fp\Collections;
  * @psalm-immutable
  * @template-covariant TV
  */
-interface StreamCastOps
+interface SetCastableOps
 {
     /**
      * @return list<TV>

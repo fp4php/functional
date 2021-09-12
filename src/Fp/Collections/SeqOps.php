@@ -9,9 +9,9 @@ namespace Fp\Collections;
  * @template-covariant TV
  * @extends SeqChainableOps<TV>
  * @extends SeqUnchainableOps<TV>
- * @extends SeqCastOps<TV>
+ * @extends SeqCastableOps<TV>
  */
-interface SeqOps extends SeqChainableOps, SeqUnchainableOps, SeqCastOps
+interface SeqOps extends SeqChainableOps, SeqUnchainableOps, SeqCastableOps
 {
 
 }
