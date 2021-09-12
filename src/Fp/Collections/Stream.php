@@ -169,7 +169,7 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     public function lines(): Stream
     {
         return $this->tap(function ($elem) {
-            echo ((string) $elem) . PHP_EOL;
+            print_r($elem) . PHP_EOL;
         });
     }
 
@@ -194,6 +194,9 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
             $thisIter = $this->getIterator();
             $thatIter = $that->getIterator();
 
+            $thisIter->rewind();
+            $thatIter->rewind();
+
             while ($thisIter->valid() && $thatIter->valid()) {
                 $thisElem = $thisIter->current();
                 $thatElem = $thatIter->current();
@@ -216,5 +219,33 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     {
         $zipped = $this->zip($that);
         return $zipped->flatMap(fn(array $pair) => self::emits($pair));
+    }
+
+    /**
+     * @inheritDoc
+     * @return Stream<Seq<TV>>
+     */
+    public function chunks(int $size): Stream
+    {
+        $source = function () use ($size): Generator {
+            $chunk = [];
+            $i = 0;
+
+            foreach ($this as $element) {
+                $i++;
+                $chunk[] = $element;
+
+                if (0 === $i % $size) {
+                    yield new ArrayList($chunk);
+                    $chunk = [];
+                }
+            }
+
+            if (!empty($chunk)) {
+                yield new ArrayList($chunk);
+            }
+        };
+
+        return self::emits($source());
     }
 }

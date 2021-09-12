@@ -441,4 +441,15 @@ interface StreamOps
      * @return Stream<TV|TVI>
      */
     public function interleave(Stream $that): Stream;
+
+    /**
+     * Produce stream of chunks with given size from this stream
+     *
+     * REPL:
+     * >>> Stream::emits([1, 2, 3, 4, 5])->chunks(2)
+     * => Stream(Seq(1, 2), Seq(3, 4), Seq(5))
+     *
+     * @return Stream<Seq<TV>>
+     */
+    public function chunks(int $size): Stream;
 }
