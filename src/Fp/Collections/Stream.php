@@ -43,10 +43,7 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     /**
      * @param iterable<TV> $emitter
      */
-    private function __construct(private iterable $emitter)
-    {
-
-    }
+    private function __construct(private iterable $emitter) { }
 
     /**
      * @inheritDoc
@@ -182,5 +179,42 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
     public function drain(): void
     {
         foreach ($this as $ignored) { }
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param Stream<TVI> $that
+     * @return Stream<array{TV, TVI}>
+     */
+    public function zip(Stream $that): Stream
+    {
+        /** @var Stream<array{TV, TVI}> */
+        return self::emits(IterableOnce::of(function () use ($that) {
+            $thisIter = $this->getIterator();
+            $thatIter = $that->getIterator();
+
+            while ($thisIter->valid() && $thatIter->valid()) {
+                $thisElem = $thisIter->current();
+                $thatElem = $thatIter->current();
+
+                yield [$thisElem, $thatElem];
+
+                $thisIter->next();
+                $thatIter->next();
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param Stream<TVI> $that
+     * @return Stream<TV|TVI>
+     */
+    public function interleave(Stream $that): Stream
+    {
+        $zipped = $this->zip($that);
+        return $zipped->flatMap(fn(array $pair) => self::emits($pair));
     }
 }

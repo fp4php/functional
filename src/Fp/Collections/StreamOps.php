@@ -415,4 +415,30 @@ interface StreamOps
      * 2
      */
     public function drain(): void;
+
+    /**
+     * Determinsitically zips elements, terminating when the end of either branch is reached naturally.
+     *
+     * REPL:
+     * >>> Stream::emits([1, 2, 3])->zip(Stream::emits([4, 5, 6, 7]))->toArray()
+     * => [[1, 4], [2, 5], [3, 6]]
+     *
+     * @template TVI
+     * @param Stream<TVI> $that
+     * @return Stream<array{TV, TVI}>
+     */
+    public function zip(Stream $that): Stream;
+
+    /**
+     * Deterministically interleaves elements, starting on the left, terminating when the end of either branch is reached naturally.
+     *
+     * REPL:
+     * >>> Stream::emits([1, 2, 3])->interleave(Stream::emits([4, 5, 6, 7]))->toArray()
+     * => [1, 4, 2, 5, 3, 6]
+     *
+     * @template TVI
+     * @param Stream<TVI> $that
+     * @return Stream<TV|TVI>
+     */
+    public function interleave(Stream $that): Stream;
 }
