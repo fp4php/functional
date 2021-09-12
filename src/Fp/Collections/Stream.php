@@ -107,4 +107,19 @@ final class Stream implements StreamOps, StreamCasts, StreamEmitter, Collection
 
         return new self($source());
     }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param TVI $const
+     * @return self<TVI>
+     */
+    public static function constant(mixed $const): self
+    {
+        return new self(IterableOnce::of(function () use ($const) {
+            while (true) {
+                yield $const;
+            }
+        }));
+    }
 }
