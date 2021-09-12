@@ -6,9 +6,12 @@ namespace Fp\Collections;
 
 use ArrayIterator;
 use Error;
+use Fp\Functional\Unit;
 use Generator;
 use Iterator;
 use IteratorIterator;
+
+use function Fp\unit;
 
 /**
  * @psalm-immutable
@@ -134,6 +137,15 @@ final class Stream implements StreamOps, StreamEmitter, Collection
                 yield $const;
             }
         }));
+    }
+
+    /**
+     * @inheritDoc
+     * @return Stream<Unit>
+     */
+    public static function infinite(): Stream
+    {
+        return self::constant(Unit::getInstance());
     }
 
     /**

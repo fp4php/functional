@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use SplFileObject;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -69,6 +71,20 @@ trait StreamCastable
                 yield $callback($e);
             }
         }));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toFile(string $path, bool $append = false): void
+    {
+        $file = new SplFileObject($path, $append ? 'a' : 'w');
+
+        foreach ($this as $elem) {
+            $file->fwrite((string) $elem);
+        }
+
+        $file = null;
     }
 }
 

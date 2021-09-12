@@ -258,12 +258,15 @@ trait StreamChainable
     public function take(int $length): self
     {
         return self::emits(IterableOnce::of(function () use ($length) {
-            foreach ($this as $i => $elem) {
+            $i = 0;
+
+            foreach ($this as $elem) {
                 if ($i === $length) {
                     break;
                 }
 
                 yield $elem;
+                $i++;
             }
         }));
     }

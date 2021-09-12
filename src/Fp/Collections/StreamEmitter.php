@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Unit;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -92,4 +94,15 @@ interface StreamEmitter
      * @return Stream<int>
      */
     public static function range(int $start, int $stopExclusive, int $by = 1): Stream;
+
+    /**
+     * Creates an infinite stream
+     *
+     * REPL:
+     * >>> Stream::infinite()->map(fn() => rand(0, 1))->take(2)->toArray()
+     * => [0, 1]
+     *
+     * @return Stream<Unit>
+     */
+    public static function infinite(): Stream;
 }

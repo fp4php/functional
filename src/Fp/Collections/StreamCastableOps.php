@@ -37,4 +37,10 @@ interface StreamCastableOps
      * @return HashMap<TKI, TVI>
      */
     public function toHashMap(callable $callback): HashMap;
+
+    /**
+     * @param string $path file path
+     * @param bool $append append to an existing file
+     */
+    public function toFile(string $path, bool $append = false): void;
 }
