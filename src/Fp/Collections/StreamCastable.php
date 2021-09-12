@@ -81,6 +81,7 @@ trait StreamCastable
         $file = new SplFileObject($path, $append ? 'a' : 'w');
 
         foreach ($this as $elem) {
+            /** @psalm-suppress ImpureMethodCall */
             $file->fwrite((string) $elem);
         }
 

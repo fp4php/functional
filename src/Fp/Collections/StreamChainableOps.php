@@ -281,4 +281,18 @@ interface StreamChainableOps
      * @return Stream<Seq<TV>>
      */
     public function chunks(int $size): Stream;
+
+    /**
+     * Partitions the input into a stream of chunks according to a discriminator function.
+     *
+     * REPL:
+     * >>>
+     * >>> Stream::emits(["Hello", "Hi", "Greetings", "Hey"])->groupAdjacentBy(fn($str) => $str[0])
+     * => Stream(["H", Seq("Hello", "Hi")], ["G", Seq("Greetings")], ["H", Seq("Hey")])
+     *
+     * @template D
+     * @param callable(TV): D $discriminator
+     * @return Stream<array{D, Seq<TV>}>
+     */
+    public function groupAdjacentBy(callable $discriminator): Stream;
 }

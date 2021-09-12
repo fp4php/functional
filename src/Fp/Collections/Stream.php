@@ -11,8 +11,6 @@ use Generator;
 use Iterator;
 use IteratorIterator;
 
-use function Fp\unit;
-
 /**
  * @psalm-immutable
  * @template-covariant TV

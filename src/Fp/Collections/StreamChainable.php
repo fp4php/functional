@@ -438,5 +438,46 @@ trait StreamChainable
 
         return self::emits($source());
     }
+
+    /**
+     * @inheritDoc
+     * @template D
+     * @param callable(TV): D $discriminator
+     * @return Stream<array{D, Seq<TV>}>
+     */
+    public function groupAdjacentBy(callable $discriminator): Stream
+    {
+        $source = function () use ($discriminator): Generator {
+            $buffer = [];
+            $prevDisc = null;
+            $isHead = true;
+
+            foreach ($this as $elem) {
+                /** @var TV $e */
+                $e = $elem;
+
+                if ($isHead) {
+                    $isHead = false;
+                    $prevDisc = $discriminator($e);
+                }
+
+                $curDisc = $discriminator($e);
+
+                if ($prevDisc !== $curDisc) {
+                    yield [$prevDisc, new ArrayList($buffer)];
+                    $buffer = [];
+                }
+
+                $buffer[] = $elem;
+                $prevDisc = $curDisc;
+            }
+
+            if (!empty($buffer)) {
+                yield [$prevDisc, new ArrayList($buffer)];
+            }
+        };
+
+        return self::emits($source());
+    }
 }
 
