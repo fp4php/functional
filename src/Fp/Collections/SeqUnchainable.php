@@ -11,7 +11,7 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements Seq
+ * @psalm-require-implements SeqUnchainableOps
  */
 trait SeqUnchainable
 {
