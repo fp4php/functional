@@ -9,10 +9,10 @@ use Iterator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @extends NonEmptyCollection<TV>
- * @extends NonEmptySetOps<TV>
+ * @extends NonEmptySet<TV>
+ * @extends NonEmptyOrderedSetOps<TV>
  */
-interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps
+interface NonEmptyOrderedSet extends NonEmptySet, NonEmptyOrderedSetOps
 {
     /**
      * @inheritDoc

@@ -8,13 +8,13 @@ namespace Fp\Collections;
  * @psalm-immutable
  * @template-covariant TV
  */
-interface OrderedSetChainableOps
+interface NonEmptyOrderedSetChainableOps
 {
     /**
      * Returns every collection element except first
      *
      * REPL:
-     * >>> HashSet::collect([1, 2, 3])->tail()->toArray()
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toArray()
      * => [2, 3]
      *
      * @psalm-return OrderedSet<TV>

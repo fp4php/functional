@@ -12,9 +12,9 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements NonEmptySet<TV>
+ * @implements NonEmptyOrderedSet<TV>
  */
-abstract class AbstractNonEmptySet implements NonEmptySet
+abstract class AbstractNonEmptyOrderedSet implements NonEmptyOrderedSet
 {
     /**
      * @template TVI

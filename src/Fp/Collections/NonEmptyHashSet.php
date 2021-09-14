@@ -11,9 +11,9 @@ use Iterator;
 /**
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractNonEmptySet<TV>
+ * @extends AbstractNonEmptyOrderedSet<TV>
  */
-final class NonEmptyHashSet extends AbstractNonEmptySet
+final class NonEmptyHashSet extends AbstractNonEmptyOrderedSet
 {
     /**
      * @internal
