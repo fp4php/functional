@@ -8,9 +8,9 @@ namespace Fp\Collections;
  * @psalm-immutable
  * @template-covariant TV
  * @extends OrderedSetChainableOps<TV>
- * @extends OrderedSetUnchainableOps<TV>
+ * @extends OrderedSetTerminalOps<TV>
  */
-interface OrderedSetOps extends OrderedSetChainableOps, OrderedSetUnchainableOps
+interface OrderedSetOps extends OrderedSetChainableOps, OrderedSetTerminalOps
 {
 
 }

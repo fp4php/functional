@@ -10,7 +10,7 @@ use Fp\Functional\Option\Option;
  * @psalm-immutable
  * @template-covariant TV
  */
-interface StreamUnchainableOps
+interface StreamTerminalOps
 {
     /**
      * Returns true if every stream element satisfy the condition

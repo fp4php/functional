@@ -26,9 +26,9 @@ final class Stream implements StreamOps, StreamEmitter, Collection
     use StreamChainable;
 
     /**
-     * @use StreamUnchainable<TV>
+     * @use StreamTerminable<TV>
      */
-    use StreamUnchainable;
+    use StreamTerminable;
 
     /**
      * @use StreamCastable<TV>

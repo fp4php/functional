@@ -11,10 +11,38 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements SeqUnchainableOps
+ * @psalm-require-implements NonEmptySeqTerminalOps
  */
-trait SeqUnchainable
+trait NonEmptySeqTerminable
 {
+    /**
+     * Alias for {@see NonEmptySeq::at()}
+     *
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    public function at(int $index): Option
+    {
+        $first = null;
+
+        foreach ($this as $idx => $element) {
+            if ($idx === $index) {
+                $first = $element;
+                break;
+            }
+        }
+
+        return Option::fromNullable($first);
+    }
+
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
@@ -118,51 +146,9 @@ trait SeqUnchainable
 
     /**
      * @inheritDoc
-     * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
+     * @psalm-return TV
      */
-    public function fold(mixed $init, callable $callback): mixed
-    {
-        $acc = $init;
-
-        foreach ($this as $elem) {
-            /** @var TV $cur */
-            $cur = $elem;
-            $acc = $callback($acc, $cur);
-        }
-
-        return $acc;
-    }
-
-    /**
-     * @inheritDoc
-     * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return Option<TV|TA>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return $this->head()->map(function ($head) use ($callback) {
-            /** @var TV $acc */
-            $acc = $head;
-
-            foreach ($this->tail() as $elem) {
-                /** @psalm-var TV $cur */
-                $cur = $elem;
-                $acc = $callback($acc, $cur);
-            }
-
-            return $acc;
-        });
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function head(): Option
+    public function head(): mixed
     {
         $head = null;
 
@@ -171,7 +157,7 @@ trait SeqUnchainable
             break;
         }
 
-        return Option::fromNullable($head);
+        return Option::fromNullable($head)->getUnsafe();
     }
 
     /**
@@ -197,71 +183,50 @@ trait SeqUnchainable
 
     /**
      * @inheritDoc
-     * @psalm-return Option<TV>
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
+     * @psalm-return (TV|TA)
      */
-    public function firstElement(): Option
+    public function reduce(callable $callback): mixed
+    {
+        /** @psalm-var TV $acc */
+        $acc = $this->head();
+
+        foreach ($this->tail() as $elem) {
+            /** @psalm-var TV $cur */
+            $cur = $elem;
+            $acc = $callback($acc, $cur);
+        }
+
+        return $acc;
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return TV
+     */
+    public function firstElement(): mixed
     {
         return $this->head();
     }
 
     /**
      * @inheritDoc
-     * @psalm-return Option<TV>
+     * @psalm-return TV
      */
-    public function lastElement(): Option
+    public function lastElement(): mixed
     {
-        return $this->last(fn() => true);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function __invoke(int $index): Option
-    {
-        return $this->at($index);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function at(int $index): Option
-    {
-        $first = null;
-
-        foreach ($this as $idx => $element) {
-            if ($idx === $index) {
-                $first = $element;
-                break;
-            }
-        }
-
-        return Option::fromNullable($first);
+        return $this->last(fn() => true)->getUnsafe();
     }
 
     /**
      * @inheritDoc
      * @template TKO
      * @psalm-param callable(TV): TKO $callback
-     * @psalm-return Map<TKO, Seq<TV>>
+     * @psalm-return NonEmptyMap<TKO, NonEmptySeq<TV>>
      * @psalm-suppress ImpureMethodCall
      */
-    public function groupBy(callable $callback): Map
+    public function groupBy(callable $callback): NonEmptyMap
     {
         $buffer = new HashMapBuffer();
 
@@ -270,13 +235,18 @@ trait SeqUnchainable
             $e = $elem;
             $key = $callback($e);
 
-            /** @var Seq<TV> $group */
-            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
+            /**
+             * @psalm-var Option<NonEmptySeq<TV>> $optionalGroup
+             */
+            $optionalGroup = $buffer->get($key);
 
-            $buffer->update($key, $group->prepended($e));
+            $buffer->update($key, $optionalGroup->fold(
+                fn(NonEmptySeq $group): NonEmptySeq => $group->prepended($e),
+                fn(): NonEmptySeq => new NonEmptyLinkedList($e, Nil::getInstance())
+            ));
         }
 
-        return $buffer->toHashMap();
+        return new NonEmptyHashMap($buffer->toHashMap());
     }
 }
 

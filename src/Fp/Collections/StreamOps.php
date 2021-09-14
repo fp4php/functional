@@ -8,10 +8,10 @@ namespace Fp\Collections;
  * @psalm-immutable
  * @template-covariant TV
  * @implements StreamChainableOps<TV>
- * @implements StreamUnchainableOps<TV>
+ * @implements StreamTerminalOps<TV>
  * @implements StreamCastableOps<TV>
  */
-interface StreamOps extends StreamChainableOps, StreamUnchainableOps, StreamCastableOps
+interface StreamOps extends StreamChainableOps, StreamTerminalOps, StreamCastableOps
 {
 
 }

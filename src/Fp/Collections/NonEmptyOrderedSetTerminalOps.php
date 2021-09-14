@@ -10,7 +10,7 @@ use Fp\Functional\Option\Option;
  * @psalm-immutable
  * @template-covariant TV
  */
-interface NonEmptyOrderedSetUnchainableOps
+interface NonEmptyOrderedSetTerminalOps
 {
     /**
      * Find first element which satisfies the condition

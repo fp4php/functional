@@ -8,10 +8,10 @@ namespace Fp\Collections;
  * @psalm-immutable
  * @template-covariant TV
  * @extends NonEmptySetChainableOps<TV>
- * @extends NonEmptySetUnchainableOps<TV>
+ * @extends NonEmptySetTerminalOps<TV>
  * @extends NonEmptySetCastableOps<TV>
  */
-interface NonEmptySetOps extends NonEmptySetChainableOps, NonEmptySetUnchainableOps, NonEmptySetCastableOps
+interface NonEmptySetOps extends NonEmptySetChainableOps, NonEmptySetTerminalOps, NonEmptySetCastableOps
 {
 
 }

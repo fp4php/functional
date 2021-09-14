@@ -20,9 +20,9 @@ final class NonEmptyArrayList implements NonEmptySeq
     use NonEmptySeqChainable;
 
     /**
-     * @use NonEmptySeqUnchainable<TV>
+     * @use NonEmptySeqTerminable<TV>
      */
-    use NonEmptySeqUnchainable;
+    use NonEmptySeqTerminable;
 
     /**
      * @use NonEmptySeqCastable<TV>

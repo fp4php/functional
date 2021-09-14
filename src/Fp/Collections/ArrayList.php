@@ -23,9 +23,9 @@ final class ArrayList implements Seq
     use SeqChainable;
 
     /**
-     * @use SeqUnchainable<TV>
+     * @use SeqTerminable<TV>
      */
-    use SeqUnchainable;
+    use SeqTerminable;
 
     /**
      * @use SeqCastable<TV>

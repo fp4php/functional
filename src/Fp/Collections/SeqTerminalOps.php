@@ -10,14 +10,28 @@ use Fp\Functional\Option\Option;
  * @psalm-immutable
  * @template-covariant TV
  */
-interface NonEmptySeqUnchainableOps
+interface SeqTerminalOps
 {
     /**
-     * Find element by its index
+     * Find element by its index (Starts from zero).
+     * Returns None if there is no such collection element.
+     *
+     * REPL:
+     * >>> ArrayList::collect([1, 2])(1)->get()
+     * => 2
+     *
+     * Alias for {@see Seq::at()}
+     *
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option;
+
+    /**
+     * Find element by its index (Starts from zero)
      * Returns None if there is no such collection element
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 2])->at(1)->get()
+     * >>> ArrayList::collect([1, 2])->at(1)->get()
      * => 2
      *
      * @psalm-return Option<TV>
@@ -26,12 +40,12 @@ interface NonEmptySeqUnchainableOps
 
     /**
      * Returns true if every collection element satisfy the condition
-     * false otherwise
+     * and false otherwise
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 2])->every(fn($elem) => $elem > 0)
+     * >>> LinkedList::collect([1, 2])->every(fn($elem) => $elem > 0)
      * => true
-     * >>> NonEmptyLinkedList::collect([1, 2])->every(fn($elem) => $elem > 1)
+     * >>> LinkedList::collect([1, 2])->every(fn($elem) => $elem > 1)
      * => false
      *
      * @psalm-param callable(TV): bool $predicate
@@ -43,9 +57,9 @@ interface NonEmptySeqUnchainableOps
      * false otherwise
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class)
+     * >>> LinkedList::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class)
      * => true
-     * >>> NonEmptyLinkedList::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class)
+     * >>> LinkedList::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class)
      * => false
      *
      * @psalm-template TVO
@@ -58,9 +72,9 @@ interface NonEmptySeqUnchainableOps
      * Find if there is element which satisfies the condition
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 2])->exists(fn($elem) => 2 === $elem)
+     * >>> LinkedList::collect([1, 2])->exists(fn($elem) => 2 === $elem)
      * => true
-     * >>> NonEmptyLinkedList::collect([1, 2])->exists(fn($elem) => 3 === $elem)
+     * >>> LinkedList::collect([1, 2])->exists(fn($elem) => 3 === $elem)
      * => false
      *
      * @psalm-param callable(TV): bool $predicate
@@ -72,9 +86,9 @@ interface NonEmptySeqUnchainableOps
      * False otherwise
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, new Foo(2)])->existsOf(Foo::class)
+     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Foo::class)
      * => true
-     * >>> NonEmptyLinkedList::collect([1, new Foo(2)])->existsOf(Bar::class)
+     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Bar::class)
      * => false
      *
      * @psalm-template TVO
@@ -87,7 +101,7 @@ interface NonEmptySeqUnchainableOps
      * Find first element which satisfies the condition
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
+     * >>> LinkedList::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
      * => 2
      *
      * @psalm-param callable(TV): bool $predicate
@@ -99,7 +113,7 @@ interface NonEmptySeqUnchainableOps
      * Find first element of given class
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
+     * >>> LinkedList::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
      * => Foo(2)
      *
      * @psalm-template TVO
@@ -110,21 +124,49 @@ interface NonEmptySeqUnchainableOps
     public function firstOf(string $fqcn, bool $invariant = false): Option;
 
     /**
+     * Fold many elements into one
+     *
+     * REPL:
+     * >>> LinkedList::collect(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
+     * => '012'
+     *
+     * @template TA
+     * @psalm-param TA $init initial accumulator value
+     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
+     * @psalm-return TA
+     */
+    public function fold(mixed $init, callable $callback): mixed;
+
+    /**
+     * Reduce multiple elements into one
+     * Returns None for empty collection
+     *
+     * REPL:
+     * >>> LinkedList::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
+     * => '12'
+     *
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
+     * @psalm-return Option<TV|TA>
+     */
+    public function reduce(callable $callback): Option;
+
+    /**
      * Return first collection element
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 2])->head()
+     * >>> LinkedList::collect([1, 2])->head()->get()
      * => 1
      *
-     * @psalm-return TV
+     * @psalm-return Option<TV>
      */
-    public function head(): mixed;
+    public function head(): Option;
 
     /**
      * Returns last collection element which satisfies the condition
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
+     * >>> LinkedList::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
      * => 2
      *
      * @psalm-param callable(TV): bool $predicate
@@ -134,37 +176,24 @@ interface NonEmptySeqUnchainableOps
 
     /**
      * Returns first collection element
-     * Alias for {@see NonEmptySeqOps::head}
+     * Alias for {@see SeqOps::head}
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 2])->firstElement()
+     * >>> LinkedList::collect([1, 2])->firstElement()->get()
      * => 1
      *
-     * @psalm-return TV
+     * @psalm-return Option<TV>
      */
-    public function firstElement(): mixed;
+    public function firstElement(): Option;
 
     /**
      * Returns last collection element
      *
      * REPL:
-     * >>> NonEmptyLinkedList::collect([1, 2])->lastElement()
+     * >>> LinkedList::collect([1, 2])->lastElement()->get()
      * => 2
      *
-     * @psalm-return TV
+     * @psalm-return Option<TV>
      */
-    public function lastElement(): mixed;
-
-    /**
-     * Reduce multiple elements into one
-     *
-     * REPL:
-     * >>> NonEmptyLinkedList::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)
-     * => '12'
-     *
-     * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
-     * @psalm-return (TV|TA)
-     */
-    public function reduce(callable $callback): mixed;
+    public function lastElement(): Option;
 }

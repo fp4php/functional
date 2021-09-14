@@ -11,9 +11,9 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements StreamUnchainableOps
+ * @psalm-require-implements StreamTerminalOps
  */
-trait StreamUnchainable
+trait StreamTerminable
 {
     /**
      * @inheritDoc
