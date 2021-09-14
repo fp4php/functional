@@ -195,7 +195,7 @@ abstract class Option
     public function filter(callable $callback): Option
     {
         return $this->isSome() && $callback($this->value)
-            ? self::some($this->value)
+            ? $this
             : self::none();
     }
 
@@ -221,7 +221,7 @@ abstract class Option
     {
         /** @var Option<AA> */
         return $this->isSome() && objectOf($this->value, $fqcn, $invariant)
-            ? self::some($this->value)
+            ? $this
             : self::none();
     }
 
