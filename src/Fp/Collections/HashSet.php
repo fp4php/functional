@@ -10,9 +10,9 @@ use Iterator;
 /**
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractSet<TV>
+ * @extends AbstractOrderedSet<TV>
  */
-final class HashSet extends AbstractSet
+final class HashSet extends AbstractOrderedSet
 {
     /**
      * @param HashMap<TV, TV> $map

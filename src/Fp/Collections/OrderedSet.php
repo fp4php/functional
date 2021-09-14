@@ -7,15 +7,12 @@ namespace Fp\Collections;
 use Iterator;
 
 /**
- * Ordered list of elements
- *
  * @psalm-immutable
  * @template-covariant TV
- * @extends Collection<TV>
- * @extends SeqOps<TV>
- * @extends SeqCollector<TV>
+ * @extends Set<TV>
+ * @extends OrderedSetOps<TV>
  */
-interface Seq extends Collection, SeqOps, SeqCollector
+interface OrderedSet extends Set, OrderedSetOps
 {
     /**
      * @inheritDoc

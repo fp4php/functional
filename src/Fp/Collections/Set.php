@@ -11,9 +11,8 @@ use Iterator;
  * @template-covariant TV
  * @extends Collection<TV>
  * @extends SetOps<TV>
- * @extends SetCastableOps<TV>
  */
-interface Set extends Collection, SetOps, SetCastableOps
+interface Set extends Collection, SetOps
 {
     /**
      * @inheritDoc

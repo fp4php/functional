@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Generator;
 use Iterator;
 
 use function Fp\of;
@@ -13,9 +12,9 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements Set<TV>
+ * @implements OrderedSet<TV>
  */
-abstract class AbstractSet implements Set
+abstract class AbstractOrderedSet implements OrderedSet
 {
     /**
      * REPL:
