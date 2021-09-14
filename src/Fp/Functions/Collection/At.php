@@ -20,10 +20,8 @@ use Fp\Functional\Option\Option;
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param TK $key
- *
  * @psalm-return Option<TV>
  */
 function at(iterable $collection, int|string $key): Option

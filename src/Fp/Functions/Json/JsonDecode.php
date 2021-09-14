@@ -16,9 +16,7 @@ use Fp\Functional\Either\Right;
  * >>> jsonDecode('{"a": [{"b": true}]}')->get();
  * => ['a' => [['b' => true]]]
  *
- *
  * @param string $json
- *
  * @return Either<string, array|scalar>
  */
 function jsonDecode(string $json): Either

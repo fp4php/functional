@@ -15,7 +15,6 @@ use Fp\Functional\Option\Option;
  * >>> proveInt(1);
  * => Some<int>
  *
- *
  * @psalm-template T
  * @psalm-param T $potential
  * @psalm-return Option<int>

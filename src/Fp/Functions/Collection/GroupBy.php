@@ -14,14 +14,11 @@ namespace Fp\Collection;
  * );
  * => [1 => [1], 2 => [2], 3 => [3]]
  *
- *
  * @psalm-template TKG of array-key
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TK): TKG $callback
- *
  * @psalm-return (
  *		$collection is non-empty-array
  *          ? non-empty-array<TKG, non-empty-array<TK, TV>>

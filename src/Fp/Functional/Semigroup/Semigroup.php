@@ -14,7 +14,6 @@ abstract class Semigroup
      * @psalm-pure
      * @psalm-param A $lhs
      * @psalm-param A $rhs
-     *
      * @psalm-return A
      */
     abstract public function combine(mixed $lhs, mixed $rhs): mixed;

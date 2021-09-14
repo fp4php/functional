@@ -18,12 +18,9 @@ use function Fp\Collection\head;
  * >>> asNonEmptyList($collection);
  * => Option<non-empty-list<int>>
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
- *
  * @psalm-return Option<non-empty-list<TV>>
  */
 function asNonEmptyList(iterable $collection): Option

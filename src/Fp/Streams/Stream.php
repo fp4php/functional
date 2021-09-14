@@ -6,7 +6,6 @@ namespace Fp\Streams;
 
 use ArrayIterator;
 use Error;
-use Fp\Collections\IterableOnce;
 use Fp\Functional\Unit;
 use Generator;
 use Iterator;
@@ -108,7 +107,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public static function awakeEvery(int $seconds): self
     {
-        $source = function () use ($seconds): Generator {
+        return new self(asGenerator(function () use ($seconds) {
             $elapsed = 0;
             $prevTime = time();
 
@@ -121,9 +120,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
                 yield $elapsed;
             }
-        };
-
-        return new self($source());
+        }));
     }
 
     /**
@@ -159,12 +156,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public static function range(int $start, int $stopExclusive, int $by = 1): self
     {
-        $source = function () use ($start, $stopExclusive, $by): Generator {
+        return new self(asGenerator(function () use ($start, $stopExclusive, $by) {
             for ($i = $start; $i < $stopExclusive; $i += $by) {
                 yield $i;
             }
-        };
-
-        return new self($source());
+        }));
     }
 }

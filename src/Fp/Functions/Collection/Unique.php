@@ -21,10 +21,8 @@ use Generator;
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV): array-key $callback returns element unique id
- *
  * @psalm-return list<TV>
  */
 function unique(iterable $collection, callable $callback): array

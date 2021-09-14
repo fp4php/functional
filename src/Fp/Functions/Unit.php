@@ -17,7 +17,6 @@ const unit = '\Fp\unit';
  *     return unit();
  * })
  * => Option<Unit>
- *
  */
 function unit(): Unit
 {

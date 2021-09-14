@@ -13,14 +13,11 @@ namespace Fp\Cast;
  * >>> asArray($collection);
  * => array<string, int>
  *
- *
  * @psalm-template TP of bool
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param TP $preserveKeys
- *
  * @psalm-return (TP is true ? array<TK, TV> : array<int, TV>)
  */
 function asArray(iterable $collection, bool $preserveKeys = true): array

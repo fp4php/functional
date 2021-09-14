@@ -13,7 +13,6 @@ use Fp\Functional\Option\Option;
  * >>> proveBool(true);
  * => Some<true>
  *
- *
  * @psalm-template T
  * @psalm-param T $subject
  * @psalm-return Option<bool>
@@ -32,7 +31,6 @@ function proveBool(mixed $subject): Option
  * >>> proveTrue(1);
  * => None
  *
- *
  * @psalm-template T
  * @psalm-param T $subject
  * @psalm-return Option<true>
@@ -50,7 +48,6 @@ function proveTrue(mixed $subject): Option
  * REPL:
  * >>> proveFalse(false);
  * => Some<false>
- *
  *
  * @psalm-template T
  * @psalm-param T $subject

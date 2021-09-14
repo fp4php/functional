@@ -17,11 +17,9 @@ use function Fp\of;
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TP of bool
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TK): bool $predicate
  * @psalm-param TP $preserveKeys
- *
  * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
  */
 function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
@@ -52,10 +50,8 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TP of bool
- *
  * @psalm-param iterable<TK, TV|null> $collection
  * @psalm-param TP $preserveKeys
- *
  * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
  */
 function filterNotNull(iterable $collection, bool $preserveKeys = false): array
@@ -79,12 +75,10 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  * @psalm-template TV
  * @psalm-template TVO
  * @psalm-template TP of bool
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param class-string<TVO> $fqcn fully qualified class name
  * @psalm-param TP $preserveKeys
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
- *
  * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
  */
 function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false, bool $invariant = false): array

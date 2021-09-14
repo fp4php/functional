@@ -14,11 +14,8 @@ use Fp\Functional\Option\Option;
  * >>> asInt('1');
  * => Option<int>
  *
- *
  * @psalm-template T
- *
  * @psalm-param T $subject
- *
  * @psalm-return Option<int>
  */
 function asInt(mixed $subject): Option

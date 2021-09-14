@@ -18,12 +18,9 @@ use function Fp\Collection\head;
  * >>> proveArray($collection);
  * => Option<array<string, int>>
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
- *
  * @psalm-return Option<array<TK, TV>>
  */
 function proveArray(iterable $collection): Option
@@ -40,12 +37,9 @@ function proveArray(iterable $collection): Option
  * >>> proveNonEmptyArray($collection);
  * => Option<non-empty-array<string, int>>
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
- *
  * @psalm-return Option<non-empty-array<TK, TV>>
  */
 function proveNonEmptyArray(iterable $collection): Option
@@ -69,15 +63,12 @@ function proveNonEmptyArray(iterable $collection): Option
  * >>> proveArrayOf($collection, Foo::class);
  * => Option<array<string, Foo>>
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param class-string<TVO> $fqcn fully qualified class name
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
- *
  * @psalm-return Option<array<TK, TVO>>
  */
 function proveArrayOf(iterable $collection, string $fqcn, bool $invariant = false): Option
@@ -101,15 +92,12 @@ function proveArrayOf(iterable $collection, string $fqcn, bool $invariant = fals
  * >>> proveNonEmptyArrayOf(getCollection(), Foo::class);
  * => Option<non-empty-array<string, Foo>>
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param class-string<TVO> $fqcn fully qualified class name
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
- *
  * @psalm-return Option<non-empty-array<TK, TVO>>
  */
 function proveNonEmptyArrayOf(iterable $collection, string $fqcn, bool $invariant = false): Option

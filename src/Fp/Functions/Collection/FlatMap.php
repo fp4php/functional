@@ -19,10 +19,8 @@ namespace Fp\Collection;
  * @psalm-template TK of array-key
  * @psalm-template TVI
  * @psalm-template TVO
- *
  * @psalm-param iterable<TK, TVI> $collection
  * @psalm-param callable(TVI, TK): iterable<TVO> $callback
- *
  * @psalm-return list<TVO>
  */
 function flatMap(iterable $collection, callable $callback): array

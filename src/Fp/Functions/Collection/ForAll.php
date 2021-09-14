@@ -11,10 +11,8 @@ namespace Fp\Collection;
  * >>> forAll([1, 2, 3], function($v) { echo($v); });
  * => 123
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TK): void $callback
  */

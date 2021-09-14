@@ -14,11 +14,8 @@ use Fp\Functional\Option\Option;
  * >>> asFloat('1.1');
  * => Option<float>
  *
- *
  * @psalm-template T
- *
  * @psalm-param T $subject
- *
  * @psalm-return Option<float>
  */
 function asFloat(mixed $subject): Option

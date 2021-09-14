@@ -14,13 +14,10 @@ use Fp\Functional\Option\Option;
  * >>> last([1, 2, 3])->get()
  * => 3
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param null|callable(TV, TK): bool $predicate
- *
  * @psalm-return Option<TV>
  */
 function last(iterable $collection, ?callable $predicate = null): Option

@@ -17,7 +17,6 @@ use function Fp\of;
  * >>> proveOf(new Bar(2), Foo::class);
  * => None
  *
- *
  * @psalm-template TV
  * @psalm-template TVO
  * @psalm-param TV $subject

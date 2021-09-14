@@ -14,11 +14,8 @@ use Fp\Functional\Option\Option;
  * >>> asBool('yes');
  * => Option<bool>
  *
- *
  * @psalm-template T
- *
  * @psalm-param T $subject
- *
  * @psalm-return Option<bool>
  */
 function asBool(mixed $subject): Option

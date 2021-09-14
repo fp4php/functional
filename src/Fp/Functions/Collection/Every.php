@@ -16,10 +16,8 @@ use function Fp\of;
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TK): bool $predicate
- *
  * @psalm-return bool
  */
 function every(iterable $collection, callable $predicate): bool
@@ -47,11 +45,9 @@ function every(iterable $collection, callable $predicate): bool
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
-
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param class-string<TVO> $fqcn fully qualified class name
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
- *
  * @psalm-return bool
  */
 function everyOf(iterable $collection, string $fqcn, bool $invariant = false): bool

@@ -11,9 +11,8 @@ use Fp\Functional\Validated\Validated;
 /**
  * @template E
  * @template A
- *
- * @extends Semigroup<Validated<E, A>>
  * @psalm-immutable
+ * @extends Semigroup<Validated<E, A>>
  */
 class ValidatedSemigroup extends Semigroup
 {
@@ -31,7 +30,6 @@ class ValidatedSemigroup extends Semigroup
     /**
      * @psalm-param Validated<E, A> $lhs
      * @psalm-param Validated<E, A> $rhs
-     *
      * @psalm-return Validated<E, A>
      */
     public function combine(mixed $lhs, mixed $rhs): Validated

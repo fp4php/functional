@@ -13,11 +13,8 @@ const id = '\Fp\id';
  * >>> id(1);
  * => 1
  *
- *
  * @psalm-template T
- *
  * @psalm-param T $value
- *
  * @psalm-return T
  */
 function id(mixed $value): mixed

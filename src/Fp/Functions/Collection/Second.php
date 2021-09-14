@@ -14,10 +14,8 @@ use Fp\Functional\Option\Option;
  * >>> second([1, 2, 3])->get();
  * => 2
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-return Option<TV>
  */

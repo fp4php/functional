@@ -17,12 +17,9 @@ use function Fp\Cast\asNonEmptyList;
  * >>> [$head, $tail] = shift([1, 2, 3])->get();
  * => [1, [2, 3]]
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
- *
  * @psalm-return Option<array{TV, list<TV>}>
  */
 function shift(iterable $collection): Option

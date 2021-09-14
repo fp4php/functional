@@ -14,10 +14,8 @@ namespace Fp\Collection;
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param callable(TV, TK): bool $predicate
- *
  * @psalm-return bool
  */
 function exists(iterable $collection, callable $predicate): bool
@@ -36,11 +34,9 @@ function exists(iterable $collection, callable $predicate): bool
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-template TVO
- *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param class-string<TVO> $fqcn fully qualified class name
  * @psalm-param bool $invariant if turned on then subclasses are not allowed
- *
  * @psalm-return bool
  */
 function existsOf(iterable $collection, string $fqcn, bool $invariant = false): bool

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Psalm\Hook\PluckFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
 
 /**
  * Map every collection element into given property/key value

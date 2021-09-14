@@ -7,7 +7,6 @@ namespace Fp\Streams;
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
-use Fp\Collections\IterableOnce;
 use Fp\Collections\LinkedList;
 use SplFileObject;
 

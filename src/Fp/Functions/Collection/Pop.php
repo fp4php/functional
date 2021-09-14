@@ -17,12 +17,9 @@ use function Fp\Cast\asNonEmptyList;
  * >>> [$head, $tail] = pop([1, 2, 3])->get();
  * => [3, [1, 2]]
  *
- *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
- *
  * @psalm-return Option<array{TV, list<TV>}>
  */
 function pop(iterable $collection): Option

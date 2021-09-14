@@ -16,11 +16,8 @@ use Throwable;
  * >>> getReflectionProperty(Foo::class, 'a');
  * => Either<Throwable, ReflectionProperty>
  *
- *
  * @template T of object
- *
  * @psalm-param T|class-string<T> $class
- *
  * @psalm-return Either<Throwable, ReflectionProperty>
  */
 function getReflectionProperty(object|string $class, string $property): Either

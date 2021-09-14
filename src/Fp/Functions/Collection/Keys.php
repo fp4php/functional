@@ -13,9 +13,7 @@ namespace Fp\Collection;
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
- *
  * @psalm-param iterable<TK, TV> $collection
- *
  * @psalm-return ($collection is non-empty-array ? non-empty-list<TK> : list<TK>)
  */
 function keys(iterable $collection): array

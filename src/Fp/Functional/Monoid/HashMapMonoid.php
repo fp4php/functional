@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Monoid;
 
 use Fp\Collections\HashMap;
-use Fp\Collections\IterableOnce;
+
 use Generator;
 
 use function Fp\Callable\asGenerator;
