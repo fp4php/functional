@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Fp\Streams;
 
+use ArrayIterator;
+use Error;
 use Fp\Functional\Option\Option;
+use Generator;
+use Iterator;
+use IteratorIterator;
 
 use function Fp\of;
 
@@ -15,6 +20,26 @@ use function Fp\of;
  */
 trait StreamTerminable
 {
+    /**
+     * @psalm-readonly-allow-private-mutation $drained
+     */
+    private bool $drained = false;
+
+    /**
+     * Note: You can not iterate the stream the second time
+     *
+     * @inheritDoc
+     * @return Generator<TV>
+     */
+    public function getIterator(): Generator
+    {
+        $this->drained = !$this->drained
+            ? true
+            : throw new Error('Can not drain already drained stream');
+
+        return $this->emitter;
+    }
+
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate

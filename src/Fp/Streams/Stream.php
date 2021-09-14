@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Fp\Streams;
 
-use ArrayIterator;
-use Error;
 use Fp\Functional\Unit;
 use Generator;
-use Iterator;
 use IteratorAggregate;
-use IteratorIterator;
 
 use function Fp\Callable\asGenerator;
 
 /**
+ * Note: stream iteration via foreach is terminal operation
+ *
  * @psalm-immutable
  * @template-covariant TV
  * @implements StreamOps<TV>
@@ -39,42 +37,16 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     use StreamCastable;
 
     /**
-     * @psalm-readonly-allow-private-mutation $drained
+     * @var Generator<TV>
      */
-    private bool $drained = false;
+    private Generator $emitter;
 
     /**
      * @param iterable<TV> $emitter
      */
-    private function __construct(private iterable $emitter) { }
-
-    /**
-     * @inheritDoc
-     * @return Iterator<int, TV>
-     */
-    public function getIterator(): Iterator
+    private function __construct(iterable $emitter)
     {
-        $this->drained = !$this->drained
-            ? true
-            : throw new Error('Can not traverse already drained stream');
-
-        return is_array($this->emitter)
-            ? new ArrayIterator($this->emitter)
-            : new IteratorIterator($this->emitter);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
+        $this->emitter = asGenerator(fn() => $emitter);
     }
 
     /**

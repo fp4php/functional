@@ -8,6 +8,7 @@ use Fp\Collections\ArrayList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Generator;
+use LogicException;
 
 use function Fp\Callable\asGenerator;
 use function Fp\of;
@@ -21,13 +22,32 @@ use function Fp\of;
 trait StreamChainable
 {
     /**
+     * @psalm-readonly-allow-private-mutation $forked
+     */
+    private bool $forked = false;
+
+    /**
+     * @psalm-template TVO
+     * @psalm-param Generator<TVO> $gen
+     * @psalm-return self<TVO>
+     */
+    private function fork(Generator $gen): self
+    {
+        $this->forked = !$this->forked
+            ? $this->forked = true
+            : throw new LogicException('multiple stream forks detected');
+
+        return self::emits($gen);
+    }
+
+    /**
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>
      */
     public function map(callable $callback): self
     {
-        return self::emits(asGenerator(function () use ($callback) {
+        return $this->fork(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -45,7 +65,7 @@ trait StreamChainable
      */
     public function appended(mixed $elem): self
     {
-        return self::emits(asGenerator(function () use ($elem) {
+        return $this->fork(asGenerator(function () use ($elem) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -62,7 +82,7 @@ trait StreamChainable
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::emits(asGenerator(function() use ($suffix) {
+        return $this->fork(asGenerator(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -81,7 +101,7 @@ trait StreamChainable
      */
     public function prepended(mixed $elem): self
     {
-        return self::emits(asGenerator(function () use ($elem) {
+        return $this->fork(asGenerator(function () use ($elem) {
             yield $elem;
 
             foreach ($this as $prefixElem) {
@@ -98,7 +118,7 @@ trait StreamChainable
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::emits(asGenerator(function() use ($prefix) {
+        return $this->fork(asGenerator(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -116,7 +136,7 @@ trait StreamChainable
      */
     public function filter(callable $predicate): self
     {
-        return self::emits(asGenerator(function () use ($predicate) {
+        return $this->fork(asGenerator(function () use ($predicate) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -136,7 +156,7 @@ trait StreamChainable
      */
     public function filterMap(callable $callback): self
     {
-        return self::emits(asGenerator(function () use ($callback) {
+        return $this->fork(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -179,7 +199,7 @@ trait StreamChainable
      */
     public function flatMap(callable $callback): self
     {
-        return self::emits(asGenerator(function () use ($callback) {
+        return $this->fork(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -198,7 +218,7 @@ trait StreamChainable
      */
     public function tail(): self
     {
-        return self::emits(asGenerator(function () {
+        return $this->fork(asGenerator(function () {
             $isFirst = true;
 
             foreach ($this as $elem) {
@@ -219,7 +239,7 @@ trait StreamChainable
      */
     public function takeWhile(callable $predicate): self
     {
-        return self::emits(asGenerator(function () use ($predicate) {
+        return $this->fork(asGenerator(function () use ($predicate) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -240,7 +260,7 @@ trait StreamChainable
      */
     public function dropWhile(callable $predicate): self
     {
-        return self::emits(asGenerator(function () use ($predicate) {
+        return $this->fork(asGenerator(function () use ($predicate) {
             $toggle = true;
 
             foreach ($this as $elem) {
@@ -260,7 +280,7 @@ trait StreamChainable
      */
     public function take(int $length): self
     {
-        return self::emits(asGenerator(function () use ($length) {
+        return $this->fork(asGenerator(function () use ($length) {
             $i = 0;
 
             foreach ($this as $elem) {
@@ -280,12 +300,15 @@ trait StreamChainable
      */
     public function drop(int $length): self
     {
-        return self::emits(asGenerator(function () use ($length) {
-            foreach ($this as $i => $elem) {
+        return $this->fork(asGenerator(function () use ($length) {
+            $i = 0;
+
+            foreach ($this as $elem) {
                 if ($i < $length) {
                     continue;
                 }
 
+                $i++;
                 yield $elem;
             }
         }));
@@ -298,7 +321,7 @@ trait StreamChainable
      */
     public function tap(callable $callback): self
     {
-        return self::emits(asGenerator(function () use ($callback) {
+        return $this->fork(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -323,7 +346,7 @@ trait StreamChainable
      */
     public function repeatN(int $times): self
     {
-        return new self(asGenerator(function () use ($times) {
+        return $this->fork(asGenerator(function () use ($times) {
             /** @var Seq<TV> $buffer */
             $buffer = ArrayList::collect($this);
 
@@ -347,7 +370,7 @@ trait StreamChainable
      */
     public function intersperse(mixed $separator): self
     {
-        return new self(asGenerator(function () use ($separator) {
+        return $this->fork(asGenerator(function () use ($separator) {
             $isFirst = true;
 
             foreach ($this as $elem) {
@@ -394,7 +417,7 @@ trait StreamChainable
      */
     public function zip(iterable $that): self
     {
-        return self::emits(asGenerator(function () use ($that) {
+        return $this->fork(asGenerator(function () use ($that) {
             $thisIter = asGenerator(fn() => $this);
             $thatIter = asGenerator(fn() => $that);
 
@@ -419,7 +442,7 @@ trait StreamChainable
      */
     public function chunks(int $size): self
     {
-        $source = function () use ($size): Generator {
+        return $this->fork(asGenerator(function () use ($size) {
             $chunk = [];
             $i = 0;
 
@@ -436,9 +459,7 @@ trait StreamChainable
             if (!empty($chunk)) {
                 yield new ArrayList($chunk);
             }
-        };
-
-        return self::emits($source());
+        }));
     }
 
     /**
@@ -449,7 +470,7 @@ trait StreamChainable
      */
     public function groupAdjacentBy(callable $discriminator): Stream
     {
-        $source = function () use ($discriminator): Generator {
+        return $this->fork(asGenerator(function () use ($discriminator) {
             $buffer = [];
             $prevDisc = null;
             $isHead = true;
@@ -477,9 +498,7 @@ trait StreamChainable
             if (!empty($buffer)) {
                 yield [$prevDisc, new ArrayList($buffer)];
             }
-        };
-
-        return self::emits($source());
+        }));
     }
 }
 
