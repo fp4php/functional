@@ -7,6 +7,8 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Generator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @template TK
  * @template-covariant TV
@@ -31,7 +33,7 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public static function collect(iterable $source): self
     {
-        return self::collectPairs(IterableOnce::of(function () use ($source) {
+        return self::collectPairs(asGenerator(function () use ($source) {
             foreach ($source as $key => $value) {
                 yield [$key, $value];
             }
@@ -93,7 +95,7 @@ final class HashMap extends AbstractMap implements StaticStorage
             }
         }
 
-        return Option::fromNullable($elem);;
+        return Option::fromNullable($elem);
     }
 
     /**
@@ -126,7 +128,7 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public function filter(callable $predicate): self
     {
-        return self::collectPairs(IterableOnce::of(function () use ($predicate) {
+        return self::collectPairs(asGenerator(function () use ($predicate) {
             foreach ($this->generateEntries() as $entry) {
                 if ($predicate($entry)) {
                     yield $entry->toArray();
@@ -144,7 +146,7 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public function filterMap(callable $callback): self
     {
-        return self::collectPairs(IterableOnce::of(function () use ($callback) {
+        return self::collectPairs(asGenerator(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 $result = $callback($entry);
 
@@ -166,7 +168,7 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public function flatMap(callable $callback): self
     {
-        return self::collectPairs(IterableOnce::of(function () use ($callback) {
+        return self::collectPairs(asGenerator(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 foreach ($callback($entry) as $p) {
                     yield $p;
@@ -195,7 +197,7 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public function mapValues(callable $callback): self
     {
-        return self::collectPairs(IterableOnce::of(function () use ($callback) {
+        return self::collectPairs(asGenerator(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$entry->key, $callback($entry)];
                 unset($entry);
@@ -211,7 +213,7 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public function mapKeys(callable $callback): self
     {
-        return self::collectPairs(IterableOnce::of(function () use ($callback) {
+        return self::collectPairs(asGenerator(function () use ($callback) {
             foreach ($this->generateEntries() as $entry) {
                 yield [$callback($entry), $entry->value];
                 unset($entry);

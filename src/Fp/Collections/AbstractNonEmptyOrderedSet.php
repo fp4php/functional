@@ -7,6 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Iterator;
 
+use function Fp\Callable\asGenerator;
 use function Fp\of;
 
 /**
@@ -129,7 +130,7 @@ abstract class AbstractNonEmptyOrderedSet implements NonEmptyOrderedSet
      */
     public function toHashMap(callable $callback): HashMap
     {
-        return HashMap::collectPairs(IterableOnce::of(function () use ($callback) {
+        return HashMap::collectPairs(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
@@ -145,7 +146,7 @@ abstract class AbstractNonEmptyOrderedSet implements NonEmptyOrderedSet
      */
     public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsUnsafe(IterableOnce::of(function () use ($callback) {
+        return NonEmptyHashMap::collectPairsUnsafe(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }

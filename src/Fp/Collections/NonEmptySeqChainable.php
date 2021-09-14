@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -19,7 +21,7 @@ trait NonEmptySeqChainable
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(IterableOnce::of(function () use ($callback) {
+        return self::collectUnsafe(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -37,7 +39,7 @@ trait NonEmptySeqChainable
      */
     public function appended(mixed $elem): self
     {
-        return self::collectUnsafe(IterableOnce::of(function () use ($elem) {
+        return self::collectUnsafe(asGenerator(function () use ($elem) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -54,7 +56,7 @@ trait NonEmptySeqChainable
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collectUnsafe(IterableOnce::of(function() use ($suffix) {
+        return self::collectUnsafe(asGenerator(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -73,7 +75,7 @@ trait NonEmptySeqChainable
      */
     public function prepended(mixed $elem): self
     {
-        return self::collectUnsafe(IterableOnce::of(function () use ($elem) {
+        return self::collectUnsafe(asGenerator(function () use ($elem) {
             yield $elem;
 
             foreach ($this as $prefixElem) {
@@ -90,7 +92,7 @@ trait NonEmptySeqChainable
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collectUnsafe(IterableOnce::of(function() use ($prefix) {
+        return self::collectUnsafe(asGenerator(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }

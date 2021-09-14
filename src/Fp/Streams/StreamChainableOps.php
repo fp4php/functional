@@ -254,10 +254,10 @@ interface StreamChainableOps
      * => [[1, 4], [2, 5], [3, 6]]
      *
      * @template TVI
-     * @param Stream<TVI> $that
+     * @param iterable<TVI> $that
      * @return Stream<array{TV, TVI}>
      */
-    public function zip(Stream $that): Stream;
+    public function zip(iterable $that): Stream;
 
     /**
      * Deterministically interleaves elements, starting on the left, terminating when the end of either branch is reached naturally.
@@ -267,10 +267,10 @@ interface StreamChainableOps
      * => [1, 4, 2, 5, 3, 6]
      *
      * @template TVI
-     * @param Stream<TVI> $that
+     * @param iterable<TVI> $that
      * @return Stream<TV|TVI>
      */
-    public function interleave(Stream $that): Stream;
+    public function interleave(iterable $that): Stream;
 
     /**
      * Produce stream of chunks with given size from this stream

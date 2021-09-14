@@ -8,6 +8,8 @@ use Fp\Collections\HashMap;
 use Fp\Collections\IterableOnce;
 use Generator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @template TK
  * @template TV
@@ -35,7 +37,7 @@ class HashMapMonoid extends Monoid
      */
     public function combine(mixed $lhs, mixed $rhs): HashMap
     {
-        return HashMap::collectPairs(IterableOnce::of(function () use ($rhs, $lhs) {
+        return HashMap::collectPairs(asGenerator(function () use ($rhs, $lhs) {
             foreach ($lhs as $pair) {
                 yield $pair;
             }

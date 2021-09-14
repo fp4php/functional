@@ -7,6 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Generator;
 
+use function Fp\Callable\asGenerator;
 use function Fp\of;
 
 /**
@@ -23,7 +24,7 @@ trait MapOp
      */
     public function map(callable $callback): self
     {
-        return self::emits(IterableOnce::of(function () use ($callback) {
+        return self::emits(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;

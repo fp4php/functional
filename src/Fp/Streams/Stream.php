@@ -13,6 +13,8 @@ use Iterator;
 use IteratorAggregate;
 use IteratorIterator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -84,7 +86,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public static function emit(mixed $elem): self
     {
-        return new self(IterableOnce::of(function () use ($elem) {
+        return new self(asGenerator(function () use ($elem) {
             yield $elem;
         }));
     }
@@ -132,7 +134,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public static function constant(mixed $const): self
     {
-        return new self(IterableOnce::of(function () use ($const) {
+        return new self(asGenerator(function () use ($const) {
             while (true) {
                 yield $const;
             }

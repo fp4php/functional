@@ -8,6 +8,8 @@ use Fp\Collections\HashSet;
 use Fp\Collections\IterableOnce;
 use Generator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @template TV
  *
@@ -34,7 +36,7 @@ class HashSetMonoid extends Monoid
      */
     public function combine(mixed $lhs, mixed $rhs): HashSet
     {
-        return HashSet::collect(IterableOnce::of(function () use ($rhs, $lhs) {
+        return HashSet::collect(asGenerator(function () use ($rhs, $lhs) {
             foreach ($lhs as $elem) {
                 yield $elem;
             }

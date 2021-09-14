@@ -8,6 +8,8 @@ use Error;
 use Fp\Functional\Option\Option;
 use Iterator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @template-covariant TV
  * @psalm-immutable
@@ -158,7 +160,7 @@ final class NonEmptyHashSet extends AbstractNonEmptyOrderedSet
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(IterableOnce::of(function () use ($callback) {
+        return self::collectUnsafe(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
             }

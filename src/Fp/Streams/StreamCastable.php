@@ -11,6 +11,8 @@ use Fp\Collections\IterableOnce;
 use Fp\Collections\LinkedList;
 use SplFileObject;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -69,7 +71,7 @@ trait StreamCastable
      */
     public function toHashMap(callable $callback): HashMap
     {
-        return HashMap::collectPairs(IterableOnce::of(function () use ($callback) {
+        return HashMap::collectPairs(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;

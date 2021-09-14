@@ -8,6 +8,8 @@ use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\IterableOnce;
 use Generator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @template TV
  *
@@ -26,7 +28,7 @@ class NonEmptyHashSetSemigroup extends Semigroup
      */
     public function combine(mixed $lhs, mixed $rhs): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(IterableOnce::of(function () use ($rhs, $lhs): Generator {
+        return NonEmptyHashSet::collectUnsafe(asGenerator(function () use ($rhs, $lhs): Generator {
             foreach ($lhs as $elem) {
                 yield $elem;
             }

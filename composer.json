@@ -29,6 +29,7 @@
     "autoload": {
         "psr-4": {
             "Fp\\Collections\\": "src/Fp/Collections",
+            "Fp\\Streams\\": "src/Fp/Streams",
             "Fp\\Functional\\": "src/Fp/Functional",
             "Fp\\Psalm\\": "src/Fp/Psalm"
         },
@@ -40,6 +41,7 @@
             "src/Fp/Functions/Cast/AsArray.php",
             "src/Fp/Functions/Cast/AsBool.php",
             "src/Fp/Functions/Cast/AsFloat.php",
+            "src/Fp/Functions/Cast/AsGenerator.php",
             "src/Fp/Functions/Cast/AsInt.php",
             "src/Fp/Functions/Cast/AsList.php",
             "src/Fp/Functions/Cast/AsNonEmptyArray.php",

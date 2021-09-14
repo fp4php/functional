@@ -7,6 +7,8 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Iterator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @template-covariant TV
  * @psalm-immutable
@@ -86,7 +88,7 @@ final class HashSet extends AbstractOrderedSet
      */
     public function tail(): self
     {
-        return self::collect(IterableOnce::of(function () {
+        return self::collect(asGenerator(function () {
             $toggle = true;
 
             foreach ($this as $elem) {
@@ -131,7 +133,7 @@ final class HashSet extends AbstractOrderedSet
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::collect(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -150,7 +152,7 @@ final class HashSet extends AbstractOrderedSet
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::collect(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 $result = $callback($element);
 
@@ -169,7 +171,7 @@ final class HashSet extends AbstractOrderedSet
      */
     public function map(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::collect(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
             }

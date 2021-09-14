@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Fp\Streams;
 
 use Fp\Collections\ArrayList;
-use Fp\Collections\IterableOnce;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Generator;
 
+use function Fp\Callable\asGenerator;
 use function Fp\of;
 
 /**
@@ -27,7 +27,7 @@ trait StreamChainable
      */
     public function map(callable $callback): self
     {
-        return self::emits(IterableOnce::of(function () use ($callback) {
+        return self::emits(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -45,7 +45,7 @@ trait StreamChainable
      */
     public function appended(mixed $elem): self
     {
-        return self::emits(IterableOnce::of(function () use ($elem) {
+        return self::emits(asGenerator(function () use ($elem) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -62,7 +62,7 @@ trait StreamChainable
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::emits(IterableOnce::of(function() use ($suffix) {
+        return self::emits(asGenerator(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -81,7 +81,7 @@ trait StreamChainable
      */
     public function prepended(mixed $elem): self
     {
-        return self::emits(IterableOnce::of(function () use ($elem) {
+        return self::emits(asGenerator(function () use ($elem) {
             yield $elem;
 
             foreach ($this as $prefixElem) {
@@ -98,7 +98,7 @@ trait StreamChainable
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::emits(IterableOnce::of(function() use ($prefix) {
+        return self::emits(asGenerator(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -116,7 +116,7 @@ trait StreamChainable
      */
     public function filter(callable $predicate): self
     {
-        return self::emits(IterableOnce::of(function () use ($predicate) {
+        return self::emits(asGenerator(function () use ($predicate) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -136,7 +136,7 @@ trait StreamChainable
      */
     public function filterMap(callable $callback): self
     {
-        return self::emits(IterableOnce::of(function () use ($callback) {
+        return self::emits(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -179,7 +179,7 @@ trait StreamChainable
      */
     public function flatMap(callable $callback): self
     {
-        return self::emits(IterableOnce::of(function () use ($callback) {
+        return self::emits(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -198,7 +198,7 @@ trait StreamChainable
      */
     public function tail(): self
     {
-        return self::emits(IterableOnce::of(function () {
+        return self::emits(asGenerator(function () {
             $isFirst = true;
 
             foreach ($this as $elem) {
@@ -219,7 +219,7 @@ trait StreamChainable
      */
     public function takeWhile(callable $predicate): self
     {
-        return self::emits(IterableOnce::of(function () use ($predicate) {
+        return self::emits(asGenerator(function () use ($predicate) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -240,7 +240,7 @@ trait StreamChainable
      */
     public function dropWhile(callable $predicate): self
     {
-        return self::emits(IterableOnce::of(function () use ($predicate) {
+        return self::emits(asGenerator(function () use ($predicate) {
             $toggle = true;
 
             foreach ($this as $elem) {
@@ -260,7 +260,7 @@ trait StreamChainable
      */
     public function take(int $length): self
     {
-        return self::emits(IterableOnce::of(function () use ($length) {
+        return self::emits(asGenerator(function () use ($length) {
             $i = 0;
 
             foreach ($this as $elem) {
@@ -280,7 +280,7 @@ trait StreamChainable
      */
     public function drop(int $length): self
     {
-        return self::emits(IterableOnce::of(function () use ($length) {
+        return self::emits(asGenerator(function () use ($length) {
             foreach ($this as $i => $elem) {
                 if ($i < $length) {
                     continue;
@@ -298,7 +298,7 @@ trait StreamChainable
      */
     public function tap(callable $callback): self
     {
-        return self::emits(IterableOnce::of(function () use ($callback) {
+        return self::emits(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -323,7 +323,7 @@ trait StreamChainable
      */
     public function repeatN(int $times): self
     {
-        return new self(IterableOnce::of(function () use ($times) {
+        return new self(asGenerator(function () use ($times) {
             /** @var Seq<TV> $buffer */
             $buffer = ArrayList::collect($this);
 
@@ -347,7 +347,7 @@ trait StreamChainable
      */
     public function intersperse(mixed $separator): self
     {
-        return new self(IterableOnce::of(function () use ($separator) {
+        return new self(asGenerator(function () use ($separator) {
             $isFirst = true;
 
             foreach ($this as $elem) {
@@ -376,10 +376,10 @@ trait StreamChainable
     /**
      * @inheritDoc
      * @template TVI
-     * @param Stream<TVI> $that
+     * @param iterable<TVI> $that
      * @return self<TV|TVI>
      */
-    public function interleave(Stream $that): self
+    public function interleave(iterable $that): self
     {
         return $this
             ->zip($that)
@@ -389,15 +389,14 @@ trait StreamChainable
     /**
      * @inheritDoc
      * @template TVI
-     * @param Stream<TVI> $that
+     * @param iterable<TVI> $that
      * @return self<array{TV, TVI}>
      */
-    public function zip(Stream $that): self
+    public function zip(iterable $that): self
     {
-        /** @var Stream<array{TV, TVI}> */
-        return self::emits(IterableOnce::of(function () use ($that) {
-            $thisIter = $this->getIterator();
-            $thatIter = $that->getIterator();
+        return self::emits(asGenerator(function () use ($that) {
+            $thisIter = asGenerator(fn() => $this);
+            $thatIter = asGenerator(fn() => $that);
 
             $thisIter->rewind();
             $thatIter->rewind();

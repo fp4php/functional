@@ -8,6 +8,8 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\IterableOnce;
 use Generator;
 
+use function Fp\Callable\asGenerator;
+
 /**
  * @template TK
  * @template TV
@@ -27,7 +29,7 @@ class NonEmptyHashMapSemigroup extends Semigroup
      */
     public function combine(mixed $lhs, mixed $rhs): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsUnsafe(IterableOnce::of(function () use ($rhs, $lhs) {
+        return NonEmptyHashMap::collectPairsUnsafe(asGenerator(function () use ($rhs, $lhs) {
             foreach ($lhs as $pair) {
                 yield $pair;
             }

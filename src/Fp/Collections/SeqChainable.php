@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 
+use function Fp\Callable\asGenerator;
 use function Fp\of;
 
 /**
@@ -23,7 +24,7 @@ trait SeqChainable
      */
     public function map(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::collect(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -41,7 +42,7 @@ trait SeqChainable
      */
     public function appended(mixed $elem): self
     {
-        return self::collect(IterableOnce::of(function () use ($elem) {
+        return self::collect(asGenerator(function () use ($elem) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -58,7 +59,7 @@ trait SeqChainable
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collect(IterableOnce::of(function() use ($suffix) {
+        return self::collect(asGenerator(function() use ($suffix) {
             foreach ($this as $prefixElem) {
                 yield $prefixElem;
             }
@@ -77,7 +78,7 @@ trait SeqChainable
      */
     public function prepended(mixed $elem): self
     {
-        return self::collect(IterableOnce::of(function () use ($elem) {
+        return self::collect(asGenerator(function () use ($elem) {
             yield $elem;
 
             foreach ($this as $prefixElem) {
@@ -94,7 +95,7 @@ trait SeqChainable
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collect(IterableOnce::of(function() use ($prefix) {
+        return self::collect(asGenerator(function() use ($prefix) {
             foreach ($prefix as $prefixElem) {
                 yield $prefixElem;
             }
@@ -112,7 +113,7 @@ trait SeqChainable
      */
     public function filter(callable $predicate): self
     {
-        return self::collect(IterableOnce::of(function () use ($predicate) {
+        return self::collect(asGenerator(function () use ($predicate) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -132,7 +133,7 @@ trait SeqChainable
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::collect(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -175,7 +176,7 @@ trait SeqChainable
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(IterableOnce::of(function () use ($callback) {
+        return self::collect(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 /** @var TV $e */
                 $e = $element;
@@ -194,7 +195,7 @@ trait SeqChainable
      */
     public function tail(): self
     {
-        return self::collect(IterableOnce::of(function () {
+        return self::collect(asGenerator(function () {
             $isFirst = true;
 
             foreach ($this as $elem) {
@@ -215,7 +216,7 @@ trait SeqChainable
      */
     public function takeWhile(callable $predicate): self
     {
-        return self::collect(IterableOnce::of(function () use ($predicate) {
+        return self::collect(asGenerator(function () use ($predicate) {
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
@@ -236,7 +237,7 @@ trait SeqChainable
      */
     public function dropWhile(callable $predicate): self
     {
-        return self::collect(IterableOnce::of(function () use ($predicate) {
+        return self::collect(asGenerator(function () use ($predicate) {
             $toggle = true;
 
             foreach ($this as $elem) {
@@ -256,7 +257,7 @@ trait SeqChainable
      */
     public function take(int $length): self
     {
-        return self::collect(IterableOnce::of(function () use ($length) {
+        return self::collect(asGenerator(function () use ($length) {
             foreach ($this as $i => $elem) {
                 if ($i === $length) {
                     break;
@@ -273,7 +274,7 @@ trait SeqChainable
      */
     public function drop(int $length): self
     {
-        return self::collect(IterableOnce::of(function () use ($length) {
+        return self::collect(asGenerator(function () use ($length) {
             foreach ($this as $i => $elem) {
                 if ($i < $length) {
                     continue;
