@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Fp\Collections;
+namespace Fp\Streams;
 
+use Fp\Collections\ArrayList;
+use Fp\Collections\IterableOnce;
+use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Generator;
 

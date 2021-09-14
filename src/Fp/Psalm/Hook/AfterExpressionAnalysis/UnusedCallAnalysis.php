@@ -13,7 +13,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Set;
-use Fp\Collections\Stream;
+use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Psalm;
 use PhpParser\Node\Expr;

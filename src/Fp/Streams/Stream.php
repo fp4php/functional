@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Fp\Collections;
+namespace Fp\Streams;
 
 use ArrayIterator;
 use Error;
+use Fp\Collections\IterableOnce;
 use Fp\Functional\Unit;
 use Generator;
 use Iterator;
+use IteratorAggregate;
 use IteratorIterator;
 
 /**
@@ -16,9 +18,9 @@ use IteratorIterator;
  * @template-covariant TV
  * @implements StreamOps<TV>
  * @implements StreamEmitter<TV>
- * @implements Collection<TV>
+ * @implements IteratorAggregate<TV>
  */
-final class Stream implements StreamOps, StreamEmitter, Collection
+final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 {
     /**
      * @use StreamChainable<TV>

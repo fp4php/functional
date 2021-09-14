@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Fp\Collections;
+namespace Fp\Streams;
 
+use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 
 /**
