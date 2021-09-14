@@ -122,6 +122,63 @@ abstract class Option
      * 1) Unwrap the box
      * 2) If the box is empty then do nothing
      * 3) Pass unwrapped value to callback
+     * 4) Return the same box
+     *
+     * REPL:
+     * >>> $res1 = Option::fromNullable(1);
+     * => Some(1)
+     * >>> $res2 = $res1->tap(function (int $i) { echo $i; });
+     * 1
+     * => Some(1)
+     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
+     * => Some('1')
+     *
+     * @param callable(A): void $callback
+     * @psalm-return Option<A>
+     */
+    public function tap(callable $callback): Option
+    {
+        if ($this->isSome()) {
+            $callback($this->value);
+            return $this;
+        } else {
+            return self::none();
+        }
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
+     * 4) If the callback returns empty box then short circuit the execution
+     * 5) Return the same box
+     *
+     * REPL:
+     * >>> $res1 = Option::fromNullable([1]);
+     * => Some([1])
+     * >>> $res2 = $res1->flatTap(fn(array $arr): Option => first($arr));
+     * => Some([1])
+     * >>> $res3 = $res2->flatTap(fn(array $arr): Option => second($arr))
+     * => None
+     *
+     * @template B
+     * @param callable(A): Option<B> $callback
+     * @psalm-return Option<A>
+     */
+    public function flatTap(callable $callback): Option
+    {
+        if ($this->isSome() && $callback($this->value)->isSome()) {
+            $callback($this->value);
+            return $this;
+        } else {
+            return self::none();
+        }
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
      * 4) If callback return true, return Some<A>. Otherwise None.
      *
      * REPL:
