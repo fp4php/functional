@@ -12,6 +12,8 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\Seq;
+use Fp\Collections\Set;
 use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Psalm;
@@ -28,12 +30,14 @@ use Psalm\IssueBuffer;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 use Psalm\StatementsSource;
+use Psalm\Storage\ClassLikeStorage;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Union;
-use function Fp\Collection\exists;
+
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
+use function Fp\Evidence\proveTrue;
 
 /**
  * @psalm-type CallInfo = array{
@@ -43,74 +47,28 @@ use function Fp\Evidence\proveString;
  */
 final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterface
 {
-    /**
-     * FQN of conditionally pure functions or static methods
-     */
-    private const CONDITIONALLY_PURE = [
-        'Fp\Collection\at',
-        'Fp\Collection\butLast',
-        'Fp\Collection\every',
-        'Fp\Collection\exists',
-        'Fp\Collection\filter',
-        'Fp\Collection\first',
-        'Fp\Collection\flatMap',
-        'Fp\Collection\fold',
-        'Fp\Collection\groupBy',
-        'Fp\Collection\head',
-        'Fp\Collection\keys',
-        'Fp\Collection\last',
-        'Fp\Collection\map',
-        'Fp\Collection\partition',
-        'Fp\Collection\pluck',
-        'Fp\Collection\pop',
-        'Fp\Collection\reduce',
-        'Fp\Collection\reindex',
-        'Fp\Collection\reverse',
-        'Fp\Collection\second',
-        'Fp\Collection\shift',
-        'Fp\Collection\tail',
-        'Fp\Collection\unique',
-        'Fp\Collection\zip',
-        LinkedList::class.'::collect',
-        ArrayList::class.'::collect',
-        HashSet::class.'::collect',
-        HashMap::class.'::collect',
-        HashMap::class.'::collectPairs',
-        NonEmptyLinkedList::class.'::collect',
-        NonEmptyLinkedList::class.'::collectUnsafe',
-        NonEmptyLinkedList::class.'::collectNonEmpty',
-        NonEmptyArrayList::class.'::collect',
-        NonEmptyArrayList::class.'::collectUnsafe',
-        NonEmptyArrayList::class.'::collectNonEmpty',
-        NonEmptyHashSet::class.'::collect',
-        NonEmptyHashSet::class.'::collectUnsafe',
-        NonEmptyHashSet::class.'::collectNonEmpty',
-        NonEmptyHashMap::class.'::collect',
-        NonEmptyHashMap::class.'::collectUnsafe',
-        NonEmptyHashMap::class.'::collectNonEmpty',
-        NonEmptyHashMap::class.'::collectPairs',
-        NonEmptyHashMap::class.'::collectPairsUnsafe',
-        NonEmptyHashMap::class.'::collectPairsNonEmpty',
-        Stream::class.'::emits',
-    ];
-
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {
         Option::do(function() use ($event) {
             $call_info = yield self::getCallInfo($event->getExpr(), $event->getContext());
+            $conditionally_pure = self::getConditionallyPureSet();
+            $immutable_pure = self::getInImmutableContextPureSet();
+            $call_name = $call_info['call_name'];
+            $call_node = $call_info['call_node'];
+            $class_likes = $event->getCodebase()->classlikes;
 
-            if (!self::isConditionallyPure($call_info['call_name'])) {
-                return;
-            }
-
-            $codebase = $event->getCodebase();
-            $source = $event->getStatementsSource();
-
-            if (self::hasImpureArg($codebase, $source, $call_info['call_node']->args)) {
-                return;
-            }
-
-            self::removeImpureCallIssue($source, $call_info['call_node']);
+            yield proveTrue($conditionally_pure($call_name) && !self::hasImpureArg(
+                    $event->getCodebase(),
+                    $event->getStatementsSource(),
+                    ArrayList::collect($call_node->args)
+                ))
+                ->orElse(fn() => proveTrue($immutable_pure($call_name))
+                    ->flatMap(fn() => Option::fromNullable($event->getContext()->self))
+                    ->flatMap(fn($self) => Option::fromNullable($class_likes->getStorageFor($self)))
+                    ->filter(fn(ClassLikeStorage $class_like) => $class_like->mutation_free)
+                    ->filter(fn(ClassLikeStorage $class_like) => $class_like->external_mutation_free)
+                )
+                ->tap(fn() => self::removeImpureCallIssue($event->getStatementsSource(), $call_node));
         });
 
         return null;
@@ -127,9 +85,7 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
             $pathname = $source->getFilePath();
             $issues = IssueBuffer::getIssuesData();
 
-            if (!array_key_exists($pathname, $issues)) {
-                return;
-            }
+            yield proveTrue(array_key_exists($pathname, $issues));
 
             $issue_type = match (true) {
                 $call instanceof FuncCall => 'ImpureFunctionCall',
@@ -156,7 +112,6 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
     {
         return Option::do(function() use ($expr) {
             $func_call = yield proveOf($expr, FuncCall::class);
-
             $func_name = yield proveOf($func_call->name, Name::class)
                 ->flatMap(fn($name) => proveString($name->getAttribute('resolvedName')));
 
@@ -190,22 +145,16 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
         });
     }
 
-    private static function isConditionallyPure(string $call_name): bool
-    {
-        return in_array($call_name, self::CONDITIONALLY_PURE, true);
-    }
-
     /**
      * All iterable, impure-callable or mixed args are impure.
-     * @param list<Arg> $call_args
+     *
+     * @param Seq<Arg> $call_args
      */
-    private static function hasImpureArg(Codebase $codebase, StatementsSource $source, array $call_args): bool
+    private static function hasImpureArg(Codebase $codebase, StatementsSource $source, Seq $call_args): bool
     {
-        $arg_is_impure = fn(Arg $arg): bool => Psalm::getArgUnion($arg, $source)
-            ->map(fn($arg_type) => self::isArgTypeImpure($codebase, $arg_type))
-            ->getOrElse(true);
-
-        return exists($call_args, $arg_is_impure);
+        return $call_args
+            ->filterMap(fn(Arg $arg) => Psalm::getArgUnion($arg, $source))
+            ->exists(fn(Union $arg_type) => self::isArgTypeImpure($codebase, $arg_type));
     }
 
     private static function isArgTypeImpure(Codebase $codebase, Union $arg_type): bool
@@ -228,5 +177,85 @@ final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterfac
         ]);
 
         return UnionTypeComparator::isContainedBy($codebase, $callable_type, $pure_callable_type);
+    }
+
+    /**
+     * FQN of conditionally pure functions or static methods
+     *
+     * @return Set<string>
+     */
+    public static function getConditionallyPureSet(): Set
+    {
+        static $whiteList = null;
+
+        if (is_null($whiteList)) {
+            $whiteList = HashSet::collect([
+                'Fp\Collection\at',
+                'Fp\Collection\butLast',
+                'Fp\Collection\every',
+                'Fp\Collection\exists',
+                'Fp\Collection\filter',
+                'Fp\Collection\first',
+                'Fp\Collection\flatMap',
+                'Fp\Collection\fold',
+                'Fp\Collection\groupBy',
+                'Fp\Collection\head',
+                'Fp\Collection\keys',
+                'Fp\Collection\last',
+                'Fp\Collection\map',
+                'Fp\Collection\partition',
+                'Fp\Collection\pluck',
+                'Fp\Collection\pop',
+                'Fp\Collection\reduce',
+                'Fp\Collection\reindex',
+                'Fp\Collection\reverse',
+                'Fp\Collection\second',
+                'Fp\Collection\shift',
+                'Fp\Collection\tail',
+                'Fp\Collection\unique',
+                'Fp\Collection\zip',
+                LinkedList::class.'::collect',
+                ArrayList::class.'::collect',
+                HashSet::class.'::collect',
+                HashMap::class.'::collect',
+                HashMap::class.'::collectPairs',
+                NonEmptyLinkedList::class.'::collect',
+                NonEmptyLinkedList::class.'::collectUnsafe',
+                NonEmptyLinkedList::class.'::collectNonEmpty',
+                NonEmptyArrayList::class.'::collect',
+                NonEmptyArrayList::class.'::collectUnsafe',
+                NonEmptyArrayList::class.'::collectNonEmpty',
+                NonEmptyHashSet::class.'::collect',
+                NonEmptyHashSet::class.'::collectUnsafe',
+                NonEmptyHashSet::class.'::collectNonEmpty',
+                NonEmptyHashMap::class.'::collect',
+                NonEmptyHashMap::class.'::collectUnsafe',
+                NonEmptyHashMap::class.'::collectNonEmpty',
+                NonEmptyHashMap::class.'::collectPairs',
+                NonEmptyHashMap::class.'::collectPairsUnsafe',
+                NonEmptyHashMap::class.'::collectPairsNonEmpty',
+                Stream::class.'::emits',
+            ]);
+        }
+
+        /** @var Set<string> */
+        return $whiteList;
+    }
+
+    /**
+     * @return Set<string>
+     */
+    public static function getInImmutableContextPureSet(): Set
+    {
+        static $whiteList = null;
+
+        if (is_null($whiteList)) {
+            $whiteList = HashSet::collect([
+                'Fp\Callable\asGenerator',
+            ]);
+        }
+
+        /** @var Set<string> */
+        return $whiteList;
     }
 }

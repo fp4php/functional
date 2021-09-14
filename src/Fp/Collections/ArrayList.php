@@ -130,4 +130,12 @@ final class ArrayList implements Seq
         array_shift($buffer);
         return new self($buffer);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->elements);
+    }
 }

@@ -103,4 +103,12 @@ abstract class LinkedList implements Seq
             $this instanceof Nil => $this,
         };
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isEmpty(): bool
+    {
+        return $this instanceof Nil;
+    }
 }

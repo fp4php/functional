@@ -196,4 +196,22 @@ interface SeqTerminalOps
      * @psalm-return Option<TV>
      */
     public function lastElement(): Option;
+
+    /**
+     * Check if collection has no elements
+     *
+     * REPL:
+     * >>> LinkedList::collect([])->isEmpty()
+     * => true
+     */
+    public function isEmpty(): bool;
+
+    /**
+     * Check if collection has no elements
+     *
+     * REPL:
+     * >>> LinkedList::collect([])->isNonEmpty()
+     * => false
+     */
+    public function isNonEmpty(): bool;
 }

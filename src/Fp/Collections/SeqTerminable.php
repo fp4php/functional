@@ -278,5 +278,13 @@ trait SeqTerminable
 
         return $buffer->toHashMap();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function isNonEmpty(): bool
+    {
+        return !$this->isEmpty();
+    }
 }
 
