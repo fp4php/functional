@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Streams;
 
-use ArrayIterator;
 use Error;
 use Fp\Functional\Option\Option;
 use Generator;
-use Iterator;
-use IteratorIterator;
 
 use function Fp\of;
 
@@ -26,7 +23,7 @@ trait StreamTerminable
     private bool $drained = false;
 
     /**
-     * Note: You can not iterate the stream the second time
+     * Note: You can not iterate the stream second time
      *
      * @inheritDoc
      * @return Generator<TV>

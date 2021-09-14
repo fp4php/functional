@@ -13,10 +13,10 @@ use function Fp\Callable\asGenerator;
  * @template TK
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractMap<TK, TV>
+ * @extends AbstractOrderedMap<TK, TV>
  * @implements StaticStorage<empty>
  */
-final class HashMap extends AbstractMap implements StaticStorage
+final class HashMap extends AbstractOrderedMap implements StaticStorage
 {
     /**
      * @internal

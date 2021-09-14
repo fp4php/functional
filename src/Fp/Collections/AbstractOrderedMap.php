@@ -12,9 +12,9 @@ use Iterator;
  * @psalm-immutable
  * @template TK
  * @template-covariant TV
- * @implements Map<TK, TV>
+ * @implements OrderedMap<TK, TV>
  */
-abstract class AbstractMap implements Map
+abstract class AbstractOrderedMap implements OrderedMap
 {
     /**
      * REPL:
