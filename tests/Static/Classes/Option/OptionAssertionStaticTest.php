@@ -106,6 +106,19 @@ final class OptionAssertionStaticTest
      * @param Option<int> $option
      * @return Some<int>
      */
+    public function testIsNonEmptyWithTernaryTrueBranch(Option $option): Some
+    {
+        return $option->isNonEmpty()
+            ? call_user_func(function() use ($option) {
+                return $option;
+            })
+            : throw new Error();
+    }
+
+    /**
+     * @param Option<int> $option
+     * @return Some<int>
+     */
     public function testIsEmptyWithFalseBranch(Option $option): Some
     {
         if ($option->isEmpty()) {
@@ -139,19 +152,6 @@ final class OptionAssertionStaticTest
             : call_user_func(function() use ($option) {
                 return $option;
             });
-    }
-
-    /**
-     * @param Option<int> $option
-     * @return Some<int>
-     */
-    public function testIsNonEmptyWithTernaryTrueBranch(Option $option): Some
-    {
-        return $option->isNonEmpty()
-            ? call_user_func(function() use ($option) {
-                return $option;
-            })
-            : throw new Error();
     }
 
     /**
