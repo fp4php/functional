@@ -5,20 +5,16 @@ declare(strict_types=1);
 namespace Tests\Static\Functions\Json;
 
 use Fp\Functional\Either\Either;
-use Tests\PhpBlockTestCase;
 
-final class JsonDecodeTest extends PhpBlockTestCase
+use function Fp\Json\jsonDecode;
+
+final class JsonDecodeTest
 {
-    public function testDecode(): void
+    /**
+     * @return Either<string, array|scalar>
+     */
+    public function testDecode(): Either
     {
-        $phpBlock = /** @lang InjectablePHP */ '
-            $json = "{}";
-            $result = \Fp\Json\jsonDecode($json);
-        ';
-
-        $this->assertBlockTypes(
-            $phpBlock,
-            'Either<string, array<array-key, mixed>|scalar>'
-        );
+        return jsonDecode("{}");
     }
 }

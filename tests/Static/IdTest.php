@@ -4,23 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Static;
 
-use Tests\PhpBlockTestCase;
+use function Fp\id;
 
-final class IdTest extends PhpBlockTestCase
+final class IdTest
 {
-    public function testWithArray(): void
+    /**
+     * @psalm-return 1
+     */
+    public function testWithArray(): int
     {
-        $phpBlock = /** @lang InjectablePHP */ '
-            /** 
-             * @psalm-return array<string, int> 
-             */
-            function getCollection(): array { return []; }
-            
-            $result = \Fp\id(
-                getCollection(),
-            );
-        ';
-
-        $this->assertBlockTypes($phpBlock, 'array<string, int>');
+        return id(1);
     }
 }
