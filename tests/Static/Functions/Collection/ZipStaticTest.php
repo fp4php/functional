@@ -6,7 +6,7 @@ namespace Tests\Static\Functions\Collection;
 
 use function Fp\Collection\zip;
 
-final class ZipTest
+final class ZipStaticTest
 {
     /**
      * @param array<string, int> $coll1
