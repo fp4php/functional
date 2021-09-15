@@ -8,7 +8,7 @@ use Fp\Functional\Option\Option;
 
 use function Fp\Cast\asNonEmptyList;
 
-final class AsNonEmptyListTest
+final class AsNonEmptyListStaticTest
 {
     /**
      * @param iterable<string, int> $coll

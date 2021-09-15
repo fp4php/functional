@@ -15,7 +15,7 @@ final class EitherAssertionStaticTest
      * @param Either<string, int> $either
      * @return Right<int>
      */
-    public function testIsRightWithIfTrueBranch(mixed $either): mixed
+    public function testIsRightWithIfTrueBranch(Either $either): Right
     {
         if ($either->isRight()) {
             return $either;
@@ -28,7 +28,7 @@ final class EitherAssertionStaticTest
      * @param Either<string, int> $either
      * @return Left<string>
      */
-    public function testIsRightWithIfFalseBranch(mixed $either): mixed
+    public function testIsRightWithIfFalseBranch(Either $either): Left
     {
         if ($either->isRight()) {
             throw new Error();
@@ -41,7 +41,7 @@ final class EitherAssertionStaticTest
      * @param Either<string, int> $either
      * @return Right<int>
      */
-    public function testIsRightWithTernaryTrueBranch(mixed $either): mixed
+    public function testIsRightWithTernaryTrueBranch(Either $either): Right
     {
         return $either->isRight()
             ? $either
@@ -52,7 +52,7 @@ final class EitherAssertionStaticTest
      * @param Either<string, int> $either
      * @return Left<string>
      */
-    public function testIsRightWithTernaryFalseBranch(mixed $either): mixed
+    public function testIsRightWithTernaryFalseBranch(Either $either): Left
     {
         return $either->isRight()
             ? throw new Error()
@@ -63,7 +63,7 @@ final class EitherAssertionStaticTest
      * @param Either<string, int> $either
      * @return Left<string>
      */
-    public function testIsLeftWithTernaryTrueBranch(mixed $either): mixed
+    public function testIsLeftWithTernaryTrueBranch(Either $either): Left
     {
         return $either->isLeft()
             ? $either
@@ -74,7 +74,7 @@ final class EitherAssertionStaticTest
      * @param Either<string, int> $either
      * @return Right<int>
      */
-    public function testIsLeftWithTernaryFalseBranch(mixed $either): mixed
+    public function testIsLeftWithTernaryFalseBranch(Either $either): Right
     {
         return $either->isLeft()
             ? throw new Error()

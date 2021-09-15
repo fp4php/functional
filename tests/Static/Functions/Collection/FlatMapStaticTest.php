@@ -6,7 +6,7 @@ namespace Tests\Static\Functions\Collection;
 
 use function Fp\Collection\flatMap;
 
-final class FlatMapTest
+final class FlatMapStaticTest
 {
     /**
      * @param array<string, int> $coll

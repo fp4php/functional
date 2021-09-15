@@ -8,7 +8,7 @@ use Fp\Functional\Either\Either;
 
 use function Fp\Json\jsonDecode;
 
-final class JsonDecodeTest
+final class JsonDecodeStaticTest
 {
     /**
      * @return Either<string, array|scalar>
