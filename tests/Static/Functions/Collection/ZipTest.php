@@ -4,29 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Static\Functions\Collection;
 
-use Tests\PhpBlockTestCase;
+use function Fp\Collection\zip;
 
-final class ZipTest extends PhpBlockTestCase
+final class ZipTest
 {
-    public function testWithIterable(): void
+    /**
+     * @param array<string, int> $coll1
+     * @param iterable<string, bool> $coll2
+     * @return list<array{int, bool}>
+     */
+    public function testWithIterable(array $coll1, iterable $coll2): array
     {
-        $phpBlock = /** @lang InjectablePHP */ '
-            /** 
-             * @psalm-return iterable<string, int> 
-             */
-            function getCollectionA(): array { return []; }
-            
-            /** 
-             * @psalm-return iterable<string, bool> 
-             */
-            function getCollectionB(): array { return []; }
-            
-            $result = \Fp\Collection\zip(
-                getCollectionA(),
-                getCollectionB(), 
-            );
-        ';
-
-        $this->assertBlockTypes($phpBlock, 'list<array{int, bool}>');
+        return zip($coll1, $coll2);
     }
 }
