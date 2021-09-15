@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Tests\Static\Functions\Callable;
 
 use Closure;
-use Tests\PhpBlockTestCase;
 
 use function Fp\Callable\partialLeft;
 use function Fp\Callable\partialRight;
 
-final class PartialStaticTest extends PhpBlockTestCase
+final class PartialStaticTest
 {
     /**
      * @psalm-return (pure-Closure(string, bool): true)
