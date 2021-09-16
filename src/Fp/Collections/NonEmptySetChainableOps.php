@@ -50,6 +50,20 @@ interface NonEmptySetChainableOps
     public function filter(callable $predicate): Set;
 
     /**
+     * Filter elements of given class
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, new Foo(2)])->filterOf(Foo::class)->toArray()
+     * => [Foo(2)]
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Set<TVO>
+     */
+    public function filterOf(string $fqcn, bool $invariant = false): Set;
+
+    /**
      * A combined {@see NonEmptySet::map} and {@see NonEmptySet::filter}.
      *
      * Filtering is handled via Option instead of Boolean.
@@ -92,6 +106,17 @@ interface NonEmptySetChainableOps
      * @psalm-return NonEmptySet<TVO>
      */
     public function map(callable $callback): NonEmptySet;
+
+    /**
+     * REPL:
+     * >>> NonEmptyHashSet::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toArray()
+     * => [1, 2, 3, 4, 5, 6]
+     *
+     * @psalm-template TVO
+     * @psalm-param callable(TV): iterable<TVO> $callback
+     * @psalm-return Set<TVO>
+     */
+    public function flatMap(callable $callback): Set;
 
     /**
      * Call a function for every collection element

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Classes\HashMap;
+namespace Tests\Runtime\Interfaces\Map;
 
 use Fp\Collections\HashMap;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
-final class HashMapTest extends TestCase
+final class MapTest extends TestCase
 {
     public function testCollect(): void
     {

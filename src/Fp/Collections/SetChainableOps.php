@@ -50,6 +50,20 @@ interface SetChainableOps
     public function filter(callable $predicate): Set;
 
     /**
+     * Filter elements of given class
+     *
+     * REPL:
+     * >>> HashSet::collect([1, 1, new Foo(2)])->filterOf(Foo::class)->toArray()
+     * => [Foo(2)]
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Set<TVO>
+     */
+    public function filterOf(string $fqcn, bool $invariant = false): Set;
+
+    /**
      * Exclude null elements
      *
      * REPL:

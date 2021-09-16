@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
+use function Fp\of;
 
 /**
  * @template-covariant TV
@@ -114,6 +115,18 @@ final class HashSet extends AbstractSet
             $value = $e->value;
             return $predicate($value);
         }));
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return self<TVO>
+     */
+    public function filterOf(string $fqcn, bool $invariant = false): self
+    {
+        return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
     }
 
     /**

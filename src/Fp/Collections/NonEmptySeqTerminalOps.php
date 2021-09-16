@@ -25,6 +25,20 @@ interface NonEmptySeqTerminalOps
     public function at(int $index): Option;
 
     /**
+     * Alias for {@see NonEmptySeqTerminalOps::at()}
+     *
+     * Find element by its index
+     * Returns None if there is no such collection element
+     *
+     * REPL:
+     * >>> NonEmptyLinkedList::collect([1, 2])(1)->get()
+     * => 2
+     *
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option;
+
+    /**
      * Returns true if every collection element satisfy the condition
      * false otherwise
      *

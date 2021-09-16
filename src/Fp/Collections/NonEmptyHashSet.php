@@ -9,6 +9,7 @@ use Fp\Functional\Option\Option;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
+use function Fp\of;
 
 /**
  * @template-covariant TV
@@ -134,6 +135,18 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
 
     /**
      * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Set<TVO>
+     */
+    public function filterOf(string $fqcn, bool $invariant = false): Set
+    {
+        return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+    }
+
+    /**
+     * @inheritDoc
      * @template TVO
      * @param callable(TV): Option<TVO> $callback
      * @return Set<TVO>
@@ -163,6 +176,23 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
         return self::collectUnsafe(asGenerator(function () use ($callback) {
             foreach ($this as $element) {
                 yield $callback($element);
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param callable(TV): iterable<TVO> $callback
+     * @psalm-return Set<TVO>
+     */
+    public function flatMap(callable $callback): Set
+    {
+        return HashSet::collect(asGenerator(function () use ($callback) {
+            foreach ($this as $element) {
+                foreach ($callback($element) as $item) {
+                    yield $item;
+                }
             }
         }));
     }

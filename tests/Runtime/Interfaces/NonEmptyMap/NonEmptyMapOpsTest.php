@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Classes\HashMap;
+namespace Tests\Runtime\Interfaces\NonEmptyMap;
 
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Foo;
 
-final class NonEmptyHashMapOpsTest extends TestCase
+final class NonEmptyMapOpsTest extends TestCase
 {
     public function testGet(): void
     {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Classes\HashSet;
+namespace Tests\Runtime\Interfaces\Set;
 
 use Fp\Collections\HashSet;
 use Fp\Functional\Option\Option;

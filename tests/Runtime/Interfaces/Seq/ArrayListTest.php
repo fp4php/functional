@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Classes\ArrayList;
+namespace Tests\Runtime\Interfaces\Seq;
 
 use Fp\Collections\ArrayList;
 use PHPUnit\Framework\TestCase;

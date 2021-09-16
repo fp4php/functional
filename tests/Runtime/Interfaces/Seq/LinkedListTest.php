@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Classes\LinkedList;
+namespace Tests\Runtime\Interfaces\Seq;
 
 use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyLinkedList;

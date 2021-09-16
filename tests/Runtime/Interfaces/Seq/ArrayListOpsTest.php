@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Runtime\Classes\LinkedList;
+namespace Tests\Runtime\Interfaces\Seq;
 
-use Fp\Collections\LinkedList;
-use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\ArrayList;
+use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
@@ -14,16 +14,16 @@ use Tests\Mock\SubBar;
 
 use function Fp\Cast\asList;
 
-final class LinkedListOpsTest extends TestCase
+final class ArrayListOpsTest extends TestCase
 {
     public function testAppendPrepend(): void
     {
-        $linkedList = LinkedList::collect([1, 2, 3]);
+        $linkedList = ArrayList::collect([1, 2, 3]);
         $linkedList = $linkedList
             ->prepended(0)
             ->appended(4)
             ->appendedAll([5, 6])
-            ->prependedAll([-2, -1]);;
+            ->prependedAll([-2, -1]);
 
         $list = asList($linkedList);
 
@@ -35,16 +35,20 @@ final class LinkedListOpsTest extends TestCase
 
     public function testAt(): void
     {
-        $linkedList = LinkedList::collect([0, 1, 2, 3, 4, 5]);
+        $linkedList = ArrayList::collect([0, 1, 2, 3, 4, 5]);
 
         $this->assertEquals(0, $linkedList->at(0)->getUnsafe());
         $this->assertEquals(3, $linkedList->at(3)->getUnsafe());
         $this->assertEquals(5, $linkedList->at(5)->getUnsafe());
+
+        $this->assertEquals(0, $linkedList(0)->getUnsafe());
+        $this->assertEquals(3, $linkedList(3)->getUnsafe());
+        $this->assertEquals(5, $linkedList(5)->getUnsafe());
     }
 
     public function testEvery(): void
     {
-        $linkedList = LinkedList::collect([0, 1, 2, 3, 4, 5]);
+        $linkedList = ArrayList::collect([0, 1, 2, 3, 4, 5]);
 
         $this->assertTrue($linkedList->every(fn($i) => $i >= 0));
         $this->assertFalse($linkedList->every(fn($i) => $i > 0));
@@ -52,8 +56,8 @@ final class LinkedListOpsTest extends TestCase
 
     public function testEveryOf(): void
     {
-        $linkedList0 = LinkedList::collect([new Foo(1), new Foo(1)]);
-        $linkedList1 = LinkedList::collect([new Bar(true), new Foo(1)]);
+        $linkedList0 = ArrayList::collect([new Foo(1), new Foo(1)]);
+        $linkedList1 = ArrayList::collect([new Bar(true), new Foo(1)]);
 
         $this->assertTrue($linkedList0->everyOf(Foo::class));
         $this->assertFalse($linkedList1->everyOf(Foo::class));
@@ -61,8 +65,8 @@ final class LinkedListOpsTest extends TestCase
 
     public function testExists(): void
     {
-        /** @psalm-var LinkedList<mixed> $linkedList */
-        $linkedList = LinkedList::collect([new Foo(1), 1, new Foo(1)]);
+        /** @psalm-var ArrayList<mixed> $linkedList */
+        $linkedList = ArrayList::collect([new Foo(1), 1, new Foo(1)]);
 
         $this->assertTrue($linkedList->exists(fn($i) => $i === 1));
         $this->assertFalse($linkedList->exists(fn($i) => $i === 2));
@@ -70,7 +74,7 @@ final class LinkedListOpsTest extends TestCase
 
     public function testExistsOf(): void
     {
-        $linkedList = LinkedList::collect([1, new Foo(1)]);
+        $linkedList = ArrayList::collect([1, new Foo(1)]);
 
         $this->assertTrue($linkedList->existsOf(Foo::class));
         $this->assertFalse($linkedList->existsOf(Bar::class));
@@ -78,7 +82,7 @@ final class LinkedListOpsTest extends TestCase
 
     public function testFilter(): void
     {
-        $linkedList = LinkedList::collect([new Foo(1), 1, new Foo(1)]);
+        $linkedList = ArrayList::collect([new Foo(1), 1, new Foo(1)]);
         $this->assertEquals([1], $linkedList->filter(fn($i) => $i === 1)->toArray());
     }
 
@@ -86,7 +90,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2],
-            NonEmptyLinkedList::collectNonEmpty(['zero', '1', '2'])
+            ArrayList::collect(['zero', '1', '2'])
                 ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
                 ->toArray()
         );
@@ -94,7 +98,7 @@ final class LinkedListOpsTest extends TestCase
 
     public function testFilterNotNull(): void
     {
-        $linkedList = LinkedList::collect([1, null, 3]);
+        $linkedList = ArrayList::collect([1, null, 3]);
         $this->assertEquals([1, 3], $linkedList->filterNotNull()->toArray());
     }
 
@@ -102,7 +106,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $bar = new Bar(1);
         $subBar = new SubBar(1);
-        $linkedList = LinkedList::collect([new Foo(1), $bar, $subBar]);
+        $linkedList = ArrayList::collect([new Foo(1), $bar, $subBar]);
 
         $this->assertEquals([$bar, $subBar], $linkedList->filterOf(Bar::class, false)->toArray());
         $this->assertEquals([$bar], $linkedList->filterOf(Bar::class, true)->toArray());
@@ -110,8 +114,8 @@ final class LinkedListOpsTest extends TestCase
 
     public function testFirst(): void
     {
-        /** @psalm-var LinkedList<mixed> $linkedList */
-        $linkedList = LinkedList::collect([new Foo(1), 2, 1, 3]);
+        /** @psalm-var ArrayList<mixed> $linkedList */
+        $linkedList = ArrayList::collect([new Foo(1), 2, 1, 3]);
 
         $this->assertEquals(1, $linkedList->first(fn($e) => 1 === $e)->get());
         $this->assertNull($linkedList->first(fn($e) => 5 === $e)->get());
@@ -121,7 +125,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $bar = new Bar(1);
         $subBar = new SubBar(1);
-        $linkedList = LinkedList::collect([new Foo(1), $subBar, $bar]);
+        $linkedList = ArrayList::collect([new Foo(1), $subBar, $bar]);
 
         $this->assertEquals($subBar, $linkedList->firstOf(Bar::class, false)->get());
         $this->assertEquals($bar, $linkedList->firstOf(Bar::class, true)->get());
@@ -131,14 +135,14 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3, 4, 5, 6],
-            LinkedList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
+            ArrayList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
         );
     }
 
     public function testFold(): void
     {
-        /** @psalm-var LinkedList<int> $list */
-        $list = LinkedList::collect([2, 3]);
+        /** @psalm-var ArrayList<int> $list */
+        $list = ArrayList::collect([2, 3]);
 
         $this->assertEquals(
             6,
@@ -150,7 +154,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             2,
-            LinkedList::collect([2, 3])->head()->get()
+            ArrayList::collect([2, 3])->head()->get()
         );
     }
 
@@ -158,7 +162,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             3,
-            LinkedList::collect([2, 3, 0])->last(fn($e) => $e > 0)->get()
+            ArrayList::collect([2, 3, 0])->last(fn($e) => $e > 0)->get()
         );
     }
 
@@ -166,7 +170,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             1,
-            LinkedList::collect([1, 2, 3])->firstElement()->get()
+            ArrayList::collect([1, 2, 3])->firstElement()->get()
         );
     }
 
@@ -174,7 +178,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             0,
-            LinkedList::collect([2, 3, 0])->lastElement()->get()
+            ArrayList::collect([2, 3, 0])->lastElement()->get()
         );
     }
 
@@ -182,14 +186,14 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             ['2', '3', '4'],
-            LinkedList::collect([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
+            ArrayList::collect([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
         );
     }
 
     public function testReduce(): void
     {
-        /** @psalm-var LinkedList<string> $list */
-        $list = LinkedList::collect(['1', '2', '3']);
+        /** @psalm-var ArrayList<string> $list */
+        $list = ArrayList::collect(['1', '2', '3']);
 
         $this->assertEquals(
             '123',
@@ -201,7 +205,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             [3, 2, 1],
-            LinkedList::collect([1, 2, 3])->reverse()->toArray()
+            ArrayList::collect([1, 2, 3])->reverse()->toArray()
         );
     }
 
@@ -209,7 +213,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             [2, 3],
-            LinkedList::collect([1, 2, 3])->tail()->toArray()
+            ArrayList::collect([1, 2, 3])->tail()->toArray()
         );
     }
 
@@ -219,7 +223,7 @@ final class LinkedListOpsTest extends TestCase
         $foo2 = new Foo(2);
         $this->assertEquals(
             [$foo1, $foo2],
-            LinkedList::collect([$foo1, $foo1, $foo2])->unique(fn(Foo $e) => $e->a)->toArray()
+            ArrayList::collect([$foo1, $foo1, $foo2])->unique(fn(Foo $e) => $e->a)->toArray()
         );
     }
 
@@ -227,39 +231,22 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             [0, 1],
-            LinkedList::collect([0, 1, 2])->takeWhile(fn($e) => $e < 2)->toArray()
-        );
-
-        $this->assertEquals(
-            [2, 3, 4],
-            LinkedList::collect([0, 1, 2, 3, 4])->dropWhile(fn($e) => $e < 2)->toArray()
-        );
-
-        $fooList = [
-            new Foo(1, false, false),
-            new Foo(2, false, false),
-            new Foo(3, true, false),
-            new Foo(4, false, true),
-            new Foo(5, false, true),
-            new Foo(6, false, true),
-            new Foo(7, false, true),
-        ];
-        $this->assertEquals(
-            [1, 2, 3, 4, 5, 6, 7],
-            LinkedList::collect($fooList)
-                ->dropWhile(fn(Foo $foo) => $foo->b || $foo->c)
-                ->map(fn(Foo $foo) => $foo->a)
-                ->toArray()
-        );
-
-        $this->assertEquals(
-            [0, 1],
-            LinkedList::collect([0, 1, 2])->take(2)->toArray()
+            ArrayList::collect([0, 1, 2])->takeWhile(fn($e) => $e < 2)->toArray()
         );
 
         $this->assertEquals(
             [2],
-            LinkedList::collect([0, 1, 2])->drop(2)->toArray()
+            ArrayList::collect([0, 1, 2])->dropWhile(fn($e) => $e < 2)->toArray()
+        );
+
+        $this->assertEquals(
+            [0, 1],
+            ArrayList::collect([0, 1, 2])->take(2)->toArray()
+        );
+
+        $this->assertEquals(
+            [2],
+            ArrayList::collect([0, 1, 2])->drop(2)->toArray()
         );
     }
 
@@ -270,17 +257,17 @@ final class LinkedListOpsTest extends TestCase
             $f3 = new Foo(1), $f4 = new Foo(3)
         ];
 
-        $res1 = LinkedList::collect($fooList)
+        $res1 = ArrayList::collect($fooList)
             ->groupBy(fn(Foo $foo) => $foo)
             ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
-        $res2 = LinkedList::collect($fooList)
+        $res2 = ArrayList::collect($fooList)
             ->groupBy(fn(Foo $foo) => $foo->a)
             ->map(fn($entry) => $entry->value->toArray())
             ->toArray();
 
-        $res3 = LinkedList::collect($fooList)
+        $res3 = ArrayList::collect($fooList)
             ->map(fn(Foo $foo) => $foo->a)
             ->groupBy(fn(int $a) => $a)
             ->map(fn($entry) => $entry->value->toArray())
@@ -295,12 +282,12 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            LinkedList::collect([3, 2, 1])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+            ArrayList::collect([3, 2, 1])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
         );
 
         $this->assertEquals(
             [3, 2, 1],
-            LinkedList::collect([3, 2, 1])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+            ArrayList::collect([3, 2, 1])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
         );
     }
 
@@ -308,7 +295,7 @@ final class LinkedListOpsTest extends TestCase
     {
         $this->assertEquals(
             [2, 3],
-            LinkedList::collect([new Foo(1), new Foo(2)])
+            ArrayList::collect([new Foo(1), new Foo(2)])
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
                 ->toArray()
