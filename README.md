@@ -7,8 +7,9 @@ PHP Functional Programming library. Monads and common use functions.
 
 ## Documentation
 - ### [Collections](doc/Collections.md)
-- ### [Functions](doc/Functions.md)
+- ### [Streams](doc/Streams.md)
 - ### [Monads](doc/Monads.md)
+- ### [Functions](doc/Functions.md)
 
 
 ## Installation
