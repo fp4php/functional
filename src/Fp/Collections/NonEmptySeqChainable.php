@@ -145,7 +145,6 @@ trait NonEmptySeqChainable
         $sorted = $this->toArray();
 
         /**
-         * @todo implement stable pure sort
          * @psalm-suppress ImpureFunctionCall, InvalidArgument
          */
         usort($sorted, $cmp);

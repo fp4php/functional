@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\AfterExpressionAnalysis;
 
 use Fp\Collections\HashMap;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\StaticStorage;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
@@ -36,7 +37,9 @@ final class MapGetMethodCallAnalysis implements AfterExpressionAnalysisInterface
 
             $var_union = yield Psalm::getNodeUnion($call->var, $event->getStatementsSource());
             $keyed_array = yield Psalm::getUnionSingleAtomicOf($var_union, TGenericObject::class)
-                ->filter(fn(TGenericObject $object) => classOf($object->value, HashMap::class))
+                ->filter(fn(TGenericObject $object) => classOf($object->value, HashMap::class)
+                    || classOf($object->value, NonEmptyHashMap::class)
+                )
                 ->flatMap(fn(TGenericObject $object) => Option::fromNullable($object->extra_types))
                 ->flatMap(fn($extra) => firstOf($extra, TGenericObject::class))
                 ->filter(fn(TGenericObject $object) => classOf($object->value, StaticStorage::class))
