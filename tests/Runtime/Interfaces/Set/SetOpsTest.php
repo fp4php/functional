@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
-final class HashSetOpsTest extends TestCase
+final class SetOpsTest extends TestCase
 {
     public function testContains(): void
     {

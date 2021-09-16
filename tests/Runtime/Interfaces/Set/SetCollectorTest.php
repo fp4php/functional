@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
-final class HashSetTest extends TestCase
+final class SetCollectorTest extends TestCase
 {
     public function testCollect(): void
     {
@@ -45,38 +45,5 @@ final class HashSetTest extends TestCase
             1,
             HashSet::collect([$bar1, $bar2])->toArray()
         );
-    }
-
-    public function testCasts(): void
-    {
-        $this->assertEquals(
-            [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toArray(),
-        );
-
-        $this->assertEquals(
-            [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toLinkedList()->toArray(),
-        );
-
-        $this->assertEquals(
-            [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toArrayList()->toArray(),
-        );
-
-        $this->assertEquals(
-            [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toHashSet()->toArray(),
-        );
-
-        $this->assertEquals(
-            [[1, 1], [2, 2], [3, 3]],
-            HashSet::collect([1, 2, 3])->toHashMap(fn($e) => [$e, $e])->toArray(),
-        );
-    }
-
-    public function testCount(): void
-    {
-        $this->assertEquals(3, HashSet::collect([1, 2, 3])->count());
     }
 }

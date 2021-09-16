@@ -11,19 +11,6 @@ use Tests\Mock\Foo;
 
 final class MapTest extends TestCase
 {
-    public function testCollect(): void
-    {
-        $this->assertEquals(
-            [['a', 1], ['b', 2]],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toArray(),
-        );
-
-        $this->assertEquals(
-            [['a', 1], ['b', 2]],
-            HashMap::collect(['a' => 1, 'b' => 2])->toArray(),
-        );
-    }
-
     public function testCasts(): void
     {
         $this->assertEquals(
