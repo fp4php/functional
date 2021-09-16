@@ -107,4 +107,15 @@ interface NonEmptySetChainableOps
      * @psalm-return NonEmptySet<TV>
      */
     public function tap(callable $callback): NonEmptySet;
+
+    /**
+     * Returns every collection element except first
+     *
+     * REPL:
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toArray()
+     * => [2, 3]
+     *
+     * @psalm-return Set<TV>
+     */
+    public function tail(): Set;
 }

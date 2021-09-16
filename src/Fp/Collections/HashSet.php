@@ -12,9 +12,9 @@ use function Fp\Callable\asGenerator;
 /**
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractOrderedSet<TV>
+ * @extends AbstractSet<TV>
  */
-final class HashSet extends AbstractOrderedSet
+final class HashSet extends AbstractSet
 {
     /**
      * @param HashMap<TV, TV> $map

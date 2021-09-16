@@ -13,20 +13,30 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @implements OrderedSet<TV>
+ * @implements NonEmptySet<TV>
  */
-abstract class AbstractOrderedSet implements OrderedSet
+abstract class AbstractNonEmptySet implements NonEmptySet
 {
     /**
-     * REPL:
-     * >>> HashSet::collect([1, 2])
-     * => HashSet(1, 2)
-     *
+     * @template TVI
+     * @param iterable<TVI> $source
+     * @return Option<self<TVI>>
+     */
+    abstract public static function collect(iterable $source): Option;
+
+    /**
      * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
      */
-    abstract public static function collect(iterable $source): self;
+    abstract public static function collectUnsafe(iterable $source): self;
+
+    /**
+     * @template TVI
+     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
+     * @return self<TVI>
+     */
+    abstract public static function collectNonEmpty(array|NonEmptyCollection $source): self;
 
     /**
      * @inheritDoc
@@ -50,13 +60,13 @@ abstract class AbstractOrderedSet implements OrderedSet
 
     /**
      * @inheritDoc
-     * @return list<TV>
+     * @return non-empty-list<TV>
      */
     public function toArray(): array
     {
-        $buffer = [];
+        $buffer = [$this->head()];
 
-        foreach ($this as $elem) {
+        foreach ($this->tail() as $elem) {
             $buffer[] = $elem;
         }
 
@@ -83,9 +93,33 @@ abstract class AbstractOrderedSet implements OrderedSet
 
     /**
      * @inheritDoc
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectUnsafe($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyArrayList<TV>
+     */
+    public function toNonEmptyArrayList(): NonEmptyArrayList
+    {
+        return NonEmptyArrayList::collectUnsafe($this);
+    }
+
+    /**
+     * @inheritDoc
      * @return HashSet<TV>
      */
     abstract public function toHashSet(): HashSet;
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyHashSet<TV>
+     */
+    abstract public function toNonEmptyHashSet(): NonEmptyHashSet;
 
     /**
      * @inheritDoc
@@ -97,6 +131,22 @@ abstract class AbstractOrderedSet implements OrderedSet
     public function toHashMap(callable $callback): HashMap
     {
         return HashMap::collectPairs(asGenerator(function () use ($callback) {
+            foreach ($this as $elem) {
+                yield $callback($elem);
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return NonEmptyHashMap<TKI, TVI>
+     */
+    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
+    {
+        return NonEmptyHashMap::collectPairsUnsafe(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
@@ -183,72 +233,6 @@ abstract class AbstractOrderedSet implements OrderedSet
         return Option::fromNullable($first);
     }
 
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
-     */
-    public function firstOf(string $fqcn, bool $invariant = false): Option
-    {
-        /** @var Option<TVO> */
-        return $this->first(fn(mixed $v): bool => of($v, $fqcn, $invariant));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
-     */
-    public function fold(mixed $init, callable $callback): mixed
-    {
-        $acc = $init;
-
-        foreach ($this as $element) {
-            $acc = $callback($acc, $element);
-        }
-
-        return $acc;
-    }
-
-    /**
-     * @inheritDoc
-     * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return Option<TV|TA>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return $this->head()->map(function ($head) use ($callback) {
-            /** @var TV $acc */
-            $acc = $head;
-
-            foreach ($this->tail() as $element) {
-                $acc = $callback($acc, $element);
-            }
-
-            return $acc;
-        });
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function head(): Option
-    {
-        $head = null;
-
-        foreach ($this as $element) {
-            $head = $element;
-            break;
-        }
-
-        return Option::fromNullable($head);
-    }
 
     /**
      * @inheritDoc
@@ -270,20 +254,66 @@ abstract class AbstractOrderedSet implements OrderedSet
 
     /**
      * @inheritDoc
-     * @psalm-return Option<TV>
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
      */
-    public function firstElement(): Option
+    public function firstOf(string $fqcn, bool $invariant = false): Option
+    {
+        /** @var Option<TVO> */
+        return $this->first(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
+     * @psalm-return (TV|TA)
+     */
+    public function reduce(callable $callback): mixed
+    {
+        $acc = $this->head();
+
+        foreach ($this->tail() as $element) {
+            $acc = $callback($acc, $element);
+        }
+
+        return $acc;
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return TV
+     */
+    public function head(): mixed
+    {
+        $head = null;
+
+        foreach ($this as $element) {
+            $head = $element;
+            break;
+        }
+
+        return Option::fromNullable($head)->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return TV
+     */
+    public function firstElement(): mixed
     {
         return $this->head();
     }
 
     /**
      * @inheritDoc
-     * @psalm-return Option<TV>
+     * @psalm-return TV
      */
-    public function lastElement(): Option
+    public function lastElement(): mixed
     {
-        return $this->last(fn() => true);
+        return $this->last(fn() => true)->getUnsafe();
     }
 
     /**

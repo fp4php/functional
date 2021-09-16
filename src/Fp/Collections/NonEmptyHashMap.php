@@ -13,9 +13,9 @@ use function Fp\Callable\asGenerator;
  * @template TK
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractNonEmptyOrderedMap<TK, TV>
+ * @extends AbstractNonEmptyMap<TK, TV>
  */
-final class NonEmptyHashMap extends AbstractNonEmptyOrderedMap
+final class NonEmptyHashMap extends AbstractNonEmptyMap
 {
     /**
      * @internal

@@ -13,9 +13,9 @@ use function Fp\Callable\asGenerator;
 /**
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractNonEmptyOrderedSet<TV>
+ * @extends AbstractNonEmptySet<TV>
  */
-final class NonEmptyHashSet extends AbstractNonEmptyOrderedSet
+final class NonEmptyHashSet extends AbstractNonEmptySet
 {
     /**
      * @internal
