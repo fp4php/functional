@@ -198,4 +198,10 @@ final class EitherTest extends TestCase
             Either::left(['err'])->toValidated(),
         );
     }
+
+    public function testToOption(): void
+    {
+        $this->assertEquals(1, Either::right(1)->toOption()->get());
+        $this->assertNull(Either::left(1)->toOption()->get());
+    }
 }

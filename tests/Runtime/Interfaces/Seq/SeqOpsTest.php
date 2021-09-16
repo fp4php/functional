@@ -460,4 +460,38 @@ final class SeqOpsTest extends TestCase
             $seq->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
         );
     }
+
+    public function provideTestIsEmptyData(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([1, 2, 3]), ArrayList::collect([])];
+        yield LinkedList::class => [LinkedList::collect([1, 2, 3]), LinkedList::collect([])];
+    }
+
+    /**
+     * @dataProvider provideTestIsEmptyData
+     */
+    public function testIsEmpty(Seq $seq1, Seq $seq2): void
+    {
+        $this->assertFalse($seq1->isEmpty());
+        $this->assertTrue($seq1->isNonEmpty());
+        $this->assertTrue($seq2->isEmpty());
+        $this->assertFalse($seq2->isNonEmpty());
+    }
+
+    public function provideTestTakeAndDropData(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([0, 1, 2])];
+        yield LinkedList::class => [LinkedList::collect([0, 1, 2])];
+    }
+
+    /**
+     * @dataProvider provideTestTakeAndDropData
+     */
+    public function testTakeAndDrop(Seq $seq): void
+    {
+        $this->assertEquals([0, 1], $seq->takeWhile(fn($e) => $e < 2)->toArray());
+        $this->assertEquals([2], $seq->dropWhile(fn($e) => $e < 2)->toArray());
+        $this->assertEquals([0, 1], $seq->take(2)->toArray());
+        $this->assertEquals([2], $seq->drop(2)->toArray());
+    }
 }

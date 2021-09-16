@@ -460,4 +460,21 @@ final class NonEmptySeqOpsTest extends TestCase
             $seq->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
         );
     }
+
+    public function provideTestTakeAndDropData(): Generator
+    {
+        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([0, 1, 2])];
+        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([0, 1, 2])];
+    }
+
+    /**
+     * @dataProvider provideTestTakeAndDropData
+     */
+    public function testTakeAndDrop(NonEmptySeq $seq): void
+    {
+        $this->assertEquals([0, 1], $seq->takeWhile(fn($e) => $e < 2)->toArray());
+        $this->assertEquals([2], $seq->dropWhile(fn($e) => $e < 2)->toArray());
+        $this->assertEquals([0, 1], $seq->take(2)->toArray());
+        $this->assertEquals([2], $seq->drop(2)->toArray());
+    }
 }

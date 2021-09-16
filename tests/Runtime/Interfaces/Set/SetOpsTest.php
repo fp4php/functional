@@ -72,6 +72,12 @@ final class SetOpsTest extends TestCase
         $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toArray());
     }
 
+    public function testFilterOf(): void
+    {
+        $hs = HashSet::collect([new Foo(1), 1, 2, new Foo(1)]);
+        $this->assertCount(1, $hs->filterOf(Foo::class));
+    }
+
     public function testFilterMap(): void
     {
         $this->assertEquals(
@@ -147,20 +153,10 @@ final class SetOpsTest extends TestCase
 
     public function testSubsetOf(): void
     {
-        $this->assertTrue(
-            HashSet::collect([])->subsetOf(HashSet::collect([]))
-        );
-        $this->assertTrue(
-            HashSet::collect([])->subsetOf(HashSet::collect([1, 2, 3]))
-        );
-        $this->assertTrue(
-            HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2]))
-        );
-        $this->assertTrue(
-            HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2, 3]))
-        );
-        $this->assertFalse(
-            HashSet::collect([1, 2, 3])->subsetOf(HashSet::collect([1, 2]))
-        );
+        $this->assertTrue(HashSet::collect([])->subsetOf(HashSet::collect([])));
+        $this->assertTrue(HashSet::collect([])->subsetOf(HashSet::collect([1, 2, 3])));
+        $this->assertTrue(HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2])));
+        $this->assertTrue(HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2, 3])));
+        $this->assertFalse(HashSet::collect([1, 2, 3])->subsetOf(HashSet::collect([1, 2])));
     }
 }

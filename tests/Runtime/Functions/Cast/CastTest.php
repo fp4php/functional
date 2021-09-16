@@ -7,6 +7,7 @@ namespace Tests\Runtime\Functions\Cast;
 use Fp\Functional\Option\None;
 use PHPUnit\Framework\TestCase;
 
+use function Fp\Callable\asGenerator;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asBool;
 use function Fp\Cast\asFloat;
@@ -71,5 +72,15 @@ final class CastTest extends TestCase
 
         $this->assertEquals([0, 1, 2], array_keys(asNonEmptyList($c)->get() ?? []));
         $this->assertInstanceOf(None::class, asNonEmptyList([]));
+    }
+
+    public function testAsGenerator(): void
+    {
+        $this->assertEquals([1, 2], asList(asGenerator(function() {
+            yield 1;
+            yield 2;
+        })));
+
+        $this->assertEquals([1, 2], asList(asGenerator(fn() => [1, 2])));
     }
 }

@@ -12,6 +12,8 @@ use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Bar;
+use Tests\Mock\Foo;
 
 final class OptionTest extends TestCase
 {
@@ -153,11 +155,34 @@ final class OptionTest extends TestCase
         $this->assertEquals(null, $none);
     }
 
+    public function testFilterOf(): void
+    {
+        $this->assertInstanceOf(
+            Foo::class,
+            Option::some(new Foo(1))->filterOf(Foo::class)->get()
+        );
+        $this->assertNull(
+            Option::some(new Bar(1))->filterOf(Foo::class)->get()
+        );
+    }
+
     public function testCond(): void
     {
         $this->assertEquals('some', Option::cond(true, 'some')->get());
         $this->assertEquals('some', Option::condLazy(true, fn() => 'some')->get());
         $this->assertNull(Option::condLazy(false, fn() => throw new Error())->get());
         $this->assertNull(Option::cond(false, 'some')->get());
+    }
+
+    public function testTap(): void
+    {
+        $this->assertEquals(1, Option::some(1)->tap(fn($e) => $e)->get());
+        $this->assertNull(Option::none()->tap(fn($e) => $e)->get());
+    }
+
+    public function testFlatTap(): void
+    {
+        $this->assertEquals(1, Option::some(1)->flatTap(fn($e) => Option::some(2))->get());
+        $this->assertNull(Option::some(1)->flatTap(fn($e) => Option::none())->get());
     }
 }

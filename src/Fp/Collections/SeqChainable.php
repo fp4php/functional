@@ -191,26 +191,6 @@ trait SeqChainable
 
     /**
      * @inheritDoc
-     * @psalm-return self<TV>
-     */
-    public function tail(): self
-    {
-        return self::collect(asGenerator(function () {
-            $isFirst = true;
-
-            foreach ($this as $elem) {
-                if ($isFirst) {
-                    $isFirst = false;
-                    continue;
-                }
-
-                yield $elem;
-            }
-        }));
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return self<TV>
      */
