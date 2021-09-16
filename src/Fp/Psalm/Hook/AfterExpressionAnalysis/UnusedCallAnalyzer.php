@@ -40,7 +40,7 @@ use function Fp\Evidence\proveTrue;
  *     call_node: FuncCall|MethodCall,
  * }
  */
-final class UnusedCallAnalysis implements AfterExpressionAnalysisInterface
+final class UnusedCallAnalyzer implements AfterExpressionAnalysisInterface
 {
     /**
      * @return Set<string>

@@ -45,7 +45,7 @@ use function Fp\Evidence\proveTrue;
  *     call_node: FuncCall|StaticCall,
  * }
  */
-final class ConditionallyPureAnalysis implements AfterExpressionAnalysisInterface
+final class ConditionallyPureAnalyzer implements AfterExpressionAnalysisInterface
 {
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {

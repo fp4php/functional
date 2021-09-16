@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
-use Fp\Psalm\Hook\AfterExpressionAnalysis\ConditionallyPureAnalysis;
-use Fp\Psalm\Hook\AfterExpressionAnalysis\MapGetMethodCallAnalysis;
-use Fp\Psalm\Hook\AfterExpressionAnalysis\ProveTrueExpressionAnalysis;
-use Fp\Psalm\Hook\AfterExpressionAnalysis\UnusedCallAnalysis;
-use Fp\Psalm\Hook\AfterMethodCallAnalysis\EitherAssertionAnalysis;
-use Fp\Psalm\Hook\AfterMethodCallAnalysis\OptionAssertionAnalysis;
-use Fp\Psalm\Hook\AfterMethodCallAnalysis\StaticStorageAnalysis;
-use Fp\Psalm\Hook\AfterMethodCallAnalysis\ValidatedAssertionAnalysis;
+use Fp\Psalm\Hook\AfterExpressionAnalysis\ConditionallyPureAnalyzer;
+use Fp\Psalm\Hook\AfterExpressionAnalysis\StaticStorageRefinementAnalyzer;
+use Fp\Psalm\Hook\AfterExpressionAnalysis\ProveTrueExpressionAnalyzer;
+use Fp\Psalm\Hook\AfterExpressionAnalysis\UnusedCallAnalyzer;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\EitherAssertionAnalyzer;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\OptionAssertionAnalyzer;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\StaticStorageCollectorAnalyzer;
+use Fp\Psalm\Hook\AfterMethodCallAnalysis\ValidatedAssertionAnalyzer;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider;
@@ -46,13 +46,13 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(OptionFilterMethodReturnTypeProvider::class);
         $register(MapGetMethodReturnTypeProvider::class);
 
-        $register(OptionAssertionAnalysis::class);
-        $register(EitherAssertionAnalysis::class);
-        $register(ValidatedAssertionAnalysis::class);
-        $register(ProveTrueExpressionAnalysis::class);
-        $register(ConditionallyPureAnalysis::class);
-        $register(UnusedCallAnalysis::class);
-        $register(StaticStorageAnalysis::class);
-        $register(MapGetMethodCallAnalysis::class);
+        $register(OptionAssertionAnalyzer::class);
+        $register(EitherAssertionAnalyzer::class);
+        $register(ValidatedAssertionAnalyzer::class);
+        $register(ProveTrueExpressionAnalyzer::class);
+        $register(ConditionallyPureAnalyzer::class);
+        $register(UnusedCallAnalyzer::class);
+        $register(StaticStorageCollectorAnalyzer::class);
+        $register(StaticStorageRefinementAnalyzer::class);
     }
 }

@@ -19,7 +19,7 @@ use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 
 use function Fp\Evidence\proveOf;
 
-final class ProveTrueExpressionAnalysis implements AfterExpressionAnalysisInterface
+final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterface
 {
     public static function getFunctionIds(): array
     {

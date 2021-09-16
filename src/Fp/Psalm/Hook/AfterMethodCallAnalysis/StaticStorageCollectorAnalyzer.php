@@ -25,7 +25,7 @@ use function Fp\Evidence\proveNonEmptyArrayOf;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
-final class StaticStorageAnalysis implements AfterMethodCallAnalysisInterface
+final class StaticStorageCollectorAnalyzer implements AfterMethodCallAnalysisInterface
 {
     private const COLLECT = 'collect';
     private const COLLECT_UNSAFE = 'collectUnsafe';
@@ -71,7 +71,7 @@ final class StaticStorageAnalysis implements AfterMethodCallAnalysisInterface
                 ->flatMap(fn(StaticCall $call) => proveOf($call->name, Identifier::class))
                 ->map(fn(Identifier $id) => $id->name);
 
-            $storage = self::filterPairCollector($method_name, $union)->getOrElse($union);
+            $storage = self::adaptPairsToDict($method_name, $union)->getOrElse($union);
 
             $candidate = yield Option::fromNullable($event->getReturnTypeCandidate());
             $generic_object = yield Psalm::getUnionSingleAtomicOf($candidate, TGenericObject::class);
@@ -82,7 +82,7 @@ final class StaticStorageAnalysis implements AfterMethodCallAnalysisInterface
     /**
      * @psalm-return Option<Union>
      */
-    private static function filterPairCollector(string $method_name, Union $storage): Option
+    private static function adaptPairsToDict(string $method_name, Union $storage): Option
     {
         return Option::some($method_name)
             ->filter(fn($method) => in_array($method, [

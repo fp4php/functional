@@ -26,7 +26,7 @@ use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 use function Fp\objectOf;
 
-final class MapGetMethodCallAnalysis implements AfterExpressionAnalysisInterface
+final class StaticStorageRefinementAnalyzer implements AfterExpressionAnalysisInterface
 {
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {

@@ -9,7 +9,7 @@ use Fp\Psalm\Util\TypeAssertion\TypeAssertion;
 use Psalm\Plugin\EventHandler\AfterMethodCallAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterMethodCallAnalysisEvent;
 
-final class EitherAssertionAnalysis implements AfterMethodCallAnalysisInterface
+final class EitherAssertionAnalyzer implements AfterMethodCallAnalysisInterface
 {
     private const ASSERTION_METHODS = ['isLeft', 'isRight'];
 
