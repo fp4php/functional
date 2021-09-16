@@ -106,6 +106,30 @@ $prependedCollection = $originalCollection->prepended(0);
 $mappedCollection = $prependedCollection->map(fn(int $elem) => $elem + 1);
 ```
 
+- Static storage
+```php
+/**
+ * Inferred type is HashMap<'a'|'b', 1|2> & StaticStorage<array{a: 1, b: 2}> 
+ */
+$hashMap = HashMap::collect(['a' => 1, 'b' => 2]);
+
+/**
+ * Inferred type is Some<1>
+ * 
+ * Psalm plugin will check if there is corresponding element 
+ * in $hashMap static storage constructed with HashMap::collect call.
+ */
+$some = $hashMap->get('a'); 
+
+/**
+ * Inferred type is Option<1|2>
+ * 
+ * It's Option and not Some because there is no element with 'c' key
+ * in $hashMap static storage.
+ */
+$option = $hashMap->get('c');
+```
+
 - Null safety
 ```php
 /**
