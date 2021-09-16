@@ -142,6 +142,7 @@ final class NonEmptyHashSet extends AbstractNonEmptySet
      */
     public function filterOf(string $fqcn, bool $invariant = false): Set
     {
+        /** @var Set<TVO> */
         return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
     }
 

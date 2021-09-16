@@ -126,6 +126,7 @@ final class HashSet extends AbstractSet
      */
     public function filterOf(string $fqcn, bool $invariant = false): self
     {
+        /** @var self<TVO> */
         return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
     }
 

@@ -39,18 +39,18 @@ interface StreamEmitter
     public static function emits(iterable $source): Stream;
 
     /**
-     * Repeat this stream
+     * Repeat this stream an infinite number of times.
      *
      * REPL:
-     * >>> Stream::emit(1)->repeat()->toArray()
-     * => [1, 1]
+     * >>> Stream::emits([1,2,3])->repeat()->take(8)->toArray()
+     * => [1, 2, 3, 1, 2, 3, 1, 2]
      *
      * @return Stream<TV>
      */
     public function repeat(): Stream;
 
     /**
-     * Repeat this stream
+     * Repeat this stream N times
      *
      * REPL:
      * >>> Stream::emit(1)->repeatN(3)->toArray()
@@ -88,10 +88,10 @@ interface StreamEmitter
      * >>> Stream::range(0, 10, 2)->toArray()
      * => [0, 2, 4, 6, 8]
      *
-     * @param positive-int $start
-     * @param positive-int $stopExclusive
-     * @param positive-int $by
-     * @return Stream<int>
+     * @psalm-param 0|positive-int $start
+     * @psalm-param 0|positive-int $stopExclusive
+     * @psalm-param positive-int $by
+     * @psalm-return Stream<int>
      */
     public static function range(int $start, int $stopExclusive, int $by = 1): Stream;
 

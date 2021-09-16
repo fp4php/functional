@@ -305,10 +305,10 @@ trait StreamChainable
 
             foreach ($this as $elem) {
                 if ($i < $length) {
+                    $i++;
                     continue;
                 }
 
-                $i++;
                 yield $elem;
             }
         }));
@@ -325,8 +325,8 @@ trait StreamChainable
             foreach ($this as $elem) {
                 /** @var TV $e */
                 $e = $elem;
-                yield $elem;
                 $callback($e);
+                yield $elem;
             }
         }));
     }
@@ -337,7 +337,20 @@ trait StreamChainable
      */
     public function repeat(): self
     {
-        return $this->repeatN(1);
+        return $this->fork(asGenerator(function () {
+            /** @var Seq<TV> $buffer */
+            $buffer = ArrayList::collect($this);
+
+            foreach ($buffer as $elem) {
+                yield $elem;
+            }
+
+            while(true) {
+                foreach ($buffer as $elem) {
+                    yield $elem;
+                }
+            }
+        }));
     }
 
     /**
