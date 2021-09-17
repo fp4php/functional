@@ -131,6 +131,42 @@ $some = $hashMap->get('a');
 $option = $hashMap->get('c');
 ```
 
+```php
+class StaticStorageExample
+{
+    const STATIC_STORAGE = [
+        'a' => 1,
+        'b' => 2,
+    ];
+
+    /**
+     * @psalm-var NonEmptyMap & StaticStorage<self::STATIC_STORAGE>
+     */
+    private NonEmptyMap $map;
+
+    public function __construct()
+    {
+        $this->map = NonEmptyHashMap::collectNonEmpty(self::STATIC_STORAGE);
+    }
+
+    /**
+     * @psalm-return Some<1>
+     */
+    public function getSome(): Option
+    {
+        return $this->map->get('a');
+    }
+
+    /**
+     * @psalm-return 1
+     */
+    public function getOne(): int
+    {
+        return $this->getSome()->get();
+    }
+}
+```
+
 - Null safety
 ```php
 /**
