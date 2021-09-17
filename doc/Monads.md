@@ -17,6 +17,7 @@ Prevents null pointer exceptions and allow short-circuiting the
 computation if there was step which returned None.
 
 ``` php
+
 /** 
  * @return Option<User> 
  */
@@ -85,6 +86,7 @@ Allow short-circuiting the computation if there was step which returned
 Left (error outcome).
 
 ``` php
+
 /** 
  * @return Either<string, User> 
  */
@@ -156,6 +158,7 @@ In case of long computation chain you can use do notation to shorten
 amount of code. Do-notation is just syntax-sugar.
 
 ``` php
+
 /** 
  * @return Option<User> 
  */
@@ -190,7 +193,7 @@ $status = Option::do(function () {
 
 # Examples
 
--   #### Type assertions with Option
+  - #### Type assertions with Option
 
 Type assertions with Option monad via [PHP
 generators](https://www.php.net/manual/en/language.generators.syntax.php)
@@ -218,7 +221,7 @@ $maybeFooMaybeNot = Option::do(function() use ($untrusted) {
 $foo = $maybeFooMaybeNot->getOrCall(fn() => new Foo(0))
 ```
 
--   #### Filter chaining
+  - #### Filter chaining
 
 Build complex filters with small Option-based blocks
 

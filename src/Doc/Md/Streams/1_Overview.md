@@ -9,9 +9,6 @@ Every non-terminal stream operation will produce new stream fork. No more than o
 Stream can be created from any iterable. Additionally, there are fabric static methods.
 
 ```php
-use Fp\Streams\Stream;
-use Fp\Functional\Option\Option;
-
 Stream::emit(1)
     ->repeat() // [1, 1, ...] infinite stream
     ->map(fn(int $i) => $i + 1) // [2, 2, ...] infinite stream
@@ -20,14 +17,11 @@ Stream::emit(1)
 ```
 
 ```php
-use Fp\Streams\Stream;
-use Fp\Functional\Option\Option;
-
 /**
  * @return Option<float>
  */
-function safeDiv(int $divident, int $divisor): Option {
-    return Option::condLazy(0 === $divisor, fn() => $divident / $divisor);
+function safeDiv(int $dividend, int $divisor): Option {
+    return Option::condLazy(0 !== $divisor, fn() => $dividend / $divisor);
 }
 
 Stream::emits([0, 2])
@@ -38,9 +32,6 @@ Stream::emits([0, 2])
 ```
 
 ```php
-use Fp\Streams\Stream;
-use Fp\Functional\Option\Option;
-
 /**
  * Several streams may be interleaved together
  * It's zip + flatMap combination 
@@ -53,9 +44,6 @@ Stream::emits([1, 2, 3])
 ```
 
 ```php
-use Fp\Streams\Stream;
-use Fp\Functional\Option\Option;
-
 Stream::awakeEvery(5) // emit elapsed time every 5 seconds
     ->map(fn(int $elapsed) => "$elapsed seconds elapsed from stream start")
     ->lines() // print element every 5 seconds to stdout

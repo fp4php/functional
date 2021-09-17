@@ -59,7 +59,8 @@ $source = [new Foo(1), null, new Bar(2)];
  * Null type was removed
  * NonEmpty prefix was removed
  */
-$withoutNulls = NonEmptyArrayList::collectNonEmpty($source)->filterNotNull();
+$withoutNulls = NonEmptyArrayList::collectNonEmpty($source)
+    ->filter(fn(Foo|Bar|null $elem) => null !== $elem);
 
 /**
  * Inferred type is ArrayList<Foo>
