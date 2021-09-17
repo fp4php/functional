@@ -134,13 +134,13 @@ $option = $hashMap->get('c');
 ```php
 class StaticStorageExample
 {
-    const STATIC_STORAGE = [
+    private const STATIC_STORAGE = [
         'a' => 1,
         'b' => 2,
     ];
 
     /**
-     * @psalm-var NonEmptyMap & StaticStorage<self::STATIC_STORAGE>
+     * @psalm-var NonEmptyMap<string, int> & StaticStorage<self::STATIC_STORAGE>
      */
     private NonEmptyMap $map;
 
