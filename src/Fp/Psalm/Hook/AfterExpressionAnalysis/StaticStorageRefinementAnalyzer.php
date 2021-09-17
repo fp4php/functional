@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\AfterExpressionAnalysis;
 
 use Fp\Collections\ArrayList;
-use Fp\Collections\HashMap;
 use Fp\Collections\Map;
-use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyMap;
 use Fp\Collections\StaticStorage;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use Fp\Psalm\Util\Psalm;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;

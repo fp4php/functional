@@ -26,6 +26,18 @@ Stream::emit(1)
 ```
 
 ``` php
+Stream::infinite() 
+    ->map(fn() => rand(0, 9)) // infinite stream of random digits
+    ->intersperse(',') // [x1, ',', x2, ',', ...]
+    ->tap(function () {
+        // constant memory usage
+        echo memory_get_usage(true) . PHP_EOL; 
+    })
+    ->take(50000) // make infinite stream finite
+    ->fold('', fn(string $acc, $elem) => $acc . $elem); // call terminal operation to run stream
+```
+
+``` php
 /**
  * @return Option<float>
  */
