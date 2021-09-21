@@ -12,9 +12,9 @@ use Iterator;
  * @psalm-immutable
  * @extends NonEmptyCollection<array{TK, TV}>
  * @extends NonEmptyMapOps<TK, TV>
- * @extends NonEmptyMapCastableOps<TK, TV>
+ * @extends NonEmptyMapCollector<TK, TV>
  */
-interface NonEmptyMap extends NonEmptyCollection, NonEmptyMapOps, NonEmptyMapCastableOps
+interface NonEmptyMap extends NonEmptyCollection, NonEmptyMapOps, NonEmptyMapCollector
 {
     /**
      * @inheritDoc
