@@ -17,9 +17,12 @@ use Iterator;
 abstract class AbstractMap implements Map
 {
     /**
-     * REPL:
-     * >>> HashMap::collect(['a' =>  1, 'b' => 2])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> HashMap::collect(['a' =>  1, 'b' => 2]);
      * => HashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI
@@ -29,9 +32,11 @@ abstract class AbstractMap implements Map
     abstract public static function collect(iterable $source): self;
 
     /**
-     * REPL:
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])
+     * @todo move doc to interface
+     * ```php
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]]);
      * => HashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI

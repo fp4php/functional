@@ -10,14 +10,16 @@ use Generator;
 /**
  * Returns collection unique elements
  *
- * REPL:
+ * ```php
  * >>> unique([1, 2, 2, 3, 3, 3, 3]);
  * => [1, 2, 3]
+ *
  * >>> unique(
  *     [new User(id: 1), new User(id: 1), new User(id: 2)],
  *     fn(User $user) => $user->getId()
  * );
  * => [User(1), User(2)]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

@@ -11,10 +11,10 @@ use Throwable;
 /**
  * Returns class reflection or Left on exception
  *
- * REPL:
+ * ```php
  * >>> getReflectionClass(Foo::class);
- * => Either<Throwable, ReflectionClass>
- *
+ * => Right(ReflectionClass(Foo::class))
+ * ```
  *
  * @template T of object
  * @psalm-param T|class-string<T> $objectOrClass

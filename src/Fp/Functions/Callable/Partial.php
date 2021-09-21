@@ -13,11 +13,11 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
  * These N arguments will be locked at corresponding places (callback parameters)
  * from left-side and new callback will be returned with fewer arguments.
  *
- * REPL:
- * >>> $callback = fn(int $a, string $b, bool $c): bool => true;
- * => callable(int, string, bool): bool
- * >>> partial($callback, 1, "string");
- * => callable(bool): bool
+ * ```php
+ * >>> $f = fn(int $a, string $b, bool $c): bool => true;
+ * >>> partial($f, 1, "string");
+ * => fn(bool $c) => $f(1, "string", $c)
+ * ```
  *
  * Alias for {@see partialLeft}
  *

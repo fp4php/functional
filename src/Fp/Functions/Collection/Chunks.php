@@ -11,9 +11,10 @@ use Generator;
  *
  * Warning: you can not rewind the generator
  *
- * REPL:
+ * ```php
  * >>> chunks([1, 2, 3, 4], 2);
  * => [[1, 2], [3, 4]]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

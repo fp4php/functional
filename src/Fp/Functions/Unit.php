@@ -11,12 +11,13 @@ const unit = '\Fp\unit';
 /**
  * Represents no return value for do-notation
  *
- * REPL:
- * >>> Option::do(function () use ($x) {
- *     yield proveTrue($x);
+ * ```php
+ * >>> Option::do(function () {
+ *     yield proveTrue(true);
  *     return unit();
  * })
- * => Option<Unit>
+ * => Some(Unit())
+ * ```
  */
 function unit(): Unit
 {

@@ -12,11 +12,13 @@ use function Fp\Collection\head;
 /**
  * Prove that given collection is of array type
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveArray($collection);
- * => Option<array<string, int>>
+ * ```php
+ * >>> proveArray([1, 2]);
+ * => Some([1, 2])
+ *
+ * >>> proveArray(true);
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -31,11 +33,13 @@ function proveArray(iterable $collection): Option
 /**
  * Prove that given collection is of non-empty-array type
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveNonEmptyArray($collection);
- * => Option<non-empty-array<string, int>>
+ * ```php
+ * >>> proveNonEmptyArray([1, 2]);
+ * => Some([1, 2])
+ *
+ * >>> proveNonEmptyArray([]);
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -57,11 +61,13 @@ function proveNonEmptyArray(iterable $collection): Option
  * Prove that collection is of array type
  * and every element is of given class
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveArrayOf($collection, Foo::class);
- * => Option<array<string, Foo>>
+ * ```php
+ * >>> proveArrayOf([new Foo(1), new Foo(2)]);
+ * => Some([Foo(1), Foo(2)])
+ *
+ * >>> proveArrayOf([new Foo(1), 2]);
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -86,11 +92,16 @@ function proveArrayOf(iterable $collection, string $fqcn, bool $invariant = fals
  * Prove that collection is of non-empty-array type
  * and every element is of given class
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveNonEmptyArrayOf(getCollection(), Foo::class);
- * => Option<non-empty-array<string, Foo>>
+ * ```php
+ * >>> proveNonEmptyArrayOf([new Foo(1), new Foo(2)]);
+ * => Some([Foo(1), Foo(2)])
+ *
+ * >>> proveNonEmptyArrayOf([new Foo(1), 2]);
+ * => None
+ *
+ * >>> proveNonEmptyArrayOf([]);
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

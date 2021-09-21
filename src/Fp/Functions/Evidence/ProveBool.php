@@ -9,9 +9,13 @@ use Fp\Functional\Option\Option;
 /**
  * Prove that subject is of boolean type
  *
- * REPL:
+ * ```php
  * >>> proveBool(true);
- * => Some<true>
+ * => Some(true)
+ *
+ * >>> proveBool(1);
+ * => None
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $subject
@@ -27,9 +31,13 @@ function proveBool(mixed $subject): Option
  * Prove that subject is of boolean type
  * and it's value is true
  *
- * REPL:
+ * ```php
+ * >>> proveTrue(true);
+ * => Some(true)
+ *
  * >>> proveTrue(1);
  * => None
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $subject
@@ -45,9 +53,13 @@ function proveTrue(mixed $subject): Option
  * Prove that subject is of boolean type
  * and it's value is false
  *
- * REPL:
+ * ```php
  * >>> proveFalse(false);
- * => Some<false>
+ * => Some(false)
+ *
+ * >>> proveFalse(true);
+ * => None
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $subject

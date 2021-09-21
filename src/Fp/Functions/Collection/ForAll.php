@@ -7,9 +7,10 @@ namespace Fp\Collection;
 /**
  * Do something for all collection elements
  *
- * REPL:
+ * ```php
  * >>> forAll([1, 2, 3], function($v) { echo($v); });
  * => 123
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

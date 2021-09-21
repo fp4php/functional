@@ -15,12 +15,14 @@ use function Fp\Collection\filterNotNull;
  * Given callable(int): bool and callable(bool): string
  * Returns callable(int): string
  *
- * REPL:
+ * ```php
  * >>> $aToB = fn(int $a): bool => true;
  * >>> $bToC = fn(bool $b): string => (string) $b;
  * >>> $cTod = fn(string $c): float => (float) $c;
+ *
  * >>> compose($aToB, $bToC, $cTod);
- * => callable(int): float
+ * => fn(int $a): float => $cTod($bToC($aToB($a)))
+ * ```
  *
  * @psalm-template A
  * @psalm-template B

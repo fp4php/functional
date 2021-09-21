@@ -18,9 +18,12 @@ use function Fp\of;
 abstract class AbstractSet implements Set
 {
     /**
-     * REPL:
-     * >>> HashSet::collect([1, 2])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2]);
      * => HashSet(1, 2)
+     * ```
      *
      * @template TVI
      * @param iterable<TVI> $source

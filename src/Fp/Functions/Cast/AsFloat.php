@@ -10,9 +10,13 @@ use Fp\Functional\Option\Option;
  * Try cast float like value
  * Returns None if cast is not possible
  *
- * REPL:
+ * ```php
  * >>> asFloat('1.1');
- * => Option<float>
+ * => Some(1.1)
+ *
+ * >>> asFloat('1zxc1');
+ * => None
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $subject

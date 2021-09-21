@@ -10,9 +10,10 @@ use function Fp\Evidence\proveObject;
 /**
  * Check if object is of given class
  *
- * REPL:
+ * ```php
  * >>> of(new Foo(1), Foo::class);
  * => true
+ * ```
  *
  * @psalm-template TO
  * @psalm-param mixed $subject
@@ -29,9 +30,10 @@ function of(mixed $subject, string $fqcn, bool $invariant = false): bool
 /**
  * Check if object is of given class
  *
- * REPL:
+ * ```php
  * >>> of(new Foo(1), Foo::class);
  * => true
+ * ```
  *
  * @psalm-template TO
  * @psalm-param mixed $subject
@@ -53,9 +55,10 @@ function objectOf(mixed $subject, string $fqcn, bool $invariant = false): bool
 /**
  * Check if string is of given class
  *
- * REPL:
+ * ```php
  * >>> of(Foo::class, Foo::class);
  * => true
+ * ```
  *
  * @psalm-template TO
  * @psalm-param mixed $subject

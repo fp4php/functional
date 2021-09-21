@@ -17,9 +17,12 @@ use Iterator;
 abstract class AbstractNonEmptyMap implements NonEmptyMap
 {
     /**
-     * REPL:
-     * >>> NonEmptyHashMap::collect(['a' =>  1, 'b' => 2])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collect(['a' =>  1, 'b' => 2]);
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI
@@ -29,9 +32,12 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
     abstract public static function collect(iterable $source): Option;
 
     /**
-     * REPL:
-     * >>> NonEmptyHashMap::collectUnsafe(['a' =>  1, 'b' => 2])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectUnsafe(['a' =>  1, 'b' => 2]);
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI
@@ -41,9 +47,12 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
     abstract public static function collectUnsafe(iterable $source): self;
 
     /**
-     * REPL:
-     * >>> NonEmptyHashMap::collectNonEmpty(['a' =>  1, 'b' => 2])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty(['a' =>  1, 'b' => 2]);
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI
@@ -53,9 +62,12 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
     abstract public static function collectNonEmpty(array $source): self;
 
     /**
-     * REPL:
-     * >>> NonEmptyHashMap::collectPairs([['a', 1], ['b', 2]])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectPairs([['a', 1], ['b', 2]]);
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI
@@ -65,9 +77,12 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
     abstract public static function collectPairs(iterable $source): Option;
 
     /**
-     * REPL:
-     * >>> NonEmptyHashMap::collectPairsUnsafe([['a', 1], ['b', 2]])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsUnsafe([['a', 1], ['b', 2]]);
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI
@@ -77,9 +92,12 @@ abstract class AbstractNonEmptyMap implements NonEmptyMap
     abstract public static function collectPairsUnsafe(iterable $source): self;
 
     /**
-     * REPL:
-     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])
+     * @todo move doc to interface
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]]);
      * => NonEmptyHashMap('a' -> 1, 'b' -> 2)
+     * ```
      *
      * @template TKI
      * @template TVI

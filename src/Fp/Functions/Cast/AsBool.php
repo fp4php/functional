@@ -10,9 +10,16 @@ use Fp\Functional\Option\Option;
  * Try cast boolean like value
  * Returns None if cast is not possible
  *
- * REPL:
+ * ```php
  * >>> asBool('yes');
- * => Option<bool>
+ * => Some(true);
+ *
+ * >>> asBool('no');
+ * => Some(false)
+ *
+ * >>> asBool('xzc');
+ * => None
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $subject

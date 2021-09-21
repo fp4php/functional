@@ -7,9 +7,10 @@ namespace Fp\Collection;
 /**
  * Copy collection in reversed order
  *
- * REPL:
+ * ```php
  * >>> reverse([1, 2, 3]);
  * => [3, 2, 1]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

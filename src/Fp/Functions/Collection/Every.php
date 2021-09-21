@@ -10,9 +10,10 @@ use function Fp\of;
  * Returns true if every collection element satisfies the condition
  * false otherwise
  *
- * REPL:
+ * ```php
  * >>> every([1, 2], fn(int $v) => $v === 1);
  * => false
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -38,9 +39,10 @@ function every(iterable $collection, callable $predicate): bool
  * Returns true if every collection element is of given class
  * false otherwise
  *
- * REPL:
+ * ```php
  * >>> everyOf([1, new Foo()], Foo::class);
  * => false
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

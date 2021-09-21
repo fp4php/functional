@@ -12,11 +12,13 @@ use function Fp\Collection\head;
 /**
  * Prove that given collection is of list type
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveList($collection);
- * => Option<list<int>>
+ * ```php
+ * >>> proveList([1, 2]);
+ * => Some([1, 2])
+ *
+ * >>> proveList([1, 2 => 2]);
+ * => None
+ * ```
  *
  *
  * @psalm-template TK of array-key
@@ -53,12 +55,16 @@ function proveList(iterable $collection): Option
 /**
  * Prove that given collection is of non-empty-list type
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveNonEmptyList($collection);
- * => Option<non-empty-list<int>>
+ * ```php
+ * >>> proveNonEmptyList([1, 2]);
+ * => Some([1, 2])
  *
+ * >>> proveNonEmptyList([1, 2 => 2]);
+ * => None
+ *
+ * >>> proveNonEmptyList([]);
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -82,12 +88,13 @@ function proveNonEmptyList(iterable $collection): Option
  * Prove that collection is of list type
  * and every element is of given class
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveListOf($collection, Foo::class);
- * => Option<list<Foo>>
+ * ```php
+ * >>> proveListOf([new Foo(1), new Foo(2)], Foo::class);
+ * => Some([Foo(1), Foo(2)])
  *
+ * >>> proveListOf([new Foo(1), 2], Foo::class);
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -114,12 +121,16 @@ function proveListOf(iterable $collection, string $fqcn, bool $invariant = false
  * Prove that collection is of non-empty-list type
  * and every element is of given class
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> proveNonEmptyListOf(getCollection(), Foo::class);
- * => Option<non-empty-list<Foo>>
+ * ```php
+ * >>> proveNonEmptyListOf([new Foo(1), new Foo(2)], Foo::class);
+ * => Some([Foo(1), Foo(2)])
  *
+ * >>> proveNonEmptyListOf([new Foo(1), 2], Foo::class);
+ * => None
+ *
+ * >>> proveNonEmptyListOf([], Foo::class);
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -146,12 +157,13 @@ function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant
  * Prove that collection is of list type
  * and every element is of given scalar type
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int|string>
- * >>> proveListOfScalar($collection, 'int');
- * => Option<list<int>>
+ * ```php
+ * >>> proveListOfScalar([1, 2, 3], 'int');
+ * => Some([1, 2, 3])
  *
+ * >>> proveListOfScalar([1, '2', 3], 'int');
+ * => None
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

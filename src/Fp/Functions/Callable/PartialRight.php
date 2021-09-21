@@ -13,11 +13,11 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
  * And "string", true as arguments
  * Will return callable(int): bool
  *
- * REPL:
- * >>> $callback = fn(int $a, string $b, bool $c): bool => true;
- * => callable(int, string, bool): bool
- * >>> partial($callback, true, "string");
- * => callable(int): bool
+ * ```php
+ * >>> $f = fn(int $a, string $b, bool $c): bool => true;
+ * >>> partialRight($f, true, "string");
+ * => fn(int $a) => $f($a, "string", true)
+ * ```
  *
  * @see PartialFunctionReturnTypeProvider
  */

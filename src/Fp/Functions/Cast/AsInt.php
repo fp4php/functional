@@ -10,9 +10,13 @@ use Fp\Functional\Option\Option;
  * Try cast integer like value
  * Returns None if cast is not possible
  *
- * REPL:
+ * ```php
  * >>> asInt('1');
- * => Option<int>
+ * => Some(1)
+ *
+ * >>> asInt('zxc');
+ * => None
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $subject

@@ -10,9 +10,10 @@ use Fp\Functional\Option\Option;
  * Returns last collection element
  * and None if there is no last element
  *
- * REPL:
+ * ```php
  * >>> last([1, 2, 3])->get()
  * => 3
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

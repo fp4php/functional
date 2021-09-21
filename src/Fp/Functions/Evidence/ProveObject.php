@@ -9,11 +9,13 @@ use Fp\Functional\Option\Option;
 /**
  * Prove that subject is of integer type
  *
- * REPL:
+ * ```php
  * >>> proveObject(1);
  * => None
+ *
  * >>> proveObject(new Foo(1));
- * => Some<Foo(1)>
+ * => Some(Foo(1))
+ * ```
  *
  * @psalm-param mixed $potential
  * @psalm-return Option<object>

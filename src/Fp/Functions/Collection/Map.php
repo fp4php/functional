@@ -10,9 +10,10 @@ namespace Fp\Collection;
  *
  * Keys are preserved
  *
- * REPL:
+ * ```php
  * >>> map([1, 2, 3], fn(int $v) => (string) $v);
  * => ['1', '2', '3']
+ * ```
  *
  *
  * @psalm-template TK of array-key

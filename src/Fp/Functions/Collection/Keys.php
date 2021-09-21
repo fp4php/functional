@@ -7,9 +7,10 @@ namespace Fp\Collection;
 /**
  * Returns list of collection keys
  *
- * REPL:
+ * ```php
  * >>> keys(['a' => 1, 'b' => 2]);
  * => ['a', 'b']
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

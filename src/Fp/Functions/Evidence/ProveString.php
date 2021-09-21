@@ -9,11 +9,13 @@ use Fp\Functional\Option\Option;
 /**
  * Prove that subject is of string type
  *
- * REPL:
+ * ```php
  * >>> proveString('');
- * => Some<string>
+ * => Some('')
+ *
  * >>> proveString(1);
  * => None
+ * ```
  *
  * @psalm-pure
  * @psalm-template T
@@ -28,11 +30,13 @@ function proveString(mixed $potential): Option
 /**
  * Prove that subject is of class-string type
  *
- * REPL:
+ * ```php
  * >>> proveClassString(Foo:class);
- * => Some<class-string>
+ * => Some(Foo::class)
+ *
  * >>> proveClassString('');
  * => None
+ * ```
  *
  * @psalm-pure
  * @psalm-return Option<class-string>
@@ -45,11 +49,13 @@ function proveClassString(mixed $potential): Option
 /**
  * Prove that subject is of non-empty-string type
  *
- * REPL:
+ * ```php
  * >>> proveNonEmptyString('text');
- * => Some<non-empty-string>
+ * => Some('text')
+ *
  * >>> proveNonEmptyString('');
  * => None
+ * ```
  *
  * @psalm-pure
  * @psalm-return Option<non-empty-string>
@@ -64,11 +70,13 @@ function proveNonEmptyString(mixed $subject): Option
 /**
  * Prove that subject is of callable-string type
  *
- * REPL:
+ * ```php
  * >>> proveCallableString('array_map');
- * => Some<callable-string>
+ * => Some('array_map')
+ *
  * >>> proveCallableString('1');
  * => None
+ * ```
  *
  * @psalm-pure
  * @psalm-return Option<callable-string>

@@ -9,11 +9,13 @@ use Fp\Functional\Option\Option;
 /**
  * Prove that subject is of integer type
  *
- * REPL:
+ * ```php
  * >>> proveInt(1.1);
  * => None
+ *
  * >>> proveInt(1);
- * => Some<int>
+ * => Some(1)
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $potential

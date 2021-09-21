@@ -12,9 +12,10 @@ use Fp\Functional\Either\Right;
  * Decode json string into associative array
  * Returns Left on error
  *
- * REPL:
+ * ```php
  * >>> jsonDecode('{"a": [{"b": true}]}')->get();
  * => ['a' => [['b' => true]]]
+ * ```
  *
  * @param string $json
  * @return Either<string, array|scalar>

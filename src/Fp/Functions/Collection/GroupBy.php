@@ -7,12 +7,13 @@ namespace Fp\Collection;
 /**
  * Group collection elements by key returned by function
  *
- * REPL:
+ * ```php
  * >>> group(
  *     [1, 2, 3],
  *     fn(int $v): int => $v
  * );
  * => [1 => [1], 2 => [2], 3 => [3]]
+ * ```
  *
  * @psalm-template TKG of array-key
  * @psalm-template TK of array-key

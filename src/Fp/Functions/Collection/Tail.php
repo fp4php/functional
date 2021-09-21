@@ -7,9 +7,10 @@ namespace Fp\Collection;
 /**
  * Returns every collection element except first
  *
- * REPL:
+ * ```php
  * >>> tail([1, 2, 3]);
  * => [2, 3]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

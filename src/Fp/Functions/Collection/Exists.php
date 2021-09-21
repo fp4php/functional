@@ -8,9 +8,10 @@ namespace Fp\Collection;
  * Find if there is element which satisfies the condition
  * false otherwise
  *
- * REPL:
+ * ```php
  * >>> exists([1, 2], fn(int $v): bool => $v === 1);
  * => true
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -27,9 +28,10 @@ function exists(iterable $collection, callable $predicate): bool
  * Returns true if there is collection element of given class
  * False otherwise
  *
- * REPL:
+ * ```php
  * >>> existsOf([new Foo(), 2, 3], Foo::class);
  * => true
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

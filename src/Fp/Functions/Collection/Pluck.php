@@ -9,11 +9,13 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
 /**
  * Map every collection element into given property/key value
  *
- * REPL:
+ * ```php
  * >>> pluck([['a' => 1], ['a' => 2]], 'a');
  * => [1, 2]
+ *
  * >>> pluck([new Foo(1), new Foo(2)], 'a');
  * => [1, 2]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV of object|array

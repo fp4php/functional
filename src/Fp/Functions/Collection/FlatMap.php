@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 /**
- * Given [1, 4] and fn(int $x) => [$x - 1, $x, $x + 1]
- * Returns [0, 1, 2, 3, 4, 5]
+ * Map + flatten combination
  *
- * Consists of map and flatten operations:
- * 1) map [1, 4] to [[0, 1, 2], [3, 4, 5]]
- * 2) flatten [[0, 1, 2], [3, 4, 5]] to [0, 1, 2, 3, 4, 5]
+ * <ul>
+ *     <li> map [1, 4] to [[0, 1, 2], [3, 4, 5]] </li>
+ *     <li> flatten [[0, 1, 2], [3, 4, 5]] to [0, 1, 2, 3, 4, 5] </li>
+ * </ul>
  *
- * REPL:
+ * ```php
  * >>> flatMap([1, 4], fn(int $x) => [$x - 1, $x, $x + 1]);
  * => [0, 1, 2, 3, 4, 5]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TVI

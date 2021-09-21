@@ -12,9 +12,10 @@ use Throwable;
 /**
  * Returns property reflection or Left on exception
  *
- * REPL:
+ * ```php
  * >>> getReflectionProperty(Foo::class, 'a');
- * => Either<Throwable, ReflectionProperty>
+ * => Right(ReflectionProperty(Foo::class, 'a'))
+ * ```
  *
  * @template T of object
  * @psalm-param T|class-string<T> $class

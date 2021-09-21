@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Fp\Cast;
 
 /**
- * Copy collection as array
+ * Copy iterable as array
  *
- * REPL:
- * >>> $collection;
- * => iterable<string, int>
- * >>> asArray($collection);
- * => array<string, int>
+ * ```php
+ * >>> asArray(LinkedList::collect([1, 2]));
+ * => [1, 2]
+ * ```
  *
  * @psalm-template TP of bool
  * @psalm-template TK of array-key

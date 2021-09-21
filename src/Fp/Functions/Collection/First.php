@@ -11,9 +11,10 @@ use function Fp\of;
 /**
  * Find first element which satisfies the condition
  *
- * REPL:
+ * ```php
  * >>> first([1, 2], fn(int $v): bool => $v === 2)->get()
  * => 1
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -42,9 +43,10 @@ function first(iterable $collection, ?callable $predicate = null): Option
 /**
  * Find first element of given class
  *
- * REPL:
+ * ```php
  * >>> firstOf([1, new Foo(1), new Foo(2)], Foo::class)->get()
  * => Foo(1)
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

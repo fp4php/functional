@@ -10,9 +10,10 @@ use function Fp\of;
  * Filter collection by condition
  * Do not preserve keys by default
  *
- * REPL:
+ * ```php
  * >>> filter([1, 2], fn(int $v): bool => $v === 2);
  * => [2]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -43,9 +44,10 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  * Filter not null elements
  * Do not preserve keys by default
  *
- * REPL:
+ * ```php
  * >>> filterNotNull([1, null, 2]);
  * => [1, 2]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
@@ -67,9 +69,10 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  * Filter elements of given class
  * Do not preserve keys by default
  *
- * REPL:
- * >>> filterOf([1, new Foo(), 2], Foo::class);
- * => list<Foo>
+ * ```php
+ * >>> filterOf([1, new Foo(1), 2], Foo::class);
+ * => [Foo(1)]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

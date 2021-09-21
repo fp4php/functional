@@ -13,9 +13,10 @@ use function Fp\Evidence\proveNonEmptyString;
  * Regular expression search
  * Returns None if not matched
  *
- * REPL:
+ * ```php
  * >>> regExpMatch('/[a-z]+(c)/', 'abc', 1);
  * => Some('c')
+ * ```
  *
  * @psalm-param positive-int|0 $capturingGroup
  * @psalm-return Option<non-empty-string>

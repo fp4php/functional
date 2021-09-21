@@ -10,9 +10,10 @@ use Fp\Functional\Option\Option;
  * Returns second collection element
  * None if there is no second collection element
  *
- * REPL:
+ * ```php
  * >>> second([1, 2, 3])->get();
  * => 2
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

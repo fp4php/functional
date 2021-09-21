@@ -9,11 +9,13 @@ use Fp\Functional\Option\Option;
 /**
  * Prove that subject is of float type
  *
- * REPL:
+ * ```php
  * >>> proveFloat(1);
  * => None
+ *
  * >>> proveFloat(1.1);
- * => Some<float>
+ * => Some(1.1)
+ * ```
  *
  * @psalm-template T
  * @psalm-param T $potential

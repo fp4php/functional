@@ -38,9 +38,10 @@ abstract class Option
     /**
      * Check if "the box" is empty
      *
-     * REPL:
+     * ```php
      * >>> Option::fromNullable(null)->isEmpty();
      * => true
+     * ```
      *
      * @psalm-assert-if-false Some<A> $this
      */
@@ -52,9 +53,10 @@ abstract class Option
     /**
      * Check if there is something inside the box
      *
-     * REPL:
+     * ```php
      * >>> Option::fromNullable(null)->isNonEmpty();
      * => false
+     * ```
      *
      * @psalm-assert-if-true Some<A> $this
      */
@@ -67,9 +69,10 @@ abstract class Option
      * Check if there is something inside the box
      * Alias for {@see Option::isNonEmpty()}
      *
-     * REPL:
+     * ```php
      * >>> Option::fromNullable(null)->isSome();
      * => false
+     * ```
      *
      * @psalm-assert-if-true Some<A> $this
      */
@@ -82,9 +85,10 @@ abstract class Option
      * Check if "the box" is empty
      * Alias for {@see Option::isEmpty()}
      *
-     * REPL:
+     * ```php
      * >>> Option::fromNullable(null)->isNone();
      * => true
+     * ```
      *
      * @psalm-assert-if-false Some<A> $this
      */
@@ -99,13 +103,16 @@ abstract class Option
      * 3) Pass unwrapped value to callback
      * 4) Place callback result value into the new box
      *
-     * REPL:
+     * ```php
      * >>> $res1 = Option::fromNullable(1);
      * => Some(1)
+     *
      * >>> $res2 = $res1->map(fn(int $i) => $i + 1);
      * => Some(2)
+     *
      * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
      * => Some('2')
+     * ```
      *
      * @psalm-template B
      * @param callable(A): (B) $callback
@@ -124,14 +131,17 @@ abstract class Option
      * 3) Pass unwrapped value to callback
      * 4) Return the same box
      *
-     * REPL:
+     * ```php
      * >>> $res1 = Option::fromNullable(1);
      * => Some(1)
+     *
      * >>> $res2 = $res1->tap(function (int $i) { echo $i; });
      * 1
      * => Some(1)
+     *
      * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
      * => Some('1')
+     * ```
      *
      * @param callable(A): void $callback
      * @psalm-return Option<A>
@@ -153,13 +163,16 @@ abstract class Option
      * 4) If the callback returns empty box then short circuit the execution
      * 5) Return the same box
      *
-     * REPL:
+     * ```php
      * >>> $res1 = Option::fromNullable([1]);
      * => Some([1])
+     *
      * >>> $res2 = $res1->flatTap(fn(array $arr): Option => first($arr));
      * => Some([1])
+     *
      * >>> $res3 = $res2->flatTap(fn(array $arr): Option => second($arr))
      * => None
+     * ```
      *
      * @template B
      * @param callable(A): Option<B> $callback
@@ -181,13 +194,16 @@ abstract class Option
      * 3) Pass unwrapped value to callback
      * 4) If callback return true, return Some<A>. Otherwise None.
      *
-     * REPL:
+     * ```php
      * >>> $res1 = Option::fromNullable(42);
      * => Some(42)
+     *
      * >>> $res2 = $res1->filter(fn(int $i) => $i >= 42);
      * => Some(42)
+     *
      * >>> $res3 = $res2->filter(fn(int $i) => $i > 42);
      * => None
+     * ```
      *
      * @param callable(A): bool $callback
      * @return Option<A>
@@ -205,13 +221,16 @@ abstract class Option
      * 3) Check if unwrapped value is of given class
      * 4) If the value is of given class then return Some. Otherwise, None.
      *
-     * REPL:
+     * ```php
      * >>> $res1 = Option::fromNullable(new Foo(1));
      * => Some(Foo(1))
+     *
      * >>> $res2 = $res1->filterOf(Foo::class);
      * => Some(Foo(1))
+     *
      * >>> $res3 = $res2->filterOf(Bar::class);
      * => None
+     * ```
      *
      * @template AA
      * @param class-string<AA> $fqcn
@@ -231,13 +250,16 @@ abstract class Option
      * 3) Pass unwrapped value to callback
      * 4) Replace old box with new one returned by callback
      *
-     * REPL:
+     * ```php
      * >>> $res1 = Option::fromNullable(1);
      * => Some(1)
+     *
      * >>> $res2 = $res1->flatMap(fn(int $i) => Option::some($i + 1));
      * => Some(2)
+     *
      * >>> $res3 = $res2->flatMap(fn(int $i) => Option::none());
      * => None
+     * ```
      *
      * @psalm-template B
      * @param callable(A): Option<B> $callback
@@ -260,7 +282,7 @@ abstract class Option
      * 2) if there is nothing in the box then short-circuit (stop) the computation
      * 3) place contained in $box value into $unwrappedValue variable
      *
-     * REPL:
+     * ```php
      * >>> Option::do(function() {
      *     $a = 1;
      *     $b = yield Option::fromNullable(2);
@@ -270,6 +292,7 @@ abstract class Option
      *     return [$a, $b, $c, $d, $e]; // not executed
      * });
      * => None
+     * ```
      *
      * @todo Replace Option<mixed> with Option<TS> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
      *
@@ -305,11 +328,13 @@ abstract class Option
      * Creates {@see None} for null values
      * and {@see Some} for not null values.
      *
-     * REPL:
+     * ```php
      * >>> Option::fromNullable(2);
      * => Some(2)
+     *
      * >>> Option::fromNullable(null);
      * => None
+     * ```
      *
      * @psalm-template B
      * @psalm-param B|null $value
@@ -328,11 +353,13 @@ abstract class Option
      *
      * Try/catch replacement.
      *
-     * REPL:
+     * ```php
      * >>> Option::try(fn() => 1);
      * => Some(1)
+     *
      * >>> Option::try(fn() => throw new Exception('handled and converted to None'));
      * => None
+     * ```
      *
      * @psalm-template B
      * @psalm-param callable(): B $callback
@@ -350,17 +377,19 @@ abstract class Option
     /**
      * Fold possible outcomes
      *
-     * REPL:
+     * ```php
      * >>> Option::fromNullable(1)->fold(
      *     ifSome: fn(int $some) => $some + 1,
      *     ifNone: fn() => 0,
      * );
      * => 2
+     *
      * >>> Option::fromNullable(null)->fold(
      *     ifSome: fn(int $some) => $some + 1,
      *     ifNone: fn() => 0,
      * );
      * => 0
+     * ```
      *
      * @psalm-template B
      * @psalm-param callable(A): B $ifSome
@@ -378,11 +407,13 @@ abstract class Option
      * Unwrap "the box" and get contained value
      * or null for empty box case
      *
-     * REPL:
+     * ```php
      * >>> Option::some(1)->get()
      * => 1
+     *
      * >>> Option::none()->get()
      * => null
+     * ```
      *
      * @psalm-return A|null
      */
@@ -392,11 +423,13 @@ abstract class Option
      * Unwrap "the box" and get contained value
      * or throw exception for empty box case
      *
-     * REPL:
+     * ```php
      * >>> Option::some(1)->get()
      * => 1
+     *
      * >>> Option::none()->get()
-     * => RuntimeException
+     * PHP Error: Trying to get value of None
+     * ```
      *
      * @psalm-return A
      */
@@ -411,11 +444,13 @@ abstract class Option
      * Unwrap "the box" and get contained value
      * or given fallback value for empty box case
      *
-     * REPL:
-     * >>> Option::some(1)->getOrElse(0)
+     * ```php
+     * >>> Option::some(1)->getOrElse(0);
      * => 1
-     * >>> Option::none()->getOrElse(0)
+     *
+     * >>> Option::none()->getOrElse(0);
      * => 0
+     * ```
      *
      * @psalm-template B
      * @psalm-param B $fallback
@@ -432,11 +467,13 @@ abstract class Option
      * Unwrap "the box" and get contained value
      * or return callable result as fallback value for empty box case
      *
-     * REPL:
-     * >>> Option::some(1)->getOrCall(fn() => 0)
+     * ```php
+     * >>> Option::some(1)->getOrCall(fn() => 0);
      * => 1
-     * >>> Option::none()->getOrElse(fn() => 0)
+     *
+     * >>> Option::none()->getOrElse(fn() => 0);
      * => 0
+     * ```
      *
      * @psalm-template B
      * @psalm-param callable(): B $fallback
@@ -452,11 +489,13 @@ abstract class Option
     /**
      * Combine two Options into one
      *
-     * REPL:
-     * >>> Option::some(1)->orElse(fn() => Option::some(2))
+     * ```php
+     * >>> Option::some(1)->orElse(fn() => Option::some(2));
      * => Some(1)
-     * >>> Option::none()->orElse(fn() => Option::some(2))
+     *
+     * >>> Option::none()->orElse(fn() => Option::some(2));
      * => Some(2)
+     * ```
      *
      * @psalm-template B
      * @psalm-param callable(): Option<B> $fallback
@@ -472,9 +511,10 @@ abstract class Option
     /**
      * Fabric method for {@see Some} instance
      *
-     * REPL:
-     * >>> Option::some(1)
+     * ```php
+     * >>> Option::some(1);
      * => Some(1)
+     * ```
      *
      * @psalm-template B
      * @psalm-param B $value
@@ -489,9 +529,10 @@ abstract class Option
     /**
      * Fabric method for {@see None} instance
      *
-     * REPL:
-     * >>> Option::none()
+     * ```php
+     * >>> Option::none();
      * => None
+     * ```
      *
      * @psalm-return Option<empty>
      * @psalm-pure
@@ -507,11 +548,13 @@ abstract class Option
      * {@see Some} to {@see Left}
      * {@see None} to {@see Right}
      *
-     * REPL:
-     * >>> Option::some('error')->toLeft(fn() => 1)
+     * ```php
+     * >>> Option::some('error')->toLeft(fn() => 1);
      * => Left('error')
-     * >>> Option::none()->toLeft(fn() => 1)
+     *
+     * >>> Option::none()->toLeft(fn() => 1);
      * => Right(1)
+     * ```
      *
      * @psalm-template B
      * @psalm-param callable(): B $right
@@ -530,11 +573,13 @@ abstract class Option
      * {@see Some} to {@see Right}
      * {@see None} to {@see Left}
      *
-     * REPL:
-     * >>> Option::some(1)->toRight(fn() => 'error')
+     * ```php
+     * >>> Option::some(1)->toRight(fn() => 'error');
      * => Right(1)
-     * >>> Option::none()->toRight(fn() => 'error')
+     *
+     * >>> Option::none()->toRight(fn() => 'error');
      * => Left('error')
+     * ```
      *
      * @psalm-template B
      * @psalm-param callable(): B $left
@@ -550,11 +595,13 @@ abstract class Option
     /**
      * Fabric method.
      *
-     * REPL:
-     * >>> Option::cond(true, 1)
+     * ```php
+     * >>> Option::cond(true, 1);
      * => Some(1)
-     * >>> Option::cond(false, 1)
+     *
+     * >>> Option::cond(false, 1);
      * => None
+     * ```
      *
      * @psalm-pure
      * @psalm-template AI
@@ -571,11 +618,13 @@ abstract class Option
     /**
      * Fabric method.
      *
-     * REPL:
-     * >>> Option::condLazy(true, fn() => 1)
+     * ```php
+     * >>> Option::condLazy(true, fn() => 1);
      * => Some(1)
-     * >>> Option::condLazy(false, fn() => 1)
+     *
+     * >>> Option::condLazy(false, fn() => 1);
      * => None
+     * ```
      *
      * Create {@see Some} from value if given condition is true
      * Create {@see None} if given condition is false

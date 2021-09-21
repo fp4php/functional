@@ -13,9 +13,10 @@ use function Fp\Cast\asNonEmptyList;
  * and return tuple containing this element and other collection elements
  * If there is no last element then returns None
  *
- * REPL:
+ * ```php
  * >>> [$head, $tail] = pop([1, 2, 3])->get();
  * => [3, [1, 2]]
+ * ```
  *
  * @psalm-template TK of array-key
  * @psalm-template TV

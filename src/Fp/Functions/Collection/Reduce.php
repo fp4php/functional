@@ -13,12 +13,13 @@ use function Fp\Cast\asList;
  * Reduce multiple elements into one
  * Returns None for empty collection
  *
- * REPL:
+ * ```php
  * >>> reduce(
  *     ['a', 'b', 'c'],
  *     fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
  * )->get();
  * => 'abc'
+ * ```
  *
  * @template TK of array-key
  * @template TV

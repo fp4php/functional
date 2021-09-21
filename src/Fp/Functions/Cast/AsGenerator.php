@@ -7,9 +7,10 @@ namespace Fp\Callable;
 use Generator;
 
 /**
- * REPL:
- * >>> asGenerator(function { yield 1; yield 2; })
+ * ```php
+ * >>> asGenerator(function { yield 1; yield 2; });
  * => Generator(1, 2)
+ * ```
  *
  * @psalm-template TK
  * @psalm-template TV

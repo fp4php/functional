@@ -11,13 +11,14 @@ use function Fp\Cast\asList;
 /**
  * Fold many elements into one
  *
- * REPL:
+ * ```php
  * >>> fold(
  *     '',
  *     ['a', 'b', 'c'],
  *     fn(string $accumulator, $currentValue) => $accumulator . $currentValue
- * )
+ * );
  * => 'abc'
+ * ```
  *
  * @template TK of array-key
  * @template TV
