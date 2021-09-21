@@ -12,8 +12,9 @@ use Iterator;
  * @psalm-immutable
  * @extends Collection<array{TK, TV}>
  * @extends MapOps<TK, TV>
+ * @extends MapCollector<TK, TV>
  */
-interface Map extends Collection, MapOps
+interface Map extends Collection, MapOps, MapCollector
 {
     /**
      * @inheritDoc

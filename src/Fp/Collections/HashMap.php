@@ -13,10 +13,10 @@ use function Fp\Callable\asGenerator;
  * @template TK
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractMap<TK, TV>
+ * @implements Map<TK, TV>
  * @implements StaticStorage<empty>
  */
-final class HashMap extends AbstractMap implements StaticStorage
+final class HashMap implements Map, StaticStorage
 {
     /**
      * @internal
@@ -70,11 +70,130 @@ final class HashMap extends AbstractMap implements StaticStorage
     }
 
     /**
+     * @inheritDoc
+     */
+    public function count(): int
+    {
+        $counter = 0;
+
+        foreach ($this as $ignored) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    /**
+     * @inheritDoc
+     * @return list<array{TK, TV}>
+     */
+    public function toArray(): array
+    {
+        $buffer = [];
+
+        foreach ($this as $pair) {
+            $buffer[] = $pair;
+        }
+
+        return $buffer;
+    }
+
+    /**
+     * @inheritDoc
+     * @return LinkedList<array{TK, TV}>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
+     * @return ArrayList<array{TK, TV}>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return ArrayList::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<array{TK, TV}>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
     {
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(Entry<TK, TV>): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        $result = true;
+
+        foreach ($this as [$key, $value]) {
+            $entry = new Entry($key, $value);
+
+            if (!$predicate($entry)) {
+                $result = false;
+                break;
+            }
+
+            unset($entry);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
+     * @template TA
+     * @psalm-param TA $init initial accumulator value
+     * @psalm-param callable(TA, Entry<TK, TV>): TA $callback (accumulator, current element): new accumulator
+     * @psalm-return TA
+     */
+    public function fold(mixed $init, callable $callback): mixed
+    {
+        $acc = $init;
+
+        foreach ($this as [$key, $value]) {
+            $entry = new Entry($key, $value);
+            $acc = $callback($acc, $entry);
+            unset($entry);
+        }
+
+        return $acc;
     }
 
     /**
@@ -129,10 +248,13 @@ final class HashMap extends AbstractMap implements StaticStorage
     public function filter(callable $predicate): self
     {
         return self::collectPairs(asGenerator(function () use ($predicate) {
-            foreach ($this->generateEntries() as $entry) {
+            foreach ($this as [$key, $value]) {
+                $entry = new Entry($key, $value);
+
                 if ($predicate($entry)) {
                     yield $entry->toArray();
                 }
+
                 unset($entry);
             }
         }));
@@ -147,7 +269,8 @@ final class HashMap extends AbstractMap implements StaticStorage
     public function filterMap(callable $callback): self
     {
         return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this->generateEntries() as $entry) {
+            foreach ($this as [$key, $value]) {
+                $entry = new Entry($key, $value);
                 $result = $callback($entry);
 
                 if ($result->isSome()) {
@@ -169,10 +292,13 @@ final class HashMap extends AbstractMap implements StaticStorage
     public function flatMap(callable $callback): self
     {
         return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this->generateEntries() as $entry) {
+            foreach ($this as [$key, $value]) {
+                $entry = new Entry($key, $value);
+
                 foreach ($callback($entry) as $p) {
                     yield $p;
                 }
+
                 unset($entry);
             }
         }));
@@ -198,7 +324,8 @@ final class HashMap extends AbstractMap implements StaticStorage
     public function mapValues(callable $callback): self
     {
         return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this->generateEntries() as $entry) {
+            foreach ($this as [$key, $value]) {
+                $entry = new Entry($key, $value);
                 yield [$entry->key, $callback($entry)];
                 unset($entry);
             }
@@ -214,7 +341,8 @@ final class HashMap extends AbstractMap implements StaticStorage
     public function mapKeys(callable $callback): self
     {
         return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this->generateEntries() as $entry) {
+            foreach ($this as [$key, $value]) {
+                $entry = new Entry($key, $value);
                 yield [$callback($entry), $entry->value];
                 unset($entry);
             }
@@ -227,7 +355,11 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public function keys(): Seq
     {
-        return ArrayList::collect($this->generateKeys());
+        return ArrayList::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair[0];
+            }
+        }));
     }
 
     /**
@@ -236,7 +368,11 @@ final class HashMap extends AbstractMap implements StaticStorage
      */
     public function values(): Seq
     {
-        return ArrayList::collect($this->generateValues());
+        return ArrayList::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair[1];
+            }
+        }));
     }
 
     public function isEmpty():bool

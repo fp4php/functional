@@ -41,7 +41,11 @@ final class HashSet extends AbstractSet
      */
     public function getIterator(): Iterator
     {
-        return $this->map->generateValues();
+        return asGenerator(function () {
+            foreach ($this->map as $pair) {
+                yield $pair[1];
+            }
+        });
     }
 
     /**
