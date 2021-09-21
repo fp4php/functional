@@ -16,11 +16,12 @@ interface StreamTerminalOps
      * Returns true if every stream element satisfy the condition
      * and false otherwise
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 0)
+     * ```php
+     * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 0);
      * => true
-     * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 1)
+     * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 1);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -30,11 +31,12 @@ interface StreamTerminalOps
      * Returns true if every stream element is of given class
      * false otherwise
      *
-     * REPL:
-     * >>> Stream::emits([new Foo(1), new Foo(2)])->everyOf(Foo::class)
+     * ```php
+     * >>> Stream::emits([new Foo(1), new Foo(2)])->everyOf(Foo::class);
      * => true
-     * >>> Stream::emits([new Foo(1), new Bar(2)])->everyOf(Foo::class)
+     * >>> Stream::emits([new Foo(1), new Bar(2)])->everyOf(Foo::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -45,11 +47,12 @@ interface StreamTerminalOps
     /**
      * Find if there is element which satisfies the condition
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->exists(fn($elem) => 2 === $elem)
+     * ```php
+     * >>> Stream::emits([1, 2])->exists(fn($elem) => 2 === $elem);
      * => true
-     * >>> Stream::emits([1, 2])->exists(fn($elem) => 3 === $elem)
+     * >>> Stream::emits([1, 2])->exists(fn($elem) => 3 === $elem);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -59,11 +62,12 @@ interface StreamTerminalOps
      * Returns true if there is stream element of given class
      * False otherwise
      *
-     * REPL:
-     * >>> Stream::emits([1, new Foo(2)])->existsOf(Foo::class)
+     * ```php
+     * >>> Stream::emits([1, new Foo(2)])->existsOf(Foo::class);
      * => true
-     * >>> Stream::emits([1, new Foo(2)])->existsOf(Bar::class)
+     * >>> Stream::emits([1, new Foo(2)])->existsOf(Bar::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -74,9 +78,10 @@ interface StreamTerminalOps
     /**
      * Find first element which satisfies the condition
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->first(fn($elem) => $elem > 1)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -86,9 +91,10 @@ interface StreamTerminalOps
     /**
      * Find first element of given class
      *
-     * REPL:
-     * >>> Stream::emits([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
+     * ```php
+     * >>> Stream::emits([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get();
      * => Foo(2)
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -100,9 +106,10 @@ interface StreamTerminalOps
     /**
      * Fold many elements into one
      *
-     * REPL:
-     * >>> Stream::emits(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
+     * ```php
+     * >>> Stream::emits(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur);
      * => '012'
+     * ```
      *
      * @template TA
      * @psalm-param TA $init initial accumulator value
@@ -115,9 +122,10 @@ interface StreamTerminalOps
      * Reduce multiple elements into one
      * Returns None for empty stream
      *
-     * REPL:
-     * >>> Stream::emits(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
+     * ```php
+     * >>> Stream::emits(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get();
      * => '12'
+     * ```
      *
      * @template TA
      * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
@@ -128,9 +136,10 @@ interface StreamTerminalOps
     /**
      * Return first stream element
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->head()->get()
+     * ```php
+     * >>> Stream::emits([1, 2])->head()->get();
      * => 1
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -139,9 +148,10 @@ interface StreamTerminalOps
     /**
      * Returns last stream element which satisfies the condition
      *
-     * REPL:
-     * >>> Stream::emits([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
+     * ```php
+     * >>> Stream::emits([1, 0, 2])->last(fn($elem) => $elem > 0)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -152,9 +162,10 @@ interface StreamTerminalOps
      * Returns first stream element
      * Alias for {@see SeqOps::head}
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->firstElement()->get()
+     * ```php
+     * >>> Stream::emits([1, 2])->firstElement()->get();
      * => 1
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -163,9 +174,10 @@ interface StreamTerminalOps
     /**
      * Returns last stream element
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->lastElement()->get()
+     * ```php
+     * >>> Stream::emits([1, 2])->lastElement()->get();
      * => 2
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -176,10 +188,11 @@ interface StreamTerminalOps
      *
      * This is useful if you care only for side effects.
      *
-     * REPL:
-     * >>> Stream::drain([1, 2])->lines()->drain()
+     * ```php
+     * >>> Stream::drain([1, 2])->lines()->drain();
      * 1
      * 2
+     * ```
      */
     public function drain(): void;
 }

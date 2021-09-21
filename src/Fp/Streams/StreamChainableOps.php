@@ -16,9 +16,10 @@ interface StreamChainableOps
     /**
      * Add element to the stream end
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->appended(3)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2])->appended(3)->toArray();
      * => [1, 2, 3]
+     * ```
      *
      * @template TVI
      * @psalm-param TVI $elem
@@ -29,9 +30,10 @@ interface StreamChainableOps
     /**
      * Add elements to the stream end
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->appendedAll([3, 4])->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2])->appendedAll([3, 4])->toArray();
      * => [1, 2, 3, 4]
+     * ```
      *
      * @template TVI
      * @psalm-param iterable<TVI> $suffix
@@ -42,9 +44,10 @@ interface StreamChainableOps
     /**
      * Add element to the stream start
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->prepended(0)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2])->prepended(0)->toArray();
      * => [0, 1, 2]
+     * ```
      *
      * @template TVI
      * @psalm-param TVI $elem
@@ -55,9 +58,10 @@ interface StreamChainableOps
     /**
      * Add elements to the stream start
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->prependedAll(-1, 0)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2])->prependedAll(-1, 0)->toArray();
      * => [-1, 0, 1, 2]
+     * ```
      *
      * @template TVI
      * @psalm-param iterable<TVI> $prefix
@@ -70,9 +74,10 @@ interface StreamChainableOps
      * true - include element to new stream.
      * false - exclude element from new stream.
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->filter(fn($elem) => $elem > 1)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2])->filter(fn($elem) => $elem > 1)->toArray();
      * => [2]
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Stream<TV>
@@ -82,9 +87,10 @@ interface StreamChainableOps
     /**
      * Exclude null elements
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, null])->filterNotNull()->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, null])->filterNotNull()->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-return Stream<TV>
      */
@@ -93,9 +99,10 @@ interface StreamChainableOps
     /**
      * Filter elements of given class
      *
-     * REPL:
-     * >>> Stream::emits([1, new Foo(2)])->filterOf(Foo::class)->toArray()
+     * ```php
+     * >>> Stream::emits([1, new Foo(2)])->filterOf(Foo::class)->toArray();
      * => [Foo(2)]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -110,11 +117,12 @@ interface StreamChainableOps
      * Filtering is handled via Option instead of Boolean.
      * So the output type TVO can be different from the input type TV.
      *
-     * REPL:
+     * ```php
      * >>> Stream::emits(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
-     * >>>     ->toArray()
+     * >>>     ->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param callable(TV): Option<TVO> $callback
@@ -125,9 +133,10 @@ interface StreamChainableOps
     /**
      * Map stream and then flatten the result
      *
-     * REPL:
-     * >>> Stream::emits([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
+     * ```php
+     * >>> Stream::emits([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray();
      * => [1, 2, 3, 4, 5, 6]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
@@ -139,9 +148,10 @@ interface StreamChainableOps
      * Produces a new stream of elements by mapping each element in stream
      * through a transformation function (callback)
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->map(fn($elem) => (string) $elem)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2])->map(fn($elem) => (string) $elem)->toArray();
      * => ['1', '2']
+     * ```
      *
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
@@ -152,9 +162,10 @@ interface StreamChainableOps
     /**
      * Returns every stream element except first
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->tail()->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->tail()->toArray();
      * => [2, 3]
+     * ```
      *
      * @psalm-return Stream<TV>
      */
@@ -163,9 +174,10 @@ interface StreamChainableOps
     /**
      * Take stream elements while predicate is true
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Stream<TV>
@@ -175,9 +187,10 @@ interface StreamChainableOps
     /**
      * Drop stream elements while predicate is true
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray();
      * => [3]
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Stream<TV>
@@ -187,9 +200,10 @@ interface StreamChainableOps
     /**
      * Take N stream elements
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->take(2)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->take(2)->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-return Stream<TV>
      */
@@ -198,9 +212,10 @@ interface StreamChainableOps
     /**
      * Drop N stream elements
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->drop(2)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->drop(2)->toArray();
      * => [3]
+     * ```
      *
      * @psalm-return Stream<TV>
      */
@@ -209,12 +224,13 @@ interface StreamChainableOps
     /**
      * Call a function for every stream element
      *
-     * REPL:
+     * ```php
      * >>> Stream::emits([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
-     * >>>     ->toArray()
+     * >>>     ->toArray();
      * => [2, 3]
+     * ```
      *
      * @param callable(TV): void $callback
      * @psalm-return Stream<TV>
@@ -224,9 +240,10 @@ interface StreamChainableOps
     /**
      * Emits the specified separator between every pair of elements in the source stream.
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->intersperse(0)->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->intersperse(0)->toArray();
      * => [1, 0, 2, 0, 3]
+     * ```
      *
      * @template TVI
      * @param TVI $separator
@@ -237,21 +254,23 @@ interface StreamChainableOps
     /**
      * Writes this stream to the stdout synchronously
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->lines()
+     * ```php
+     * >>> Stream::emits([1, 2])->lines()->drain();
      * 1
      * 2
+     * ```
      *
      * @psalm-return Stream<TV>
      */
     public function lines(): Stream;
 
     /**
-     * Determinsitically zips elements, terminating when the end of either branch is reached naturally.
+     * Deterministically zips elements, terminating when the end of either branch is reached naturally.
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->zip(Stream::emits([4, 5, 6, 7]))->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->zip(Stream::emits([4, 5, 6, 7]))->toArray();
      * => [[1, 4], [2, 5], [3, 6]]
+     * ```
      *
      * @template TVI
      * @param iterable<TVI> $that
@@ -262,9 +281,10 @@ interface StreamChainableOps
     /**
      * Deterministically interleaves elements, starting on the left, terminating when the end of either branch is reached naturally.
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3])->interleave(Stream::emits([4, 5, 6, 7]))->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->interleave(Stream::emits([4, 5, 6, 7]))->toArray();
      * => [1, 4, 2, 5, 3, 6]
+     * ```
      *
      * @template TVI
      * @param iterable<TVI> $that
@@ -275,9 +295,10 @@ interface StreamChainableOps
     /**
      * Produce stream of chunks with given size from this stream
      *
-     * REPL:
-     * >>> Stream::emits([1, 2, 3, 4, 5])->chunks(2)
+     * ```php
+     * >>> Stream::emits([1, 2, 3, 4, 5])->chunks(2);
      * => Stream(Seq(1, 2), Seq(3, 4), Seq(5))
+     * ```
      *
      * @return Stream<Seq<TV>>
      */
@@ -286,10 +307,15 @@ interface StreamChainableOps
     /**
      * Partitions the input into a stream of chunks according to a discriminator function.
      *
-     * REPL:
-     * >>>
-     * >>> Stream::emits(["Hello", "Hi", "Greetings", "Hey"])->groupAdjacentBy(fn($str) => $str[0])
-     * => Stream(["H", Seq("Hello", "Hi")], ["G", Seq("Greetings")], ["H", Seq("Hey")])
+     * ```php
+     * >>> Stream::emits(["Hello", "Hi", "Greetings", "Hey"])
+     * >>>     ->groupAdjacentBy(fn($str) => $str[0]);
+     * => Stream(
+     * =>     ["H", Seq("Hello", "Hi")],
+     * =>     ["G", Seq("Greetings")],
+     * =>     ["H", Seq("Hey")]
+     * => )
+     * ```
      *
      * @template D
      * @param callable(TV): D $discriminator

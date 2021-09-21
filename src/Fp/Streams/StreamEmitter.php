@@ -15,9 +15,10 @@ interface StreamEmitter
     /**
      * Create singleton stream with one element
      *
-     * REPL:
-     * >>> Stream::emit(1)->toArray()
+     * ```php
+     * >>> Stream::emit(1)->toArray();
      * => [1]
+     * ```
      *
      * @template TVI
      * @param TVI $elem
@@ -28,9 +29,10 @@ interface StreamEmitter
     /**
      * Emits elements from iterable source
      *
-     * REPL:
-     * >>> Stream::emits([1, 2])->toArray()
+     * ```php
+     * >>> Stream::emits([1, 2])->toArray();
      * => [1, 2]
+     * ```
      *
      * @template TVI
      * @param iterable<TVI> $source
@@ -41,9 +43,10 @@ interface StreamEmitter
     /**
      * Repeat this stream an infinite number of times.
      *
-     * REPL:
-     * >>> Stream::emits([1,2,3])->repeat()->take(8)->toArray()
+     * ```php
+     * >>> Stream::emits([1,2,3])->repeat()->take(8)->toArray();
      * => [1, 2, 3, 1, 2, 3, 1, 2]
+     * ```
      *
      * @return Stream<TV>
      */
@@ -52,9 +55,10 @@ interface StreamEmitter
     /**
      * Repeat this stream N times
      *
-     * REPL:
-     * >>> Stream::emit(1)->repeatN(3)->toArray()
+     * ```php
+     * >>> Stream::emit(1)->repeatN(3)->toArray();
      * => [1, 1, 1]
+     * ```
      *
      * @return Stream<TV>
      */
@@ -71,9 +75,10 @@ interface StreamEmitter
     /**
      * Creates an infinite stream that always returns the supplied value
      *
-     * REPL:
-     * >>> Stream::constant(0)->take(3)->toArray()
+     * ```php
+     * >>> Stream::constant(0)->take(3)->toArray();
      * => [0, 0, 0]
+     * ```
      *
      * @template TVI
      * @param TVI $const
@@ -84,9 +89,10 @@ interface StreamEmitter
     /**
      * Creates int stream of given range
      *
-     * REPL:
-     * >>> Stream::range(0, 10, 2)->toArray()
+     * ```php
+     * >>> Stream::range(0, 10, 2)->toArray();
      * => [0, 2, 4, 6, 8]
+     * ```
      *
      * @psalm-param 0|positive-int $start
      * @psalm-param 0|positive-int $stopExclusive
@@ -98,9 +104,10 @@ interface StreamEmitter
     /**
      * Creates an infinite stream
      *
-     * REPL:
-     * >>> Stream::infinite()->map(fn() => rand(0, 1))->take(2)->toArray()
+     * ```php
+     * >>> Stream::infinite()->map(fn() => rand(0, 1))->take(2)->toArray();
      * => [0, 1]
+     * ```
      *
      * @return Stream<Unit>
      */

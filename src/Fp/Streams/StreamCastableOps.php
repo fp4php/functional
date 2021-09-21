@@ -16,26 +16,52 @@ use Fp\Collections\LinkedList;
 interface StreamCastableOps
 {
     /**
+     * ```php
+     * >>> Stream::emits([1, 2, 2])->toArray();
+     * => [1, 2, 2]
+     * ```
+     *
      * @return list<TV>
      */
     public function toArray(): array;
 
     /**
+     * ```php
+     * >>> Stream::emits([1, 2, 2])->toLinkedList();
+     * => LinkedList(1, 2, 2)
+     * ```
+     *
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList;
 
     /**
+     * ```php
+     * >>> Stream::emits([1, 2, 2])->toArrayList();
+     * => ArrayList(1, 2, 2)
+     * ```
+     *
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList;
 
     /**
+     * ```php
+     * >>> Stream::emits([1, 2, 2])->toHashSet();
+     * => HashSet(1, 2)
+     * ```
+     *
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet;
 
     /**
+     * ```php
+     * >>> Stream::emits([1, 2])
+     * >>>    ->toHashMap(fn($elem) => [(string) $elem, $elem]);
+     * => HashMap('1' -> 1, '2' -> 2)
+     * ```
+     *
      * @template TKI
      * @template TVI
      * @param callable(TV): array{TKI, TVI} $callback
