@@ -14,7 +14,7 @@ interface SetTerminalOps
 {
     /**
      * Check if the element is present in the set
-     * Alias for @see SetOps::contains
+     * Alias for {@see SetOps::contains}
      *
      * ```php
      * >>> HashSet::collect([1, 1, 2])(1);

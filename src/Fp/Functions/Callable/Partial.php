@@ -21,7 +21,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
  *
  * Alias for {@see partialLeft}
  *
- * @see PartialFunctionReturnTypeProvider
+ * {@see PartialFunctionReturnTypeProvider}
  */
 function partial(callable $callback, mixed ...$args): callable
 {

@@ -14,7 +14,7 @@ interface NonEmptySetTerminalOps
 {
     /**
      * Check if the element is present in the set
-     * Alias for @see SetOps::contains
+     * Alias for {@see SetOps::contains}
      *
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])(1);

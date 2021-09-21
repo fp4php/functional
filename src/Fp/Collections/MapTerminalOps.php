@@ -15,7 +15,7 @@ interface MapTerminalOps
 {
     /**
      * Get an element by its key
-     * Alias for @see MapOps::get
+     * Alias for {@see MapOps::get}
      *
      * ```php
      * >>> HashMap::collect(['a' => 1, 'b' => 2])('b')->getOrElse(0);

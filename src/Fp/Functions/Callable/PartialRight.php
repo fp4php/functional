@@ -19,7 +19,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
  * => fn(int $a) => $f($a, "string", true)
  * ```
  *
- * @see PartialFunctionReturnTypeProvider
+ * {@see PartialFunctionReturnTypeProvider}
  */
 function partialRight(callable $callback, mixed ...$args): callable
 {
