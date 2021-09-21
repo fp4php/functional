@@ -20,6 +20,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])('b')->getOrElse(0);
      * => 2
+     *
      * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])('c')->getOrElse(0);
      * => 0
      * ```
@@ -35,6 +36,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->get('b')->getOrElse(0);
      * => 2
+     *
      * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->get('c')->getOrElse(0);
      * => 0
      * ```
@@ -80,6 +82,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 0);
      * => true
+     *
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 1);
      * => false
      * ```
@@ -132,6 +135,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->map(fn(Entry $e) => $e->value + 1);
      * => NonEmptyHashMap('1' -> 2, '2' -> 3)
      * ```
@@ -149,6 +153,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->mapValues(fn(Entry $e) => $e->value + 1);
      * => NonEmptyHashMap('1' -> 2, '2' -> 3)
      * ```
@@ -165,6 +170,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->mapKeys(fn(Entry $e) => $e->value + 1);
      * => NonEmptyHashMap(2 -> 1, 3 -> 2)
      * ```
@@ -181,6 +187,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->keys(fn($elem) => $elem + 1)->toArray();
      * => ['1', '2']
      * ```
@@ -195,6 +202,7 @@ interface NonEmptyMapOps
      * ```php
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->values(fn($elem) => $elem + 1)->toArray();
      * => [1, 2]
      * ```

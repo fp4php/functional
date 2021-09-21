@@ -21,9 +21,7 @@ abstract class Validated
 {
     /**
      * @psalm-template EE
-     *
      * @psalm-param EE $value
-     *
      * @psalm-return Validated<EE, empty>
      * @psalm-pure
      */
@@ -34,9 +32,7 @@ abstract class Validated
 
     /**
      * @psalm-template AA
-     *
      * @psalm-param AA $value
-     *
      * @psalm-return Validated<empty, AA>
      * @psalm-pure
      */
@@ -107,10 +103,8 @@ abstract class Validated
 
     /**
      * @psalm-template B
-     *
      * @psalm-param callable(A): B $ifValid
      * @psalm-param callable(E): B $ifInvalid
-     *
      * @psalm-return B
      */
     public function fold(callable $ifValid, callable $ifInvalid): mixed
@@ -136,9 +130,7 @@ abstract class Validated
             return new Right($value);
         }
 
-        /**
-         * @var Invalid<E> $this
-         */
+        /** @var Invalid<E> $this */
 
         return new Left($this->value);
     }

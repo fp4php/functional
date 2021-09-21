@@ -267,6 +267,7 @@ interface NonEmptySeqChainableOps
      * ```php
      * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray();
      * => [1, 2, 3]
+     *
      * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray();
      * => [3, 2, 1]
      * ```

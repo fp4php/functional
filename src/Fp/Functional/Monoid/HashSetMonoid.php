@@ -12,7 +12,6 @@ use function Fp\Callable\asGenerator;
 
 /**
  * @template TV
- *
  * @extends Monoid<HashSet<TV>>
  * @psalm-immutable
  */
@@ -28,10 +27,8 @@ class HashSetMonoid extends Monoid
 
     /**
      * @psalm-pure
-     *
      * @psalm-param HashSet<TV> $lhs
      * @psalm-param HashSet<TV> $rhs
-     *
      * @psalm-return HashSet<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): HashSet

@@ -80,6 +80,7 @@ interface MapChainableOps
      * ```php
      * >>> $collection = HashMap::collectPairs([['2', 2], ['5', 5]]);
      * => HashMap('2' -> 2, '5' -> 5)
+     *
      * >>> $collection
      * >>>     ->flatMap(fn(Entry $e) => [
      * >>>         [$e->value - 1, $e->value - 1],
@@ -107,6 +108,7 @@ interface MapChainableOps
      * ```php
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->map(fn(Entry $e) => $e->value + 1);
      * => HashMap('1' -> 2, '2' -> 3)
      * ```
@@ -124,6 +126,7 @@ interface MapChainableOps
      * ```php
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->mapValues(fn(Entry $e) => $e->value + 1);
      * => HashMap('1' -> 2, '2' -> 3)
      * ```
@@ -140,6 +143,7 @@ interface MapChainableOps
      * ```php
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->mapKeys(fn(Entry $e) => $e->value + 1);
      * => HashMap(2 -> 1, 3 -> 2)
      * ```
@@ -156,6 +160,7 @@ interface MapChainableOps
      * ```php
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->keys(fn($elem) => $elem + 1)->toArray();
      * => ['1', '2']
      * ```
@@ -170,6 +175,7 @@ interface MapChainableOps
      * ```php
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
+     *
      * >>> $collection->values(fn($elem) => $elem + 1)->toArray();
      * => [1, 2]
      * ```

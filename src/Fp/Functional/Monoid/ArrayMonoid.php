@@ -7,7 +7,6 @@ namespace Fp\Functional\Monoid;
 /**
  * @template TK of array-key
  * @template TV
- *
  * @extends Monoid<array<TK, TV>>
  * @psalm-immutable
  */
@@ -20,10 +19,8 @@ class ArrayMonoid extends Monoid
 
     /**
      * @psalm-pure
-     *
      * @psalm-param array<TK, TV> $lhs
      * @psalm-param array<TK, TV> $rhs
-     *
      * @psalm-return array<TK, TV>
      */
     public function combine(mixed $lhs, mixed $rhs): array

@@ -8,7 +8,6 @@ use Fp\Collections\ArrayList;
 
 /**
  * @template TV
- *
  * @extends Monoid<ArrayList<TV>>
  * @psalm-immutable
  */
@@ -24,10 +23,8 @@ class ArrayListMonoid extends Monoid
 
     /**
      * @psalm-pure
-     *
      * @psalm-param ArrayList<TV> $lhs
      * @psalm-param ArrayList<TV> $rhs
-     *
      * @psalm-return ArrayList<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): ArrayList

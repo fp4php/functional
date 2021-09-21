@@ -19,6 +19,7 @@ interface StreamTerminalOps
      * ```php
      * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 0);
      * => true
+     *
      * >>> Stream::emits([1, 2])->every(fn($elem) => $elem > 1);
      * => false
      * ```
@@ -34,6 +35,7 @@ interface StreamTerminalOps
      * ```php
      * >>> Stream::emits([new Foo(1), new Foo(2)])->everyOf(Foo::class);
      * => true
+     *
      * >>> Stream::emits([new Foo(1), new Bar(2)])->everyOf(Foo::class);
      * => false
      * ```
@@ -50,6 +52,7 @@ interface StreamTerminalOps
      * ```php
      * >>> Stream::emits([1, 2])->exists(fn($elem) => 2 === $elem);
      * => true
+     *
      * >>> Stream::emits([1, 2])->exists(fn($elem) => 3 === $elem);
      * => false
      * ```
@@ -65,6 +68,7 @@ interface StreamTerminalOps
      * ```php
      * >>> Stream::emits([1, new Foo(2)])->existsOf(Foo::class);
      * => true
+     *
      * >>> Stream::emits([1, new Foo(2)])->existsOf(Bar::class);
      * => false
      * ```

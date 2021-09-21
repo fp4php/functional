@@ -13,7 +13,6 @@ use function Fp\Callable\asGenerator;
 /**
  * @template TK
  * @template TV
- *
  * @extends Monoid<HashMap<TK, TV>>
  * @psalm-immutable
  */
@@ -29,10 +28,8 @@ class HashMapMonoid extends Monoid
 
     /**
      * @psalm-pure
-     *
      * @psalm-param HashMap<TK, TV> $lhs
      * @psalm-param HashMap<TK, TV> $rhs
-     *
      * @psalm-return HashMap<TK, TV>
      */
     public function combine(mixed $lhs, mixed $rhs): HashMap
