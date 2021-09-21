@@ -15,9 +15,10 @@ interface SeqChainableOps
     /**
      * Add element to the collection end
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->appended(3)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->appended(3)->toArray();
      * => [1, 2, 3]
+     * ```
      *
      * @template TVI
      * @psalm-param TVI $elem
@@ -28,9 +29,10 @@ interface SeqChainableOps
     /**
      * Add elements to the collection end
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->appendedAll([3, 4])->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->appendedAll([3, 4])->toArray();
      * => [1, 2, 3, 4]
+     * ```
      *
      * @template TVI
      * @psalm-param iterable<TVI> $suffix
@@ -41,9 +43,10 @@ interface SeqChainableOps
     /**
      * Add element to the collection start
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->prepended(0)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->prepended(0)->toArray();
      * => [0, 1, 2]
+     * ```
      *
      * @template TVI
      * @psalm-param TVI $elem
@@ -54,9 +57,10 @@ interface SeqChainableOps
     /**
      * Add elements to the collection start
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->prependedAll(-1, 0)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->prependedAll(-1, 0)->toArray();
      * => [-1, 0, 1, 2]
+     * ```
      *
      * @template TVI
      * @psalm-param iterable<TVI> $prefix
@@ -69,9 +73,10 @@ interface SeqChainableOps
      * true - include element to new collection.
      * false - exclude element from new collection.
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->filter(fn($elem) => $elem > 1)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->filter(fn($elem) => $elem > 1)->toArray();
      * => [2]
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Seq<TV>
@@ -81,9 +86,10 @@ interface SeqChainableOps
     /**
      * Exclude null elements
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2, null])->filterNotNull()->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2, null])->filterNotNull()->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-return Seq<TV>
      */
@@ -92,9 +98,10 @@ interface SeqChainableOps
     /**
      * Filter elements of given class
      *
-     * REPL:
-     * >>> LinkedList::collect([1, new Foo(2)])->filterOf(Foo::class)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, new Foo(2)])->filterOf(Foo::class)->toArray();
      * => [Foo(2)]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -109,11 +116,12 @@ interface SeqChainableOps
      * Filtering is handled via Option instead of Boolean.
      * So the output type TVO can be different from the input type TV.
      *
-     * REPL:
+     * ```php
      * >>> LinkedList::collect(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
-     * >>>     ->toArray()
+     * >>>     ->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param callable(TV): Option<TVO> $callback
@@ -124,9 +132,10 @@ interface SeqChainableOps
     /**
      * Map collection and then flatten the result
      *
-     * REPL:
-     * >>> LinkedList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
+     * ```php
+     * >>> LinkedList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray();
      * => [1, 2, 3, 4, 5, 6]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
@@ -138,9 +147,10 @@ interface SeqChainableOps
      * Produces a new collection of elements by mapping each element in collection
      * through a transformation function (callback)
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->map(fn($elem) => (string) $elem)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->map(fn($elem) => (string) $elem)->toArray();
      * => ['1', '2']
+     * ```
      *
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
@@ -151,9 +161,10 @@ interface SeqChainableOps
     /**
      * Copy collection in reversed order
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->reverse()->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->reverse()->toArray();
      * => [2, 1]
+     * ```
      *
      * @psalm-return Seq<TV>
      */
@@ -162,9 +173,10 @@ interface SeqChainableOps
     /**
      * Returns every collection element except first
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2, 3])->tail()->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2, 3])->tail()->toArray();
      * => [2, 3]
+     * ```
      *
      * @psalm-return Seq<TV>
      */
@@ -173,9 +185,10 @@ interface SeqChainableOps
     /**
      * Returns collection unique elements
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 1, 2])->unique(fn($elem) => $elem)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 1, 2])->unique(fn($elem) => $elem)->toArray();
      * => [1, 2]
+     * ```
      *
      * @experimental
      * @psalm-param callable(TV): (int|string) $callback returns element unique id
@@ -186,9 +199,10 @@ interface SeqChainableOps
     /**
      * Take collection elements while predicate is true
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Seq<TV>
@@ -198,9 +212,10 @@ interface SeqChainableOps
     /**
      * Drop collection elements while predicate is true
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray();
      * => [3]
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Seq<TV>
@@ -210,9 +225,10 @@ interface SeqChainableOps
     /**
      * Take N collection elements
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2, 3])->take(2)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2, 3])->take(2)->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-return Seq<TV>
      */
@@ -221,9 +237,10 @@ interface SeqChainableOps
     /**
      * Drop N collection elements
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2, 3])->drop(2)->toArray()
+     * ```php
+     * >>> LinkedList::collect([1, 2, 3])->drop(2)->toArray();
      * => [3]
+     * ```
      *
      * @psalm-return Seq<TV>
      */
@@ -232,11 +249,13 @@ interface SeqChainableOps
     /**
      * Sort collection
      *
-     * REPL:
-     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+     * ```php
+     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray();
      * => [1, 2, 3]
-     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+     *
+     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray();
      * => [3, 2, 1]
+     * ```
      *
      * @psalm-param callable(TV, TV): int $cmp
      * @psalm-return Seq<TV>
@@ -246,12 +265,13 @@ interface SeqChainableOps
     /**
      * Call a function for every collection element
      *
-     * REPL:
+     * ```php
      * >>> LinkedList::collect([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
-     * >>>     ->toArray()
+     * >>>     ->toArray();
      * => [2, 3]
+     * ```
      *
      * @param callable(TV): void $callback
      * @psalm-return Seq<TV>
@@ -261,12 +281,13 @@ interface SeqChainableOps
     /**
      * Group elements
      *
-     * REPL:
+     * ```php
      * >>> LinkedList::collect([1, 1, 3])
      * >>>     ->groupBy(fn($e) => $e)
      * >>>     ->map(fn(Seq $e) => $e->toArray())
      * >>>     ->toArray();
      * => [[1, [1, 1]], [3, [3]]]
+     * ```
      *
      * @template TKO
      * @psalm-param callable(TV): TKO $callback

@@ -105,7 +105,7 @@ interface MapChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> $collection = HashMap::collect([['1', 1], ['2', 2]]);
+     * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
      * >>> $collection->map(fn(Entry $e) => $e->value + 1);
      * => HashMap('1' -> 2, '2' -> 3)

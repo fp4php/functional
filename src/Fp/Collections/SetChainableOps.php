@@ -15,9 +15,10 @@ interface SetChainableOps
     /**
      * Produces new set with given element included
      *
-     * REPL:
-     * >>> HashSet::collect([1, 1, 2])->updated(3)->toArray()
+     * ```php
+     * >>> HashSet::collect([1, 1, 2])->updated(3)->toArray();
      * => [1, 2, 3]
+     * ```
      *
      * @template TVI
      * @param TVI $element
@@ -28,9 +29,10 @@ interface SetChainableOps
     /**
      * Produces new set with given element excluded
      *
-     * REPL:
-     * >>> HashSet::collect([1, 1, 2])->removed(2)->toArray()
+     * ```php
+     * >>> HashSet::collect([1, 1, 2])->removed(2)->toArray();
      * => [1]
+     * ```
      *
      * @param TV $element
      * @return Set<TV>
@@ -40,9 +42,10 @@ interface SetChainableOps
     /**
      * Filter collection by condition
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2, 2])->filter(fn($elem) => $elem > 1)->toArray()
+     * ```php
+     * >>> HashSet::collect([1, 2, 2])->filter(fn($elem) => $elem > 1)->toArray();
      * => [2]
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Set<TV>
@@ -52,9 +55,10 @@ interface SetChainableOps
     /**
      * Filter elements of given class
      *
-     * REPL:
-     * >>> HashSet::collect([1, 1, new Foo(2)])->filterOf(Foo::class)->toArray()
+     * ```php
+     * >>> HashSet::collect([1, 1, new Foo(2)])->filterOf(Foo::class)->toArray();
      * => [Foo(2)]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -66,9 +70,10 @@ interface SetChainableOps
     /**
      * Exclude null elements
      *
-     * REPL:
-     * >>> HashSet::collect([1, 1, null])->filterNotNull()->toArray()
+     * ```php
+     * >>> HashSet::collect([1, 1, null])->filterNotNull()->toArray();
      * => [1]
+     * ```
      *
      * @psalm-return Set<TV>
      */
@@ -80,11 +85,12 @@ interface SetChainableOps
      * Filtering is handled via Option instead of Boolean.
      * So the output type TVO can be different from the input type TV.
      *
-     * REPL:
+     * ```php
      * >>> HashSet::collect(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
-     * >>>     ->toArray()
+     * >>>     ->toArray();
      * => [1, 2]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param callable(TV): Option<TVO> $callback
@@ -93,9 +99,10 @@ interface SetChainableOps
     public function filterMap(callable $callback): Set;
 
     /**
-     * REPL:
-     * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toArray()
+     * ```php
+     * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toArray();
      * => [1, 2, 3, 4, 5, 6]
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
@@ -107,9 +114,10 @@ interface SetChainableOps
      * Produces a new collection of elements by mapping each element in collection
      * through a transformation function (callback)
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray()
+     * ```php
+     * >>> HashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray();
      * => ['1', '2']
+     * ```
      *
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
@@ -120,12 +128,13 @@ interface SetChainableOps
     /**
      * Call a function for every collection element
      *
-     * REPL:
+     * ```php
      * >>> HashSet::collect([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
-     * >>>     ->toArray()
+     * >>>     ->toArray();
      * => [2, 3]
+     * ```
      *
      * @param callable(TV): void $callback
      * @psalm-return Set<TV>
@@ -135,9 +144,10 @@ interface SetChainableOps
     /**
      * Returns every collection element except first
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2, 3])->tail()->toArray()
+     * ```php
+     * >>> HashSet::collect([1, 2, 3])->tail()->toArray();
      * => [2, 3]
+     * ```
      *
      * @psalm-return Set<TV>
      */

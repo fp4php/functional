@@ -16,11 +16,13 @@ interface SetTerminalOps
      * Check if the element is present in the set
      * Alias for @see SetOps::contains
      *
-     * REPL:
-     * >>> HashSet::collect([1, 1, 2])(1)
+     * ```php
+     * >>> HashSet::collect([1, 1, 2])(1);
      * => true
-     * >>> HashSet::collect([1, 1, 2])(3)
+     *
+     * >>> HashSet::collect([1, 1, 2])(3);
      * => false
+     * ```
      *
      * @psalm-param TV $element
      */
@@ -29,11 +31,13 @@ interface SetTerminalOps
     /**
      * Check if the element is present in the set
      *
-     * REPL:
-     * >>> HashSet::collect([1, 1, 2])->contains(1)
+     * ```php
+     * >>> HashSet::collect([1, 1, 2])->contains(1);
      * => true
-     * >>> HashSet::collect([1, 1, 2])->contains(3)
+     *
+     * >>> HashSet::collect([1, 1, 2])->contains(3);
      * => false
+     * ```
      *
      * @psalm-param TV $element
      */
@@ -43,11 +47,13 @@ interface SetTerminalOps
      * Returns true if every collection element satisfy the condition
      * false otherwise
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 0)
+     * ```php
+     * >>> HashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 0);
      * => true
-     * >>> HashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 1)
+     *
+     * >>> HashSet::collect([1, 2, 2])->every(fn($elem) => $elem > 1);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -57,11 +63,13 @@ interface SetTerminalOps
      * Returns true if every collection element is of given class
      * false otherwise
      *
-     * REPL:
-     * >>> HashSet::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class)
+     * ```php
+     * >>> HashSet::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class);
      * => true
-     * >>> HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class)
+     *
+     * >>> HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -72,11 +80,13 @@ interface SetTerminalOps
     /**
      * Find if there is element which satisfies the condition
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2, 2])->exists(fn($elem) => 2 === $elem)
+     * ```php
+     * >>> HashSet::collect([1, 2, 2])->exists(fn($elem) => 2 === $elem);
      * => true
-     * >>> HashSet::collect([1, 2, 2])->exists(fn($elem) => 3 === $elem)
+     *
+     * >>> HashSet::collect([1, 2, 2])->exists(fn($elem) => 3 === $elem);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -86,11 +96,13 @@ interface SetTerminalOps
      * Returns true if there is collection element of given class
      * False otherwise
      *
-     * REPL:
-     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Foo::class)
+     * ```php
+     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Foo::class);
      * => true
-     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Bar::class)
+     *
+     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Bar::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -101,9 +113,10 @@ interface SetTerminalOps
     /**
      * Fold many elements into one
      *
-     * REPL:
-     * >>> HashSet::collect(['1', '2', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
+     * ```php
+     * >>> HashSet::collect(['1', '2', '2'])->fold('0', fn($acc, $cur) => $acc . $cur);
      * => '012'
+     * ```
      *
      * @template TA
      * @psalm-param TA $init initial accumulator value
@@ -116,9 +129,10 @@ interface SetTerminalOps
      * Reduce multiple elements into one
      * Returns None for empty collection
      *
-     * REPL:
-     * >>> HashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
+     * ```php
+     * >>> HashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get();
      * => '12'
+     * ```
      *
      * @template TA
      * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
@@ -129,22 +143,26 @@ interface SetTerminalOps
     /**
      * Check if this set is subset of another set
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2]))
+     * ```php
+     * >>> HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2]));
      * => true
-     * >>> HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2, 3]))
+     *
+     * >>> HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2, 3]));
      * => true
-     * >>> HashSet::collect([1, 2, 3])->subsetOf(HashSet::collect([1, 2]))
+     *
+     * >>> HashSet::collect([1, 2, 3])->subsetOf(HashSet::collect([1, 2]));
      * => false
+     * ```
      */
     public function subsetOf(Set|NonEmptySet $superset): bool;
 
     /**
      * Find first element which satisfies the condition
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
+     * ```php
+     * >>> HashSet::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -154,9 +172,10 @@ interface SetTerminalOps
     /**
      * Returns last collection element which satisfies the condition
      *
-     * REPL:
-     * >>> HashSet::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
+     * ```php
+     * >>> HashSet::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -166,9 +185,10 @@ interface SetTerminalOps
     /**
      * Find first element of given class
      *
-     * REPL:
-     * >>> HashSet::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
+     * ```php
+     * >>> HashSet::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get();
      * => Foo(2)
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -180,9 +200,10 @@ interface SetTerminalOps
     /**
      * Return first collection element
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2])->head()->get()
+     * ```php
+     * >>> HashSet::collect([1, 2])->head()->get();
      * => 1
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -192,9 +213,10 @@ interface SetTerminalOps
      * Returns first collection element
      * Alias for {@see SetOps::head}
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2])->firstElement()->get()
+     * ```php
+     * >>> HashSet::collect([1, 2])->firstElement()->get();
      * => 1
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -203,9 +225,10 @@ interface SetTerminalOps
     /**
      * Returns last collection element
      *
-     * REPL:
-     * >>> HashSet::collect([1, 2])->lastElement()->get()
+     * ```php
+     * >>> HashSet::collect([1, 2])->lastElement()->get();
      * => 2
+     * ```
      *
      * @psalm-return Option<TV>
      */

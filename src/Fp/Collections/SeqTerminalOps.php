@@ -16,9 +16,10 @@ interface SeqTerminalOps
      * Find element by its index (Starts from zero).
      * Returns None if there is no such collection element.
      *
-     * REPL:
-     * >>> ArrayList::collect([1, 2])(1)->get()
+     * ```php
+     * >>> ArrayList::collect([1, 2])(1)->get();
      * => 2
+     * ```
      *
      * Alias for {@see Seq::at()}
      *
@@ -30,9 +31,10 @@ interface SeqTerminalOps
      * Find element by its index (Starts from zero)
      * Returns None if there is no such collection element
      *
-     * REPL:
-     * >>> ArrayList::collect([1, 2])->at(1)->get()
+     * ```php
+     * >>> ArrayList::collect([1, 2])->at(1)->get();
      * => 2
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -42,11 +44,13 @@ interface SeqTerminalOps
      * Returns true if every collection element satisfy the condition
      * and false otherwise
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->every(fn($elem) => $elem > 0)
+     * ```php
+     * >>> LinkedList::collect([1, 2])->every(fn($elem) => $elem > 0);
      * => true
-     * >>> LinkedList::collect([1, 2])->every(fn($elem) => $elem > 1)
+     *
+     * >>> LinkedList::collect([1, 2])->every(fn($elem) => $elem > 1);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -56,11 +60,13 @@ interface SeqTerminalOps
      * Returns true if every collection element is of given class
      * false otherwise
      *
-     * REPL:
-     * >>> LinkedList::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class)
+     * ```php
+     * >>> LinkedList::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class);
      * => true
-     * >>> LinkedList::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class)
+     *
+     * >>> LinkedList::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -71,11 +77,13 @@ interface SeqTerminalOps
     /**
      * Find if there is element which satisfies the condition
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->exists(fn($elem) => 2 === $elem)
+     * ```php
+     * >>> LinkedList::collect([1, 2])->exists(fn($elem) => 2 === $elem);
      * => true
-     * >>> LinkedList::collect([1, 2])->exists(fn($elem) => 3 === $elem)
+     *
+     * >>> LinkedList::collect([1, 2])->exists(fn($elem) => 3 === $elem);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -85,11 +93,13 @@ interface SeqTerminalOps
      * Returns true if there is collection element of given class
      * False otherwise
      *
-     * REPL:
-     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Foo::class)
+     * ```php
+     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Foo::class);
      * => true
-     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Bar::class)
+     *
+     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Bar::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -100,9 +110,10 @@ interface SeqTerminalOps
     /**
      * Find first element which satisfies the condition
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
+     * ```php
+     * >>> LinkedList::collect([1, 2, 3])->first(fn($elem) => $elem > 1)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -112,9 +123,10 @@ interface SeqTerminalOps
     /**
      * Find first element of given class
      *
-     * REPL:
-     * >>> LinkedList::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
+     * ```php
+     * >>> LinkedList::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get();
      * => Foo(2)
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -126,9 +138,10 @@ interface SeqTerminalOps
     /**
      * Fold many elements into one
      *
-     * REPL:
-     * >>> LinkedList::collect(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur)
+     * ```php
+     * >>> LinkedList::collect(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur);
      * => '012'
+     * ```
      *
      * @template TA
      * @psalm-param TA $init initial accumulator value
@@ -141,9 +154,10 @@ interface SeqTerminalOps
      * Reduce multiple elements into one
      * Returns None for empty collection
      *
-     * REPL:
-     * >>> LinkedList::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get()
+     * ```php
+     * >>> LinkedList::collect(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get();
      * => '12'
+     * ```
      *
      * @template TA
      * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
@@ -154,9 +168,10 @@ interface SeqTerminalOps
     /**
      * Return first collection element
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->head()->get()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->head()->get();
      * => 1
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -165,9 +180,10 @@ interface SeqTerminalOps
     /**
      * Returns last collection element which satisfies the condition
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
+     * ```php
+     * >>> LinkedList::collect([1, 0, 2])->last(fn($elem) => $elem > 0)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -178,9 +194,10 @@ interface SeqTerminalOps
      * Returns first collection element
      * Alias for {@see SeqOps::head}
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->firstElement()->get()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->firstElement()->get();
      * => 1
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -189,9 +206,10 @@ interface SeqTerminalOps
     /**
      * Returns last collection element
      *
-     * REPL:
-     * >>> LinkedList::collect([1, 2])->lastElement()->get()
+     * ```php
+     * >>> LinkedList::collect([1, 2])->lastElement()->get();
      * => 2
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -200,18 +218,20 @@ interface SeqTerminalOps
     /**
      * Check if collection has no elements
      *
-     * REPL:
-     * >>> LinkedList::collect([])->isEmpty()
+     * ```php
+     * >>> LinkedList::collect([])->isEmpty();
      * => true
+     * ```
      */
     public function isEmpty(): bool;
 
     /**
      * Check if collection has no elements
      *
-     * REPL:
-     * >>> LinkedList::collect([])->isNonEmpty()
+     * ```php
+     * >>> LinkedList::collect([])->isNonEmpty();
      * => false
+     * ```
      */
     public function isNonEmpty(): bool;
 }

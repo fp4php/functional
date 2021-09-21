@@ -11,9 +11,10 @@ namespace Fp\Collections;
 interface SeqCollector
 {
     /**
-     * REPL:
-     * >>> LinkedList::collect([1, 2])
+     * ```php
+     * >>> LinkedList::collect([1, 2]);
      * => LinkedList(1, 2)
+     * ```
      *
      * @template TVI
      * @param iterable<TVI> $source
