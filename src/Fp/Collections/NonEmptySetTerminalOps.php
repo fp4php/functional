@@ -16,11 +16,13 @@ interface NonEmptySetTerminalOps
      * Check if the element is present in the set
      * Alias for @see SetOps::contains
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])(1)
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])(1);
      * => true
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])(3)
+     *
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])(3);
      * => false
+     * ```
      *
      * @psalm-param TV $element
      */
@@ -29,11 +31,13 @@ interface NonEmptySetTerminalOps
     /**
      * Check if the element is present in the set
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->contains(1)
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->contains(1);
      * => true
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->contains(3)
+     *
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->contains(3);
      * => false
+     * ```
      *
      * @psalm-param TV $element
      */
@@ -43,11 +47,13 @@ interface NonEmptySetTerminalOps
      * Returns true if every collection element satisfy the condition
      * false otherwise
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->every(fn($elem) => $elem > 0)
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->every(fn($elem) => $elem > 0);
      * => true
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->every(fn($elem) => $elem > 1)
+     *
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->every(fn($elem) => $elem > 1);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -57,11 +63,13 @@ interface NonEmptySetTerminalOps
      * Returns true if every collection element is of given class
      * false otherwise
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmptyNonEmpty([new Foo(1), new Foo(2)])->everyOf(Foo::class)
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmptyNonEmpty([new Foo(1), new Foo(2)])->everyOf(Foo::class);
      * => true
-     * >>> NonEmptyHashSet::collectNonEmptyNonEmpty([new Foo(1), new Bar(2)])->everyOf(Foo::class)
+     *
+     * >>> NonEmptyHashSet::collectNonEmptyNonEmpty([new Foo(1), new Bar(2)])->everyOf(Foo::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -72,11 +80,13 @@ interface NonEmptySetTerminalOps
     /**
      * Find if there is element which satisfies the condition
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->exists(fn($elem) => 2 === $elem)
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->exists(fn($elem) => 2 === $elem);
      * => true
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->exists(fn($elem) => 3 === $elem)
+     *
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->exists(fn($elem) => 3 === $elem);
      * => false
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      */
@@ -86,11 +96,13 @@ interface NonEmptySetTerminalOps
      * Returns true if there is collection element of given class
      * False otherwise
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, new Foo(2)])->existsOf(Foo::class)
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, new Foo(2)])->existsOf(Foo::class);
      * => true
-     * >>> NonEmptyHashSet::collectNonEmpty([1, new Foo(2)])->existsOf(Bar::class)
+     *
+     * >>> NonEmptyHashSet::collectNonEmpty([1, new Foo(2)])->existsOf(Bar::class);
      * => false
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -101,9 +113,10 @@ interface NonEmptySetTerminalOps
     /**
      * Reduce multiple elements into one
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur);
      * => '12'
+     * ```
      *
      * @template TA
      * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
@@ -114,22 +127,26 @@ interface NonEmptySetTerminalOps
     /**
      * Check if this set is subset of another set
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collect([1, 2])->subsetOf(NonEmptyHashSet::collect([1, 2]))
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->subsetOf(NonEmptyHashSet::collectNonEmpty([1, 2]));
      * => true
-     * >>> NonEmptyHashSet::collect([1, 2])->subsetOf(NonEmptyHashSet::collect([1, 2, 3]))
+     *
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->subsetOf(NonEmptyHashSet::collectNonEmpty([1, 2, 3]));
      * => true
-     * >>> NonEmptyHashSet::collect([1, 2, 3])->subsetOf(NonEmptyHashSet::collect([1, 2]))
+     *
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])->subsetOf(NonEmptyHashSet::collectNonEmpty([1, 2]));
      * => false
+     * ```
      */
     public function subsetOf(Set|NonEmptySet $superset): bool;
 
     /**
      * Find first element which satisfies the condition
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])->first(fn($elem) => $elem > 1)->get()
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])->first(fn($elem) => $elem > 1)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -139,9 +156,10 @@ interface NonEmptySetTerminalOps
     /**
      * Returns last collection element which satisfies the condition
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 0, 2])->last(fn($elem) => $elem > 0)->get()
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 0, 2])->last(fn($elem) => $elem > 0)->get();
      * => 2
+     * ```
      *
      * @psalm-param callable(TV): bool $predicate
      * @psalm-return Option<TV>
@@ -151,9 +169,12 @@ interface NonEmptySetTerminalOps
     /**
      * Find first element of given class
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get()
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([new Bar(1), new Foo(2), new Foo(3)])
+     * >>>     ->firstOf(Foo::class)
+     * >>>     ->get();
      * => Foo(2)
+     * ```
      *
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
@@ -165,9 +186,10 @@ interface NonEmptySetTerminalOps
     /**
      * Return first collection element
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->head()
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->head();
      * => 1
+     * ```
      *
      * @psalm-return TV
      */
@@ -177,9 +199,10 @@ interface NonEmptySetTerminalOps
      * Returns first collection element
      * Alias for {@see NonEmptySetOps::head}
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->firstElement()
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->firstElement();
      * => 1
+     * ```
      *
      * @psalm-return TV
      */
@@ -188,9 +211,10 @@ interface NonEmptySetTerminalOps
     /**
      * Returns last collection element
      *
-     * REPL:
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->lastElement()
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2])->lastElement();
      * => 2
+     * ```
      *
      * @psalm-return TV
      */
