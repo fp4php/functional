@@ -13,9 +13,9 @@ use function Fp\Callable\asGenerator;
  * @template TK
  * @template-covariant TV
  * @psalm-immutable
- * @extends AbstractNonEmptyMap<TK, TV>
+ * @implements NonEmptyMap<TK, TV>
  */
-final class NonEmptyHashMap extends AbstractNonEmptyMap
+final class NonEmptyHashMap implements NonEmptyMap
 {
     /**
      * @internal
@@ -118,6 +118,103 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
     }
 
     /**
+     * @inheritDoc
+     */
+    public function count(): int
+    {
+        $counter = 0;
+
+        foreach ($this as $ignored) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    /**
+     * @inheritDoc
+     * @return non-empty-list<array{TK, TV}>
+     */
+    public function toArray(): array
+    {
+        return $this->toNonEmptyArrayList()->toArray();
+    }
+
+    /**
+     * @inheritDoc
+     * @return LinkedList<array{TK, TV}>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
+     * @return NonEmptyLinkedList<array{TK, TV}>
+     */
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectUnsafe(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
+     * @return ArrayList<array{TK, TV}>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return ArrayList::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
+     * @return NonEmptyArrayList<array{TK, TV}>
+     */
+    public function toNonEmptyArrayList(): NonEmptyArrayList
+    {
+        return NonEmptyArrayList::collectUnsafe(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<array{TK, TV}>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
+     * @return NonEmptyHashSet<array{TK, TV}>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet
+    {
+        return NonEmptyHashSet::collectUnsafe(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair;
+            }
+        }));
+    }
+
+    /**
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
@@ -131,6 +228,38 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
     public function toNonEmptyHashMap(): NonEmptyHashMap
     {
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(Entry<TK, TV>): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        $result = true;
+
+        foreach ($this as [$key, $value]) {
+            $entry = new Entry($key, $value);
+
+            if (!$predicate($entry)) {
+                $result = false;
+                break;
+            }
+
+            unset($entry);
+        }
+
+        return $result;
     }
 
     /**
@@ -207,7 +336,8 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
     public function mapValues(callable $callback): self
     {
         return self::collectPairsUnsafe(asGenerator(function () use ($callback) {
-            foreach ($this->generateEntries() as $entry) {
+            foreach ($this as [$key, $value]) {
+                $entry = new Entry($key, $value);
                 yield [$entry->key, $callback($entry)];
                 unset($entry);
             }
@@ -223,7 +353,8 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
     public function mapKeys(callable $callback): self
     {
         return self::collectPairsUnsafe(asGenerator(function () use ($callback) {
-            foreach ($this->generateEntries() as $entry) {
+            foreach ($this as [$key, $value]) {
+                $entry = new Entry($key, $value);
                 yield [$callback($entry), $entry->value];
                 unset($entry);
             }
@@ -236,7 +367,11 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function keys(): NonEmptySeq
     {
-        return NonEmptyArrayList::collectUnsafe($this->generateKeys());
+        return NonEmptyArrayList::collectUnsafe(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair[0];
+            }
+        }));
     }
 
     /**
@@ -245,6 +380,10 @@ final class NonEmptyHashMap extends AbstractNonEmptyMap
      */
     public function values(): NonEmptySeq
     {
-        return NonEmptyArrayList::collectUnsafe($this->generateValues());
+        return NonEmptyArrayList::collectUnsafe(asGenerator(function () {
+            foreach ($this as $pair) {
+                yield $pair[1];
+            }
+        }));
     }
 }
