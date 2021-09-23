@@ -20,15 +20,15 @@ class AbstractOperation
     /**
      * @var Generator<TK, TV>
      */
-    protected Generator $input;
+    protected Generator $gen;
 
     /**
      *
-     * @param iterable<TK, TV> $input
+     * @param iterable<TK, TV> $gen
      */
-    final public function __construct(iterable $input)
+    final public function __construct(iterable $gen)
     {
-        $this->input = asGenerator(fn() => $input);
+        $this->gen = asGenerator(fn() => $gen);
     }
 
     /**

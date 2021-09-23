@@ -25,7 +25,7 @@ class MapValuesOperation extends AbstractOperation
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
-            foreach ($this->input as $key => $value) {
+            foreach ($this->gen as $key => $value) {
                 yield $key => $f($value, $key);
             }
         });

@@ -76,10 +76,8 @@ final class HashMap implements Map, StaticStorage
      */
     public function getKeyValueIterator(): Generator
     {
-        foreach ($this->hashTable->table as $bucket) {
-            foreach ($bucket as [$key, $value]) {
-                yield $key => $value;
-            }
+        foreach ($this as [$key, $value]) {
+            yield $key => $value;
         }
     }
 

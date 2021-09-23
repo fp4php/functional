@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Collections\Operations\AppendedOperation;
 use Fp\Collections\Operations\FunctionAdapter;
 use Fp\Collections\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
@@ -37,13 +38,7 @@ trait SeqChainable
      */
     public function appended(mixed $elem): self
     {
-        return self::collect(asGenerator(function () use ($elem) {
-            foreach ($this as $prefixElem) {
-                yield $prefixElem;
-            }
-
-            yield $elem;
-        }));
+        return self::collect(AppendedOperation::of($this)($elem));
     }
 
     /**
