@@ -7,6 +7,8 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
+use Fp\Operations\FilterMapOperation;
+use Fp\Operations\FilterOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
@@ -83,16 +85,7 @@ trait SeqChainable
      */
     public function filter(callable $predicate): self
     {
-        return self::collect(asGenerator(function () use ($predicate) {
-            foreach ($this as $element) {
-                /** @var TV $e */
-                $e = $element;
-
-                if ($predicate($e)) {
-                    yield $e;
-                }
-            }
-        }));
+        return self::collect(FilterOperation::of($this)($predicate));
     }
 
     /**
@@ -103,17 +96,7 @@ trait SeqChainable
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(asGenerator(function () use ($callback) {
-            foreach ($this as $element) {
-                /** @var TV $e */
-                $e = $element;
-                $result = $callback($e);
-
-                if ($result->isSome()) {
-                    yield $result->get();
-                }
-            }
-        }));
+        return self::collect(FilterMapOperation::of($this)($callback));
     }
 
     /**
