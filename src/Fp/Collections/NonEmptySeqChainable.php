@@ -9,8 +9,7 @@ use function Fp\Callable\asGenerator;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements NonEmptySeqChainableOps
- * @psalm-require-implements NonEmptySeqCollector
+ * @psalm-require-implements NonEmptySeq
  */
 trait NonEmptySeqChainable
 {

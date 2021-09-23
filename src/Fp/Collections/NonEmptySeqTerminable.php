@@ -11,7 +11,7 @@ use function Fp\of;
 /**
  * @psalm-immutable
  * @template-covariant TV
- * @psalm-require-implements NonEmptySeqTerminalOps
+ * @psalm-require-implements NonEmptySeq
  */
 trait NonEmptySeqTerminable
 {
