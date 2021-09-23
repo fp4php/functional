@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Collections\Operations\FunctionAdapter;
+use Fp\Collections\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 use Iterator;
 
@@ -452,11 +454,7 @@ final class HashSet implements Set
      */
     public function map(callable $callback): self
     {
-        return self::collect(asGenerator(function () use ($callback) {
-            foreach ($this as $element) {
-                yield $callback($element);
-            }
-        }));
+        return self::collect(MapValuesOperation::of($this)($callback));
     }
 
     /**

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Collections\Operations\FunctionAdapter;
+use Fp\Collections\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 
 use function Fp\Callable\asGenerator;
@@ -24,14 +26,7 @@ trait SeqChainable
      */
     public function map(callable $callback): self
     {
-        return self::collect(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                /** @var TV $e */
-                $e = $elem;
-
-                yield $callback($e);
-            }
-        }));
+        return self::collect(MapValuesOperation::of($this)($callback));
     }
 
     /**

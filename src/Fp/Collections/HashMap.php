@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Collections\Operations\MapKeysOperation;
+use Fp\Collections\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 use Generator;
 
@@ -65,6 +67,18 @@ final class HashMap implements Map, StaticStorage
         foreach ($this->hashTable->table as $bucket) {
             foreach ($bucket as $pair) {
                 yield $pair;
+            }
+        }
+    }
+
+    /**
+     * @return Generator<TK, TV>
+     */
+    public function getKeyValueIterator(): Generator
+    {
+        foreach ($this->hashTable->table as $bucket) {
+            foreach ($bucket as [$key, $value]) {
+                yield $key => $value;
             }
         }
     }
@@ -323,13 +337,11 @@ final class HashMap implements Map, StaticStorage
      */
     public function mapValues(callable $callback): self
     {
-        return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as [$key, $value]) {
-                $entry = new Entry($key, $value);
-                yield [$entry->key, $callback($entry)];
-                unset($entry);
-            }
-        }));
+        return self::collect(
+            MapValuesOperation::of($this->getKeyValueIterator())(
+                fn($value, $key) => $callback(new Entry($key, $value))
+            )
+        );
     }
 
     /**
@@ -340,13 +352,11 @@ final class HashMap implements Map, StaticStorage
      */
     public function mapKeys(callable $callback): self
     {
-        return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as [$key, $value]) {
-                $entry = new Entry($key, $value);
-                yield [$callback($entry), $entry->value];
-                unset($entry);
-            }
-        }));
+        return self::collect(
+            MapKeysOperation::of($this->getKeyValueIterator())(
+                fn($value, $key) => $callback(new Entry($key, $value))
+            )
+        );
     }
 
     /**
