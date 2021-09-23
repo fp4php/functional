@@ -42,20 +42,4 @@ class AbstractOperation
     {
         return new static($input);
     }
-
-    /**
-     * @psalm-pure
-     * @template TKI
-     * @template TVI
-     * @param iterable<array{TKI, TVI}> $input
-     * @return static<TKI, TVI>
-     */
-    public static function ofPairs(iterable $input): static
-    {
-        return new static(asGenerator(function () use ($input) {
-            foreach ($input as $pair) {
-                yield $pair[0] => $pair[1];
-            }
-        }));
-    }
 }

@@ -7,6 +7,7 @@ namespace Fp\Collections;
 use Fp\Collections\Operations\AppendedOperation;
 use Fp\Collections\Operations\FunctionAdapter;
 use Fp\Collections\Operations\MapValuesOperation;
+use Fp\Collections\Operations\PrependedOperation;
 use Fp\Functional\Option\Option;
 
 use function Fp\Callable\asGenerator;
@@ -68,13 +69,7 @@ trait SeqChainable
      */
     public function prepended(mixed $elem): self
     {
-        return self::collect(asGenerator(function () use ($elem) {
-            yield $elem;
-
-            foreach ($this as $prefixElem) {
-                yield $prefixElem;
-            }
-        }));
+        return self::collect(PrependedOperation::of($this)($elem));
     }
 
     /**
