@@ -25,6 +25,7 @@
     },
     "autoload": {
         "psr-4": {
+            "Fp\\Operations\\": "src/Fp/Operations",
             "Fp\\Collections\\": "src/Fp/Collections",
             "Fp\\Streams\\": "src/Fp/Streams",
             "Fp\\Functional\\": "src/Fp/Functional",

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Collections\Operations\FunctionAdapter;
-use Fp\Collections\Operations\MapValuesOperation;
+use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 use Iterator;
 

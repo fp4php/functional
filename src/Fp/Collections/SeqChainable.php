@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Collections\Operations\AppendedOperation;
-use Fp\Collections\Operations\FunctionAdapter;
-use Fp\Collections\Operations\MapValuesOperation;
-use Fp\Collections\Operations\PrependedOperation;
 use Fp\Functional\Option\Option;
+use Fp\Operations\AppendedAllOperation;
+use Fp\Operations\AppendedOperation;
+use Fp\Operations\MapValuesOperation;
+use Fp\Operations\PrependedAllOperation;
+use Fp\Operations\PrependedOperation;
 
 use function Fp\Callable\asGenerator;
 use function Fp\of;
@@ -50,15 +51,7 @@ trait SeqChainable
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collect(asGenerator(function() use ($suffix) {
-            foreach ($this as $prefixElem) {
-                yield $prefixElem;
-            }
-
-            foreach ($suffix as $suffixElem) {
-                yield $suffixElem;
-            }
-        }));
+        return self::collect(AppendedAllOperation::of($this)($suffix));
     }
 
     /**
@@ -80,15 +73,7 @@ trait SeqChainable
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collect(asGenerator(function() use ($prefix) {
-            foreach ($prefix as $prefixElem) {
-                yield $prefixElem;
-            }
-
-            foreach ($this as $suffixElem) {
-                yield $suffixElem;
-            }
-        }));
+        return self::collect(PrependedAllOperation::of($this)($prefix));
     }
 
     /**

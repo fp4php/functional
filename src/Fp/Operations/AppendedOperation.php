@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Collections\Operations;
+namespace Fp\Operations;
 
 use Generator;
 
@@ -14,7 +14,7 @@ use function Fp\Callable\asGenerator;
  * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
-class PrependedOperation extends AbstractOperation
+class AppendedOperation extends AbstractOperation
 {
     /**
      * @psalm-pure
@@ -25,11 +25,11 @@ class PrependedOperation extends AbstractOperation
     public function __invoke(mixed $elem): Generator
     {
         return asGenerator(function () use ($elem) {
-            yield $elem;
-
-            foreach ($this->gen as $suffixElem) {
-                yield $suffixElem;
+            foreach ($this->gen as $prefixElem) {
+                yield $prefixElem;
             }
+
+            yield $elem;
         });
     }
 }

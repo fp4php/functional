@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Collections\Operations;
+namespace Fp\Operations;
 
 use Generator;
 

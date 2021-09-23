@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Collections\Operations;
+namespace Fp\Operations;
 
 use Generator;
 
@@ -14,22 +14,24 @@ use function Fp\Callable\asGenerator;
  * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
-class AppendedOperation extends AbstractOperation
+class AppendedAllOperation extends AbstractOperation
 {
     /**
      * @psalm-pure
      * @template TVI
-     * @psalm-param TVI $elem
+     * @psalm-param iterable<TVI> $suffix
      * @return Generator<TV|TVI>
      */
-    public function __invoke(mixed $elem): Generator
+    public function __invoke(iterable $suffix): Generator
     {
-        return asGenerator(function () use ($elem) {
+        return asGenerator(function () use ($suffix) {
             foreach ($this->gen as $prefixElem) {
                 yield $prefixElem;
             }
 
-            yield $elem;
+            foreach ($suffix as $suffixElem) {
+                yield $suffixElem;
+            }
         });
     }
 }

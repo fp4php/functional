@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Collections\Operations\MapKeysOperation;
-use Fp\Collections\Operations\MapValuesOperation;
+use Fp\Operations\MapKeysOperation;
+use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 use Generator;
 
