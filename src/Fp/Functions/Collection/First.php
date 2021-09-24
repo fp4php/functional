@@ -8,8 +8,6 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 
-use function Fp\of;
-
 /**
  * Find first element which satisfies the condition
  *

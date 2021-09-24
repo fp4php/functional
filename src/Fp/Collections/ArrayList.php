@@ -6,7 +6,18 @@ namespace Fp\Collections;
 
 use ArrayIterator;
 use Fp\Functional\Option\Option;
+use Fp\Operations\EveryOfOperation;
+use Fp\Operations\EveryOperation;
+use Fp\Operations\ExistsOfOperation;
+use Fp\Operations\ExistsOperation;
+use Fp\Operations\FirstOfOperation;
+use Fp\Operations\FirstOperation;
+use Fp\Operations\FoldOperation;
+use Fp\Operations\ReduceOperation;
+use Generator;
 use Iterator;
+
+use function Fp\Callable\asGenerator;
 
 /**
  * O(1) {@see Seq::at()} and {@see Seq::__invoke} operations
@@ -21,11 +32,6 @@ final class ArrayList implements Seq
      * @use SeqChainable<TV>
      */
     use SeqChainable;
-
-    /**
-     * @use SeqTerminable<TV>
-     */
-    use SeqTerminable;
 
     /**
      * @use SeqCastable<TV>
@@ -63,6 +69,16 @@ final class ArrayList implements Seq
     public function getIterator(): Iterator
     {
         return new ArrayIterator($this->elements);
+    }
+
+    /**
+     * @return Generator<int, TV>
+     */
+    private function iter(): Generator
+    {
+        foreach ($this as $elem) {
+            yield $elem;
+        }
     }
 
     /**
@@ -137,5 +153,167 @@ final class ArrayList implements Seq
     public function isEmpty(): bool
     {
         return empty($this->elements);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return EveryOperation::of($this->iter())($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function everyOf(string $fqcn, bool $invariant = false): bool
+    {
+        return EveryOfOperation::of($this->iter())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return ExistsOperation::of($this->iter())($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function existsOf(string $fqcn, bool $invariant = false): bool
+    {
+        return ExistsOfOperation::of($this->iter())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    public function first(callable $predicate): Option
+    {
+        return FirstOperation::of($this->iter())($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
+     */
+    public function firstOf(string $fqcn, bool $invariant = false): Option
+    {
+        return FirstOfOperation::of($this->iter())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TA
+     * @psalm-param TA $init initial accumulator value
+     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
+     * @psalm-return TA
+     */
+    public function fold(mixed $init, callable $callback): mixed
+    {
+        return FoldOperation::of($this->iter())($init, $callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
+     * @psalm-return Option<TV|TA>
+     */
+    public function reduce(callable $callback): Option
+    {
+        return ReduceOperation::of($this->iter())($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    public function last(callable $predicate): Option
+    {
+        $last = null;
+
+        foreach ($this as $elem) {
+            if ($predicate($elem)) {
+                $last = $elem;
+            }
+        }
+
+        return Option::fromNullable($last);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    public function firstElement(): Option
+    {
+        return $this->head();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    public function lastElement(): Option
+    {
+        return $this->last(fn() => true);
+    }
+
+
+    /**
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return Map<TKO, Seq<TV>>
+     * @psalm-suppress ImpureMethodCall
+     */
+    public function groupBy(callable $callback): Map
+    {
+        $buffer = new HashMapBuffer();
+
+        foreach ($this as $elem) {
+            $key = $callback($elem);
+
+            /** @var Seq<TV> $group */
+            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
+
+            $buffer->update($key, $group->prepended($elem));
+        }
+
+        return $buffer->toHashMap();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isNonEmpty(): bool
+    {
+        return !$this->isEmpty();
     }
 }

@@ -7,6 +7,8 @@ namespace Fp\Collection;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 
+use Fp\Operations\ReduceOperation;
+
 use function Fp\Cast\asList;
 
 /**
@@ -30,5 +32,5 @@ use function Fp\Cast\asList;
  */
 function reduce(iterable $collection, callable $callback): Option
 {
-    return ArrayList::collect(asList($collection))->reduce($callback);
+    return ReduceOperation::of($collection)($callback);
 }

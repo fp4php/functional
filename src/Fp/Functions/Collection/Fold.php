@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Collections\ArrayList;
-
-use function Fp\Cast\asList;
+use Fp\Operations\FoldOperation;
 
 /**
  * Fold many elements into one
@@ -30,5 +28,5 @@ use function Fp\Cast\asList;
  */
 function fold(mixed $init, iterable $collection, callable $callback): mixed
 {
-    return ArrayList::collect(asList($collection))->fold($init, $callback);
+    return FoldOperation::of($collection)($init, $callback);
 }
