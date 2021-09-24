@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Operations\EveryOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 use Iterator;
@@ -136,16 +137,7 @@ final class HashSet implements Set
      */
     public function every(callable $predicate): bool
     {
-        $result = true;
-
-        foreach ($this as $element) {
-            if (!$predicate($element)) {
-                $result = false;
-                break;
-            }
-        }
-
-        return $result;
+        return EveryOperation::of($this)($predicate);
     }
 
     /**

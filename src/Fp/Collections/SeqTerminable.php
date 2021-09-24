@@ -6,6 +6,9 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 
+use Fp\Operations\EveryOfOperation;
+use Fp\Operations\EveryOperation;
+
 use function Fp\of;
 
 /**
@@ -21,19 +24,7 @@ trait SeqTerminable
      */
     public function every(callable $predicate): bool
     {
-        $result = true;
-
-        foreach ($this as $elem) {
-            /** @var TV $e */
-            $e = $elem;
-
-            if (!$predicate($e)) {
-                $result = false;
-                break;
-            }
-        }
-
-        return $result;
+        return EveryOperation::of($this)($predicate);
     }
 
     /**
@@ -44,7 +35,7 @@ trait SeqTerminable
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->every(fn(mixed $v) => of($v, $fqcn, $invariant));
+        return EveryOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
