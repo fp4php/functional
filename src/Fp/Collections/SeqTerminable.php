@@ -10,6 +10,9 @@ use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
 use Fp\Operations\ExistsOperation;
 
+use Fp\Operations\FirstOfOperation;
+use Fp\Operations\FirstOperation;
+
 use function Fp\of;
 
 /**
@@ -66,19 +69,7 @@ trait SeqTerminable
      */
     public function first(callable $predicate): Option
     {
-        $first = null;
-
-        foreach ($this as $elem) {
-            /** @var TV $e */
-            $e = $elem;
-
-            if ($predicate($e)) {
-                $first = $e;
-                break;
-            }
-        }
-
-        return Option::fromNullable($first);
+        return FirstOperation::of($this)($predicate);
     }
 
     /**
@@ -90,8 +81,7 @@ trait SeqTerminable
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        /** @var Option<TVO> */
-        return $this->first(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+        return FirstOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**

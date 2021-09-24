@@ -28,8 +28,8 @@ use function Fp\Cast\asArray;
  * @psalm-param callable(TVI, TK): TVO $callback
  *
  * @psalm-return (
- *    $collection is non-empty-list  ? non-empty-list<TVO>        : (
- *    $collection is list            ? list<TVO>                  : (
+ *    $collection is non-empty-list  ? non-empty-list<TVO>      : (
+ *    $collection is list            ? list<TVO>                : (
  *    $collection is non-empty-array ? non-empty-array<TK, TVO> : (
  *    array<TK, TVO>
  * ))))

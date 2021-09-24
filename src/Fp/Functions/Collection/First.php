@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\FirstOfOperation;
+use Fp\Operations\FirstOperation;
 
 use function Fp\of;
 
@@ -24,20 +26,7 @@ use function Fp\of;
  */
 function first(iterable $collection, ?callable $predicate = null): Option
 {
-    if (is_null($predicate)) {
-        return head($collection);
-    }
-
-    $first = null;
-
-    foreach ($collection as $index => $element) {
-        if ($predicate($element, $index)) {
-            $first = $element;
-            break;
-        }
-    }
-
-    return Option::fromNullable($first);
+    return FirstOperation::of($collection)($predicate);
 }
 
 /**
@@ -58,9 +47,5 @@ function first(iterable $collection, ?callable $predicate = null): Option
  */
 function firstOf(iterable $collection, string $fqcn, bool $invariant = false): Option
 {
-    /** @var Option<TVO> */
-    return first(
-        $collection,
-        fn(mixed $v): bool => of($v, $fqcn, $invariant)
-    );
+    return FirstOfOperation::of($collection)($fqcn, $invariant);
 }
