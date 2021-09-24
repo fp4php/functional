@@ -17,8 +17,13 @@ use Fp\Operations\FlatMapOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
+use Fp\Operations\SortedOperation;
 use Fp\Operations\TakeOperation;
 use Fp\Operations\TakeWhileOperation;
+
+use Fp\Operations\TapOperation;
+
+use Fp\Operations\UniqueOperation;
 
 use function Fp\Callable\asGenerator;
 
@@ -181,13 +186,7 @@ trait SeqChainable
      */
     public function tap(callable $callback): self
     {
-        foreach ($this as $elem) {
-            /** @var TV $e */
-            $e = $elem;
-            $callback($e);
-        }
-
-        return $this;
+        return self::collect(TapOperation::of($this)($callback));
     }
 
     /**
@@ -198,12 +197,7 @@ trait SeqChainable
      */
     public function unique(callable $callback): self
     {
-        $pairs = $this->map(function($elem) use ($callback) {
-            /** @var TV $elem */
-            return [$callback($elem), $elem];
-        });
-
-        return self::collect(HashMap::collectPairs($pairs)->values());
+        return self::collect(UniqueOperation::of($this)($callback));
     }
 
     /**
@@ -213,14 +207,7 @@ trait SeqChainable
      */
     public function sorted(callable $cmp): self
     {
-        $sorted = $this->toArray();
-
-        /**
-         * @psalm-suppress ImpureFunctionCall, InvalidArgument
-         */
-        usort($sorted, $cmp);
-
-        return self::collect($sorted);
+        return self::collect(SortedOperation::of($this)($cmp));
     }
 }
 
