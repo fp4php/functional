@@ -10,23 +10,22 @@ namespace Fp\Operations;
  * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
-class EveryOperation extends AbstractOperation
+class ExistsOperation extends AbstractOperation
 {
     /**
-     * @param callable(TV, TK): bool $f
-     * @return bool
+     * @psalm-param callable(TV, TK): bool $f
      */
     public function __invoke(callable $f): bool
     {
-        $res = true;
+        $exists = false;
 
         foreach ($this->gen as $key => $value) {
-            if (!$f($value, $key)) {
-                $res = false;
+            if ($f($value, $key)) {
+                $exists = true;
                 break;
             }
         }
 
-        return $res;
+        return $exists;
     }
 }

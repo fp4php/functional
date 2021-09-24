@@ -9,6 +9,9 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 
+use Fp\Operations\ExistsOfOperation;
+use Fp\Operations\ExistsOperation;
+
 use function Fp\of;
 
 /**
@@ -44,18 +47,7 @@ trait SeqTerminable
      */
     public function exists(callable $predicate): bool
     {
-        $isExists = false;
-
-        foreach ($this as $elem) {
-            /** @var TV $e */
-            $e = $elem;
-
-            if ($predicate($e)) {
-                $isExists = true;
-                break;
-            }
-        }
-        return $isExists;
+        return ExistsOperation::of($this)($predicate);
     }
 
     /**
@@ -66,10 +58,7 @@ trait SeqTerminable
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->firstOf($fqcn, $invariant)->fold(
-            fn() => true,
-            fn() => false,
-        );
+        return ExistsOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
