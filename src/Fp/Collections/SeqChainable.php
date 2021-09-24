@@ -8,6 +8,8 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
 use Fp\Operations\FilterMapOperation;
+use Fp\Operations\FilterNotNullOperation;
+use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
@@ -104,7 +106,7 @@ trait SeqChainable
      */
     public function filterNotNull(): self
     {
-        return $this->filter(fn(mixed $v) => !is_null($v));
+        return self::collect(FilterNotNullOperation::of($this)());
     }
 
     /**
@@ -116,8 +118,7 @@ trait SeqChainable
      */
     public function filterOf(string $fqcn, bool $invariant = false): self
     {
-        /** @var self<TVO> */
-        return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+        return self::collect(FilterOfOperation::of($this)($fqcn, $invariant));
     }
 
     /**
