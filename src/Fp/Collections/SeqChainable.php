@@ -7,16 +7,18 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
+use Fp\Operations\DropWhileOperation;
 use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterNotNullOperation;
 use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
+use Fp\Operations\FlatMapOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
+use Fp\Operations\TakeWhileOperation;
 
 use function Fp\Callable\asGenerator;
-use function Fp\of;
 
 /**
  * @psalm-immutable
@@ -129,17 +131,7 @@ trait SeqChainable
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(asGenerator(function () use ($callback) {
-            foreach ($this as $element) {
-                /** @var TV $e */
-                $e = $element;
-                $result = $callback($e);
-
-                foreach ($result as $item) {
-                    yield $item;
-                }
-            }
-        }));
+        return self::collect(FlatMapOperation::of($this)($callback));
     }
 
     /**
@@ -149,18 +141,7 @@ trait SeqChainable
      */
     public function takeWhile(callable $predicate): self
     {
-        return self::collect(asGenerator(function () use ($predicate) {
-            foreach ($this as $elem) {
-                /** @var TV $e */
-                $e = $elem;
-
-                if (!$predicate($e)) {
-                    break;
-                }
-
-                yield $e;
-            }
-        }));
+        return self::collect(TakeWhileOperation::of($this)($predicate));
     }
 
     /**
@@ -170,18 +151,7 @@ trait SeqChainable
      */
     public function dropWhile(callable $predicate): self
     {
-        return self::collect(asGenerator(function () use ($predicate) {
-            $toggle = true;
-
-            foreach ($this as $elem) {
-                /** @var TV $e */
-                $e = $elem;
-
-                if (!($toggle = $toggle && $predicate($e))) {
-                    yield $e;
-                }
-            }
-        }));
+        return self::collect(DropWhileOperation::of($this)($predicate));
     }
 
     /**

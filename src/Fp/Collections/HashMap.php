@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Operations\FlatMapOperation;
 use Fp\Operations\MapKeysOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
@@ -303,17 +304,11 @@ final class HashMap implements Map, StaticStorage
      */
     public function flatMap(callable $callback): self
     {
-        return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as [$key, $value]) {
-                $entry = new Entry($key, $value);
-
-                foreach ($callback($entry) as $p) {
-                    yield $p;
-                }
-
-                unset($entry);
-            }
-        }));
+        return self::collectPairs(
+            FlatMapOperation::of($this->getKeyValueIterator())(
+                fn($value, $key) => $callback(new Entry($key, $value))
+            )
+        );
     }
 
     /**
