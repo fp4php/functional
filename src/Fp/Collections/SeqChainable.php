@@ -7,6 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
+use Fp\Operations\DropOperation;
 use Fp\Operations\DropWhileOperation;
 use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterNotNullOperation;
@@ -16,6 +17,7 @@ use Fp\Operations\FlatMapOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
+use Fp\Operations\TakeOperation;
 use Fp\Operations\TakeWhileOperation;
 
 use function Fp\Callable\asGenerator;
@@ -160,15 +162,7 @@ trait SeqChainable
      */
     public function take(int $length): self
     {
-        return self::collect(asGenerator(function () use ($length) {
-            foreach ($this as $i => $elem) {
-                if ($i === $length) {
-                    break;
-                }
-
-                yield $elem;
-            }
-        }));
+        return self::collect(TakeOperation::of($this)($length));
     }
 
     /**
@@ -177,15 +171,7 @@ trait SeqChainable
      */
     public function drop(int $length): self
     {
-        return self::collect(asGenerator(function () use ($length) {
-            foreach ($this as $i => $elem) {
-                if ($i < $length) {
-                    continue;
-                }
-
-                yield $elem;
-            }
-        }));
+        return self::collect(DropOperation::of($this)($length));
     }
 
     /**
