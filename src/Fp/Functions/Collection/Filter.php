@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use function Fp\of;
+use Fp\Operations\FilterNotNullOperation;
+use Fp\Operations\FilterOfOperation;
+use Fp\Operations\FilterOperation;
+
+use function Fp\Cast\asArray;
+use function Fp\Cast\asList;
 
 /**
  * Filter collection by condition
@@ -25,19 +30,10 @@ use function Fp\of;
  */
 function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
-    $aggregation = [];
-
-    foreach ($collection as $index => $element) {
-        if ($predicate($element, $index)) {
-            if ($preserveKeys) {
-                $aggregation[$index] = $element;
-            } else {
-                $aggregation[] = $element;
-            }
-        }
-    }
-
-    return $aggregation;
+    $gen = FilterOperation::of($collection)($predicate);
+    return $preserveKeys
+        ? asArray($gen)
+        : asList($gen);
 }
 
 /**
@@ -58,11 +54,10 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  */
 function filterNotNull(iterable $collection, bool $preserveKeys = false): array
 {
-    return filter(
-        $collection,
-        fn(mixed $v) => !is_null($v),
-        $preserveKeys
-    );
+    $gen = FilterNotNullOperation::of($collection)();
+    return $preserveKeys
+        ? asArray($gen)
+        : asList($gen);
 }
 
 /**
@@ -86,11 +81,9 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  */
 function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false, bool $invariant = false): array
 {
-    /** @var array<TK, TVO> */
-    return filter(
-        $collection,
-        fn(mixed $v): bool => of($v, $fqcn, $invariant),
-        $preserveKeys
-    );
+    $gen = FilterOfOperation::of($collection)($fqcn, $invariant);
+    return $preserveKeys
+        ? asArray($gen)
+        : asList($gen);
 }
 

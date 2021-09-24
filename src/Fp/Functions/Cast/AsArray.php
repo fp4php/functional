@@ -17,7 +17,7 @@ namespace Fp\Cast;
  * @psalm-template TV
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TV> : array<int, TV>)
+ * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
  */
 function asArray(iterable $collection, bool $preserveKeys = true): array
 {

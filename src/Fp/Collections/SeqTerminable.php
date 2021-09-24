@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
-
 use Fp\Operations\ExistsOfOperation;
 use Fp\Operations\ExistsOperation;
 

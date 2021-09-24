@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\MapValuesOperation;
+
+use function Fp\Cast\asArray;
+
 /**
  * Produces a new array of elements by mapping each element in collection
  * through a transformation function (callback).
@@ -32,11 +36,5 @@ namespace Fp\Collection;
  */
 function map(iterable $collection, callable $callback): array
 {
-    $aggregation = [];
-
-    foreach ($collection as $index => $element) {
-        $aggregation[$index] = $callback($element, $index);
-    }
-
-    return $aggregation;
+    return asArray(MapValuesOperation::of($collection)($callback));
 }
