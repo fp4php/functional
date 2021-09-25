@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\HeadOperation;
 
 /**
  * Returns collection first element
@@ -21,12 +22,5 @@ use Fp\Functional\Option\Option;
  */
 function head(iterable $collection): Option
 {
-    $head = null;
-
-    foreach ($collection as $element) {
-        $head = $element;
-        break;
-    }
-
-    return Option::fromNullable($head);
+    return HeadOperation::of($collection)();
 }

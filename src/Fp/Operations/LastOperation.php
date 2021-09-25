@@ -12,7 +12,7 @@ use Fp\Functional\Option\Option;
  * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
-class FirstOperation extends AbstractOperation
+class LastOperation extends AbstractOperation
 {
     /**
      * @param null|callable(TV, TK): bool $f
@@ -20,19 +20,14 @@ class FirstOperation extends AbstractOperation
      */
     public function __invoke(?callable $f = null): Option
     {
-        if (is_null($f)) {
-            $f = fn(mixed $value, mixed $key): bool => true;
-        }
-
-        $first = null;
+        $last = null;
 
         foreach ($this->gen as $key => $value) {
-            if ($f($value, $key)) {
-                $first = $value;
-                break;
+            if (is_null($f) || $f($value, $key)) {
+                $last = $value;
             }
         }
 
-        return Option::fromNullable($first);
+        return Option::fromNullable($last);
     }
 }

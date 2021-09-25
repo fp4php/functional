@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\LastOperation;
 
 /**
  * Returns last collection element
@@ -23,13 +24,5 @@ use Fp\Functional\Option\Option;
  */
 function last(iterable $collection, ?callable $predicate = null): Option
 {
-    $last = null;
-
-    foreach ($collection as $index => $element) {
-        if (is_null($predicate) || $predicate($element, $index)) {
-            $last = $element;
-        }
-    }
-
-    return Option::fromNullable($last);
+    return LastOperation::of($collection)($predicate);
 }

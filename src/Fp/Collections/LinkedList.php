@@ -12,6 +12,7 @@ use Fp\Operations\ExistsOperation;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\FoldOperation;
+use Fp\Operations\LastOperation;
 use Fp\Operations\ReduceOperation;
 use Generator;
 use Iterator;
@@ -220,14 +221,9 @@ abstract class LinkedList implements Seq
      */
     public function head(): Option
     {
-        $head = null;
-
-        foreach ($this as $element) {
-            $head = $element;
-            break;
-        }
-
-        return Option::fromNullable($head);
+        return $this->isCons()
+            ? Option::some($this)->map(fn(Cons $cons) => $cons->head)
+            : Option::none();
     }
 
     /**
@@ -237,15 +233,7 @@ abstract class LinkedList implements Seq
      */
     public function last(callable $predicate): Option
     {
-        $last = null;
-
-        foreach ($this as $elem) {
-            if ($predicate($elem)) {
-                $last = $elem;
-            }
-        }
-
-        return Option::fromNullable($last);
+        return LastOperation::of($this->iter())($predicate);
     }
 
     /**
@@ -336,5 +324,13 @@ abstract class LinkedList implements Seq
     public function isNonEmpty(): bool
     {
         return !$this->isEmpty();
+    }
+
+    /**
+     * @psalm-assert-if-true Cons<TV> $this
+     */
+    public function isCons(): bool
+    {
+        return $this instanceof Cons;
     }
 }

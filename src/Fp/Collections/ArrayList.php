@@ -13,6 +13,7 @@ use Fp\Operations\ExistsOperation;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\FoldOperation;
+use Fp\Operations\LastOperation;
 use Fp\Operations\ReduceOperation;
 use Generator;
 use Iterator;
@@ -247,15 +248,7 @@ final class ArrayList implements Seq
      */
     public function last(callable $predicate): Option
     {
-        $last = null;
-
-        foreach ($this as $elem) {
-            if ($predicate($elem)) {
-                $last = $elem;
-            }
-        }
-
-        return Option::fromNullable($last);
+        return LastOperation::of($this->iter())($predicate);
     }
 
     /**
