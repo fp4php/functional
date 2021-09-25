@@ -37,7 +37,7 @@ class GroupByOperation extends AbstractOperation
 
         foreach ($this->gen as $key => $value) {
             if (0 === $i % 100) {
-                $state = $stateBuilder->get()->run($state);
+                $state = $stateBuilder->runS($state);
                 $stateBuilder = StateFunctions::set($state);
             }
 
@@ -53,6 +53,6 @@ class GroupByOperation extends AbstractOperation
 
         return $stateBuilder
             ->inspect(fn(HashTable $tbl) => new HashMap($tbl, empty($tbl->table)))
-            ->run($state);
+            ->runA($state);
     }
 }

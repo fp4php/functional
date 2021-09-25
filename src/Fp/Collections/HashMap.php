@@ -61,7 +61,7 @@ final class HashMap implements Map, StaticStorage
 
         foreach ($source as [$key, $value]) {
             if (0 === $i % 100) {
-                $state = $stateBuilder->get()->run($state);
+                $state = $stateBuilder->runS($state);
                 $stateBuilder = StateFunctions::set($state);
             }
 
@@ -73,7 +73,7 @@ final class HashMap implements Map, StaticStorage
             ->inspect(function (HashTable $table) {
                 return new HashMap($table, empty($table->table));
             })
-            ->run($state);
+            ->runA($state);
     }
 
     /**

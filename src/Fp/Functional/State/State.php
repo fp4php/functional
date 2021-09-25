@@ -10,6 +10,10 @@ use Fp\Functional\Unit;
 use function Fp\unit;
 
 /**
+ * State dataclass encapsulates
+ * function from some state to new modified state
+ * and some value which represents computation
+ *
  * @template S
  * @template A
  * @psalm-yield A
@@ -23,6 +27,8 @@ final class State
     public function __construct(private Closure $func) { }
 
     /**
+     * Fabric method for State dataclass instantiation
+     *
      * @psalm-pure
      * @template SS
      * @template AA
@@ -35,6 +41,8 @@ final class State
     }
 
     /**
+     * Map value. State will not be changed
+     *
      * @psalm-template B
      * @param callable(A): B $f
      * @psalm-return self<S, B>
@@ -69,6 +77,9 @@ final class State
     }
 
     /**
+     * Inspect current state
+     * and compute some value based on this state.
+     *
      * @template AA
      * @param callable(S): AA $f
      * @return State<S, AA>
@@ -85,6 +96,8 @@ final class State
     }
 
     /**
+     * Copy current state to computed value
+     *
      * @return State<S, S>
      */
     public function get(): State
@@ -93,6 +106,8 @@ final class State
     }
 
     /**
+     * Set current state and discard value
+     *
      * @param S $state
      * @return State<S, Unit>
      */
@@ -111,6 +126,8 @@ final class State
     }
 
     /**
+     * Modify current state and discard value
+     *
      * @psalm-pure
      * @param callable(S): S $f
      * @return State<S, Unit>
@@ -127,11 +144,37 @@ final class State
     }
 
     /**
+     * Run with the provided initial state value
+     *
+     * @param S $state
+     * @return array{S, A}
+     */
+    public function run(mixed $state): array
+    {
+        return ($this->func)($state);
+    }
+
+    /**
+     * Run with the provided initial state value and return the final value
+     * (discarding the final state).
+     *
      * @param S $state
      * @return A
      */
-    public function run(mixed $state): mixed
+    public function runA(mixed $state): mixed
     {
         return ($this->func)($state)[1];
+    }
+
+    /**
+     * Run with the provided initial state value and return the final state
+     * (discarding the final value)
+     *
+     * @param S $state
+     * @return S
+     */
+    public function runS(mixed $state): mixed
+    {
+        return ($this->func)($state)[0];
     }
 }

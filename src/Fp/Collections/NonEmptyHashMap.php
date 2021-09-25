@@ -85,7 +85,7 @@ final class NonEmptyHashMap implements NonEmptyMap
 
         foreach ($source as [$key, $value]) {
             if (0 === $i % 100) {
-                $state = $stateBuilder->get()->run($state);
+                $state = $stateBuilder->runS($state);
                 $stateBuilder = StateFunctions::set($state);
             }
 
@@ -96,7 +96,7 @@ final class NonEmptyHashMap implements NonEmptyMap
         return $stateBuilder
             ->inspect(fn(HashTable $tbl) => new HashMap($tbl, empty($tbl->table)))
             ->map(fn(HashMap $map) => Option::condLazy(!$map->isEmpty(), fn() => new self($map)))
-            ->run($state);
+            ->runA($state);
     }
 
     /**
