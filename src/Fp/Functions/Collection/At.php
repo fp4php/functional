@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\AtOperation;
 
 /**
  * Find element by its key
@@ -30,6 +31,6 @@ function at(iterable $collection, int|string $key): Option
     return Option::some($collection)
         ->filter(fn($coll) => is_array($coll))
         ->flatMap(fn(array $coll) => Option::condLazy(array_key_exists($key, $coll), fn() => $coll[$key]))
-        ->orElse(fn() => first($collection, fn(mixed $v, mixed $k) => $k === $key));
+        ->orElse(fn() => AtOperation::of($collection)($key));
 }
 

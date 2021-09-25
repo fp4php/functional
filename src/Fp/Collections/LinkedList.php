@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\AtOperation;
+use Fp\Operations\CountOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
@@ -12,6 +14,7 @@ use Fp\Operations\ExistsOperation;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\FoldOperation;
+use Fp\Operations\GroupByOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\ReduceOperation;
 use Generator;
@@ -251,7 +254,7 @@ abstract class LinkedList implements Seq
      */
     public function lastElement(): Option
     {
-        return $this->last(fn() => true);
+        return LastOperation::of($this->iter())();
     }
 
     /**
@@ -259,13 +262,7 @@ abstract class LinkedList implements Seq
      */
     public function count(): int
     {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
+        return CountOperation::of($this->iter())();
     }
 
     /**
@@ -283,16 +280,7 @@ abstract class LinkedList implements Seq
      */
     public function at(int $index): Option
     {
-        $first = null;
-
-        foreach ($this as $idx => $element) {
-            if ($idx === $index) {
-                $first = $element;
-                break;
-            }
-        }
-
-        return Option::fromNullable($first);
+        return AtOperation::of($this->iter())($index);
     }
 
     /**
@@ -300,22 +288,10 @@ abstract class LinkedList implements Seq
      * @template TKO
      * @psalm-param callable(TV): TKO $callback
      * @psalm-return Map<TKO, Seq<TV>>
-     * @psalm-suppress ImpureMethodCall
      */
     public function groupBy(callable $callback): Map
     {
-        $buffer = new HashMapBuffer();
-
-        foreach ($this as $elem) {
-            $key = $callback($elem);
-
-            /** @var Seq<TV> $group */
-            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
-
-            $buffer->update($key, $group->prepended($elem));
-        }
-
-        return $buffer->toHashMap();
+        return GroupByOperation::of($this->iter())($callback);
     }
 
     /**

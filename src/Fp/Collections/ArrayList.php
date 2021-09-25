@@ -13,6 +13,7 @@ use Fp\Operations\ExistsOperation;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\FoldOperation;
+use Fp\Operations\GroupByOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\ReduceOperation;
 use Generator;
@@ -266,7 +267,7 @@ final class ArrayList implements Seq
      */
     public function lastElement(): Option
     {
-        return $this->last(fn() => true);
+        return LastOperation::of($this->iter())();
     }
 
 
@@ -284,22 +285,10 @@ final class ArrayList implements Seq
      * @template TKO
      * @psalm-param callable(TV): TKO $callback
      * @psalm-return Map<TKO, Seq<TV>>
-     * @psalm-suppress ImpureMethodCall
      */
     public function groupBy(callable $callback): Map
     {
-        $buffer = new HashMapBuffer();
-
-        foreach ($this as $elem) {
-            $key = $callback($elem);
-
-            /** @var Seq<TV> $group */
-            $group = $buffer->get($key)->getOrElse(Nil::getInstance());
-
-            $buffer->update($key, $group->prepended($elem));
-        }
-
-        return $buffer->toHashMap();
+        return GroupByOperation::of($this->iter())($callback);
     }
 
     /**
