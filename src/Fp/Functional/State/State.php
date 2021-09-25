@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\State;
 
 use Closure;
+use Fp\Functional\Unit;
 
 
 /**
@@ -37,8 +38,8 @@ final class State
 
     /**
      * @psalm-template B
-     * @param callable(A): self<S, B> $f
-     * @psalm-return self<S, B>
+     * @param callable(A): State<S, B> $f
+     * @psalm-return State<S, B>
      */
     public function flatMap(callable $f): self
     {
@@ -70,13 +71,26 @@ final class State
     }
 
     /**
-     * @template AA
      * @return State<S, S>
      */
     public function get(): State
     {
         return $this->inspect(fn(mixed $state): mixed => $state);
     }
+
+//    /**
+//     * @param S $state
+//     * @return State<S, Unit>
+//     */
+//    public function set(mixed $state): State
+//    {
+//        return new self(function ($state0) use ($state) {
+//            /** @psalm-var S $state0 */
+//            $state1 = $state0;
+//
+//            return [$state, ($this->func)($state1)[1]];
+//        });
+//    }
 
     /**
      * @psalm-pure

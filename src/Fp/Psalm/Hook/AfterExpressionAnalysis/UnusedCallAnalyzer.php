@@ -13,16 +13,15 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Set;
+use Fp\Functional\State\State;
 use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Psalm;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use Psalm\Context;
 use Psalm\IssueBuffer;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
@@ -63,6 +62,7 @@ final class UnusedCallAnalyzer implements AfterExpressionAnalysisInterface
                 Stream::class.'::forAll',
                 Stream::class.'::toFile',
                 Stream::class.'::drain',
+                State::class.'::run',
             ]);
         }
 

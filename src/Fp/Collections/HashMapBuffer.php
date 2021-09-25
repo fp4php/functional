@@ -5,38 +5,33 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Functional\State\State;
+use Fp\Functional\State\StateFunctions;
+use Fp\Functional\Unit;
+
+use function Fp\Callable\partial;
 
 /**
  * Internal buffer
  * Which provides fast update operation
  *
  * @internal
- * @template TK
- * @template TV
  */
 final class HashMapBuffer
 {
     /**
-     * @var HashTable<TK, TV>
-     */
-    private HashTable $hashTable;
-
-    private bool $empty = true;
-
-    public function __construct()
-    {
-        $this->hashTable = new HashTable();
-    }
-
-    /**
+     * @template TK
+     * @template TV
+     * @param HashTable<TK, TV> $hashTable
      * @param TK $key
+     * @return Option<TV>
      */
-    public function get(mixed $key): Option
+    public static function get(mixed $key, HashTable $hashTable): Option
     {
         $hash = (string) HashComparator::computeHash($key);
         $elem = null;
 
-        foreach ($this->hashTable->table[$hash] ?? [] as [$k, $v]) {
+        foreach ($hashTable->table[$hash] ?? [] as [$k, $v]) {
             if (HashComparator::hashEquals($key, $k)) {
                 $elem = $v;
             }
@@ -46,41 +41,48 @@ final class HashMapBuffer
     }
 
     /**
+     * @psalm-pure
+     * @template TK
+     * @template TV
      * @param TK $key
      * @param TV $value
-     * @return self<TK, TV>
-     * @psalm-suppress PropertyTypeCoercion
+     * @return State<HashTable<TK, TV>, Unit>
      */
-    public function update(mixed $key, mixed $value): self
+    public static function update(mixed $key, mixed $value): State
     {
-        $hash = (string) HashComparator::computeHash($key);
-
-        if (!isset($this->hashTable->table[$hash])) {
-            $this->hashTable->table[$hash] = [];
-        }
-
-        $replacedIdx = -1;
-
-        foreach ($this->hashTable->table[$hash] as $idx => [$k, $v]) {
-            if (HashComparator::hashEquals($key, $k)) {
-                $replacedIdx = $idx;
-                $this->hashTable->table[$hash][$idx][1] = $value;
-            }
-        }
-
-        if ($replacedIdx < 0) {
-            $this->hashTable->table[$hash][] = [$key, $value];
-        }
-
-        $this->empty = false;
-        return $this;
+        return StateFunctions::modify(partial([self::class, 'modify'], $key, $value));
     }
 
     /**
-     * @return HashMap<TK, TV>
+     * @template TK
+     * @template TV
+     * @param TK $key
+     * @param TV $value
+     * @param HashTable<TK, TV> $hashTable
+     * @return HashTable<TK, TV>
      */
-    public function toHashMap(): HashMap
+    public static function modify(mixed $key, mixed $value, HashTable $hashTable): HashTable
     {
-        return new HashMap($this->hashTable, $this->empty);
+        $hash = (string) HashComparator::computeHash($key);
+
+        if (!isset($hashTable->table[$hash])) {
+            $hashTable->table[$hash] = [];
+        }
+
+        $replacedPos = -1;
+
+        foreach ($hashTable->table[$hash] as $idx => [$k, $v]) {
+            if (HashComparator::hashEquals($key, $k)) {
+                $replacedPos = $idx;
+                $pairValueRef =& $hashTable->table[$hash][$idx][1];
+                $pairValueRef = $value;
+            }
+        }
+
+        if ($replacedPos < 0) {
+            $hashTable->table[$hash][] = [$key, $value];
+        }
+
+        return $hashTable;
     }
 }

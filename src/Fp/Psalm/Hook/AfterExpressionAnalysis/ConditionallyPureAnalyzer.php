@@ -214,6 +214,7 @@ final class ConditionallyPureAnalyzer implements AfterExpressionAnalysisInterfac
                 'Fp\Collection\tail',
                 'Fp\Collection\unique',
                 'Fp\Collection\zip',
+                'Fp\Cast\asPairs',
                 LinkedList::class.'::collect',
                 ArrayList::class.'::collect',
                 HashSet::class.'::collect',

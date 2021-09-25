@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\State\StateFunctions;
 use Fp\Operations\FlatMapOperation;
 use Fp\Operations\MapKeysOperation;
 use Fp\Operations\MapValuesOperation;
@@ -51,13 +52,28 @@ final class HashMap implements Map, StaticStorage
      */
     public static function collectPairs(iterable $source): self
     {
-        $buffer = new HashMapBuffer();
+        /**
+         * @psalm-var HashTable<TKI, TVI> $state
+         */
+        $state = new HashTable();
+        $stateBuilder = StateFunctions::infer(fn() => $state);
+        $i = 0;
 
         foreach ($source as [$key, $value]) {
-            $buffer->update($key, $value);
+            if ($i % 100 === 0) {
+                $state = $stateBuilder->get()->run($state);
+                $stateBuilder = StateFunctions::set($state);
+            }
+
+            $stateBuilder = $stateBuilder->flatMap(fn() => HashMapBuffer::update($key, $value));
+            $i++;
         }
 
-        return $buffer->toHashMap();
+        return $stateBuilder
+            ->inspect(function (HashTable $table) {
+                return new HashMap($table, empty($table->table));
+            })
+            ->run($state);
     }
 
     /**

@@ -6,6 +6,8 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 
+use Fp\Operations\GroupByOperation;
+
 use function Fp\of;
 
 /**
@@ -224,29 +226,18 @@ trait NonEmptySeqTerminable
      * @template TKO
      * @psalm-param callable(TV): TKO $callback
      * @psalm-return NonEmptyMap<TKO, NonEmptySeq<TV>>
-     * @psalm-suppress ImpureMethodCall
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        $buffer = new HashMapBuffer();
+        $grouped = GroupByOperation::of($this)($callback);
 
-        foreach ($this as $elem) {
-            /** @var TV $e */
-            $e = $elem;
-            $key = $callback($e);
+        /** @var NonEmptyMap<TKO, Cons<TV>> $noneEmptyGrouped */
+        $noneEmptyGrouped = new NonEmptyHashMap($grouped);
 
-            /**
-             * @psalm-var Option<NonEmptySeq<TV>> $optionalGroup
-             */
-            $optionalGroup = $buffer->get($key);
-
-            $buffer->update($key, $optionalGroup->fold(
-                fn(NonEmptySeq $group): NonEmptySeq => $group->prepended($e),
-                fn(): NonEmptySeq => new NonEmptyLinkedList($e, Nil::getInstance())
-            ));
-        }
-
-        return new NonEmptyHashMap($buffer->toHashMap());
+        return $noneEmptyGrouped->mapValues(fn(Entry $entry) => new NonEmptyLinkedList(
+            $entry->value->head,
+            $entry->value->tail
+        ));
     }
 }
 

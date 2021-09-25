@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Functional\State\State;
+use Fp\Functional\State\StateFunctions;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
@@ -74,15 +76,27 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public static function collectPairs(iterable $source): Option
     {
-        $buffer = new HashMapBuffer();
+        /**
+         * @psalm-var HashTable<TKI, TVI> $state
+         */
+        $state = new HashTable();
+        $stateBuilder = StateFunctions::infer(fn() => $state);
+        $i = 0;
 
         foreach ($source as [$key, $value]) {
-            $buffer->update($key, $value);
+            if ($i % 100 === 0) {
+                $state = $stateBuilder->get()->run($state);
+                $stateBuilder = StateFunctions::set($state);
+            }
+
+            $stateBuilder = $stateBuilder->flatMap(fn() => HashMapBuffer::update($key, $value));
+            $i++;
         }
 
-        $hashMap = $buffer->toHashMap();
-
-        return Option::condLazy(!$hashMap->isEmpty(), fn() => new self($hashMap));
+        return $stateBuilder
+            ->inspect(fn(HashTable $tbl) => new HashMap($tbl, empty($tbl->table)))
+            ->map(fn(HashMap $map) => Option::condLazy(!$map->isEmpty(), fn() => new self($map)))
+            ->run($state);
     }
 
     /**
