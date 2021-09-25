@@ -26,7 +26,7 @@ final class HashMapBuffer
      * @param TK $key
      * @return Option<TV>
      */
-    public static function get(mixed $key, HashTable $hashTable): Option
+    public static function get(HashTable $hashTable, mixed $key): Option
     {
         $hash = (string) HashComparator::computeHash($key);
         $elem = null;

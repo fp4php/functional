@@ -7,6 +7,7 @@ namespace Fp\Functional\State;
 use Closure;
 use Fp\Functional\Unit;
 
+use function Fp\unit;
 
 /**
  * @template S
@@ -19,8 +20,18 @@ final class State
     /**
      * @param Closure(S): array{S, A} $func
      */
-    public function __construct(private Closure $func)
+    public function __construct(private Closure $func) { }
+
+    /**
+     * @psalm-pure
+     * @template SS
+     * @template AA
+     * @param Closure(SS): array{SS, AA} $func
+     * @return static<SS, AA>
+     */
+    public static function of(Closure $func): self
     {
+        return new self($func);
     }
 
     /**
@@ -30,9 +41,12 @@ final class State
      */
     public function map(callable $f): self
     {
-        return new self(function (mixed $state) use ($f): array {
+        return self::of(function (mixed $state) use ($f): array {
             /** @psalm-var S $state */
-            return [$state, $f(($this->func)($state)[1])];
+            $stateUp = $state;
+            [$stateDown, $valueDown] = ($this->func)($stateUp);
+
+            return [$stateDown, $f($valueDown)];
         });
     }
 
@@ -43,7 +57,7 @@ final class State
      */
     public function flatMap(callable $f): self
     {
-        return new self(function (mixed $state) use ($f): array {
+        return self::of(function (mixed $state) use ($f): array {
             /** @psalm-var S $state0 */
             $state0 = $state;
 
@@ -61,12 +75,12 @@ final class State
      */
     public function inspect(callable $f): State
     {
-        return new self(function(mixed $state) use ($f) {
-            /** @psalm-var S $state0 */
-            $state0 = $state;
-            $state1 = ($this->func)($state0)[0];
+        return self::of(function(mixed $state) use ($f) {
+            /** @psalm-var S $stateUp */
+            $stateUp = $state;
+            $stateDown = ($this->func)($stateUp)[0];
 
-            return [$state1, $f($state1)];
+            return [$stateDown, $f($stateDown)];
         });
     }
 
@@ -78,34 +92,37 @@ final class State
         return $this->inspect(fn(mixed $state): mixed => $state);
     }
 
-//    /**
-//     * @param S $state
-//     * @return State<S, Unit>
-//     */
-//    public function set(mixed $state): State
-//    {
-//        return new self(function ($state0) use ($state) {
-//            /** @psalm-var S $state0 */
-//            $state1 = $state0;
-//
-//            return [$state, ($this->func)($state1)[1]];
-//        });
-//    }
+    /**
+     * @param S $state
+     * @return State<S, Unit>
+     */
+    public function set(mixed $state): State
+    {
+        $stateDown = $state;
+
+        return self::of(function (mixed $state) use ($stateDown) {
+            /** @psalm-var S $stateUp */
+            $stateUp = $state;
+
+            ($this->func)($stateUp);
+
+            return [$stateDown, unit()];
+        });
+    }
 
     /**
      * @psalm-pure
      * @param callable(S): S $f
-     * @return State<S, A>
+     * @return State<S, Unit>
      */
     public function modify(callable $f): State
     {
         return new State(function (mixed $state) use ($f) {
-            /** @psalm-var S $state0 */
-            $state0 = $state;
+            /** @psalm-var S $stateUp */
+            $stateUp = $state;
+            $stateDown = ($this->func)($stateUp)[0];
 
-            [$state1, $value1] = ($this->func)($state0);
-
-            return [$f($state1), $value1];
+            return [$f($stateDown), unit()];
         });
     }
 

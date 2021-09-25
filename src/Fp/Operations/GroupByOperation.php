@@ -10,7 +10,6 @@ use Fp\Collections\HashTable;
 use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
 use Fp\Collections\Nil;
-use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Fp\Functional\State\StateFunctions;
 
@@ -37,7 +36,7 @@ class GroupByOperation extends AbstractOperation
         $i = 0;
 
         foreach ($this->gen as $key => $value) {
-            if ($i % 100 === 0) {
+            if (0 === $i % 100) {
                 $state = $stateBuilder->get()->run($state);
                 $stateBuilder = StateFunctions::set($state);
             }
@@ -45,8 +44,8 @@ class GroupByOperation extends AbstractOperation
             $groupKey = $f($value, $key);
 
             $stateBuilder = $stateBuilder
-                ->inspect(fn(HashTable $tbl) => HashMapBuffer::get($groupKey, $tbl))
-                ->map(fn(Option $opt) => $opt->getOrElse(Nil::getInstance()))
+                ->inspect(fn(HashTable $tbl) => HashMapBuffer::get($tbl, $groupKey))
+                ->map(fn(Option $group) => $group->getOrElse(Nil::getInstance()))
                 ->flatMap(fn(LinkedList $group) => HashMapBuffer::update($groupKey, $group->prepended($value)));
 
             $i++;

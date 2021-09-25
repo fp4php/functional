@@ -60,7 +60,7 @@ final class HashMap implements Map, StaticStorage
         $i = 0;
 
         foreach ($source as [$key, $value]) {
-            if ($i % 100 === 0) {
+            if (0 === $i % 100) {
                 $state = $stateBuilder->get()->run($state);
                 $stateBuilder = StateFunctions::set($state);
             }

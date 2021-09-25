@@ -44,16 +44,6 @@ class StateFunctions
     /**
      * @psalm-pure
      * @template S
-     * @return State<S, S>
-     */
-    public static function get(): State
-    {
-        return self::inspect(id);
-    }
-
-    /**
-     * @psalm-pure
-     * @template S
      * @param S $state
      * @return State<S, Unit>
      */
