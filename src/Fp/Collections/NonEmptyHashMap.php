@@ -83,7 +83,9 @@ final class NonEmptyHashMap implements NonEmptyMap
 
         $hashTable = State::forS($init, function () use ($source) {
             foreach ($source as [$key, $value]) {
-                yield HashMapBuffer::update($key, $value);
+                yield StateFunctions::modify(
+                    fn(HashTable $tbl) => HashTable::update($tbl, $key, $value)
+                );
             }
         });
 

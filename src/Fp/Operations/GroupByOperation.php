@@ -41,10 +41,10 @@ class GroupByOperation extends AbstractOperation
             foreach ($this->gen as $key => $value) {
                 $groupKey = $f($value, $key);
                 $group = yield $state
-                    ->inspect(fn(HashTable $tbl) => HashMapBuffer::get($tbl, $groupKey))
+                    ->inspect(fn(HashTable $tbl) => HashTable::get($tbl, $groupKey))
                     ->map(fn(Option $group) => $group->getOrElse(Nil::getInstance()));
 
-                yield HashMapBuffer::update($groupKey, $group->prepended($value));
+                HashTable::update(yield $state->get(), $groupKey, $group->prepended($value));
             }
         });
 

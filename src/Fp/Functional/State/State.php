@@ -203,14 +203,14 @@ final class State
      * @template TState
      * @template TReturn
      * @template TSend
-     * @psalm-param callable(): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
+     * @psalm-param callable(TState): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
      * @psalm-param TState $initState
      * @psalm-return TState
      * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
      */
     public static function forS(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
     {
-        $gen = $computation();
+        $gen = $computation($initState);
         $cur = StateFunctions::infer(fn() => $initState);
 
         while ($gen->valid()) {
@@ -235,14 +235,14 @@ final class State
      * @template TState
      * @template TReturn
      * @template TSend
-     * @psalm-param callable(): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
+     * @psalm-param callable(TState): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
      * @psalm-param TState $initState
      * @psalm-return TReturn
      * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
      */
     public static function forA(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
     {
-        $gen = $computation();
+        $gen = $computation($initState);
         $cur = StateFunctions::infer(fn() => $initState);
 
         while ($gen->valid()) {
