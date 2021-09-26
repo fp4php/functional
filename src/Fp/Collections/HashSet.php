@@ -4,13 +4,31 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Operations\CountOperation;
+use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
+use Fp\Operations\ExistsOfOperation;
+use Fp\Operations\ExistsOperation;
+use Fp\Operations\FilterMapOperation;
+use Fp\Operations\FilterNotNullOperation;
+use Fp\Operations\FilterOfOperation;
+use Fp\Operations\FilterOperation;
+use Fp\Operations\FirstOfOperation;
+use Fp\Operations\FirstOperation;
+use Fp\Operations\FlatMapOperation;
+use Fp\Operations\FoldOperation;
+use Fp\Operations\HeadOperation;
+use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
+use Fp\Operations\ReduceOperation;
+use Fp\Operations\TailOperation;
+use Fp\Operations\TapOperation;
+use Fp\Streams\Stream;
+use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
-use function Fp\of;
 
 /**
  * @template-covariant TV
@@ -51,17 +69,21 @@ final class HashSet implements Set
     }
 
     /**
+     * @return Generator<int, TV>
+     */
+    private function iter(): Generator
+    {
+        foreach ($this as $elem) {
+            yield $elem;
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function count(): int
     {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
+        return CountOperation::of($this->iter())();
     }
 
     /**
@@ -148,7 +170,7 @@ final class HashSet implements Set
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->every(fn(mixed $v) => of($v, $fqcn, $invariant));
+        return EveryOfOperation::of($this->iter())($fqcn, $invariant);
     }
 
     /**
@@ -157,7 +179,7 @@ final class HashSet implements Set
      */
     public function exists(callable $predicate): bool
     {
-        return $this->first($predicate)->isSome();
+        return ExistsOperation::of($this->iter())($predicate);
     }
 
     /**
@@ -168,10 +190,7 @@ final class HashSet implements Set
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->firstOf($fqcn, $invariant)->fold(
-            fn() => true,
-            fn() => false,
-        );
+        return ExistsOfOperation::of($this->iter())($fqcn, $invariant);
     }
 
     /**
@@ -181,16 +200,7 @@ final class HashSet implements Set
      */
     public function first(callable $predicate): Option
     {
-        $first = null;
-
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $first = $element;
-                break;
-            }
-        }
-
-        return Option::fromNullable($first);
+        return FirstOperation::of($this->iter())($predicate);
     }
 
     /**
@@ -202,8 +212,7 @@ final class HashSet implements Set
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        /** @var Option<TVO> */
-        return $this->first(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+        return FirstOfOperation::of($this->iter())($fqcn, $invariant);
     }
 
     /**
@@ -215,13 +224,7 @@ final class HashSet implements Set
      */
     public function fold(mixed $init, callable $callback): mixed
     {
-        $acc = $init;
-
-        foreach ($this as $element) {
-            $acc = $callback($acc, $element);
-        }
-
-        return $acc;
+        return FoldOperation::of($this->iter())($init, $callback);
     }
 
     /**
@@ -232,16 +235,7 @@ final class HashSet implements Set
      */
     public function reduce(callable $callback): Option
     {
-        return $this->head()->map(function ($head) use ($callback) {
-            /** @var TV $acc */
-            $acc = $head;
-
-            foreach ($this->tail() as $element) {
-                $acc = $callback($acc, $element);
-            }
-
-            return $acc;
-        });
+        return ReduceOperation::of($this->iter())($callback);
     }
 
     /**
@@ -250,14 +244,7 @@ final class HashSet implements Set
      */
     public function head(): Option
     {
-        $head = null;
-
-        foreach ($this as $element) {
-            $head = $element;
-            break;
-        }
-
-        return Option::fromNullable($head);
+        return HeadOperation::of($this->iter())();
     }
 
     /**
@@ -267,15 +254,7 @@ final class HashSet implements Set
      */
     public function last(callable $predicate): Option
     {
-        $last = null;
-
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $last = $element;
-            }
-        }
-
-        return Option::fromNullable($last);
+        return LastOperation::of($this->iter())($predicate);
     }
 
     /**
@@ -284,7 +263,7 @@ final class HashSet implements Set
      */
     public function firstElement(): Option
     {
-        return $this->head();
+        return FirstOperation::of($this->iter())();
     }
 
     /**
@@ -293,7 +272,7 @@ final class HashSet implements Set
      */
     public function lastElement(): Option
     {
-        return $this->last(fn() => true);
+        return LastOperation::of($this->iter())();
     }
 
     /**
@@ -349,18 +328,7 @@ final class HashSet implements Set
      */
     public function tail(): self
     {
-        return self::collect(asGenerator(function () {
-            $toggle = true;
-
-            foreach ($this as $elem) {
-                if ($toggle) {
-                    $toggle = false;
-                    continue;
-                }
-
-                yield $elem;
-            }
-        }));
+        return self::collect(TailOperation::of($this->iter())());
     }
 
     /**
@@ -370,11 +338,7 @@ final class HashSet implements Set
      */
     public function filter(callable $predicate): self
     {
-        return new self($this->map->filter(function (Entry $e) use ($predicate) {
-            /** @psalm-var TV $value */
-            $value = $e->value;
-            return $predicate($value);
-        }));
+        return self::collect(FilterOperation::of($this->iter())($predicate));
     }
 
     /**
@@ -386,8 +350,7 @@ final class HashSet implements Set
      */
     public function filterOf(string $fqcn, bool $invariant = false): self
     {
-        /** @var self<TVO> */
-        return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+        return self::collect(FilterOfOperation::of($this->iter())($fqcn, $invariant));
     }
 
     /**
@@ -396,7 +359,7 @@ final class HashSet implements Set
      */
     public function filterNotNull(): self
     {
-        return $this->filter(fn($elem) => null !== $elem);
+        return self::collect(FilterNotNullOperation::of($this->iter())());
     }
 
     /**
@@ -407,15 +370,7 @@ final class HashSet implements Set
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(asGenerator(function () use ($callback) {
-            foreach ($this as $element) {
-                $result = $callback($element);
-
-                if ($result->isSome()) {
-                    yield $result->get();
-                }
-            }
-        }));
+        return self::collect(FilterMapOperation::of($this->iter())($callback));
     }
 
     /**
@@ -426,15 +381,7 @@ final class HashSet implements Set
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(asGenerator(function () use ($callback) {
-            foreach ($this as $element) {
-                $result = $callback($element);
-
-                foreach ($result as $item) {
-                    yield $item;
-                }
-            }
-        }));
+        return self::collect(FlatMapOperation::of($this->iter())($callback));
     }
 
     /**
@@ -455,10 +402,7 @@ final class HashSet implements Set
      */
     public function tap(callable $callback): self
     {
-        foreach ($this as $elem) {
-            $callback($elem);
-        }
-
+        Stream::emits(TapOperation::of($this->iter())($callback))->drain();
         return $this;
     }
 

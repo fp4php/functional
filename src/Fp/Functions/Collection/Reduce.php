@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-
 use Fp\Operations\ReduceOperation;
-
-use function Fp\Cast\asList;
 
 /**
  * Reduce multiple elements into one
