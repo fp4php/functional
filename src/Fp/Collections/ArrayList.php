@@ -37,7 +37,6 @@ use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
-use function Fp\Cast\asList;
 
 /**
  * O(1) {@see Seq::at()} and {@see Seq::__invoke} operations
