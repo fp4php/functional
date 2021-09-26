@@ -5,9 +5,24 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\CountOperation;
+use Fp\Operations\EveryOfOperation;
+use Fp\Operations\EveryOperation;
+use Fp\Operations\ExistsOfOperation;
+use Fp\Operations\ExistsOperation;
+use Fp\Operations\FirstOfOperation;
+use Fp\Operations\FirstOperation;
+use Fp\Operations\HeadOperation;
+use Fp\Operations\LastOperation;
+use Fp\Operations\MapValuesOperation;
+use Fp\Operations\ReduceOperation;
+use Fp\Operations\TapOperation;
+use Fp\Streams\Stream;
+use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
+use function Fp\Cast\asNonEmptyList;
 use function Fp\of;
 
 /**
@@ -66,17 +81,21 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
+     * @return Generator<int, TV>
+     */
+    private function iter(): Generator
+    {
+        foreach ($this as $elem) {
+            yield $elem;
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function count(): int
     {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
+        return CountOperation::of($this->iter())();
     }
 
     /**
@@ -85,13 +104,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toArray(): array
     {
-        $buffer = [$this->head()];
-
-        foreach ($this->tail() as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
+        return asNonEmptyList($this->iter())->getUnsafe();
     }
 
     /**
@@ -195,16 +208,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function every(callable $predicate): bool
     {
-        $result = true;
-
-        foreach ($this as $element) {
-            if (!$predicate($element)) {
-                $result = false;
-                break;
-            }
-        }
-
-        return $result;
+        return EveryOperation::of($this->iter())($predicate);
     }
 
     /**
@@ -215,7 +219,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->every(fn(mixed $v) => of($v, $fqcn, $invariant));
+        return EveryOfOperation::of($this->iter())($fqcn, $invariant);
     }
 
     /**
@@ -224,7 +228,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function exists(callable $predicate): bool
     {
-        return $this->first($predicate)->isSome();
+        return ExistsOperation::of($this->iter())($predicate);
     }
 
     /**
@@ -235,10 +239,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->firstOf($fqcn, $invariant)->fold(
-            fn() => true,
-            fn() => false,
-        );
+        return ExistsOfOperation::of($this->iter())($fqcn, $invariant);
     }
 
     /**
@@ -248,16 +249,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function first(callable $predicate): Option
     {
-        $first = null;
-
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $first = $element;
-                break;
-            }
-        }
-
-        return Option::fromNullable($first);
+        return FirstOperation::of($this->iter())($predicate);
     }
 
 
@@ -268,15 +260,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function last(callable $predicate): Option
     {
-        $last = null;
-
-        foreach ($this as $element) {
-            if ($predicate($element)) {
-                $last = $element;
-            }
-        }
-
-        return Option::fromNullable($last);
+        return LastOperation::of($this->iter())($predicate);
     }
 
     /**
@@ -288,8 +272,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        /** @var Option<TVO> */
-        return $this->first(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+        return FirstOfOperation::of($this->iter())($fqcn, $invariant);
     }
 
     /**
@@ -300,13 +283,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function reduce(callable $callback): mixed
     {
-        $acc = $this->head();
-
-        foreach ($this->tail() as $element) {
-            $acc = $callback($acc, $element);
-        }
-
-        return $acc;
+        return ReduceOperation::of($this->iter())($callback)->getUnsafe();
     }
 
     /**
@@ -315,14 +292,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function head(): mixed
     {
-        $head = null;
-
-        foreach ($this as $element) {
-            $head = $element;
-            break;
-        }
-
-        return Option::fromNullable($head)->getUnsafe();
+        return HeadOperation::of($this->iter())()->getUnsafe();
     }
 
     /**
@@ -331,7 +301,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function firstElement(): mixed
     {
-        return $this->head();
+        return FirstOperation::of($this->iter())()->getUnsafe();
     }
 
     /**
@@ -340,24 +310,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function lastElement(): mixed
     {
-        return $this->last(fn() => true)->getUnsafe();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function subsetOf(Set|NonEmptySet $superset): bool
-    {
-        $isSubset = true;
-
-        foreach ($this as $elem) {
-            if (!$superset($elem)) {
-                $isSubset = false;
-                break;
-            }
-        }
-
-        return $isSubset;
+        return LastOperation::of($this->iter())()->getUnsafe();
     }
 
     /**
@@ -392,9 +345,9 @@ final class NonEmptyHashSet implements NonEmptySet
     /**
      * @inheritDoc
      * @param TV $element
-     * @return Set<TV>
+     * @return HashSet<TV>
      */
-    public function removed(mixed $element): Set
+    public function removed(mixed $element): HashSet
     {
         return $this->set->removed($element);
     }
@@ -402,9 +355,9 @@ final class NonEmptyHashSet implements NonEmptySet
     /**
      * @inheritDoc
      * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Set<TV>
+     * @psalm-return HashSet<TV>
      */
-    public function filter(callable $predicate): Set
+    public function filter(callable $predicate): HashSet
     {
         return $this->set->filter($predicate);
     }
@@ -414,30 +367,29 @@ final class NonEmptyHashSet implements NonEmptySet
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn fully qualified class name
      * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Set<TVO>
+     * @psalm-return HashSet<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): Set
+    public function filterOf(string $fqcn, bool $invariant = false): HashSet
     {
-        /** @var Set<TVO> */
-        return $this->filter(fn(mixed $v): bool => of($v, $fqcn, $invariant));
+        return $this->set->filterOf($fqcn, $invariant);
     }
 
     /**
      * @inheritDoc
      * @template TVO
      * @param callable(TV): Option<TVO> $callback
-     * @return Set<TVO>
+     * @return HashSet<TVO>
      */
-    public function filterMap(callable $callback): Set
+    public function filterMap(callable $callback): HashSet
     {
         return $this->set->filterMap($callback);
     }
 
     /**
      * @inheritDoc
-     * @psalm-return Set<TV>
+     * @psalm-return HashSet<TV>
      */
-    public function filterNotNull(): Set
+    public function filterNotNull(): HashSet
     {
         return $this->filter(fn($elem) => null !== $elem);
     }
@@ -450,28 +402,18 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(asGenerator(function () use ($callback) {
-            foreach ($this as $element) {
-                yield $callback($element);
-            }
-        }));
+        return self::collectUnsafe(MapValuesOperation::of($this->iter())($callback));
     }
 
     /**
      * @inheritDoc
      * @psalm-template TVO
      * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return Set<TVO>
+     * @psalm-return HashSet<TVO>
      */
-    public function flatMap(callable $callback): Set
+    public function flatMap(callable $callback): HashSet
     {
-        return HashSet::collect(asGenerator(function () use ($callback) {
-            foreach ($this as $element) {
-                foreach ($callback($element) as $item) {
-                    yield $item;
-                }
-            }
-        }));
+        return $this->set->flatMap($callback);
     }
 
     /**
@@ -481,10 +423,24 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function tap(callable $callback): self
     {
+        Stream::emits(TapOperation::of($this->iter())($callback))->drain();
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function subsetOf(Set|NonEmptySet $superset): bool
+    {
+        $isSubset = true;
+
         foreach ($this as $elem) {
-            $callback($elem);
+            if (!$superset($elem)) {
+                $isSubset = false;
+                break;
+            }
         }
 
-        return $this;
+        return $isSubset;
     }
 }

@@ -29,6 +29,7 @@ use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
+use function Fp\Cast\asList;
 
 /**
  * @template-covariant TV
@@ -57,7 +58,7 @@ final class HashSet implements Set
 
     /**
      * @inheritDoc
-     * @return Iterator<TV>
+     * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator
     {
@@ -92,13 +93,7 @@ final class HashSet implements Set
      */
     public function toArray(): array
     {
-        $buffer = [];
-
-        foreach ($this as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
+        return asList($this->iter());
     }
 
     /**
@@ -277,23 +272,6 @@ final class HashSet implements Set
 
     /**
      * @inheritDoc
-     */
-    public function subsetOf(Set|NonEmptySet $superset): bool
-    {
-        $isSubset = true;
-
-        foreach ($this as $elem) {
-            if (!$superset($elem)) {
-                $isSubset = false;
-                break;
-            }
-        }
-
-        return $isSubset;
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-param TV $element
      */
     public function contains(mixed $element): bool
@@ -409,5 +387,22 @@ final class HashSet implements Set
     public function isEmpty():bool
     {
         return $this->map->isEmpty();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function subsetOf(Set|NonEmptySet $superset): bool
+    {
+        $isSubset = true;
+
+        foreach ($this as $elem) {
+            if (!$superset($elem)) {
+                $isSubset = false;
+                break;
+            }
+        }
+
+        return $isSubset;
     }
 }
