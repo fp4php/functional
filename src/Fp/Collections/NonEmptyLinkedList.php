@@ -7,9 +7,20 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
+use Fp\Operations\AtOperation;
+use Fp\Operations\EveryOfOperation;
+use Fp\Operations\EveryOperation;
+use Fp\Operations\ExistsOfOperation;
+use Fp\Operations\ExistsOperation;
+use Fp\Operations\FirstOfOperation;
+use Fp\Operations\FirstOperation;
+use Fp\Operations\GroupByOperation;
+use Fp\Operations\HeadOperation;
+use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
+use Fp\Operations\ReduceOperation;
 use Fp\Operations\SortedOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
@@ -24,11 +35,6 @@ use Iterator;
  */
 final class NonEmptyLinkedList implements NonEmptySeq
 {
-    /**
-     * @use NonEmptySeqTerminable<TV>
-     */
-    use NonEmptySeqTerminable;
-
     /**
      * @use NonEmptySeqCastable<TV>
      */
@@ -174,15 +180,6 @@ final class NonEmptyLinkedList implements NonEmptySeq
 
     /**
      * @inheritDoc
-     * @psalm-return TV
-     */
-    public function head(): mixed
-    {
-        return $this->head;
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-return self<TV>
      */
     public function reverse(): self
@@ -321,5 +318,155 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function sorted(callable $cmp): self
     {
         return self::collectUnsafe(SortedOperation::of($this->iter())($cmp));
+    }
+
+    /**
+     * Alias for {@see NonEmptySeq::at()}
+     *
+     * @psalm-return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return Option<TV>
+     */
+    public function at(int $index): Option
+    {
+        return AtOperation::of($this->iter())($index);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return EveryOperation::of($this->iter())($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function everyOf(string $fqcn, bool $invariant = false): bool
+    {
+        return EveryOfOperation::of($this->iter())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return ExistsOperation::of($this->iter())($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     */
+    public function existsOf(string $fqcn, bool $invariant = false): bool
+    {
+        return ExistsOfOperation::of($this->iter())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    public function first(callable $predicate): Option
+    {
+        return FirstOperation::of($this->iter())($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
+     */
+    public function firstOf(string $fqcn, bool $invariant = false): Option
+    {
+        return FirstOfOperation::of($this->iter())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return TV
+     */
+    public function head(): mixed
+    {
+        return $this->head;
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): bool $predicate
+     * @psalm-return Option<TV>
+     */
+    public function last(callable $predicate): Option
+    {
+        return LastOperation::of($this->iter())($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TA
+     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
+     * @psalm-return (TV|TA)
+     */
+    public function reduce(callable $callback): mixed
+    {
+        return ReduceOperation::of($this->iter())($callback)->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return TV
+     */
+    public function firstElement(): mixed
+    {
+        return $this->head();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return TV
+     */
+    public function lastElement(): mixed
+    {
+        return LastOperation::of($this->iter())()->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return NonEmptyMap<TKO, NonEmptySeq<TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyMap
+    {
+        $grouped = GroupByOperation::of($this)($callback);
+
+        /**
+         * @var NonEmptyMap<TKO, Cons<TV>> $nonEmptyGrouped
+         */
+        $nonEmptyGrouped = new NonEmptyHashMap($grouped);
+
+        return $nonEmptyGrouped->mapValues(fn(Entry $entry) => new NonEmptyLinkedList(
+            $entry->value->head,
+            $entry->value->tail
+        ));
     }
 }
