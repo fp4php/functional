@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\EveryOfOperation;
+use Fp\Operations\EveryOperation;
+
 use function Fp\of;
 
 /**
@@ -23,16 +26,7 @@ use function Fp\of;
  */
 function every(iterable $collection, callable $predicate): bool
 {
-    $result = true;
-
-    foreach ($collection as $index => $element) {
-        if (!$predicate($element, $index)) {
-            $result = false;
-            break;
-        }
-    }
-
-    return $result;
+    return EveryOperation::of($collection)($predicate);
 }
 
 /**
@@ -54,8 +48,5 @@ function every(iterable $collection, callable $predicate): bool
  */
 function everyOf(iterable $collection, string $fqcn, bool $invariant = false): bool
 {
-    return every(
-        $collection,
-        fn(mixed $v) => of($v, $fqcn, $invariant)
-    );
+    return EveryOfOperation::of($collection)($fqcn, $invariant);
 }

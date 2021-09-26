@@ -15,7 +15,6 @@ use Fp\Operations\ExistsOperation;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\GroupByOperation;
-use Fp\Operations\HeadOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;

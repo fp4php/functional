@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\ExistsOfOperation;
+use Fp\Operations\ExistsOperation;
+
 /**
  * Find if there is element which satisfies the condition
  * false otherwise
@@ -21,7 +24,7 @@ namespace Fp\Collection;
  */
 function exists(iterable $collection, callable $predicate): bool
 {
-    return first($collection, $predicate)->isSome();
+    return ExistsOperation::of($collection)($predicate);
 }
 
 /**
@@ -43,8 +46,5 @@ function exists(iterable $collection, callable $predicate): bool
  */
 function existsOf(iterable $collection, string $fqcn, bool $invariant = false): bool
 {
-    return firstOf($collection, $fqcn, $invariant)->fold(
-        fn() => true,
-        fn() => false,
-    );
+    return ExistsOfOperation::of($collection)($fqcn, $invariant);
 }
