@@ -37,7 +37,7 @@ class GroupByOperation extends AbstractOperation
         $init = new HashTable();
         $state = StateFunctions::set($init);
 
-        return State::doA($init, function() use ($state, $f) {
+        $hashTable = State::forS($init, function() use ($state, $f) {
             foreach ($this->gen as $key => $value) {
                 $groupKey = $f($value, $key);
                 $group = yield $state
@@ -46,9 +46,8 @@ class GroupByOperation extends AbstractOperation
 
                 yield HashMapBuffer::update($groupKey, $group->prepended($value));
             }
-
-            return yield $state
-                ->inspect(fn(HashTable $tbl) => new HashMap($tbl, empty($tbl->table)));
         });
+
+        return new HashMap($hashTable, empty($hashTable->table));
     }
 }

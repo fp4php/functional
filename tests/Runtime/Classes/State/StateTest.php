@@ -78,12 +78,12 @@ final class StateTest extends TestCase
         );
     }
 
-    public function testDoA(): void
+    public function testForA(): void
     {
         /** @var non-empty-array<string, int> $init */
         $init = [];
 
-        $a = State::doA($init, function() {
+        $a = State::forA($init, function() {
             $state1 = State::of(function (array $s) {
                 $s['a'] = 1;
                 return [$s, ['a', 1]];

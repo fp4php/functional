@@ -194,7 +194,40 @@ final class State
     {
         $gen = $computation();
         $cur = $gen->current();
-        return self::doWalk($gen, $cur)->map(fn() => $gen->getReturn());
+        return self::walkRecursive($gen, $cur)->map(fn() => $gen->getReturn());
+    }
+
+
+    /**
+     * @psalm-pure
+     * @template TState
+     * @template TReturn
+     * @template TSend
+     * @psalm-param callable(): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
+     * @psalm-param TState $initState
+     * @psalm-return TState
+     * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
+     */
+    public static function forS(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
+    {
+        $gen = $computation();
+        $cur = StateFunctions::infer(fn() => $initState);
+
+        while ($gen->valid()) {
+            $cur = $gen->current();
+            $cur = self::walkRecursive($gen, $cur, $maxNestingLevel);
+            $pair = $cur->run($initState);
+
+            /** @psalm-var TState $initState */
+            $initState = $pair[0];
+
+            $cur = StateFunctions::set($pair[0])->map(fn(): mixed => $pair[1]);
+        }
+
+        /** @var TState */
+        return $cur
+            ->map(fn() => $gen->getReturn())
+            ->runS($initState);
     }
 
     /**
@@ -207,14 +240,14 @@ final class State
      * @psalm-return TReturn
      * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
      */
-    public static function doA(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
+    public static function forA(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
     {
         $gen = $computation();
         $cur = StateFunctions::infer(fn() => $initState);
 
         while ($gen->valid()) {
             $cur = $gen->current();
-            $cur = self::doWalk($gen, $cur, $maxNestingLevel);
+            $cur = self::walkRecursive($gen, $cur, $maxNestingLevel);
             $pair = $cur->run($initState);
 
             /** @psalm-var TState $initState */
@@ -229,19 +262,17 @@ final class State
     }
 
     /**
-     * @psalm-param null|callable(State, int): array{State, int} $guard
+     * @param Generator<State> $gen
      */
-    private static function doWalk(Generator $gen, State $currentState, int $maxLevel = 0, int $curLevel = 0): State
+    private static function walkRecursive(Generator $gen, State $currentState, int $maxLevel = 0, int $curLevel = 0): State
     {
         return $currentState->flatMap(function ($val) use ($maxLevel, $curLevel, $currentState, $gen) {
             $gen->send($val);
-
-            /** @var State $nextState */
             $nextState = $gen->current();
 
             return !$gen->valid() || ($maxLevel > 0 && $curLevel >= $maxLevel)
                 ? $currentState
-                : self::doWalk($gen, $nextState, $maxLevel, ++$curLevel);
+                : self::walkRecursive($gen, $nextState, $maxLevel, ++$curLevel);
         });
     }
 }
