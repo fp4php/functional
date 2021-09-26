@@ -11,6 +11,7 @@ use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
 use Fp\Operations\SortedOperation;
+use Fp\Operations\TailOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
@@ -49,13 +50,12 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public static function collect(iterable $source): Option
     {
-        $buffer = [];
+        $arrayList = ArrayList::collect($source);
 
-        foreach ($source as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return Option::condLazy(isset($buffer[0]), fn() => new self(new ArrayList($buffer)));
+        return Option::condLazy(
+            $arrayList->isNonEmpty(),
+            fn() => new self($arrayList)
+        );
     }
 
     /**
@@ -200,18 +200,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function tail(): ArrayList
     {
-        $isFirst = true;
-        $buffer = [];
-
-        foreach ($this as $elem) {
-            if (!$isFirst) {
-                $buffer[] = $elem;
-            }
-
-            $isFirst = false;
-        }
-
-        return new ArrayList($buffer);
+        return $this->arrayList->tail();
     }
 
     /**

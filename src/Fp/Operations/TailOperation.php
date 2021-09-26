@@ -14,20 +14,24 @@ use function Fp\Callable\asGenerator;
  * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
-class FilterOperation extends AbstractOperation
+class TailOperation extends AbstractOperation
 {
     /**
      * @psalm-pure
-     * @psalm-param callable(TV, TK): bool $f
      * @return Generator<TK, TV>
      */
-    public function __invoke(callable $f): Generator
+    public function __invoke(): Generator
     {
-        return asGenerator(function () use ($f) {
+        return asGenerator(function () {
+            $isFirst = true;
+
             foreach ($this->gen as $key => $value) {
-                if ($f($value, $key)) {
-                    yield $key => $value;
+                if ($isFirst) {
+                    $isFirst = false;
+                    continue;
                 }
+
+                yield $key => $value;
             }
         });
     }

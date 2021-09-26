@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\TailOperation;
+
+use function Fp\Cast\asList;
+
 /**
  * Returns every collection element except first
  *
@@ -19,16 +23,5 @@ namespace Fp\Collection;
  */
 function tail(iterable $collection): array
 {
-    $buffer = [];
-    $toggle = false;
-
-    foreach ($collection as $element) {
-        if ($toggle) {
-            $buffer[] = $element;
-        }
-
-        $toggle = true;
-    }
-
-    return $buffer;
+    return asList(TailOperation::of($collection)());
 }
