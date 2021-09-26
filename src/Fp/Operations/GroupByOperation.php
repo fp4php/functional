@@ -11,7 +11,10 @@ use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
 use Fp\Collections\Nil;
 use Fp\Functional\Option\Option;
+use Fp\Functional\State\State;
 use Fp\Functional\State\StateFunctions;
+
+use function Fp\unit;
 
 /**
  * @template TK
@@ -29,30 +32,23 @@ class GroupByOperation extends AbstractOperation
     public function __invoke(callable $f): Map
     {
         /**
-         * @psalm-var HashTable<TKO, LinkedList<TV>> $state
+         * @psalm-var HashTable<TKO, LinkedList<TV>> $init
          */
-        $state = new HashTable();
-        $stateBuilder = StateFunctions::infer(fn() => $state);
-        $i = 0;
+        $init = new HashTable();
+        $state = StateFunctions::set($init);
 
-        foreach ($this->gen as $key => $value) {
-            if (0 === $i % 100) {
-                $state = $stateBuilder->runS($state);
-                $stateBuilder = StateFunctions::set($state);
+        return State::doA($init, function() use ($state, $f) {
+            foreach ($this->gen as $key => $value) {
+                $groupKey = $f($value, $key);
+                $group = yield $state
+                    ->inspect(fn(HashTable $tbl) => HashMapBuffer::get($tbl, $groupKey))
+                    ->map(fn(Option $group) => $group->getOrElse(Nil::getInstance()));
+
+                yield HashMapBuffer::update($groupKey, $group->prepended($value));
             }
 
-            $groupKey = $f($value, $key);
-
-            $stateBuilder = $stateBuilder
-                ->inspect(fn(HashTable $tbl) => HashMapBuffer::get($tbl, $groupKey))
-                ->map(fn(Option $group) => $group->getOrElse(Nil::getInstance()))
-                ->flatMap(fn(LinkedList $group) => HashMapBuffer::update($groupKey, $group->prepended($value)));
-
-            $i++;
-        }
-
-        return $stateBuilder
-            ->inspect(fn(HashTable $tbl) => new HashMap($tbl, empty($tbl->table)))
-            ->runA($state);
+            return yield $state
+                ->inspect(fn(HashTable $tbl) => new HashMap($tbl, empty($tbl->table)));
+        });
     }
 }

@@ -182,30 +182,35 @@ final class State
     }
 
     /**
+     * @psalm-pure
      * @template TState
      * @template TReturn
      * @template TSend
      * @psalm-param callable(): Generator<int, State<TState, mixed>, TSend, TReturn> $computation
      * @psalm-return self<TState, TReturn>
+     * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
      */
-    public static function do(callable $computation): self {
+    public static function do(callable $computation): self
+    {
         $gen = $computation();
         $cur = $gen->current();
         return self::doWalk($gen, $cur)->map(fn() => $gen->getReturn());
     }
 
     /**
+     * @psalm-pure
      * @template TState
      * @template TReturn
      * @template TSend
      * @psalm-param callable(): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
      * @psalm-param TState $initState
-     * @psalm-return self<TState, TReturn>
+     * @psalm-return TReturn
+     * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
      */
-    public static function does(mixed $initState, callable $computation, int $maxNestingLevel = 100): self {
+    public static function doA(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
+    {
         $gen = $computation();
-
-        $cur = StateFunctions::pure(unit());
+        $cur = StateFunctions::infer(fn() => $initState);
 
         while ($gen->valid()) {
             $cur = $gen->current();
@@ -218,7 +223,9 @@ final class State
             $cur = StateFunctions::set($pair[0])->map(fn(): mixed => $pair[1]);
         }
 
-        return $cur->map(fn() => $gen->getReturn());
+        return $cur
+            ->map(fn() => $gen->getReturn())
+            ->runA($initState);
     }
 
     /**

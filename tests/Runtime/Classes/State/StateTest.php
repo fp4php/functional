@@ -78,12 +78,12 @@ final class StateTest extends TestCase
         );
     }
 
-    public function testDoes(): void
+    public function testDoA(): void
     {
         /** @var non-empty-array<string, int> $init */
         $init = [];
 
-        $state = State::does($init, function() {
+        $a = State::doA($init, function() {
             $state1 = State::of(function (array $s) {
                 $s['a'] = 1;
                 return [$s, ['a', 1]];
@@ -119,12 +119,9 @@ final class StateTest extends TestCase
             return [$pair1, $pair2, $pair3, $pair4, $pair5, $pair6];
         }, 2);
 
-        $actual = $state->run($init);
+        $actual = $a;
         $this->assertEquals(
-            [
-                ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6],
-                [['a', 1], ['b', 2], ['c', 3], ['d', 4], ['e', 5], ['f', 6]]
-            ],
+            [['a', 1], ['b', 2], ['c', 3], ['d', 4], ['e', 5], ['f', 6]],
             $actual
         );
     }
