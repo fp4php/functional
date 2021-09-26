@@ -7,8 +7,6 @@ namespace Fp\Collection;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 
-use function Fp\of;
-
 /**
  * Returns true if every collection element satisfies the condition
  * false otherwise

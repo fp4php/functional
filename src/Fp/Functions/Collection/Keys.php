@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\KeysOperation;
+
+use function Fp\Cast\asList;
+
 /**
  * Returns list of collection keys
  *
@@ -19,11 +23,5 @@ namespace Fp\Collection;
  */
 function keys(iterable $collection): array
 {
-    $keys = [];
-
-    foreach ($collection as $index => $element) {
-        $keys[] = $index;
-    }
-
-    return $keys;
+    return asList(KeysOperation::of($collection)());
 }

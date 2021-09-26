@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\FlatMapOperation;
+
+use function Fp\Cast\asList;
+
 /**
  * Map + flatten combination
  *
@@ -18,23 +22,13 @@ namespace Fp\Collection;
  * ```
  *
  * @psalm-template TK of array-key
- * @psalm-template TVI
+ * @psalm-template TV
  * @psalm-template TVO
- * @psalm-param iterable<TK, TVI> $collection
- * @psalm-param callable(TVI, TK): iterable<TVO> $callback
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param callable(TV, TK): iterable<TVO> $callback
  * @psalm-return list<TVO>
  */
 function flatMap(iterable $collection, callable $callback): array
 {
-    $flattened = [];
-
-    foreach ($collection as $index => $element) {
-        $result = $callback($element, $index);
-
-        foreach ($result as $item) {
-            $flattened[] = $item;
-        }
-    }
-
-    return $flattened;
+    return asList(FlatMapOperation::of($collection)($callback));
 }

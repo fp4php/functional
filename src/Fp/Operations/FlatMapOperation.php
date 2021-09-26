@@ -20,7 +20,7 @@ class FlatMapOperation extends AbstractOperation
      * @psalm-pure
      * @psalm-template TVO
      * @psalm-param callable(TV, TK): iterable<TVO> $f
-     * @return Generator<TVO>
+     * @return Generator<int, TVO>
      */
     public function __invoke(callable $f): Generator
     {

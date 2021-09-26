@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\TapOperation;
+use Fp\Streams\Stream;
+
 /**
  * Do something for all collection elements
  *
@@ -19,7 +22,5 @@ namespace Fp\Collection;
  */
 function forAll(iterable $collection, callable $callback): void
 {
-    foreach ($collection as $index => $element) {
-        $callback($element, $index);
-    }
+    Stream::emits(TapOperation::of($collection)($callback))->drain();
 }
