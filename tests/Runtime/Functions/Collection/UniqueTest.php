@@ -13,7 +13,7 @@ final class UniqueTest extends TestCase
     public function testUnique(): void
     {
         $this->assertEquals(
-            [3],
+            [1],
             unique(
                 [1, 1, 1, 1, 2, 3, 3],
                 fn(int $v) => 1

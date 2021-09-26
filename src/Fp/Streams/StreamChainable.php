@@ -7,6 +7,7 @@ namespace Fp\Streams;
 use Fp\Collections\ArrayList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
+use Fp\Operations\ZipOperation;
 use Generator;
 use LogicException;
 
@@ -430,23 +431,7 @@ trait StreamChainable
      */
     public function zip(iterable $that): self
     {
-        return $this->fork(asGenerator(function () use ($that) {
-            $thisIter = asGenerator(fn() => $this);
-            $thatIter = asGenerator(fn() => $that);
-
-            $thisIter->rewind();
-            $thatIter->rewind();
-
-            while ($thisIter->valid() && $thatIter->valid()) {
-                $thisElem = $thisIter->current();
-                $thatElem = $thatIter->current();
-
-                yield [$thisElem, $thatElem];
-
-                $thisIter->next();
-                $thatIter->next();
-            }
-        }));
+        return $this->fork(ZipOperation::of($this)($that));
     }
 
     /**

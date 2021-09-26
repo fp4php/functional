@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Collections\HashMap;
-use Generator;
+use Fp\Operations\UniqueOperation;
+
+use function Fp\Cast\asList;
 
 /**
  * Returns collection unique elements
@@ -29,11 +30,5 @@ use Generator;
  */
 function unique(iterable $collection, callable $callback): array
 {
-    $source = function () use ($callback, $collection): Generator {
-        foreach ($collection as $elem) {
-            yield $callback($elem) => $elem;
-        }
-    };
-
-    return HashMap::collect($source())->values()->toArray();
+    return asList(UniqueOperation::of($collection)($callback));
 }

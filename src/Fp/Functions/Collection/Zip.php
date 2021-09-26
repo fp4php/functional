@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\ZipOperation;
+
 use function Fp\Cast\asList;
 
 /**
@@ -28,15 +30,5 @@ use function Fp\Cast\asList;
  */
 function zip(iterable $left, iterable $right): array
 {
-    $aggregation = [];
-    $leftList = asList($left);
-    $rightList = asList($right);
-
-    foreach ($leftList as $leftKey => $leftValue) {
-        if (isset($rightList[$leftKey])) {
-            $aggregation[] = [$leftValue, $rightList[$leftKey]];
-        }
-    }
-
-    return $aggregation;
+    return asList(ZipOperation::of($left)($right));
 }
