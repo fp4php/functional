@@ -8,8 +8,6 @@ use Fp\Functional\Unit;
 
 use function Fp\unit;
 
-use const Fp\id;
-
 class StateFunctions
 {
     /**

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Fp\Functional\State\State;
 use Fp\Functional\State\StateFunctions;
 use Iterator;
 

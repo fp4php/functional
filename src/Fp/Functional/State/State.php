@@ -7,6 +7,8 @@ namespace Fp\Functional\State;
 use Closure;
 use Fp\Functional\Unit;
 
+use Generator;
+
 use function Fp\unit;
 
 /**
@@ -55,24 +57,6 @@ final class State
             [$stateDown, $valueDown] = ($this->func)($stateUp);
 
             return [$stateDown, $f($valueDown)];
-        });
-    }
-
-    /**
-     * @psalm-template B
-     * @param callable(A): State<S, B> $f
-     * @psalm-return State<S, B>
-     */
-    public function flatMap(callable $f): self
-    {
-        return self::of(function (mixed $state) use ($f): array {
-            /** @psalm-var S $state0 */
-            $state0 = $state;
-
-            [$state1, $value1] = ($this->func)($state0);
-            [$state2, $value2] = ($f($value1)->func)($state1);
-
-            return [$state2, $value2];
         });
     }
 
@@ -176,5 +160,81 @@ final class State
     public function runS(mixed $state): mixed
     {
         return ($this->func)($state)[0];
+    }
+
+
+    /**
+     * @psalm-template B
+     * @param callable(A): State<S, B> $f
+     * @psalm-return State<S, B>
+     */
+    public function flatMap(callable $f): self
+    {
+        return self::of(function (mixed $state) use ($f): array {
+            /** @psalm-var S $state0 */
+            $state0 = $state;
+
+            [$state1, $value1] = ($this->func)($state0);
+            [$state2, $value2] = ($f($value1)->func)($state1);
+
+            return [$state2, $value2];
+        });
+    }
+
+    /**
+     * @template TState
+     * @template TReturn
+     * @template TSend
+     * @psalm-param callable(): Generator<int, State<TState, mixed>, TSend, TReturn> $computation
+     * @psalm-return self<TState, TReturn>
+     */
+    public static function do(callable $computation): self {
+        $gen = $computation();
+        $cur = $gen->current();
+        return self::doWalk($gen, $cur)->map(fn() => $gen->getReturn());
+    }
+
+    /**
+     * @template TState
+     * @template TReturn
+     * @template TSend
+     * @psalm-param callable(): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
+     * @psalm-param TState $initState
+     * @psalm-return self<TState, TReturn>
+     */
+    public static function does(mixed $initState, callable $computation, int $maxNestingLevel = 100): self {
+        $gen = $computation();
+
+        $cur = StateFunctions::pure(unit());
+
+        while ($gen->valid()) {
+            $cur = $gen->current();
+            $cur = self::doWalk($gen, $cur, $maxNestingLevel);
+            $pair = $cur->run($initState);
+
+            /** @psalm-var TState $initState */
+            $initState = $pair[0];
+
+            $cur = StateFunctions::set($pair[0])->map(fn(): mixed => $pair[1]);
+        }
+
+        return $cur->map(fn() => $gen->getReturn());
+    }
+
+    /**
+     * @psalm-param null|callable(State, int): array{State, int} $guard
+     */
+    private static function doWalk(Generator $gen, State $currentState, int $maxLevel = 0, int $curLevel = 0): State
+    {
+        return $currentState->flatMap(function ($val) use ($maxLevel, $curLevel, $currentState, $gen) {
+            $gen->send($val);
+
+            /** @var State $nextState */
+            $nextState = $gen->current();
+
+            return !$gen->valid() || ($maxLevel > 0 && $curLevel >= $maxLevel)
+                ? $currentState
+                : self::doWalk($gen, $nextState, $maxLevel, ++$curLevel);
+        });
     }
 }
