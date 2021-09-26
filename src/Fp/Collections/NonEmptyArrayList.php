@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\AppendedAllOperation;
+use Fp\Operations\AppendedOperation;
+use Fp\Operations\MapValuesOperation;
+use Fp\Operations\PrependedAllOperation;
+use Fp\Operations\PrependedOperation;
+use Fp\Operations\SortedOperation;
+use Fp\Operations\TapOperation;
+use Fp\Operations\UniqueOperation;
+use Fp\Streams\Stream;
+use Generator;
 use Iterator;
 
 /**
@@ -14,11 +24,6 @@ use Iterator;
  */
 final class NonEmptyArrayList implements NonEmptySeq
 {
-    /**
-     * @use NonEmptySeqChainable<TV>
-     */
-    use NonEmptySeqChainable;
-
     /**
      * @use NonEmptySeqTerminable<TV>
      */
@@ -80,6 +85,16 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function getIterator(): Iterator
     {
         return $this->arrayList->getIterator();
+    }
+
+    /**
+     * @return Generator<int, TV>
+     */
+    private function iter(): Generator
+    {
+        foreach ($this as $elem) {
+            yield $elem;
+        }
     }
 
     /**
@@ -244,5 +259,91 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function drop(int $length): ArrayList
     {
         return $this->arrayList->drop($length);
+    }
+
+    /**
+     * @template TVO
+     * @psalm-param callable(TV): TVO $callback
+     * @psalm-return self<TVO>
+     */
+    public function map(callable $callback): self
+    {
+        return self::collectUnsafe(MapValuesOperation::of($this->iter())($callback));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return self<TV|TVI>
+     */
+    public function appended(mixed $elem): self
+    {
+        return self::collectUnsafe(AppendedOperation::of($this->iter())($elem));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param iterable<TVI> $suffix
+     * @psalm-return self<TV|TVI>
+     */
+    public function appendedAll(iterable $suffix): self
+    {
+        return self::collectUnsafe(AppendedAllOperation::of($this->iter())($suffix));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param TVI $elem
+     * @psalm-return self<TV|TVI>
+     */
+    public function prepended(mixed $elem): self
+    {
+        return self::collectUnsafe(PrependedOperation::of($this->iter())($elem));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @psalm-param iterable<TVI> $prefix
+     * @psalm-return self<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): self
+    {
+        return self::collectUnsafe(PrependedAllOperation::of($this->iter())($prefix));
+    }
+
+    /**
+     * @inheritDoc
+     * @param callable(TV): void $callback
+     * @psalm-return self<TV>
+     */
+    public function tap(callable $callback): self
+    {
+        Stream::emits(TapOperation::of($this->iter())($callback))->drain();
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     * @experimental
+     * @psalm-param callable(TV): (int|string) $callback
+     * @psalm-return self<TV>
+     */
+    public function unique(callable $callback): self
+    {
+        return self::collectUnsafe(UniqueOperation::of($this->iter())($callback));
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return self<TV>
+     */
+    public function sorted(callable $cmp): self
+    {
+        return self::collectUnsafe(SortedOperation::of($this->iter())($cmp));
     }
 }
