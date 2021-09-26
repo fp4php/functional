@@ -6,7 +6,6 @@ namespace Fp\Functional\State;
 
 use Closure;
 use Fp\Functional\Unit;
-
 use Generator;
 
 use function Fp\unit;
