@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\ChunksOperation;
 use Generator;
 
 /**
@@ -20,24 +21,9 @@ use Generator;
  * @psalm-template TV
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-param positive-int $chunkSize
- * @psalm-return Generator<list<TV>>
+ * @psalm-return Generator<non-empty-list<TV>>
  */
 function chunks(iterable $collection, int $chunkSize): Generator
 {
-    $chunk = [];
-    $i = 0;
-
-    foreach ($collection as $element) {
-        $i++;
-        $chunk[] = $element;
-
-        if (0 === $i % $chunkSize) {
-            yield $chunk;
-            $chunk = [];
-        }
-    }
-
-    if (!empty($chunk)) {
-        yield $chunk;
-    }
+    return ChunksOperation::of($collection)($chunkSize);
 }

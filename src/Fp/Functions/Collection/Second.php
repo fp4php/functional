@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\SecondOperation;
 
 /**
  * Returns second collection element
@@ -18,20 +19,10 @@ use Fp\Functional\Option\Option;
  * @psalm-template TK of array-key
  * @psalm-template TV
  * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param null|callable(TV, TK): bool $predicate
  * @psalm-return Option<TV>
  */
-function second(iterable $collection): Option
+function second(iterable $collection, ?callable $predicate = null): Option
 {
-    $i = 0;
-    $second = null;
-
-    foreach ($collection as $elem) {
-        if (1 === $i) {
-            $second = $elem;
-            break;
-        }
-        $i++;
-    }
-
-    return Option::fromNullable($second);
+    return SecondOperation::of($collection)($predicate);
 }

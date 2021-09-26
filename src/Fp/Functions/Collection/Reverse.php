@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use function Fp\Cast\asArray;
+
 /**
  * Copy collection in reversed order
  *
@@ -19,11 +21,5 @@ namespace Fp\Collection;
  */
 function reverse(iterable $collection): array
 {
-    $aggregation = [];
-
-    foreach ($collection as $index => $element) {
-        $aggregation[$index] = $element;
-    }
-
-    return array_reverse($aggregation);
+    return array_reverse(asArray($collection));
 }

@@ -300,6 +300,7 @@ interface StreamChainableOps
      * => Stream(Seq(1, 2), Seq(3, 4), Seq(5))
      * ```
      *
+     * @param positive-int $size
      * @return Stream<Seq<TV>>
      */
     public function chunks(int $size): Stream;

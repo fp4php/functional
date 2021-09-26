@@ -451,6 +451,7 @@ trait StreamChainable
 
     /**
      * @inheritDoc
+     * @param positive-int $size
      * @return self<Seq<TV>>
      */
     public function chunks(int $size): self
