@@ -38,6 +38,7 @@ use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
+use function Fp\Cast\asList;
 
 /**
  * O(1) {@see Seq::prepended} operation
@@ -49,11 +50,6 @@ use function Fp\Callable\asGenerator;
  */
 abstract class LinkedList implements Seq
 {
-    /**
-     * @use SeqCastable<TV>
-     */
-    use SeqCastable;
-
     /**
      * @inheritDoc
      * @template TVI
@@ -92,11 +88,54 @@ abstract class LinkedList implements Seq
 
     /**
      * @inheritDoc
+     * @return list<TV>
+     */
+    public function toArray(): array
+    {
+        return asList($this->iter());
+    }
+
+    /**
+     * @inheritDoc
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
     {
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     * @return ArrayList<TV>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return ArrayList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return HashMap<TKI, TVI>
+     */
+    public function toHashMap(callable $callback): HashMap
+    {
+        return HashMap::collectPairs(asGenerator(function () use ($callback) {
+            foreach ($this as $elem) {
+                yield $callback($elem);
+            }
+        }));
     }
 
     /**

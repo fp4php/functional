@@ -23,7 +23,6 @@ use Iterator;
 
 use function Fp\Callable\asGenerator;
 use function Fp\Cast\asNonEmptyList;
-use function Fp\of;
 
 /**
  * @template-covariant TV
@@ -251,7 +250,6 @@ final class NonEmptyHashSet implements NonEmptySet
     {
         return FirstOperation::of($this->iter())($predicate);
     }
-
 
     /**
      * @inheritDoc
