@@ -7,20 +7,8 @@ namespace Fp\Functional\Trampoline;
 use Closure;
 
 /**
- * ```php
- * // stack safe factorial example
- *
- * function fac(int $n): Trampoline {
- *     return $n === 0
- *         ? new Done(1)
- *         : new FlatMap(
- *             new More(fn() => fac($n - 1)),
- *             fn(int $x) => new Done($n * $x)
- *         );
- * }
- * ```
- *
- * @template A
+ * @psalm-immutable
+ * @template-covariant A
  */
 abstract class Trampoline
 {
@@ -63,8 +51,8 @@ abstract class Trampoline
                     $cur = ($cur->resume)();
                     continue 2;
                 case $cur instanceof FlatMap:
-                    $x = $cur->subject;
-                    $f = $cur->kleisli;
+                    $x = $cur->sub;
+                    $f = $cur->cont;
                     switch (true) {
                         case $x instanceof Done:
                             $cur = $f($x->value);
@@ -73,8 +61,8 @@ abstract class Trampoline
                             $cur = new FlatMap(($x->resume)(), $f);
                             continue 3;
                         case $x instanceof FlatMap:
-                            $y = $x->subject;
-                            $g = $x->kleisli;
+                            $y = $x->sub;
+                            $g = $x->cont;
                             $cur = $y->flatMap(fn($q) => $g($q)->flatMap($f));
                             continue 3;
                     }
