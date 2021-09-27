@@ -6,9 +6,9 @@ namespace Fp\Functional\Trampoline;
 
 /**
  * @template A
- * @extends TailRec<A>
+ * @extends Trampoline<A>
  */
-final class Returned extends TailRec
+final class Done extends Trampoline
 {
     /**
      * @param A $value

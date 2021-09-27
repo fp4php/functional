@@ -10,39 +10,39 @@ use Closure;
  * ```php
  * // stack safe factorial example
  *
- * function fac(int $n): TailRec {
+ * function fac(int $n): Trampoline {
  *     return $n === 0
- *         ? new Returned(1)
+ *         ? new Done(1)
  *         : new FlatMap(
- *             new Suspend(fn() => fac($n - 1)),
- *             fn(int $x) => new Returned($n * $x)
+ *             new More(fn() => fac($n - 1)),
+ *             fn(int $x) => new Done($n * $x)
  *         );
  * }
  * ```
  *
  * @template A
  */
-abstract class TailRec
+abstract class Trampoline
 {
     /**
      * @template B
      * @param Closure(A): B $f
-     * @return TailRec<B>
+     * @return Trampoline<B>
      */
-    public function map(Closure $f): TailRec
+    public function map(Closure $f): Trampoline
     {
         return $this->flatMap(function ($a) use ($f) {
             /** @var A $a */
-            return new Returned($f($a));
+            return new Done($f($a));
         });
     }
 
     /**
      * @template B
-     * @param Closure(A): TailRec<B> $f
-     * @return TailRec<B>
+     * @param Closure(A): Trampoline<B> $f
+     * @return Trampoline<B>
      */
-    public function flatMap(Closure $f): TailRec
+    public function flatMap(Closure $f): Trampoline
     {
         return new FlatMap($this, $f);
     }
@@ -56,20 +56,20 @@ abstract class TailRec
 
         while(true) {
             switch (true) {
-                case $cur instanceof Returned:
+                case $cur instanceof Done:
                     /** @var A */
                     return $cur->value;
-                case $cur instanceof Suspend:
+                case $cur instanceof More:
                     $cur = ($cur->resume)();
                     continue 2;
                 case $cur instanceof FlatMap:
                     $x = $cur->subject;
                     $f = $cur->kleisli;
                     switch (true) {
-                        case $x instanceof Returned:
+                        case $x instanceof Done:
                             $cur = $f($x->value);
                             continue 3;
-                        case $x instanceof Suspend:
+                        case $x instanceof More:
                             $cur = new FlatMap(($x->resume)(), $f);
                             continue 3;
                         case $x instanceof FlatMap:

@@ -9,13 +9,13 @@ use Closure;
 /**
  * @template A
  * @template B
- * @extends TailRec<B>
+ * @extends Trampoline<B>
  */
-final class FlatMap extends TailRec
+final class FlatMap extends Trampoline
 {
     /**
-     * @param TailRec<A> $subject
-     * @param Closure(A): TailRec<B> $kleisli
+     * @param Trampoline<A> $subject
+     * @param Closure(A): Trampoline<B> $kleisli
      */
-    public function __construct(public TailRec $subject, public Closure $kleisli) { }
+    public function __construct(public Trampoline $subject, public Closure $kleisli) { }
 }

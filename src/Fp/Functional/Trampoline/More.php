@@ -8,12 +8,12 @@ use Closure;
 
 /**
  * @template A
- * @extends TailRec<A>
+ * @extends Trampoline<A>
  */
-final class Suspend extends TailRec
+final class More extends Trampoline
 {
     /**
-     * @param Closure(): TailRec<A> $resume
+     * @param Closure(): Trampoline<A> $resume
      */
     public function __construct(public Closure $resume) { }
 }
