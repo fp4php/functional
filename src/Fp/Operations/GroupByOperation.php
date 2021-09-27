@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace Fp\Operations;
 
 use Fp\Collections\HashMap;
-use Fp\Collections\HashMapBuffer;
 use Fp\Collections\HashTable;
 use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
 use Fp\Collections\Nil;
 use Fp\Functional\Option\Option;
 use Fp\Functional\State\State;
-use Fp\Functional\State\StateFunctions;
-
-use function Fp\unit;
 
 /**
  * @template TK
@@ -35,7 +31,7 @@ class GroupByOperation extends AbstractOperation
          * @psalm-var HashTable<TKO, LinkedList<TV>> $init
          */
         $init = new HashTable();
-        $state = StateFunctions::set($init);
+        $state = State::setState($init);
 
         $hashTable = State::forS($init, function() use ($state, $f) {
             foreach ($this->gen as $key => $value) {

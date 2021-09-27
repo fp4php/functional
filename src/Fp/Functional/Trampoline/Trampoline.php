@@ -51,19 +51,22 @@ abstract class Trampoline
                     $cur = ($cur->resume)();
                     continue 2;
                 case $cur instanceof FlatMap:
-                    $x = $cur->sub;
-                    $f = $cur->cont;
+                    $sub1 = $cur->sub;
+                    $cont1 = $cur->cont;
                     switch (true) {
-                        case $x instanceof Done:
-                            $cur = $f($x->value);
+                        case $sub1 instanceof Done:
+                            $cur = $cont1($sub1->value);
                             continue 3;
-                        case $x instanceof More:
-                            $cur = new FlatMap(($x->resume)(), $f);
+                        case $sub1 instanceof More:
+                            $cur = new FlatMap(($sub1->resume)(), $cont1);
                             continue 3;
-                        case $x instanceof FlatMap:
-                            $y = $x->sub;
-                            $g = $x->cont;
-                            $cur = $y->flatMap(fn($q) => $g($q)->flatMap($f));
+                        case $sub1 instanceof FlatMap:
+                            $sub2 = $sub1->sub;
+                            $cont2 = $sub1->cont;
+
+                            // Reassociate the bind to the right
+                            $cur = $sub2->flatMap(fn($z) => $cont2($z)->flatMap($cont1));
+
                             continue 3;
                     }
                     continue 2;

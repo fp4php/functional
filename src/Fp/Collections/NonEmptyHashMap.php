@@ -6,7 +6,6 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Functional\State\State;
-use Fp\Functional\State\StateFunctions;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
@@ -83,7 +82,7 @@ final class NonEmptyHashMap implements NonEmptyMap
 
         $hashTable = State::forS($init, function () use ($source) {
             foreach ($source as [$key, $value]) {
-                yield StateFunctions::modify(
+                yield State::modifyState(
                     fn(HashTable $tbl) => HashTable::update($tbl, $key, $value)
                 );
             }

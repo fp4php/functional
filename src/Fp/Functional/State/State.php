@@ -42,6 +42,20 @@ final class State
     }
 
     /**
+     * @psalm-pure
+     * @template SS
+     * @template AA
+     * @param AA $value
+     * @return State<SS, AA>
+     */
+    public static function pure(mixed $value): State
+    {
+        return new State(function (mixed $state) use ($value) {
+            return [$state, $value];
+        });
+    }
+
+    /**
      * Map value. State will not be changed
      *
      * @psalm-template B
@@ -79,6 +93,21 @@ final class State
     }
 
     /**
+     * @psalm-pure
+     * @template SS
+     * @template AA
+     * @param callable(SS): AA $f
+     * @return State<SS, AA>
+     */
+    public static function inspectState(callable $f): State
+    {
+        return new State(function (mixed $state) use ($f): array {
+            /** @psalm-var SS $state */
+            return [$state, $f($state)];
+        });
+    }
+
+    /**
      * Copy current state to computed value
      *
      * @return State<S, S>
@@ -109,6 +138,17 @@ final class State
     }
 
     /**
+     * @psalm-pure
+     * @template SS
+     * @param SS $state
+     * @return State<SS, Unit>
+     */
+    public static function setState(mixed $state): State
+    {
+        return new State(fn() => [$state, unit()]);
+    }
+
+    /**
      * Modify current state and discard value
      *
      * @psalm-pure
@@ -123,6 +163,34 @@ final class State
             $stateDown = ($this->func)($stateUp)[0];
 
             return [$f($stateDown), unit()];
+        });
+    }
+
+    /**
+     * @psalm-pure
+     * @template SS
+     * @param callable(SS): SS $f
+     * @return State<SS, Unit>
+     */
+    public static function modifyState(callable $f): State
+    {
+        return new State(function (mixed $state) use ($f) {
+            /** @psalm-var SS $state */
+            return [$f($state), unit()];
+        });
+    }
+
+    /**
+     * @psalm-pure
+     * @template SS
+     * @param callable(): SS $f
+     * @return State<SS, Unit>
+     */
+    public static function infer(callable $f): State
+    {
+        return new State(function (mixed $state) {
+            /** @psalm-var SS $state */
+            return [$state, unit()];
         });
     }
 
@@ -210,7 +278,7 @@ final class State
     public static function forS(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
     {
         $gen = $computation($initState);
-        $cur = StateFunctions::infer(fn() => $initState);
+        $cur = self::infer(fn() => $initState);
 
         while ($gen->valid()) {
             $cur = $gen->current();
@@ -220,7 +288,7 @@ final class State
             /** @psalm-var TState $initState */
             $initState = $pair[0];
 
-            $cur = StateFunctions::set($pair[0])->map(fn(): mixed => $pair[1]);
+            $cur = self::setState($pair[0])->map(fn(): mixed => $pair[1]);
         }
 
         /** @var TState */
@@ -242,7 +310,7 @@ final class State
     public static function forA(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
     {
         $gen = $computation($initState);
-        $cur = StateFunctions::infer(fn() => $initState);
+        $cur = self::infer(fn() => $initState);
 
         while ($gen->valid()) {
             $cur = $gen->current();
@@ -252,7 +320,7 @@ final class State
             /** @psalm-var TState $initState */
             $initState = $pair[0];
 
-            $cur = StateFunctions::set($pair[0])->map(fn(): mixed => $pair[1]);
+            $cur = self::setState($pair[0])->map(fn(): mixed => $pair[1]);
         }
 
         return $cur

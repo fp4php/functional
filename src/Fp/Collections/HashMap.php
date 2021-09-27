@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\State\State;
-use Fp\Functional\State\StateFunctions;
 use Fp\Operations\FlatMapOperation;
 use Fp\Operations\MapKeysOperation;
 use Fp\Operations\MapValuesOperation;
@@ -60,7 +59,7 @@ final class HashMap implements Map, StaticStorage
 
         $hashTable = State::forS($init, function () use ($source) {
             foreach ($source as [$key, $value]) {
-                yield StateFunctions::modify(
+                yield State::modifyState(
                     fn(HashTable $tbl) => HashTable::update($tbl, $key, $value)
                 );
             }
