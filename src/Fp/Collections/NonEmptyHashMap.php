@@ -6,7 +6,13 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Functional\State\State;
-use Iterator;
+use Fp\Operations\CountOperation;
+use Fp\Operations\EveryOperation;
+use Fp\Operations\KeysOperation;
+use Fp\Operations\MapKeysOperation;
+use Fp\Operations\MapValuesOperation;
+use Fp\Operations\ValuesOperation;
+use Generator;
 
 use function Fp\Callable\asGenerator;
 
@@ -119,11 +125,19 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @return Iterator<int, array{TK, TV}>
+     * @return Generator<int, array{TK, TV}>
      */
-    public function getIterator(): Iterator
+    public function getIterator(): Generator
     {
         return $this->hashMap->getIterator();
+    }
+
+    /**
+     * @return Generator<TK, TV>
+     */
+    public function getKeyValueIterator(): Generator
+    {
+        return $this->hashMap->getKeyValueIterator();
     }
 
     /**
@@ -131,13 +145,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function count(): int
     {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
+        return CountOperation::of($this->getIterator())();
     }
 
     /**
@@ -155,11 +163,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toLinkedList(): LinkedList
     {
-        return LinkedList::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return LinkedList::collect($this->getIterator());
     }
 
     /**
@@ -167,11 +171,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return NonEmptyLinkedList::collectUnsafe($this->getIterator());
     }
 
     /**
@@ -179,11 +179,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return ArrayList::collect($this->getIterator());
     }
 
     /**
@@ -191,11 +187,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return NonEmptyArrayList::collectUnsafe($this->getIterator());
     }
 
     /**
@@ -204,11 +196,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toHashSet(): HashSet
     {
-        return HashSet::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return HashSet::collect($this->getIterator());
     }
 
     /**
@@ -216,11 +204,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return NonEmptyHashSet::collectUnsafe($this->getIterator());
     }
 
     /**
@@ -241,34 +225,23 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     * @psalm-param callable(Entry<TK, TV>): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return EveryOperation::of($this->getKeyValueIterator())(
+            fn($value, $key) => $predicate(new Entry($key, $value))
+        );
+    }
+
+    /**
+     * @inheritDoc
      * @param TK $key
      * @return Option<TV>
      */
     public function __invoke(mixed $key): Option
     {
         return $this->get($key);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
-     */
-    public function every(callable $predicate): bool
-    {
-        $result = true;
-
-        foreach ($this as [$key, $value]) {
-            $entry = new Entry($key, $value);
-
-            if (!$predicate($entry)) {
-                $result = false;
-                break;
-            }
-
-            unset($entry);
-        }
-
-        return $result;
     }
 
     /**
@@ -344,13 +317,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function mapValues(callable $callback): self
     {
-        return self::collectPairsUnsafe(asGenerator(function () use ($callback) {
-            foreach ($this as [$key, $value]) {
-                $entry = new Entry($key, $value);
-                yield [$entry->key, $callback($entry)];
-                unset($entry);
-            }
-        }));
+        return self::collectUnsafe(
+            MapValuesOperation::of($this->getKeyValueIterator())(
+                fn($value, $key) => $callback(new Entry($key, $value))
+            )
+        );
     }
 
     /**
@@ -361,13 +332,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function mapKeys(callable $callback): self
     {
-        return self::collectPairsUnsafe(asGenerator(function () use ($callback) {
-            foreach ($this as [$key, $value]) {
-                $entry = new Entry($key, $value);
-                yield [$callback($entry), $entry->value];
-                unset($entry);
-            }
-        }));
+        return self::collectUnsafe(
+            MapKeysOperation::of($this->getKeyValueIterator())(
+                fn($value, $key) => $callback(new Entry($key, $value))
+            )
+        );
     }
 
     /**
@@ -376,11 +345,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function keys(): NonEmptySeq
     {
-        return NonEmptyArrayList::collectUnsafe(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair[0];
-            }
-        }));
+        return NonEmptyArrayList::collectUnsafe(KeysOperation::of($this->getKeyValueIterator())());
     }
 
     /**
@@ -389,10 +354,6 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function values(): NonEmptySeq
     {
-        return NonEmptyArrayList::collectUnsafe(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair[1];
-            }
-        }));
+        return NonEmptyArrayList::collectUnsafe(ValuesOperation::of($this->getKeyValueIterator())());
     }
 }

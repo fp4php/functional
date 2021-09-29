@@ -5,13 +5,21 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\State\State;
+use Fp\Operations\CountOperation;
+use Fp\Operations\EveryOperation;
+use Fp\Operations\FilterMapOperation;
+use Fp\Operations\FilterOperation;
 use Fp\Operations\FlatMapOperation;
+use Fp\Operations\FoldOperation;
+use Fp\Operations\KeysOperation;
 use Fp\Operations\MapKeysOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
+use Fp\Operations\ValuesOperation;
 use Generator;
 
 use function Fp\Callable\asGenerator;
+use function Fp\Cast\asList;
 
 /**
  * @template TK
@@ -95,13 +103,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function count(): int
     {
-        $counter = 0;
-
-        foreach ($this as $ignored) {
-            $counter++;
-        }
-
-        return $counter;
+        return CountOperation::of($this->getIterator())();
     }
 
     /**
@@ -110,13 +112,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function toArray(): array
     {
-        $buffer = [];
-
-        foreach ($this as $pair) {
-            $buffer[] = $pair;
-        }
-
-        return $buffer;
+        return asList($this->getIterator());
     }
 
     /**
@@ -125,11 +121,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function toLinkedList(): LinkedList
     {
-        return LinkedList::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return LinkedList::collect($this->getIterator());
     }
 
     /**
@@ -137,11 +129,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return ArrayList::collect($this->getIterator());
     }
 
     /**
@@ -150,11 +138,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function toHashSet(): HashSet
     {
-        return HashSet::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair;
-            }
-        }));
+        return HashSet::collect($this->getIterator());
     }
 
     /**
@@ -167,75 +151,31 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
-     * @param TK $key
-     * @return Option<TV>
-     */
-    public function __invoke(mixed $key): Option
-    {
-        return $this->get($key);
-    }
-
-    /**
-     * @inheritDoc
      * @psalm-param callable(Entry<TK, TV>): bool $predicate
      */
     public function every(callable $predicate): bool
     {
-        $result = true;
-
-        foreach ($this as [$key, $value]) {
-            $entry = new Entry($key, $value);
-
-            if (!$predicate($entry)) {
-                $result = false;
-                break;
-            }
-
-            unset($entry);
-        }
-
-        return $result;
+        return EveryOperation::of($this->getKeyValueIterator())(
+            fn($value, $key) => $predicate(new Entry($key, $value))
+        );
     }
 
     /**
      * @inheritDoc
      * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, Entry<TK, TV>): TA $callback (accumulator, current element): new accumulator
+     * @psalm-param TA $init
+     * @psalm-param callable(TA, Entry<TK, TV>): TA $callback
      * @psalm-return TA
      */
     public function fold(mixed $init, callable $callback): mixed
     {
-        $acc = $init;
-
-        foreach ($this as [$key, $value]) {
-            $entry = new Entry($key, $value);
-            $acc = $callback($acc, $entry);
-            unset($entry);
-        }
-
-        return $acc;
-    }
-
-    /**
-     * @inheritDoc
-     * @param TK $key
-     * @return Option<TV>
-     */
-    public function get(mixed $key): Option
-    {
-        $elem = null;
-
-        $bucket = $this->findBucketByKey($key)->getOrElse([]);
-
-        foreach ($bucket as [$k, $v]) {
-            /** @psalm-suppress ImpureMethodCall */
-            if (HashComparator::hashEquals($key, $k)) {
-                $elem = $v;
+        return FoldOperation::of($this->getKeyValueIterator())(
+            $init,
+            function (mixed $acc, $value, $key) use ($callback) {
+                /** @psalm-var TA $acc */
+                return $callback($acc, new Entry($key, $value));
             }
-        }
-
-        return Option::fromNullable($elem);
+        );
     }
 
     /**
@@ -268,17 +208,9 @@ final class HashMap implements Map, StaticStorage
      */
     public function filter(callable $predicate): self
     {
-        return self::collectPairs(asGenerator(function () use ($predicate) {
-            foreach ($this as [$key, $value]) {
-                $entry = new Entry($key, $value);
-
-                if ($predicate($entry)) {
-                    yield $entry->toArray();
-                }
-
-                unset($entry);
-            }
-        }));
+        return self::collect(FilterOperation::of($this->getKeyValueIterator())(
+            fn($value, $key) => $predicate(new Entry($key, $value))
+        ));
     }
 
     /**
@@ -289,18 +221,9 @@ final class HashMap implements Map, StaticStorage
      */
     public function filterMap(callable $callback): self
     {
-        return self::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as [$key, $value]) {
-                $entry = new Entry($key, $value);
-                $result = $callback($entry);
-
-                if ($result->isSome()) {
-                    yield [$entry->key, $result->get()];
-                }
-
-                unset($entry);
-            }
-        }));
+        return self::collect(FilterMapOperation::of($this->getKeyValueIterator())(
+            fn($value, $key) => $callback(new Entry($key, $value))
+        ));
     }
 
     /**
@@ -366,11 +289,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function keys(): Seq
     {
-        return ArrayList::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair[0];
-            }
-        }));
+        return ArrayList::collect(KeysOperation::of($this->getKeyValueIterator())());
     }
 
     /**
@@ -379,11 +298,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function values(): Seq
     {
-        return ArrayList::collect(asGenerator(function () {
-            foreach ($this as $pair) {
-                yield $pair[1];
-            }
-        }));
+        return ArrayList::collect(ValuesOperation::of($this->getKeyValueIterator())());
     }
 
     public function isEmpty():bool
@@ -392,13 +307,35 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
+     * @inheritDoc
      * @param TK $key
-     * @return Option<list<array{TK, TV}>>
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * @inheritDoc
+     * @param TK $key
+     * @return Option<TV>
      * @psalm-suppress ImpureMethodCall
      */
-    private function findBucketByKey(mixed $key): Option
+    public function get(mixed $key): Option
     {
+        $elem = null;
         $hash = (string) HashComparator::computeHash($key);
-        return Option::fromNullable($this->hashTable->table[$hash] ?? null);
+
+        $bucket = Option::fromNullable($this->hashTable->table[$hash] ?? null)
+            ->getOrElse([]);
+
+        foreach ($bucket as [$k, $v]) {
+            if (HashComparator::hashEquals($key, $k)) {
+                $elem = $v;
+            }
+        }
+
+        return Option::fromNullable($elem);
     }
 }
