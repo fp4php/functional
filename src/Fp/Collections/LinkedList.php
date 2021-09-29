@@ -68,7 +68,6 @@ abstract class LinkedList implements Seq
     }
 
     /**
-     * @inheritDoc
      * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator
@@ -77,22 +76,12 @@ abstract class LinkedList implements Seq
     }
 
     /**
-     * @return Generator<int, TV>
-     */
-    private function iter(): Generator
-    {
-        foreach ($this as $elem) {
-            yield $elem;
-        }
-    }
-
-    /**
      * @inheritDoc
      * @return list<TV>
      */
     public function toArray(): array
     {
-        return asList($this->iter());
+        return asList($this->getIterator());
     }
 
     /**
@@ -175,7 +164,7 @@ abstract class LinkedList implements Seq
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->iter())($predicate);
+        return EveryOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -186,7 +175,7 @@ abstract class LinkedList implements Seq
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return EveryOfOperation::of($this->iter())($fqcn, $invariant);
+        return EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -195,7 +184,7 @@ abstract class LinkedList implements Seq
      */
     public function exists(callable $predicate): bool
     {
-        return ExistsOperation::of($this->iter())($predicate);
+        return ExistsOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -206,7 +195,7 @@ abstract class LinkedList implements Seq
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return ExistsOfOperation::of($this->iter())($fqcn, $invariant);
+        return ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -216,7 +205,7 @@ abstract class LinkedList implements Seq
      */
     public function first(callable $predicate): Option
     {
-        return FirstOperation::of($this->iter())($predicate);
+        return FirstOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -228,7 +217,7 @@ abstract class LinkedList implements Seq
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        return FirstOfOperation::of($this->iter())($fqcn, $invariant);
+        return FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -240,7 +229,7 @@ abstract class LinkedList implements Seq
      */
     public function fold(mixed $init, callable $callback): mixed
     {
-        return FoldOperation::of($this->iter())($init, $callback);
+        return FoldOperation::of($this->getIterator())($init, $callback);
     }
 
     /**
@@ -251,7 +240,7 @@ abstract class LinkedList implements Seq
      */
     public function reduce(callable $callback): Option
     {
-        return ReduceOperation::of($this->iter())($callback);
+        return ReduceOperation::of($this->getIterator())($callback);
     }
 
     /**
@@ -284,7 +273,7 @@ abstract class LinkedList implements Seq
      */
     public function last(callable $predicate): Option
     {
-        return LastOperation::of($this->iter())($predicate);
+        return LastOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -302,7 +291,7 @@ abstract class LinkedList implements Seq
      */
     public function lastElement(): Option
     {
-        return LastOperation::of($this->iter())();
+        return LastOperation::of($this->getIterator())();
     }
 
     /**
@@ -310,7 +299,7 @@ abstract class LinkedList implements Seq
      */
     public function count(): int
     {
-        return CountOperation::of($this->iter())();
+        return CountOperation::of($this->getIterator())();
     }
 
     /**
@@ -328,7 +317,7 @@ abstract class LinkedList implements Seq
      */
     public function at(int $index): Option
     {
-        return AtOperation::of($this->iter())($index);
+        return AtOperation::of($this->getIterator())($index);
     }
 
     /**
@@ -339,7 +328,7 @@ abstract class LinkedList implements Seq
      */
     public function groupBy(callable $callback): Map
     {
-        return GroupByOperation::of($this->iter())($callback);
+        return GroupByOperation::of($this->getIterator())($callback);
     }
 
     /**
@@ -357,7 +346,7 @@ abstract class LinkedList implements Seq
      */
     public function map(callable $callback): self
     {
-        return self::collect(MapValuesOperation::of($this->iter())($callback));
+        return self::collect(MapValuesOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -368,7 +357,7 @@ abstract class LinkedList implements Seq
      */
     public function appended(mixed $elem): self
     {
-        return self::collect(AppendedOperation::of($this->iter())($elem));
+        return self::collect(AppendedOperation::of($this->getIterator())($elem));
     }
 
     /**
@@ -379,7 +368,7 @@ abstract class LinkedList implements Seq
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collect(AppendedAllOperation::of($this->iter())($suffix));
+        return self::collect(AppendedAllOperation::of($this->getIterator())($suffix));
     }
 
     /**
@@ -401,7 +390,7 @@ abstract class LinkedList implements Seq
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collect(PrependedAllOperation::of($this->iter())($prefix));
+        return self::collect(PrependedAllOperation::of($this->getIterator())($prefix));
     }
 
     /**
@@ -411,7 +400,7 @@ abstract class LinkedList implements Seq
      */
     public function filter(callable $predicate): self
     {
-        return self::collect(FilterOperation::of($this->iter())($predicate));
+        return self::collect(FilterOperation::of($this->getIterator())($predicate));
     }
 
     /**
@@ -422,7 +411,7 @@ abstract class LinkedList implements Seq
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(FilterMapOperation::of($this->iter())($callback));
+        return self::collect(FilterMapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -431,7 +420,7 @@ abstract class LinkedList implements Seq
      */
     public function filterNotNull(): self
     {
-        return self::collect(FilterNotNullOperation::of($this->iter())());
+        return self::collect(FilterNotNullOperation::of($this->getIterator())());
     }
 
     /**
@@ -443,7 +432,7 @@ abstract class LinkedList implements Seq
      */
     public function filterOf(string $fqcn, bool $invariant = false): self
     {
-        return self::collect(FilterOfOperation::of($this->iter())($fqcn, $invariant));
+        return self::collect(FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
     }
 
     /**
@@ -454,7 +443,7 @@ abstract class LinkedList implements Seq
      */
     public function flatMap(callable $callback): self
     {
-        return self::collect(FlatMapOperation::of($this->iter())($callback));
+        return self::collect(FlatMapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -464,7 +453,7 @@ abstract class LinkedList implements Seq
      */
     public function takeWhile(callable $predicate): self
     {
-        return self::collect(TakeWhileOperation::of($this->iter())($predicate));
+        return self::collect(TakeWhileOperation::of($this->getIterator())($predicate));
     }
 
     /**
@@ -474,7 +463,7 @@ abstract class LinkedList implements Seq
      */
     public function dropWhile(callable $predicate): self
     {
-        return self::collect(DropWhileOperation::of($this->iter())($predicate));
+        return self::collect(DropWhileOperation::of($this->getIterator())($predicate));
     }
 
     /**
@@ -483,7 +472,7 @@ abstract class LinkedList implements Seq
      */
     public function take(int $length): self
     {
-        return self::collect(TakeOperation::of($this->iter())($length));
+        return self::collect(TakeOperation::of($this->getIterator())($length));
     }
 
     /**
@@ -492,7 +481,7 @@ abstract class LinkedList implements Seq
      */
     public function drop(int $length): self
     {
-        return self::collect(DropOperation::of($this->iter())($length));
+        return self::collect(DropOperation::of($this->getIterator())($length));
     }
 
     /**
@@ -502,7 +491,7 @@ abstract class LinkedList implements Seq
      */
     public function tap(callable $callback): self
     {
-        return self::collect(TapOperation::of($this->iter())($callback));
+        return self::collect(TapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -513,7 +502,7 @@ abstract class LinkedList implements Seq
      */
     public function unique(callable $callback): self
     {
-        return self::collect(UniqueOperation::of($this->iter())($callback));
+        return self::collect(UniqueOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -523,6 +512,6 @@ abstract class LinkedList implements Seq
      */
     public function sorted(callable $cmp): self
     {
-        return self::collect(SortedOperation::of($this->iter())($cmp));
+        return self::collect(SortedOperation::of($this->getIterator())($cmp));
     }
 }

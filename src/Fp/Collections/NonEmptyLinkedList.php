@@ -77,22 +77,11 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
      * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator
     {
         return new LinkedListIterator($this->toLinkedList());
-    }
-
-    /**
-     * @return Generator<int, TV>
-     */
-    private function iter(): Generator
-    {
-        foreach ($this as $elem) {
-            yield $elem;
-        }
     }
 
     /**
@@ -219,7 +208,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(MapValuesOperation::of($this->iter())($callback));
+        return self::collectUnsafe(MapValuesOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -230,7 +219,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function appended(mixed $elem): self
     {
-        return self::collectUnsafe(AppendedOperation::of($this->iter())($elem));
+        return self::collectUnsafe(AppendedOperation::of($this->getIterator())($elem));
     }
 
     /**
@@ -241,7 +230,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function appendedAll(iterable $suffix): self
     {
-        return self::collectUnsafe(AppendedAllOperation::of($this->iter())($suffix));
+        return self::collectUnsafe(AppendedAllOperation::of($this->getIterator())($suffix));
     }
 
     /**
@@ -252,7 +241,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function prepended(mixed $elem): self
     {
-        return self::collectUnsafe(PrependedOperation::of($this->iter())($elem));
+        return self::collectUnsafe(PrependedOperation::of($this->getIterator())($elem));
     }
 
     /**
@@ -263,7 +252,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function prependedAll(iterable $prefix): self
     {
-        return self::collectUnsafe(PrependedAllOperation::of($this->iter())($prefix));
+        return self::collectUnsafe(PrependedAllOperation::of($this->getIterator())($prefix));
     }
 
     /**
@@ -273,7 +262,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function tap(callable $callback): self
     {
-        Stream::emits(TapOperation::of($this->iter())($callback))->drain();
+        Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
     }
 
@@ -285,7 +274,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function unique(callable $callback): self
     {
-        return self::collectUnsafe(UniqueOperation::of($this->iter())($callback));
+        return self::collectUnsafe(UniqueOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -295,7 +284,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function sorted(callable $cmp): self
     {
-        return self::collectUnsafe(SortedOperation::of($this->iter())($cmp));
+        return self::collectUnsafe(SortedOperation::of($this->getIterator())($cmp));
     }
 
     /**
@@ -314,7 +303,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function at(int $index): Option
     {
-        return AtOperation::of($this->iter())($index);
+        return AtOperation::of($this->getIterator())($index);
     }
 
     /**
@@ -323,7 +312,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->iter())($predicate);
+        return EveryOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -334,7 +323,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return EveryOfOperation::of($this->iter())($fqcn, $invariant);
+        return EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -343,7 +332,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function exists(callable $predicate): bool
     {
-        return ExistsOperation::of($this->iter())($predicate);
+        return ExistsOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -354,7 +343,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return ExistsOfOperation::of($this->iter())($fqcn, $invariant);
+        return ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -364,7 +353,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function first(callable $predicate): Option
     {
-        return FirstOperation::of($this->iter())($predicate);
+        return FirstOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -376,7 +365,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        return FirstOfOperation::of($this->iter())($fqcn, $invariant);
+        return FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -395,7 +384,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function last(callable $predicate): Option
     {
-        return LastOperation::of($this->iter())($predicate);
+        return LastOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -406,7 +395,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function reduce(callable $callback): mixed
     {
-        return ReduceOperation::of($this->iter())($callback)->getUnsafe();
+        return ReduceOperation::of($this->getIterator())($callback)->getUnsafe();
     }
 
     /**
@@ -424,7 +413,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function lastElement(): mixed
     {
-        return LastOperation::of($this->iter())()->getUnsafe();
+        return LastOperation::of($this->getIterator())()->getUnsafe();
     }
 
     /**
