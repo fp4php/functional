@@ -7,7 +7,6 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
-use Fp\Operations\AtOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
@@ -15,19 +14,19 @@ use Fp\Operations\ExistsOperation;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\GroupByOperation;
-use Fp\Operations\HeadOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\SortedOperation;
-use Fp\Operations\TailOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
 use Generator;
 use Iterator;
+
+use function Fp\Callable\asGenerator;
 
 /**
  * @psalm-immutable
@@ -36,11 +35,6 @@ use Iterator;
  */
 final class NonEmptyArrayList implements NonEmptySeq
 {
-    /**
-     * @use NonEmptySeqCastable<TV>
-     */
-    use NonEmptySeqCastable;
-
     /**
      * @internal
      * @param ArrayList<TV> $arrayList
@@ -109,33 +103,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function count(): int
     {
         return $this->arrayList->count();
-    }
-
-    /**
-     * @inheritDoc
-     * @return non-empty-list<TV>
-     */
-    public function toArray(): array
-    {
-        /** @var non-empty-list<TV> */
-        return $this->arrayList->elements;
-    }
-
-    /**
-     * @inheritDoc
-     * @return ArrayList<TV>
-     */
-    public function toArrayList(): ArrayList
-    {
-        return $this->arrayList;
-    }
-
-    /**
-     * @return NonEmptyArrayList<TV>
-     */
-    public function toNonEmptyArrayList(): NonEmptyArrayList
-    {
-        return $this;
     }
 
     /**
@@ -481,5 +448,100 @@ final class NonEmptyArrayList implements NonEmptySeq
             $entry->value->head,
             $entry->value->tail
         ));
+    }
+
+    /**
+     * @inheritDoc
+     * @return non-empty-list<TV>
+     */
+    public function toArray(): array
+    {
+        /** @var non-empty-list<TV> */
+        return $this->arrayList->elements;
+    }
+
+    /**
+     * @inheritDoc
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return ArrayList<TV>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return $this->arrayList;
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function toNonEmptyLinkedList(): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectUnsafe($this);
+    }
+
+    /**
+     * @return NonEmptyArrayList<TV>
+     */
+    public function toNonEmptyArrayList(): NonEmptyArrayList
+    {
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyHashSet<TV>
+     */
+    public function toNonEmptyHashSet(): NonEmptyHashSet
+    {
+        return NonEmptyHashSet::collectUnsafe($this);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return HashMap<TKI, TVI>
+     */
+    public function toHashMap(callable $callback): HashMap
+    {
+        return HashMap::collectPairs(asGenerator(function () use ($callback) {
+            foreach ($this as $elem) {
+                yield $callback($elem);
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return NonEmptyHashMap<TKI, TVI>
+     */
+    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
+    {
+        return NonEmptyHashMap::collectPairsUnsafe(asGenerator(function () use ($callback) {
+            foreach ($this as $elem) {
+                yield $callback($elem);
+            }
+        }));
     }
 }
