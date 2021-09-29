@@ -23,7 +23,6 @@ use Fp\Operations\SortedOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
-use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
@@ -44,6 +43,7 @@ final class NonEmptyArrayList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @param iterable<TVI> $source
      * @return Option<self<TVI>>
@@ -59,6 +59,7 @@ final class NonEmptyArrayList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
@@ -69,6 +70,7 @@ final class NonEmptyArrayList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
      * @return self<TVI>
@@ -204,6 +206,7 @@ final class NonEmptyArrayList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>
@@ -290,8 +293,7 @@ final class NonEmptyArrayList implements NonEmptySeq
     }
 
     /**
-     * Alias for {@see NonEmptySeq::at()}
-     *
+     * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function __invoke(int $index): Option
@@ -477,6 +479,7 @@ final class NonEmptyArrayList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @return NonEmptyArrayList<TV>
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList

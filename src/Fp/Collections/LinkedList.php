@@ -143,11 +143,19 @@ abstract class LinkedList implements Seq
     }
 
     /**
+     * @psalm-assert-if-true Cons<TV> $this
+     */
+    public function isCons(): bool
+    {
+        return $this instanceof Cons;
+    }
+
+    /**
      * @inheritDoc
      */
     public function isEmpty(): bool
     {
-        return $this instanceof Nil;
+        return !$this->isCons();
     }
 
     /**
@@ -155,7 +163,7 @@ abstract class LinkedList implements Seq
      */
     public function isNonEmpty(): bool
     {
-        return !$this->isEmpty();
+        return $this->isCons();
     }
 
     /**
@@ -332,14 +340,7 @@ abstract class LinkedList implements Seq
     }
 
     /**
-     * @psalm-assert-if-true Cons<TV> $this
-     */
-    public function isCons(): bool
-    {
-        return $this instanceof Cons;
-    }
-
-    /**
+     * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>

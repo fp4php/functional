@@ -44,6 +44,6 @@ class GroupByOperation extends AbstractOperation
             }
         });
 
-        return new HashMap($hashTable, empty($hashTable->table));
+        return new HashMap($hashTable);
     }
 }

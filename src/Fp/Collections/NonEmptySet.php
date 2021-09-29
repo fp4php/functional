@@ -11,8 +11,9 @@ use Iterator;
  * @template-covariant TV
  * @extends NonEmptyCollection<TV>
  * @extends NonEmptySetOps<TV>
+ * @extends NonEmptySetCollector<TV>
  */
-interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps
+interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps, NonEmptySetCollector
 {
     /**
      * @inheritDoc

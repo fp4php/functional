@@ -45,6 +45,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @param iterable<TVI> $source
      * @return Option<self<TVI>>
@@ -57,6 +58,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @param iterable<TVI> $source
      * @return self<TVI>
@@ -67,6 +69,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @template TVI
      * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
      * @return self<TVI>
@@ -288,8 +291,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * Alias for {@see NonEmptySeq::at()}
-     *
+     * @inheritDoc
      * @psalm-return Option<TV>
      */
     public function __invoke(int $index): Option
@@ -318,8 +320,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * @inheritDoc
      * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-param class-string<TVO> $fqcn
+     * @psalm-param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
@@ -338,8 +340,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * @inheritDoc
      * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-param class-string<TVO> $fqcn
+     * @psalm-param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
@@ -359,8 +361,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * @inheritDoc
      * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-param class-string<TVO> $fqcn
+     * @psalm-param bool $invariant
      * @psalm-return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
@@ -480,6 +482,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
      * @return NonEmptyArrayList<TV>
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList

@@ -29,11 +29,11 @@ use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\SortedOperation;
+use Fp\Operations\TailOperation;
 use Fp\Operations\TakeOperation;
 use Fp\Operations\TakeWhileOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
-use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
@@ -174,9 +174,7 @@ final class ArrayList implements Seq
      */
     public function tail(): self
     {
-        $buffer = $this->toArray();
-        array_shift($buffer);
-        return new self($buffer);
+        return self::collect(TailOperation::of($this->getIterator())());
     }
 
     /**
@@ -275,6 +273,7 @@ final class ArrayList implements Seq
      */
     public function lastElement(): Option
     {
+        // TODO known size optimization
         return LastOperation::of($this->getIterator())();
     }
 
@@ -322,6 +321,7 @@ final class ArrayList implements Seq
 
     /**
      * @inheritDoc
+     * @psalm-assert-if-true non-empty-list<TV> $this->elements
      */
     public function isNonEmpty(): bool
     {
@@ -329,6 +329,7 @@ final class ArrayList implements Seq
     }
 
     /**
+     * @inheritDoc
      * @template TVO
      * @psalm-param callable(TV): TVO $callback
      * @psalm-return self<TVO>

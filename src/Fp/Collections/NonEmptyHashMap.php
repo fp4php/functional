@@ -96,7 +96,7 @@ final class NonEmptyHashMap implements NonEmptyMap
 
         $isEmpty = empty($hashTable->table);
 
-        return Option::condLazy(!$isEmpty, fn() => new HashMap($hashTable, $isEmpty))
+        return Option::condLazy(!$isEmpty, fn() => new HashMap($hashTable))
             ->map(fn(HashMap $map) => new self($map));
     }
 
@@ -167,6 +167,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * @inheritDoc
      * @return NonEmptyLinkedList<array{TK, TV}>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
@@ -175,6 +176,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * @inheritDoc
      * @return ArrayList<array{TK, TV}>
      */
     public function toArrayList(): ArrayList
@@ -183,6 +185,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * @inheritDoc
      * @return NonEmptyArrayList<array{TK, TV}>
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
@@ -200,6 +203,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * @inheritDoc
      * @return NonEmptyHashSet<array{TK, TV}>
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
@@ -208,6 +212,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * @inheritDoc
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
@@ -216,6 +221,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * @inheritDoc
      * @return NonEmptyHashMap<TK, TV>
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap

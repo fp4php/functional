@@ -30,11 +30,16 @@ use function Fp\Cast\asList;
  */
 final class HashMap implements Map, StaticStorage
 {
+    private bool $empty;
+
     /**
      * @internal
      * @psalm-param HashTable<TK, TV> $hashTable
      */
-    public function __construct(private HashTable $hashTable, private bool $empty) { }
+    public function __construct(private HashTable $hashTable)
+    {
+        $this->empty = empty($hashTable->table);
+    }
 
     /**
      * @inheritDoc
@@ -53,6 +58,7 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
+     * @inheritDoc
      * @template TKI
      * @template TVI
      * @param iterable<array{TKI, TVI}> $source
@@ -73,7 +79,7 @@ final class HashMap implements Map, StaticStorage
             }
         });
 
-        return new HashMap($hashTable, empty($hashTable->table));
+        return new HashMap($hashTable);
     }
 
     /**
@@ -125,6 +131,7 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
+     * @inheritDoc
      * @return ArrayList<array{TK, TV}>
      */
     public function toArrayList(): ArrayList
@@ -142,6 +149,7 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
+     * @inheritDoc
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
@@ -227,6 +235,7 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
+     * @inheritDoc
      * @experimental
      * @psalm-template TKO
      * @psalm-template TVO

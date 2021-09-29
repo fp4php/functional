@@ -25,7 +25,6 @@ use Fp\Operations\ReduceOperation;
 use Fp\Operations\TailOperation;
 use Fp\Operations\TapOperation;
 use Fp\Streams\Stream;
-use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
@@ -41,9 +40,7 @@ final class HashSet implements Set
     /**
      * @param HashMap<TV, TV> $map
      */
-    private function __construct(private HashMap $map)
-    {
-    }
+    private function __construct(private HashMap $map) { }
 
     /**
      * @inheritDoc
