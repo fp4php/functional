@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Fp\Functional\State;
 
 use Closure;
+use Fp\Functional\Trampoline\Done;
+use Fp\Functional\Trampoline\More;
+use Fp\Functional\Trampoline\Trampoline;
 use Fp\Functional\Unit;
 use Generator;
 
@@ -23,9 +26,9 @@ use function Fp\unit;
 final class State
 {
     /**
-     * @param Closure(S): array{S, A} $func
+     * @param Closure(S): Trampoline<array{S, A}> $runS
      */
-    public function __construct(private Closure $func) { }
+    public function __construct(private Closure $runS) { }
 
     /**
      * Fabric method for State dataclass instantiation
@@ -33,26 +36,12 @@ final class State
      * @psalm-pure
      * @template SS
      * @template AA
-     * @param Closure(SS): array{SS, AA} $func
+     * @param Closure(SS): Trampoline<array{SS, AA}> $func
      * @return static<SS, AA>
      */
     public static function of(Closure $func): self
     {
         return new self($func);
-    }
-
-    /**
-     * @psalm-pure
-     * @template SS
-     * @template AA
-     * @param AA $value
-     * @return State<SS, AA>
-     */
-    public static function pure(mixed $value): State
-    {
-        return new State(function (mixed $state) use ($value) {
-            return [$state, $value];
-        });
     }
 
     /**
@@ -64,12 +53,12 @@ final class State
      */
     public function map(callable $f): self
     {
-        return self::of(function (mixed $state) use ($f): array {
+        return self::of(function (mixed $state) use ($f): Trampoline {
             /** @psalm-var S $state */
             $stateUp = $state;
-            [$stateDown, $valueDown] = ($this->func)($stateUp);
 
-            return [$stateDown, $f($valueDown)];
+            return ($this->runS)($stateUp)
+                ->flatMap(fn($pair) => Done::of([$pair[0], $f($pair[1])]));
         });
     }
 
@@ -86,9 +75,9 @@ final class State
         return self::of(function(mixed $state) use ($f) {
             /** @psalm-var S $stateUp */
             $stateUp = $state;
-            $stateDown = ($this->func)($stateUp)[0];
 
-            return [$stateDown, $f($stateDown)];
+            return ($this->runS)($stateUp)
+                ->flatMap(fn($pair) => Done::of([$pair[0], $f($pair[0])]));
         });
     }
 
@@ -101,9 +90,9 @@ final class State
      */
     public static function inspectState(callable $f): State
     {
-        return new State(function (mixed $state) use ($f): array {
+        return new State(function (mixed $state) use ($f): Trampoline {
             /** @psalm-var SS $state */
-            return [$state, $f($state)];
+            return Done::of([$state, $f($state)]);
         });
     }
 
@@ -131,9 +120,8 @@ final class State
             /** @psalm-var S $stateUp */
             $stateUp = $state;
 
-            ($this->func)($stateUp);
-
-            return [$stateDown, unit()];
+            return ($this->runS)($stateUp)
+                ->flatMap(fn($pair) => Done::of([$stateDown, unit()]));
         });
     }
 
@@ -145,7 +133,7 @@ final class State
      */
     public static function setState(mixed $state): State
     {
-        return new State(fn() => [$state, unit()]);
+        return new State(fn() => Done::of([$state, unit()]));
     }
 
     /**
@@ -160,9 +148,9 @@ final class State
         return new State(function (mixed $state) use ($f) {
             /** @psalm-var S $stateUp */
             $stateUp = $state;
-            $stateDown = ($this->func)($stateUp)[0];
 
-            return [$f($stateDown), unit()];
+            return ($this->runS)($stateUp)
+                ->flatMap(fn($pair) => Done::of([$f($pair[0]), unit()]));
         });
     }
 
@@ -176,7 +164,7 @@ final class State
     {
         return new State(function (mixed $state) use ($f) {
             /** @psalm-var SS $state */
-            return [$f($state), unit()];
+            return Done::of([$f($state), unit()]);
         });
     }
 
@@ -190,7 +178,7 @@ final class State
     {
         return new State(function (mixed $state) {
             /** @psalm-var SS $state */
-            return [$state, unit()];
+            return Done::of([$state, unit()]);
         });
     }
 
@@ -202,7 +190,7 @@ final class State
      */
     public function run(mixed $state): array
     {
-        return ($this->func)($state);
+        return ($this->runS)($state)->run();
     }
 
     /**
@@ -214,7 +202,7 @@ final class State
      */
     public function runA(mixed $state): mixed
     {
-        return ($this->func)($state)[1];
+        return ($this->runS)($state)->run()[1];
     }
 
     /**
@@ -226,7 +214,7 @@ final class State
      */
     public function runS(mixed $state): mixed
     {
-        return ($this->func)($state)[0];
+        return ($this->runS)($state)->run()[0];
     }
 
 
@@ -237,18 +225,19 @@ final class State
      */
     public function flatMap(callable $f): self
     {
-        return self::of(function (mixed $state) use ($f): array {
+        return self::of(function (mixed $state) use ($f): Trampoline {
             /** @psalm-var S $state0 */
             $state0 = $state;
 
-            [$state1, $value1] = ($this->func)($state0);
-            [$state2, $value2] = ($f($value1)->func)($state1);
-
-            return [$state2, $value2];
+            return More::of(fn() => ($this->runS)($state0))
+                ->flatMap(fn($pair) => More::of(fn() => ($f($pair[1])->runS)($pair[0])))
+                    ->flatMap(fn($pair) => Done::of($pair));
         });
     }
 
     /**
+     * Stack unsafe
+     *
      * @psalm-pure
      * @template TState
      * @template TReturn
@@ -261,85 +250,21 @@ final class State
     {
         $gen = $computation();
         $cur = $gen->current();
-        return self::walkRecursive($gen, $cur)->map(fn() => $gen->getReturn());
-    }
-
-
-    /**
-     * @psalm-pure
-     * @template TState
-     * @template TReturn
-     * @template TSend
-     * @psalm-param callable(TState): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
-     * @psalm-param TState $initState
-     * @psalm-return TState
-     * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
-     */
-    public static function forS(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
-    {
-        $gen = $computation($initState);
-        $cur = self::infer(fn() => $initState);
-
-        while ($gen->valid()) {
-            $cur = $gen->current();
-            $cur = self::walkRecursive($gen, $cur, $maxNestingLevel);
-            $pair = $cur->run($initState);
-
-            /** @psalm-var TState $initState */
-            $initState = $pair[0];
-
-            $cur = self::setState($pair[0])->map(fn(): mixed => $pair[1]);
-        }
-
-        /** @var TState */
-        return $cur
-            ->map(fn() => $gen->getReturn())
-            ->runS($initState);
-    }
-
-    /**
-     * @psalm-pure
-     * @template TState
-     * @template TReturn
-     * @template TSend
-     * @psalm-param callable(TState): Generator<int, State<mixed, mixed>, TSend, TReturn> $computation
-     * @psalm-param TState $initState
-     * @psalm-return TReturn
-     * @psalm-suppress ImpureMethodCall, ImpureFunctionCall
-     */
-    public static function forA(mixed $initState, callable $computation, int $maxNestingLevel = 50): mixed
-    {
-        $gen = $computation($initState);
-        $cur = self::infer(fn() => $initState);
-
-        while ($gen->valid()) {
-            $cur = $gen->current();
-            $cur = self::walkRecursive($gen, $cur, $maxNestingLevel);
-            $pair = $cur->run($initState);
-
-            /** @psalm-var TState $initState */
-            $initState = $pair[0];
-
-            $cur = self::setState($pair[0])->map(fn(): mixed => $pair[1]);
-        }
-
-        return $cur
-            ->map(fn() => $gen->getReturn())
-            ->runA($initState);
+        return self::doWalk($gen, $cur)->map(fn() => $gen->getReturn());
     }
 
     /**
      * @param Generator<State> $gen
      */
-    private static function walkRecursive(Generator $gen, State $currentState, int $maxLevel = 0, int $curLevel = 0): State
+    private static function doWalk(Generator $gen, State $currentState): State
     {
-        return $currentState->flatMap(function ($val) use ($maxLevel, $curLevel, $currentState, $gen) {
+        return $currentState->flatMap(function ($val) use ($currentState, $gen) {
             $gen->send($val);
             $nextState = $gen->current();
 
-            return !$gen->valid() || ($maxLevel > 0 && $curLevel >= $maxLevel)
+            return !$gen->valid()
                 ? $currentState
-                : self::walkRecursive($gen, $nextState, $maxLevel, ++$curLevel);
+                : self::doWalk($gen, $nextState);
         });
     }
 }

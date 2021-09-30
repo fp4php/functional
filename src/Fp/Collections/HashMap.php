@@ -70,14 +70,15 @@ final class HashMap implements Map, StaticStorage
          * @psalm-var HashTable<TKI, TVI> $init
          */
         $init = new HashTable();
+        $state = State::setState($init);
 
-        $hashTable = State::forS($init, function () use ($source) {
-            foreach ($source as [$key, $value]) {
-                yield State::modifyState(
-                    fn(HashTable $tbl) => HashTable::update($tbl, $key, $value)
-                );
-            }
-        });
+        foreach ($source as [$key, $value]) {
+            $state = $state->modify(function (HashTable $tbl) use ($key, $value) {
+                return HashTable::update($tbl, $key, $value);
+            });
+        }
+
+        $hashTable = $state->runS($init);
 
         return new HashMap($hashTable);
     }

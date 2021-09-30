@@ -9,7 +9,6 @@ use Fp\Collections\HashTable;
 use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
 use Fp\Collections\Nil;
-use Fp\Functional\Option\Option;
 use Fp\Functional\State\State;
 
 /**
@@ -33,17 +32,20 @@ class GroupByOperation extends AbstractOperation
         $init = new HashTable();
         $state = State::setState($init);
 
-        $hashTable = State::forS($init, function() use ($state, $f) {
-            foreach ($this->gen as $key => $value) {
-                $groupKey = $f($value, $key);
-                $group = yield $state
-                    ->inspect(fn(HashTable $tbl) => HashTable::get($tbl, $groupKey))
-                    ->map(fn(Option $group) => $group->getOrElse(Nil::getInstance()));
+        foreach ($this->gen as $key => $value) {
+            $groupKey = $f($value, $key);
+            $state = $state
+                ->inspect(fn(HashTable $tbl) => [
+                    $tbl,
+                    HashTable::get($tbl, $groupKey)->getOrElse(Nil::getInstance())
+                ])
+                ->map(fn(array $pair) => HashTable::update(
+                    $pair[0],
+                    $groupKey,
+                    $pair[1]->prepended($value)
+                ));
+        }
 
-                HashTable::update(yield $state->get(), $groupKey, $group->prepended($value));
-            }
-        });
-
-        return new HashMap($hashTable);
+        return new HashMap($state->runS($init));
     }
 }
