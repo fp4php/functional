@@ -131,8 +131,26 @@ abstract class AndThen
                     $self = $self->right;
                     continue 2;
                 case $self instanceof Concat && $self->left instanceof Concat:
-                    throw new Error('not implemented'); // TODO rotateAccum
+                    $self = $self->left->rotateAccum($self->right);
+                    continue 2;
             }
         }
+    }
+
+    public function rotateAccum(AndThen $right): AndThen
+    {
+        $left = $this;
+
+        while(true) {
+            switch (true) {
+                case $left instanceof Concat:
+                    $right = Concat::of($left->right, $right);
+                    $left = $left->left;
+                    continue 2;
+                default:
+                    return Concat::of($left, $right);
+            }
+        }
+
     }
 }
