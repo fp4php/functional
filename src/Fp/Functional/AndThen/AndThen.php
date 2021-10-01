@@ -58,45 +58,52 @@ abstract class AndThen
      */
     private function then(AndThen $ab, AndThen $bc): AndThen
     {
-        return match (true) {
-            $ab instanceof Single => match (true) {
-                $bc instanceof Single => $ab->index + $bc->index < self::FUSION_MAX_STACK_DEPTH
+        if ($ab instanceof Single) {
+            if ($bc instanceof Single) {
+                return $ab->index + $bc->index < self::FUSION_MAX_STACK_DEPTH
                     ? Single::of(fn($in) => ($bc->func)(($ab->func)($in)), $ab->index + $bc->index + 1)
-                    : Concat::of($ab, $bc),
-                $bc instanceof Concat
-                    && $bc->left instanceof Single
-                    && $ab->index + $bc->left->index < self::FUSION_MAX_STACK_DEPTH => Concat::of(
-                        Single::of(
-                            fn($in) => ($bc->left->func)(($ab->func)($in)),
-                            $ab->index + $bc->left->index + 1
-                        ),
-                        $bc->right
+                    : Concat::of($ab, $bc);
+
+            } elseif ($bc instanceof Concat
+                && $bc->left instanceof Single
+                && $ab->index + $bc->left->index < self::FUSION_MAX_STACK_DEPTH) {
+
+                return Concat::of(
+                    Single::of(
+                        fn($in) => ($bc->left->func)(($ab->func)($in)),
+                        $ab->index + $bc->left->index + 1
                     ),
-                default => Concat::of($ab, $bc)
-            },
-            $ab instanceof Concat && $ab->right instanceof Single => match (true) {
-                $bc instanceof Single => $ab->right->index + $bc->index < self::FUSION_MAX_STACK_DEPTH
+                    $bc->right
+                );
+            } else {
+                return Concat::of($ab, $bc);
+            }
+        } elseif ($ab instanceof Concat && $ab->right instanceof Single) {
+            if ($bc instanceof Single) {
+                return $ab->right->index + $bc->index < self::FUSION_MAX_STACK_DEPTH
                     ? Concat::of($ab->left, Single::of(
                         fn($in) => ($bc->func)(($ab->right->func)($in)),
                         $ab->right->index + $bc->index + 1
                     ))
-                    : Concat::of($ab, $bc),
-                $bc instanceof Concat
-                    && $bc->left instanceof Single
-                    && $ab->right->index + $bc->left->index < self::FUSION_MAX_STACK_DEPTH => Concat::of(
-                        $ab->left,
-                        Concat::of(
-                            Single::of(
-                                fn($in) => ($bc->left->func)(($ab->right->func)($in)),
-                                $ab->right->index + $bc->left->index + 1
-                            ),
-                            $bc->right
-                        )
-                    ),
-                default => Concat::of($ab, $bc)
-            },
-            default => Concat::of($ab, $bc)
-        };
+                    : Concat::of($ab, $bc);
+            } elseif ($bc instanceof Concat
+                && $bc->left instanceof Single
+                && $ab->right->index + $bc->left->index < self::FUSION_MAX_STACK_DEPTH) {
+
+                return Concat::of(
+                    $ab->left,
+                    Concat::of(
+                        Single::of(
+                            fn($in) => ($bc->left->func)(($ab->right->func)($in)),
+                            $ab->right->index + $bc->left->index + 1
+                        ),
+                        $bc->right
+                    )
+                );
+            }
+        } else {
+            return Concat::of($ab, $bc);
+        }
     }
 
     /**
