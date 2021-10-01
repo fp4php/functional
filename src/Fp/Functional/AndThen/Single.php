@@ -15,19 +15,19 @@ use Closure;
 final class Single extends AndThen
 {
     /**
-     * @param Closure(A): B $func
+     * @param Closure(A): B $run
      */
-    public function __construct(public Closure $func, public int $index) { }
+    public function __construct(public Closure $run, public int $index) { }
 
     /**
      * @psalm-pure
      * @template AA
      * @template BB
-     * @param Closure(AA): BB $fun
+     * @param Closure(AA): BB $run
      * @return self<AA, BB>
      */
-    public static function of(Closure $fun, int $index): self
+    public static function of(Closure $run, int $index): self
     {
-        return new self($fun, $index);
+        return new self($run, $index);
     }
 }
