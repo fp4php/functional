@@ -82,18 +82,14 @@ final class NonEmptyHashMap implements NonEmptyMap
     public static function collectPairs(iterable $source): Option
     {
         /**
-         * @psalm-var HashTable<TKI, TVI> $init
+         * @psalm-var HashTable<TKI, TVI> $hashTable
          */
-        $init = new HashTable();
-        $state = State::setState($init);
+        $hashTable = new HashTable();
 
         foreach ($source as [$key, $value]) {
-            $state = $state->modify(
-                fn(HashTable $tbl) => HashTable::update($tbl, $key, $value)
-            );
+            $hashTable = $hashTable->update($hashTable, $key, $value);
         }
 
-        $hashTable = $state->runS($init);
         $isEmpty = empty($hashTable->table);
 
         return Option::condLazy(!$isEmpty, fn() => new HashMap($hashTable))

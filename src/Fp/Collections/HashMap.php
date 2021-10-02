@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Functional\State\State;
 use Fp\Operations\CountOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\FilterMapOperation;
@@ -67,18 +66,13 @@ final class HashMap implements Map, StaticStorage
     public static function collectPairs(iterable $source): self
     {
         /**
-         * @psalm-var HashTable<TKI, TVI> $init
+         * @psalm-var HashTable<TKI, TVI> $hashTable
          */
-        $init = new HashTable();
-        $state = State::setState($init);
+        $hashTable = new HashTable();
 
         foreach ($source as [$key, $value]) {
-            $state = $state->modify(function (HashTable $tbl) use ($key, $value) {
-                return HashTable::update($tbl, $key, $value);
-            });
+            $hashTable = $hashTable->update($hashTable, $key, $value);
         }
-
-        $hashTable = $state->runS($init);
 
         return new HashMap($hashTable);
     }

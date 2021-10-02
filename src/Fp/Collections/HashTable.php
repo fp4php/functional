@@ -11,6 +11,7 @@ use Fp\Functional\Option\Option;
  * @template TK
  * @template TV
  * @psalm-type hash = string
+ * @psalm-suppress ImpureMethodCall, ImpurePropertyFetch
  */
 final class HashTable
 {
@@ -20,6 +21,7 @@ final class HashTable
     public array $table = [];
 
     /**
+     * @psalm-pure
      * @template TKey
      * @template TValue
      * @param HashTable<TKey, TValue> $hashTable
@@ -41,12 +43,14 @@ final class HashTable
     }
 
     /**
+     * @psalm-pure
      * @template TKey
      * @template TValue
      * @param TKey $key
      * @param TValue $value
      * @param HashTable<TKey, TValue> $hashTable
      * @return HashTable<TKey, TValue>
+     * @psalm-suppress PropertyTypeCoercion
      */
     public static function update(HashTable $hashTable, mixed $key, mixed $value): HashTable
     {
@@ -61,8 +65,7 @@ final class HashTable
         foreach ($hashTable->table[$hash] as $idx => [$k, $v]) {
             if (HashComparator::hashEquals($key, $k)) {
                 $replacedPos = $idx;
-                $pairValueRef =& $hashTable->table[$hash][$idx][1];
-                $pairValueRef = $value;
+                $hashTable->table[$hash][$idx][1] = $value;
             }
         }
 

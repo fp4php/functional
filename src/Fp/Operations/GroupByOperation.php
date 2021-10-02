@@ -9,7 +9,6 @@ use Fp\Collections\HashTable;
 use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
 use Fp\Collections\Nil;
-use Fp\Functional\State\State;
 
 /**
  * @template TK
@@ -27,25 +26,22 @@ class GroupByOperation extends AbstractOperation
     public function __invoke(callable $f): Map
     {
         /**
-         * @psalm-var HashTable<TKO, LinkedList<TV>> $init
+         * @psalm-var HashTable<TKO, LinkedList<TV>> $hashTable
          */
-        $init = new HashTable();
-        $state = State::setState($init);
+        $hashTable = new HashTable();
 
         foreach ($this->gen as $key => $value) {
             $groupKey = $f($value, $key);
-            $state = $state
-                ->inspect(fn(HashTable $tbl) => [
-                    $tbl,
-                    HashTable::get($tbl, $groupKey)->getOrElse(Nil::getInstance())
-                ])
-                ->map(fn(array $pair) => HashTable::update(
-                    $pair[0],
-                    $groupKey,
-                    $pair[1]->prepended($value)
-                ));
+
+            HashTable::update(
+                $hashTable,
+                $groupKey,
+                HashTable::get($hashTable, $groupKey)
+                    ->getOrElse(Nil::getInstance())
+                    ->prepended($value)
+            );
         }
 
-        return new HashMap($state->runS($init));
+        return new HashMap($hashTable);
     }
 }
