@@ -308,4 +308,18 @@ interface SeqChainableOps
      * @psalm-return Seq<TV|TVI>
      */
     public function intersperse(mixed $separator): Seq;
+
+    /**
+     * Deterministically zips elements, terminating when the end of either branch is reached naturally.
+     *
+     * ```php
+     * >>> ArrayList::collect([1, 2, 3])->zip([4, 5, 6, 7])->toArray();
+     * => [[1, 4], [2, 5], [3, 6]]
+     * ```
+     *
+     * @template TVI
+     * @param iterable<TVI> $that
+     * @return Seq<array{TV, TVI}>
+     */
+    public function zip(iterable $that): Seq;
 }

@@ -526,4 +526,18 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals([0 , ',', 1, ',', 2], $seq->intersperse(',')->toArray());
     }
+
+    public function provideTestZipData(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([0, 1, 2])];
+        yield LinkedList::class => [LinkedList::collect([0, 1, 2])];
+    }
+
+    /**
+     * @dataProvider provideTestZipData
+     */
+    public function testZip(Seq $seq): void
+    {
+        $this->assertEquals([[0, 'a'], [1, 'b']], $seq->zip(['a', 'b'])->toArray());
+    }
 }

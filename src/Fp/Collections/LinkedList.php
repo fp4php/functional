@@ -34,6 +34,7 @@ use Fp\Operations\TakeOperation;
 use Fp\Operations\TakeWhileOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
+use Fp\Operations\ZipOperation;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
@@ -524,5 +525,16 @@ abstract class LinkedList implements Seq
     public function intersperse(mixed $separator): self
     {
         return self::collect(IntersperseOperation::of($this->getIterator())($separator));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param iterable<TVI> $that
+     * @return self<array{TV, TVI}>
+     */
+    public function zip(iterable $that): self
+    {
+        return self::collect(ZipOperation::of($this->getIterator())($that));
     }
 }
