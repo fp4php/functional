@@ -8,7 +8,6 @@ use Fp\Collections\Seq;
 use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
-use SebastianBergmann\CodeCoverage\Report\PHP;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 

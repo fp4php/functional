@@ -4,22 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Static\Plugin;
 
-use Fp\Collections\ArrayList;
-use Fp\Collections\LinkedList;
-use Fp\Collections\HashSet;
-use Fp\Collections\HashMap;
-use Fp\Collections\NonEmptyArrayList;
-use Fp\Collections\NonEmptyLinkedList;
-use Fp\Collections\NonEmptyHashSet;
-use Fp\Collections\NonEmptyHashMap;
-use Fp\Collections\Seq;
-use Fp\Collections\Set;
-use Fp\Collections\Map;
-use Fp\Collections\NonEmptySeq;
-use Fp\Collections\NonEmptySet;
-use Fp\Collections\NonEmptyMap;
-use Fp\Streams\Stream;
-
 final class CollectionFilterPluginStaticTest
 {
     /**

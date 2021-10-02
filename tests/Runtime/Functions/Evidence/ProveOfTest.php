@@ -7,11 +7,9 @@ namespace Tests\Runtime\Functions\Evidence;
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Some;
 use PHPUnit\Framework\TestCase;
-
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
-use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveOf;
 
 final class ProveOfTest extends TestCase

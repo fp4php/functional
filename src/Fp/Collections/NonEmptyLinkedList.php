@@ -24,7 +24,6 @@ use Fp\Operations\SortedOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
-use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;

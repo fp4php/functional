@@ -20,6 +20,6 @@ class Unit
     {
         return is_null(self::$instance)
             ? self::$instance = new self()
-            : self::$instance;;
+            : self::$instance;
     }
 }

@@ -8,8 +8,6 @@ use Fp\Functional\Option\Some;
 use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
-use Tests\Mock\Foo;
 
 final class StreamTest extends TestCase
 {

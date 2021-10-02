@@ -10,7 +10,6 @@ use Fp\Functional\Either\Right;
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
-use Fp\Functional\Semigroup\Semigroup;
 
 /**
  * @template-covariant E

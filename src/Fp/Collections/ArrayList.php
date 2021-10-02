@@ -50,9 +50,7 @@ final class ArrayList implements Seq
     /**
      * @param list<TV> $elements
      */
-    public function __construct(public array $elements)
-    {
-    }
+    public function __construct(public array $elements) { }
 
     /**
      * @inheritDoc

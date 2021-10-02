@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Reflection;
 
 use Fp\Functional\Either\Either;
-use ReflectionException;
 use ReflectionProperty;
 use Throwable;
 

@@ -27,14 +27,12 @@ use Fp\Operations\GroupByOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
-use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\SortedOperation;
 use Fp\Operations\TakeOperation;
 use Fp\Operations\TakeWhileOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
-use Generator;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
