@@ -18,6 +18,8 @@ use function Fp\unit;
  * function from some state to new modified state
  * and some value which represents computation
  *
+ * @internal
+ * @experimental
  * @template S
  * @template A
  * @psalm-yield A

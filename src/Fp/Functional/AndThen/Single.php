@@ -7,6 +7,8 @@ namespace Fp\Functional\AndThen;
 use Closure;
 
 /**
+ * @internal
+ * @experimental
  * @psalm-immutable
  * @template A
  * @template-covariant B

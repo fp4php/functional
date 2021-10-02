@@ -8,6 +8,8 @@ use Closure;
 use LogicException;
 
 /**
+ * @internal
+ * @experimental
  * @psalm-immutable
  * @template T
  * @template-covariant R

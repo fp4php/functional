@@ -7,6 +7,8 @@ namespace Fp\Functional\Trampoline;
 use Closure;
 
 /**
+ * @internal
+ * @experimental
  * @psalm-immutable
  * @template-covariant A
  */

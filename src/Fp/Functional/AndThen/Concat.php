@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fp\Functional\AndThen;
 
 /**
+ * @internal
+ * @experimental
  * @psalm-immutable
  * @template A
  * @template E

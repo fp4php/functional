@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Fp\Functional\Trampoline;
 
 /**
+ * @internal
+ * @experimental
  * @psalm-immutable
  * @template A
  * @extends Trampoline<A>
