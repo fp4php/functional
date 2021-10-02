@@ -294,4 +294,18 @@ interface SeqChainableOps
      * @psalm-return Map<TKO, Seq<TV>>
      */
     public function groupBy(callable $callback): Map;
+
+    /**
+     * Add specified separator between every pair of elements in the source collection.
+     *
+     * ```php
+     * >>> ArrayList::collect([1, 2, 3])->intersperse(0)->toArray();
+     * => [1, 0, 2, 0, 3]
+     * ```
+     *
+     * @template TVI
+     * @param TVI $separator
+     * @psalm-return Seq<TV|TVI>
+     */
+    public function intersperse(mixed $separator): Seq;
 }

@@ -512,4 +512,18 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals([0, 1], $seq->take(2)->toArray());
         $this->assertEquals([2], $seq->drop(2)->toArray());
     }
+
+    public function provideTestIntersperseData(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([0, 1, 2])];
+        yield LinkedList::class => [LinkedList::collect([0, 1, 2])];
+    }
+
+    /**
+     * @dataProvider provideTestIntersperseData
+     */
+    public function testIntersperse(Seq $seq): void
+    {
+        $this->assertEquals([0 , ',', 1, ',', 2], $seq->intersperse(',')->toArray());
+    }
 }

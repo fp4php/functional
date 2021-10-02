@@ -24,6 +24,7 @@ use Fp\Operations\FirstOperation;
 use Fp\Operations\FlatMapOperation;
 use Fp\Operations\FoldOperation;
 use Fp\Operations\GroupByOperation;
+use Fp\Operations\IntersperseOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
@@ -512,5 +513,16 @@ abstract class LinkedList implements Seq
     public function sorted(callable $cmp): self
     {
         return self::collect(SortedOperation::of($this->getIterator())($cmp));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVI
+     * @param TVI $separator
+     * @psalm-return self<TV|TVI>
+     */
+    public function intersperse(mixed $separator): self
+    {
+        return self::collect(IntersperseOperation::of($this->getIterator())($separator));
     }
 }
