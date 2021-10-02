@@ -322,6 +322,24 @@ final class SeqOpsTest extends TestCase
         );
     }
 
+    public function provideTestFoldData(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect(['1', '2', '3'])];
+        yield LinkedList::class => [LinkedList::collect(['1', '2', '3'])];
+    }
+
+    /**
+     * @dataProvider provideTestReduceData
+     * @param Seq<string> $seq
+     */
+    public function testFold(Seq $seq): void
+    {
+        $this->assertEquals(
+            '123',
+            $seq->fold('', fn(string $acc, $e) => $acc . $e)
+        );
+    }
+
     public function provideTestReverseData(): Generator
     {
         yield ArrayList::class => [ArrayList::collect(['1', '2', '3'])];

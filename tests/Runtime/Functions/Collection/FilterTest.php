@@ -19,11 +19,15 @@ final class FilterTest extends TestCase
 {
     public function testFilter(): void
     {
-        $c = [1, 2];
-
         $this->assertEquals([1], filter(
-            $c,
+            ['a' => 1, 2],
             fn(int $v) => $v < 2
+        ));
+
+        $this->assertEquals(['a' => 1], filter(
+            ['a' =>  1, 'b' => 2],
+            fn(int $v) => $v < 2,
+            true
         ));
     }
 

@@ -159,4 +159,20 @@ final class SetOpsTest extends TestCase
         $this->assertTrue(HashSet::collect([1, 2])->subsetOf(HashSet::collect([1, 2, 3])));
         $this->assertFalse(HashSet::collect([1, 2, 3])->subsetOf(HashSet::collect([1, 2])));
     }
+
+    public function testHead(): void
+    {
+        $this->assertEquals(
+            1,
+            HashSet::collect([1, 2, 3])->head()->get()
+        );
+    }
+
+    public function testTail(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            HashSet::collect([1, 2, 3])->tail()->toArray()
+        );
+    }
 }

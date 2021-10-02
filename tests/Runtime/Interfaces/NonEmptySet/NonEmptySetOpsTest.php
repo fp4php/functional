@@ -152,4 +152,20 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertTrue($set->subsetOf(NonEmptyHashSet::collectNonEmpty([1, 2, 3])));
         $this->assertFalse(NonEmptyHashSet::collectNonEmpty([1, 2, 3])->subsetOf($set));
     }
+
+    public function testHead(): void
+    {
+        $this->assertEquals(
+            1,
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->head()
+        );
+    }
+
+    public function testTail(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toArray()
+        );
+    }
 }

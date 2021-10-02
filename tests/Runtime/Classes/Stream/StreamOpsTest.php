@@ -229,4 +229,12 @@ final class StreamOpsTest extends TestCase
                 ->toArray()
         );
     }
+
+    public function testHead(): void
+    {
+        $this->assertEquals(
+            1,
+            Stream::emits([1, 2, 3])->head()->get()
+        );
+    }
 }
