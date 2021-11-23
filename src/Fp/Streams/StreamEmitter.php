@@ -68,6 +68,7 @@ interface StreamEmitter
      * Discrete stream that emits elapsed duration since the start time of stream consumption.
      * For example: awakeEvery(5) will return (approximately) 5s, 10s, 15s, and will lie dormant between emitted values.
      *
+     * @param 0|positive-int $seconds
      * @return Stream<int>
      */
     public static function awakeEvery(int $seconds): Stream;

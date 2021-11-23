@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Functional\Option\Option;
+use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterNotNullOperation;
 use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
@@ -87,3 +89,31 @@ function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false
         : asList($gen);
 }
 
+/**
+ * A combined {@see map()} and {@see filter()}.
+ *
+ * Filtering is handled via Option instead of Boolean.
+ * So the output type TVO can be different from the input type TV.
+ * Do not preserve keys by default.
+ *
+ * ```php
+ * >>> filterMap([1, 2], fn(int $v): bool => $v === 2 ? Option::some($v) : Option::none());
+ * => [2]
+ * ```
+ *
+ * @psalm-template TK of array-key
+ * @psalm-template TV
+ * @psalm-template TVO
+ * @psalm-template TP of bool
+ * @psalm-param iterable<TK, TV> $collection
+ * @psalm-param callable(TV, TK): Option<TVO> $predicate
+ * @psalm-param TP $preserveKeys
+ * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
+ */
+function filterMap(iterable $collection, callable $predicate, bool $preserveKeys = false): array
+{
+    $gen = FilterMapOperation::of($collection)($predicate);
+    return $preserveKeys
+        ? asArray($gen)
+        : asList($gen);
+}

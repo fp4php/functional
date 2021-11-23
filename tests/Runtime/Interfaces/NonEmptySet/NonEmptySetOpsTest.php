@@ -49,6 +49,23 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertFalse(NonEmptyHashSet::collectNonEmpty([new Foo(1), new Bar(2)])->everyOf(Foo::class));
     }
 
+    public function testEveryMap(): void
+    {
+        $hs = NonEmptyHashSet::collectNonEmpty([
+            new Foo(1),
+            new Foo(2),
+        ]);
+
+        $this->assertEquals(
+            Option::some($hs),
+            $hs->everyMap(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none()),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $hs->everyMap(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
+        );
+    }
+
     public function testExists(): void
     {
         /** @psalm-var NonEmptyHashSet<object|scalar> $hs */

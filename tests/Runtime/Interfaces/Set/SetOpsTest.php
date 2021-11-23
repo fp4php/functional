@@ -48,6 +48,23 @@ final class SetOpsTest extends TestCase
         $this->assertFalse(HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class));
     }
 
+    public function testEveryMap(): void
+    {
+        $hs = HashSet::collect([
+            new Foo(1),
+            new Foo(2),
+        ]);
+
+        $this->assertEquals(
+            Option::some($hs),
+            $hs->everyMap(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none()),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $hs->everyMap(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
+        );
+    }
+
     public function testExists(): void
     {
         /** @psalm-var HashSet<object|scalar> $hs */

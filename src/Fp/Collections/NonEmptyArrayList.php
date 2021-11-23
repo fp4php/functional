@@ -7,6 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
+use Fp\Operations\EveryMapOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
@@ -328,6 +329,18 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
         return EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVO
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<self<TVO>>
+     */
+    public function everyMap(callable $callback): Option
+    {
+        return EveryMapOperation::of($this->getIterator())($callback)
+            ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
     }
 
     /**

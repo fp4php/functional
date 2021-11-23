@@ -31,10 +31,14 @@ class FunctionalPlugin implements PluginEntryPointInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {
-        $register = function(string $hook) use ($registration): void {
-            class_exists($hook);
-            $registration->registerHooksFromClass($hook);
-        };
+        $register =
+            /**
+             * @param class-string $hook
+             */
+            function(string $hook) use ($registration): void {
+                class_exists($hook);
+                $registration->registerHooksFromClass($hook);
+            };
 
         $register(FilterFunctionReturnTypeProvider::class);
         $register(PartialFunctionReturnTypeProvider::class);

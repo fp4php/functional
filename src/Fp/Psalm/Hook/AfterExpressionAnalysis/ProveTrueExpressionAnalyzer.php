@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\AfterExpressionAnalysis;
 
+use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Util\Psalm;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Yield_;
 use PhpParser\NodeTraverser;
@@ -40,7 +42,7 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
                 $statements_analyzer,
                 new VirtualFuncCall(
                     new VirtualFullyQualified('assert'),
-                    $prove_true_args,
+                    $prove_true_args->toArray(),
                 ),
                 $event->getContext(),
             );
@@ -49,7 +51,7 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
     }
 
     /**
-     * @psalm-return Option<array<array-key, Node\Arg>>
+     * @psalm-return Option<ArrayList<Node\Arg>>
      */
     private static function getProveTrueArgsFromYield(Node\Expr $expr): Option
     {
@@ -59,9 +61,9 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
 
         $visitor = new class extends NodeVisitorAbstract {
             /**
-             * @var array<array-key, Node\Arg>
+             * @var null|ArrayList<Node\Arg>
              */
-            public ?array $proveTrueArgs = null;
+            public ?ArrayList $proveTrueArgs = null;
 
             public function leaveNode(Node $node): void
             {
@@ -69,9 +71,11 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
                     return;
                 }
 
-                if ($node instanceof Node\Expr\FuncCall && 'Fp\Evidence\proveTrue' === $node->name->getAttribute('resolvedName')) {
-                    $this->proveTrueArgs = $node->args;
-                }
+                $this->proveTrueArgs = Option::some($node)
+                    ->filter(fn($n) => $n instanceof Node\Expr\FuncCall)
+                    ->filter(fn($n) => 'Fp\Evidence\proveTrue' === $n->name->getAttribute('resolvedName'))
+                    ->map(fn($n) => Psalm::getCallArgs($n)->get())
+                    ->get();
             }
         };
 

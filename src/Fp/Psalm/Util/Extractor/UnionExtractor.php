@@ -9,6 +9,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\VariadicPlaceholder;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
@@ -24,9 +25,13 @@ trait UnionExtractor
     /**
      * @psalm-return Option<Union>
      */
-    public static function getArgUnion(Arg $arg, StatementsSource $source): Option
+    public static function getArgUnion(Arg|VariadicPlaceholder $arg, StatementsSource $source): Option
     {
-        return Option::fromNullable($source->getNodeTypeProvider()->getType($arg->value));
+        $provider = $source->getNodeTypeProvider();
+
+        return Option::some($arg)
+            ->filter(fn($arg) => $arg instanceof Arg)
+            ->flatMap(fn($arg) => Option::fromNullable($provider->getType($arg->value)));
     }
 
     /**
