@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
+use Fp\Operations\EveryMapOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
@@ -152,6 +153,18 @@ final class HashSet implements Set
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
         return EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @template TVO
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<self<TVO>>
+     */
+    public function everyMap(callable $callback): Option
+    {
+        return EveryMapOperation::of($this->getIterator())($callback)
+            ->map(fn($gen) => HashSet::collect($gen));
     }
 
     /**

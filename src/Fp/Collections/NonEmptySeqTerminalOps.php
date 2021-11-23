@@ -75,6 +75,26 @@ interface NonEmptySeqTerminalOps
     public function everyOf(string $fqcn, bool $invariant = false): bool;
 
     /**
+     * A combined {@see NonEmptySeq::map} and {@see NonEmptySeq::every}.
+     *
+     * Predicate satisfying is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collect([1, 2, 3])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * => Some(NonEmptyArrayList(1, 2, 3))
+     *
+     * >>> NonEmptyArrayList::collect([0, 1, 2])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * => None
+     * ```
+     *
+     * @psalm-template TVO
+     * @psalm-param callable(TV): Option<TVO> $callback
+     * @psalm-return Option<NonEmptySeq<TVO>>
+     */
+    public function everyMap(callable $callback): Option;
+
+    /**
      * Find if there is element which satisfies the condition
      *
      * ```php

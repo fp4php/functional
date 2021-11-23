@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\CountOperation;
+use Fp\Operations\EveryMapOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\KeysOperation;
 use Fp\Operations\MapKeysOperation;
@@ -233,6 +234,21 @@ final class NonEmptyHashMap implements NonEmptyMap
         return EveryOperation::of($this->getKeyValueIterator())(
             fn($value, $key) => $predicate(new Entry($key, $value))
         );
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
+     * @psalm-return Option<self<TK, TVO>>
+     */
+    public function everyMap(callable $callback): Option
+    {
+        $hs = EveryMapOperation::of($this->getKeyValueIterator())(
+            fn($value, $key) => $callback(new Entry($key, $value))
+        );
+
+        return $hs->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
     }
 
     /**

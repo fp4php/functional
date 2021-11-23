@@ -99,6 +99,33 @@ final class SeqOpsTest extends TestCase
     }
 
     /**
+     * @dataProvider provideTestEveryMapData
+     */
+    public function testEveryMap(Seq $seq1, Seq $seq2): void
+    {
+        $this->assertEquals(
+            Option::some($seq1),
+            $seq1->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $seq2->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+        );
+    }
+
+    public function provideTestEveryMapData(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([1, 2, 3]),
+            ArrayList::collect([0, 1, 2]),
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([1, 2, 3]),
+            LinkedList::collect([0, 1, 2]),
+        ];
+    }
+
+    /**
      * @dataProvider provideTestExistsData
      */
     public function testExists(Seq $seq): void

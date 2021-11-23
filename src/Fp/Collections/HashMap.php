@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
+use Fp\Operations\EveryMapOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterOperation;
@@ -161,6 +162,21 @@ final class HashMap implements Map, StaticStorage
         return EveryOperation::of($this->getKeyValueIterator())(
             fn($value, $key) => $predicate(new Entry($key, $value))
         );
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
+     * @psalm-return Option<self<TK, TVO>>
+     */
+    public function everyMap(callable $callback): Option
+    {
+        $hs = EveryMapOperation::of($this->getKeyValueIterator())(
+            fn($value, $key) => $callback(new Entry($key, $value))
+        );
+
+        return $hs->map(fn($gen) => HashMap::collect($gen));
     }
 
     /**

@@ -99,6 +99,33 @@ final class NonEmptySeqOpsTest extends TestCase
     }
 
     /**
+     * @dataProvider provideTestEveryMapData
+     */
+    public function testEveryMap(NonEmptySeq $seq1, NonEmptySeq $seq2): void
+    {
+        $this->assertEquals(
+            Option::some($seq1),
+            $seq1->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $seq2->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+        );
+    }
+
+    public function provideTestEveryMapData(): Generator
+    {
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3]),
+            NonEmptyArrayList::collectNonEmpty([0, 1, 2]),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3]),
+            NonEmptyLinkedList::collectNonEmpty([0, 1, 2]),
+        ];
+    }
+
+    /**
      * @dataProvider provideTestExistsData
      */
     public function testExists(NonEmptySeq $seq): void
