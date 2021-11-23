@@ -56,11 +56,12 @@ final class ConditionallyPureAnalyzer implements AfterExpressionAnalysisInterfac
             $call_name = $call_info['call_name'];
             $call_node = $call_info['call_node'];
             $class_likes = $event->getCodebase()->classlikes;
+            $call_args = yield Psalm::getCallArgs($call_node);
 
             yield proveTrue($conditionally_pure($call_name) && !self::hasImpureArg(
                     $event->getCodebase(),
                     $event->getStatementsSource(),
-                    ArrayList::collect($call_node->args)
+                    $call_args,
                 ))
                 ->orElse(fn() => proveTrue($immutable_pure($call_name))
                     ->flatMap(fn() => Option::fromNullable($event->getContext()->self))

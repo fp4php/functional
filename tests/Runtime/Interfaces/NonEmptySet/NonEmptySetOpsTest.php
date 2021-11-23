@@ -51,15 +51,18 @@ final class NonEmptySetOpsTest extends TestCase
 
     public function testEveryMap(): void
     {
-        $hs = NonEmptyHashSet::collectNonEmpty([1, 2, 3]);
+        $hs = NonEmptyHashSet::collectNonEmpty([
+            new Foo(1),
+            new Foo(2),
+        ]);
 
         $this->assertEquals(
             Option::some($hs),
-            $hs->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+            $hs->everyMap(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
             Option::none(),
-            $hs->everyMap(fn($x) => $x >= 2 ? Option::some($x) : Option::none()),
+            $hs->everyMap(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
         );
     }
 

@@ -39,15 +39,18 @@ final class MapOpsTest extends TestCase
 
     public function testEveryMap(): void
     {
-        $hm = HashMap::collect(['a' => 1, 'b' => 2]);
+        $hm = HashMap::collect([
+            'a' => new Foo(1),
+            'b' => new Foo(2),
+        ]);
 
         $this->assertEquals(
             Option::some($hm),
-            $hm->everyMap(fn($x) => $x->value >= 1 ? Option::some($x->value) : Option::none())
+            $hm->everyMap(fn($x) => $x->value->a >= 1 ? Option::some($x->value) : Option::none())
         );
         $this->assertEquals(
             Option::none(),
-            $hm->everyMap(fn($x) => $x->value >= 2 ? Option::some($x->value) : Option::none())
+            $hm->everyMap(fn($x) => $x->value->a >= 2 ? Option::some($x->value) : Option::none())
         );
     }
 

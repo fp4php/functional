@@ -50,15 +50,18 @@ final class SetOpsTest extends TestCase
 
     public function testEveryMap(): void
     {
-        $hs = HashSet::collect([1, 2, 3]);
+        $hs = HashSet::collect([
+            new Foo(1),
+            new Foo(2),
+        ]);
 
         $this->assertEquals(
             Option::some($hs),
-            $hs->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+            $hs->everyMap(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
             Option::none(),
-            $hs->everyMap(fn($x) => $x >= 2 ? Option::some($x) : Option::none()),
+            $hs->everyMap(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
         );
     }
 

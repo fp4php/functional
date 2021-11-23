@@ -142,6 +142,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
     /**
      * @inheritDoc
+     * @param 0|positive-int $seconds
      * @return self<int>
      */
     public static function awakeEvery(int $seconds): self
@@ -151,7 +152,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
             $prevTime = time();
 
             while (true) {
-                sleep($seconds);
+                if ($seconds > 0) {
+                    sleep($seconds);
+                }
 
                 $curTime = time();
                 $elapsed += $curTime - $prevTime;
