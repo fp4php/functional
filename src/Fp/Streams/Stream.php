@@ -152,9 +152,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
             $prevTime = time();
 
             while (true) {
-                if ($seconds > 0) {
-                    sleep($seconds);
-                }
+                /** @psalm-suppress PossiblyInvalidArgument */
+                sleep($seconds);
 
                 $curTime = time();
                 $elapsed += $curTime - $prevTime;
