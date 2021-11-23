@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Functions\Collection;
 
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 
 use Tests\Mock\Bar;
@@ -12,6 +13,7 @@ use Tests\Mock\Foo;
 use Tests\Mock\SubBar;
 
 use function Fp\Collection\filter;
+use function Fp\Collection\filterMap;
 use function Fp\Collection\filterOf;
 use function Fp\Collection\filterNotNull;
 
@@ -69,5 +71,19 @@ final class FilterTest extends TestCase
             [2 => $bar],
             filterOf([1, $subBar, $bar, 4], Bar::class, true, true)
         );
+    }
+
+    public function testFilterMap(): void
+    {
+        $this->assertEquals([1], filterMap(
+            ['a' => 1, 2],
+            fn(int $v) => $v < 2 ? Option::some($v) : Option::none(),
+        ));
+
+        $this->assertEquals(['a' => 1], filterMap(
+            ['a' =>  1, 'b' => 2],
+            fn(int $v) => $v < 2 ? Option::some($v) : Option::none(),
+            true
+        ));
     }
 }
