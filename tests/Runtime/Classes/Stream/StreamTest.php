@@ -31,6 +31,8 @@ final class StreamTest extends TestCase
     {
         $this->assertEquals([0, 1], Stream::emits([0, 1])->toArray());
         $this->assertEquals([0, 1], Stream::emits([0, 1])->toArrayList()->toArray());
+        $this->assertEquals([0, 1], Stream::emits([0, 1])->toNonEmptyArrayList()->getUnsafe()->toArray());
+        $this->assertNull(Stream::emits([])->toNonEmptyArrayList()->get());
         $this->assertEquals([0, 1], Stream::emits([0, 1])->toLinkedList()->toArray());
         $this->assertEquals([0, 1], Stream::emits([0, 1, 1])->toHashSet()->toArray());
         $this->assertEquals([[0, 0], [1, 1]], Stream::emits([0, 1])->toHashMap(fn($e) => [$e, $e])->toArray());

@@ -8,6 +8,8 @@ use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
+use Fp\Collections\NonEmptyArrayList;
+use Fp\Functional\Option\Option;
 
 /**
  * @psalm-immutable
@@ -44,6 +46,18 @@ interface StreamCastableOps
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList;
+
+    /**
+     * ```php
+     * >>> Stream::emits([1, 2, 2])->toNonEmptyArrayList();
+     * => Some(NonEmptyArrayList(1, 2, 2))
+     * >>> Stream::emits([])->toNonEmptyArrayList();
+     * => None
+     * ```
+     *
+     * @return Option<NonEmptyArrayList<TV>>
+     */
+    public function toNonEmptyArrayList(): Option;
 
     /**
      * ```php

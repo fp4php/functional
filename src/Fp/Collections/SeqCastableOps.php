@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Option\Option;
+
 /**
  * @psalm-immutable
  * @template-covariant TV
@@ -39,6 +41,18 @@ interface SeqCastableOps
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList;
+
+    /**
+     * ```php
+     * >>> ArrayList::collect([1, 2, 2])->toNonEmptyArrayList();
+     * => Some(NonEmptyArrayList(1, 2, 2))
+     * >>> ArrayList::collect([])->toNonEmptyArrayList();
+     * => None
+     * ```
+     *
+     * @return Option<NonEmptyArrayList<TV>>
+     */
+    public function toNonEmptyArrayList(): Option;
 
     /**
      * ```php

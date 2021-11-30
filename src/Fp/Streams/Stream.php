@@ -8,6 +8,7 @@ use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
+use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Unit;
@@ -630,6 +631,20 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function toArrayList(): ArrayList
     {
         return $this->leaf(ArrayList::collect($this->emitter));
+    }
+
+    /**
+     * @inheritDoc
+     * @return Option<NonEmptyArrayList<TV>>
+     */
+    public function toNonEmptyArrayList(): Option
+    {
+        $arrayList = $this->leaf(ArrayList::collect($this->emitter));
+
+        return Option::cond(
+            $arrayList->isNonEmpty(),
+            new NonEmptyArrayList($arrayList)
+        );
     }
 
     /**

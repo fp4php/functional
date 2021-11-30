@@ -14,19 +14,21 @@ final class SeqTest extends TestCase
 {
     public function provideTestCastsData(): Generator
     {
-        yield ArrayList::class => [ArrayList::collect([1, 2, 3])];
-        yield LinkedList::class => [LinkedList::collect([1, 2, 3])];
+        yield ArrayList::class => [ArrayList::collect([1, 2, 3]), ArrayList::collect([])];
+        yield LinkedList::class => [LinkedList::collect([1, 2, 3]), LinkedList::collect([])];
     }
 
     /**
      * @dataProvider provideTestCastsData
      */
-    public function testCasts(Seq $seq): void
+    public function testCasts(Seq $seq, Seq $emptySeq): void
     {
         $this->assertEquals([1, 2, 3], $seq->toArray());
         $this->assertEquals([1, 2, 3], $seq->toLinkedList()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toLinkedList()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toArrayList()->toArray());
+        $this->assertEquals([1, 2, 3], $seq->toNonEmptyArrayList()->getUnsafe()->toArray());
+        $this->assertNull($emptySeq->toNonEmptyArrayList()->get());
         $this->assertEquals([1, 2, 3], $seq->toArrayList()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toHashSet()->toArray());
         $this->assertEquals([[1, 1], [2, 2], [3, 3]], $seq->toHashMap(fn($e) => [$e, $e])->toArray());

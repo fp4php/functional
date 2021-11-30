@@ -105,6 +105,20 @@ abstract class LinkedList implements Seq
 
     /**
      * @inheritDoc
+     * @return Option<NonEmptyArrayList<TV>>
+     */
+    public function toNonEmptyArrayList(): Option
+    {
+        $arrayList = $this->toArrayList();
+
+        return Option::cond(
+            $arrayList->isNonEmpty(),
+            new NonEmptyArrayList($arrayList)
+        );
+    }
+
+    /**
+     * @inheritDoc
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet

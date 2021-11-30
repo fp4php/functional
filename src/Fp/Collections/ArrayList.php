@@ -109,6 +109,18 @@ final class ArrayList implements Seq
 
     /**
      * @inheritDoc
+     * @return Option<NonEmptyArrayList<TV>>
+     */
+    public function toNonEmptyArrayList(): Option
+    {
+        return Option::cond(
+            $this->isNonEmpty(),
+            new NonEmptyArrayList($this)
+        );
+    }
+
+    /**
+     * @inheritDoc
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet

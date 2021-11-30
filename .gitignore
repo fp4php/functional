@@ -4,3 +4,4 @@ build
 .phpunit.result.cache
 Makefile.local
 composer.lock
+main.php
