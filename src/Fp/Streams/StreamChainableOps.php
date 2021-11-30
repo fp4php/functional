@@ -112,7 +112,7 @@ interface StreamChainableOps
     public function filterOf(string $fqcn, bool $invariant = false): Stream;
 
     /**
-     * A combined {@see Seq::map} and {@see Seq::filter}.
+     * A combined {@see Stream::map} and {@see Stream::filter}.
      *
      * Filtering is handled via Option instead of Boolean.
      * So the output type TVO can be different from the input type TV.
