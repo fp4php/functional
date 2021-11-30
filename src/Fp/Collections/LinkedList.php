@@ -69,6 +69,26 @@ abstract class LinkedList implements Seq
     }
 
     /**
+     * @inheritDoc
+     * @template TVI
+     * @param TVI $val
+     * @return self<TVI>
+     */
+    public static function singleton(mixed $val): self
+    {
+        return new Cons($val, Nil::getInstance());
+    }
+
+    /**
+     * @inheritDoc
+     * @return self<empty>
+     */
+    public static function empty(): self
+    {
+        return Nil::getInstance();
+    }
+
+    /**
      * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator

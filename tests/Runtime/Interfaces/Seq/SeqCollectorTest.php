@@ -16,5 +16,11 @@ final class SeqCollectorTest extends TestCase
         $this->assertTrue(Nil::getInstance() === Nil::getInstance());
         $this->assertEquals([1, 2, 3], ArrayList::collect([1, 2, 3])->toArray());
         $this->assertEquals([1, 2, 3], LinkedList::collect([1, 2, 3])->toArray());
+
+        $this->assertEquals([1], ArrayList::singleton(1)->toArray());
+        $this->assertEquals([1], LinkedList::singleton(1)->toArray());
+
+        $this->assertEquals([], ArrayList::empty()->toArray());
+        $this->assertEquals([], LinkedList::empty()->toArray());
     }
 }

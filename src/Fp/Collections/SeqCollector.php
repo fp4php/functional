@@ -21,4 +21,26 @@ interface SeqCollector
      * @return self<TVI>
      */
     public static function collect(iterable $source): self;
+
+    /**
+     * ```php
+     * >>> LinkedList::singleton(1)->toArray();
+     * => [1]
+     * ```
+     *
+     * @template TVI
+     * @param TVI $val
+     * @return self<TVI>
+     */
+    public static function singleton(mixed $val): self;
+
+    /**
+     * ```php
+     * >>> LinkedList::singleton()->toArray();
+     * => []
+     * ```
+     *
+     * @return self<empty>
+     */
+    public static function empty(): self;
 }
