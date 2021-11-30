@@ -36,7 +36,7 @@ interface SeqCollector
 
     /**
      * ```php
-     * >>> LinkedList::singleton()->toArray();
+     * >>> LinkedList::empty()->toArray();
      * => []
      * ```
      *
