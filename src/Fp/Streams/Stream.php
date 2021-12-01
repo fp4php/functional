@@ -35,6 +35,7 @@ use Fp\Operations\InterleaveOperation;
 use Fp\Operations\IntersperseOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
+use Fp\Operations\MkStringOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
@@ -596,6 +597,14 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function lastElement(): Option
     {
         return $this->leaf(LastOperation::of($this->emitter)());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
+    {
+        return $this->leaf(MkStringOperation::of($this->emitter)($start, $sep, $end));
     }
 
     /**

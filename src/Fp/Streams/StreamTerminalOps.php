@@ -199,4 +199,18 @@ interface StreamTerminalOps
      * ```
      */
     public function drain(): void;
+
+    /**
+     * Displays all elements of this collection in a string
+     * using start, end, and separator strings.
+     *
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->mkString("(", ",", ")")
+     * => '(1,2,3)'
+     *
+     * >>> Stream::emits([])->mkString("(", ",", ")")
+     * => '()'
+     * ```
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string;
 }

@@ -237,4 +237,10 @@ final class StreamOpsTest extends TestCase
             Stream::emits([1, 2, 3])->head()->get()
         );
     }
+
+    public function testMkString(): void
+    {
+        $this->assertEquals('(0,1,2)', Stream::emits([0, 1, 2])->mkString('(', ',', ')'));
+        $this->assertEquals('()', Stream::emits([])->mkString('(', ',', ')'));
+    }
 }

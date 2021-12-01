@@ -567,4 +567,19 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals([[0, 'a'], [1, 'b']], $seq->zip(['a', 'b'])->toArray());
     }
+
+    public function provideTestMkString(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([0, 1, 2]), ArrayList::empty()];
+        yield LinkedList::class => [LinkedList::collect([0, 1, 2]), LinkedList::empty()];
+    }
+
+    /**
+     * @dataProvider provideTestMkString
+     */
+    public function testMkString(Seq $seq, Seq $emptySeq): void
+    {
+        $this->assertEquals('(0,1,2)', $seq->mkString('(', ',', ')'));
+        $this->assertEquals('()', $emptySeq->mkString('(', ',', ')'));
+    }
 }

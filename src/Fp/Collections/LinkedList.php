@@ -28,6 +28,7 @@ use Fp\Operations\GroupByOperation;
 use Fp\Operations\IntersperseOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
+use Fp\Operations\MkStringOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\SortedOperation;
@@ -583,5 +584,13 @@ abstract class LinkedList implements Seq
     public function zip(iterable $that): self
     {
         return self::collect(ZipOperation::of($this->getIterator())($that));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
+    {
+        return MkStringOperation::of($this->getIterator())($start, $sep, $end);
     }
 }
