@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Option\Option;
+use Fp\Functional\Option\Some;
+use Fp\Functional\Option\None;
+
 /**
  * @psalm-immutable
  * @template TK
@@ -20,6 +24,17 @@ interface MapCastableOps
      * @return list<array{TK, TV}>
      */
     public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> HashMap::collectPairs([['a',  1], ['b', 2]])->toAssocArray();
+     * => Some(['a' => 1, 'b' => 2])
+     * >>> HashMap::collectPairs([[new Foo(), 1], [new Foo(), 2]])->toAssocArray();
+     * => None
+     * ```
+     * @psalm-return (TK is array-key ? Some<array<TK, TV>> : None)
+     */
+    public function toAssocArray(): Option;
 
     /**
      * ```php

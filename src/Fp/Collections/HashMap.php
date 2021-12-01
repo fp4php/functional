@@ -15,6 +15,8 @@ use Fp\Operations\KeysOperation;
 use Fp\Operations\MapKeysOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Option\Some;
+use Fp\Functional\Option\None;
 use Fp\Operations\ValuesOperation;
 use Generator;
 
@@ -115,6 +117,25 @@ final class HashMap implements Map, StaticStorage
     public function toArray(): array
     {
         return asList($this->getIterator());
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-return (TK is array-key ? Some<array<TK, TV>> : None)
+     */
+    public function toAssocArray(): Option
+    {
+        $acc = [];
+
+        foreach ($this->getIterator() as [$key, $val]) {
+            if (is_object($key) || is_array($key)) {
+                return None::getInstance();
+            } else {
+                $acc[$key] = $val;
+            }
+        }
+
+        return new Some($acc);
     }
 
     /**
