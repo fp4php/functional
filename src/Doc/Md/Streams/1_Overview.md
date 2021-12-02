@@ -95,13 +95,10 @@ function parseJsonLinesFile(string $path): array
     };
 
     return Stream::emits($chars())
-        ->groupAdjacentBy(fn($c) => PHP_EOL === $c)
-        ->map(function ($pair) {
-            return $pair[1]
-                ->reduce(fn(string $acc, $cur) => $acc . $cur)
-                ->getOrElse('[]');
-        })
-        ->filterMap('parseFoo')
+        ->groupAdjacentBy(fn($char) => PHP_EOL === $char)
+        ->map(fn(array $pair) => $pair[1])
+        ->map(fn(Seq $line) => $line->mkString(sep: ''))
+        ->filterMap(parseFoo(...))
         ->toArray();
 }
 
