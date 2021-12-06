@@ -1,6 +1,7 @@
 # Streams
 **Contents**
 - [Overview](#Overview)
+- [Bulk insert into multiple tables](#Bulk-insert-into-multiple-tables)
 - [JSON Lines example](#JSON-Lines-example)
 
 # Overview
@@ -68,6 +69,22 @@ Stream::emits([1, 2, 3])
 Stream::awakeEvery(5) // emit elapsed time every 5 seconds
     ->map(fn(int $elapsed) => "$elapsed seconds elapsed from stream start")
     ->lines() // print element every 5 seconds to stdout
+```
+
+# Bulk insert into multiple tables
+
+``` php
+Stream::emits($iterableDatabaseCursor)
+    ->chunks(5000)
+    // Insert chunks of 5000 rows to 'events' table
+    ->tap(fn(Seq $chunk) => $client->insert('events', $chunk))
+    ->flatMap(function(Seq $chunk) {
+        return $chunk->filter(fn(Event $event) => $event->type === 'SOME_TYPE')
+    })
+    ->chunks(5000)
+    // Insert chunks of 5000 rows to 'events_of_some_type' table
+    ->tap(fn(Seq $chunk) => $client->insert('events_of_some_type', $chunk))
+    ->drain();
 ```
 
 # JSON Lines example
