@@ -55,7 +55,7 @@ class PartitionFunctionReturnTypeProvider implements FunctionReturnTypeProviderI
 
                 $upper_union = new Union([
                     ...array_values($atomic_types),
-                    ...array_values($head_arg_type->getTemplateTypes()),
+                    ...$head_arg_type->getTemplateTypes(),
                     ...array_values($head_arg_type->getClosureTypes()),
                     ...array_values($head_arg_type->getCallableTypes()),
                 ]);
