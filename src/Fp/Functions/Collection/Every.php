@@ -9,7 +9,6 @@ use Fp\Operations\EveryMapOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use function Fp\Cast\asArray;
-use function Fp\Cast\asList;
 
 /**
  * Returns true if every collection element satisfies the condition

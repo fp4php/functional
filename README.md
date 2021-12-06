@@ -27,6 +27,49 @@ To improve type inference
 $ vendor/bin/psalm-plugin enable Fp\\Psalm\\FunctionalPlugin
 ```
 
+## Overview
+Type safe and concise. 
+
+Powerful combination: Collections + Option monad.
+```php
+class PgSqlCurrencyArrayType extends Type
+{
+    public function convertToDatabaseValue($value, AbstractPlatform $platform): string
+    {
+        $currencies = Option::fromNullable($value)
+            ->filter(fn(mixed $raw) => is_iterable($raw))
+            ->getOrElse([]);
+
+        return ArrayList::collect($currencies)
+            ->filterOf(Currency::class)
+            ->map(fn(Currency $currency) => $currency->getCurrencyCode())
+            ->mkString('{', ',', '}');
+    }
+
+    /**
+     * @return Seq<Currency>
+     */
+    public function convertToPHPValue($value, AbstractPlatform $platform): Seq
+    {
+        $csv = Option::fromNullable($value)
+            ->flatMap(proveString(...))
+            ->map(fn(string $pgSqlArray) => trim($pgSqlArray, '{}'))
+            ->getOrElse('');
+
+        return ArrayList::collect(explode(',', $csv))
+            ->filterMap($this->parseCurrency(...));
+    }
+
+    /**
+     * @return Option<Currency>
+     */
+    public function parseCurrency(string $currencyCode): Option
+    {
+        return Option::try(fn() => Currency::of($currencyCode));
+    }
+}
+```
+
 
 ## Examples
 
