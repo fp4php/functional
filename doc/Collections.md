@@ -173,6 +173,39 @@ $collection->subsetOf(HashSet::collect([
 ])); // true
 ```
 
+  - Easy to move from MANY to ONE for many-to-one relations
+
+<!-- end list -->
+
+``` php
+class Ceo
+{
+    public function __construct(public string $name) { }
+}
+
+class Manager
+{
+    public function __construct(public string $name, public Ceo $ceo) { }
+}
+
+class Developer
+{
+    public function __construct(public string $name, public Manager $manager) { }
+}
+
+$ceo = new Ceo('CEO');
+$managerX = new Manager('Manager X', $ceo);
+$managerY = new Manager('Manager Y', $ceo);
+$developerA = new Developer('Developer A', $managerX);
+$developerB = new Developer('Developer B', $managerX);
+$developerC = new Developer('Developer C', $managerY);
+
+HashSet::collect([$developerA, $developerB, $developerC])
+    ->map(fn(Developer $developer) => $developer->manager)
+    ->map(fn(Manager $manager) => $manager->ceo)
+    ->tap(fn(Ceo $ceo) => print_r($ceo->name . PHP_EOL)); // CEO. Not CEOCEOCEO
+```
+
 # NonEmptyArrayList
 
 `NonEmptySeq<TV>` interface implementation.
