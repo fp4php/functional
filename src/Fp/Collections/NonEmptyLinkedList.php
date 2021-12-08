@@ -16,6 +16,7 @@ use Fp\Operations\ExistsOperation;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\GroupByOperation;
+use Fp\Operations\LastOfOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
@@ -380,6 +381,18 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
         return FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
+     */
+    public function lastOf(string $fqcn, bool $invariant = false): Option
+    {
+        return LastOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**

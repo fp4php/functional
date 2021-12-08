@@ -26,6 +26,7 @@ use Fp\Operations\FlatMapOperation;
 use Fp\Operations\FoldOperation;
 use Fp\Operations\GroupByOperation;
 use Fp\Operations\IntersperseOperation;
+use Fp\Operations\LastOfOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\MkStringOperation;
@@ -274,6 +275,18 @@ abstract class LinkedList implements Seq
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
         return FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
+     */
+    public function lastOf(string $fqcn, bool $invariant = false): Option
+    {
+        return LastOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**

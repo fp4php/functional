@@ -228,7 +228,7 @@ final class SeqOpsTest extends TestCase
         $this->assertNull($seq->first(fn($e) => 5 === $e)->get());
     }
 
-    public function provideTestFirstOfData(): Generator
+    public function provideTestFirstOfAndLastOfData(): Generator
     {
         $bar = new Bar(1);
         $subBar = new SubBar(1);
@@ -238,12 +238,15 @@ final class SeqOpsTest extends TestCase
     }
 
     /**
-     * @dataProvider provideTestFirstOfData
+     * @dataProvider provideTestFirstOfAndLastOfData
      */
-    public function testFirstOf(Seq $seq, Bar $bar, SubBar $subBar): void
+    public function testFirstOfAndLastOf(Seq $seq, Bar $bar, SubBar $subBar): void
     {
         $this->assertEquals($subBar, $seq->firstOf(Bar::class, false)->get());
         $this->assertEquals($bar, $seq->firstOf(Bar::class, true)->get());
+
+        $this->assertEquals($bar, $seq->lastOf(Bar::class, false)->get());
+        $this->assertEquals($subBar, $seq->lastOf(SubBar::class, true)->get());
     }
 
     public function provideTestFlatMapData(): Generator

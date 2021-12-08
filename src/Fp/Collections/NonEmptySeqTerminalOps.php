@@ -156,6 +156,25 @@ interface NonEmptySeqTerminalOps
     public function firstOf(string $fqcn, bool $invariant = false): Option;
 
     /**
+     * Find last element of given class
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([
+     *     new Foo(1),
+     *     new Bar(1),
+     *     new Foo(2)
+     * ])->lastOf(Foo::class)->get();
+     * => Foo(2)
+     * ```
+     *
+     * @psalm-template TVO
+     * @psalm-param class-string<TVO> $fqcn fully qualified class name
+     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @psalm-return Option<TVO>
+     */
+    public function lastOf(string $fqcn, bool $invariant = false): Option;
+
+    /**
      * Return first collection element
      *
      * ```php
