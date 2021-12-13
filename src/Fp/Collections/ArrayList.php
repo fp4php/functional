@@ -39,6 +39,7 @@ use Fp\Operations\TakeWhileOperation;
 use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
 use Fp\Operations\ZipOperation;
+use Fp\Streams\Stream;
 use Iterator;
 
 use function Fp\Callable\asGenerator;
@@ -540,7 +541,8 @@ final class ArrayList implements Seq
      */
     public function tap(callable $callback): self
     {
-        return self::collect(TapOperation::of($this->getIterator())($callback));
+        Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
+        return $this;
     }
 
     /**
