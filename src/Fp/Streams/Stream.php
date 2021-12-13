@@ -192,8 +192,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
     /**
      * @inheritDoc
-     * @param 0|positive-int $start
-     * @param 0|positive-int $stopExclusive
      * @param positive-int $by
      * @return self<int>
      */

@@ -95,8 +95,6 @@ interface StreamEmitter
      * => [0, 2, 4, 6, 8]
      * ```
      *
-     * @psalm-param 0|positive-int $start
-     * @psalm-param 0|positive-int $stopExclusive
      * @psalm-param positive-int $by
      * @psalm-return Stream<int>
      */

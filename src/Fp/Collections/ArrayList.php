@@ -96,6 +96,16 @@ final class ArrayList implements Seq
     }
 
     /**
+     * @inheritDoc
+     * @psalm-param positive-int $by
+     * @psalm-return self<int>
+     */
+    public static function range(int $start, int $stopExclusive, int $by = 1): self
+    {
+        return Stream::range($start, $stopExclusive, $by)->toArrayList();
+    }
+
+    /**
      * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator
