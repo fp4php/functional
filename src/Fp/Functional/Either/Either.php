@@ -192,9 +192,10 @@ abstract class Either
      * => Left('error')
      * ```
      *
+     * @psalm-template LO
      * @psalm-template RO
-     * @psalm-param callable(R): Either<L, RO> $callback
-     * @psalm-return Either<L, RO>
+     * @psalm-param callable(R): Either<LO, RO> $callback
+     * @psalm-return Either<LO|L, RO>
      */
     public function flatMap(callable $callback): Either
     {
