@@ -391,10 +391,11 @@ abstract class Option
      * => 0
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(A): B $ifSome
-     * @psalm-param callable(): B $ifNone
-     * @psalm-return B
+     * @psalm-template TOutSome
+     * @psalm-template TOutNone
+     * @psalm-param callable(A): TOutSome $ifSome
+     * @psalm-param callable(): TOutNone $ifNone
+     * @psalm-return TOutSome|TOutNone
      */
     public function fold(callable $ifSome, callable $ifNone): mixed
     {

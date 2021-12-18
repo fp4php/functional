@@ -105,10 +105,11 @@ abstract class Either
      * => 'error!'
      * ```
      *
-     * @psalm-template TO
-     * @psalm-param callable(R): TO $ifRight
-     * @psalm-param callable(L): TO $ifLeft
-     * @psalm-return TO
+     * @psalm-template TOutLeft
+     * @psalm-template TOutRight
+     * @psalm-param callable(R): TOutRight $ifRight
+     * @psalm-param callable(L): TOutLeft $ifLeft
+     * @psalm-return TOutRight|TOutLeft
      */
     public function fold(callable $ifRight, callable $ifLeft): mixed
     {
