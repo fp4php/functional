@@ -58,5 +58,10 @@
             </errorLevel>
         </InternalProperty>
         <UnusedClosureParam errorLevel="suppress"/>
+        <UnusedMethodCall errorLevel="suppress">
+            <errorLevel type="suppress">
+                <directory name="tests"/>
+            </errorLevel>
+        </UnusedMethodCall>
     </issueHandlers>
 </psalm>

@@ -471,7 +471,7 @@ abstract class Option
      * >>> Option::some(1)->getOrCall(fn() => 0);
      * => 1
      *
-     * >>> Option::none()->getOrElse(fn() => 0);
+     * >>> Option::none()->getOrCall(fn() => 0);
      * => 0
      * ```
      *
@@ -484,6 +484,28 @@ abstract class Option
         return $this->isSome()
             ? $this->value
             : $fallback();
+    }
+
+    /**
+     * Unwrap "the box" and get contained value
+     * or throw an exception if the box is empty
+     *
+     * ```php
+     * >>> Option::some(1)->getOrThrow(fn() => new RuntimeException('???'));
+     * => 1
+     *
+     * >>> Option::none()->getOrThrow(fn() => new RuntimeException('???'));
+     * RuntimeException with message '???'
+     * ```
+     *
+     * @psalm-param callable(): Throwable $fallback
+     * @psalm-return A
+     */
+    public function getOrThrow(callable $fallback): mixed
+    {
+        return $this->isSome()
+            ? $this->value
+            : throw $fallback();
     }
 
     /**

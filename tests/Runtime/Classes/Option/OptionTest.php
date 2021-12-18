@@ -12,6 +12,7 @@ use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
@@ -108,8 +109,19 @@ final class OptionTest extends TestCase
     {
         $this->assertEquals(1, Option::some(1)->getOrElse(0));
         $this->assertEquals(0, Option::none()->getOrElse(0));
+    }
+
+    public function testGetOrCall(): void
+    {
         $this->assertEquals(1, Option::some(1)->getOrCall(fn() => 0));
         $this->assertEquals(0, Option::none()->getOrCall(fn() => 0));
+    }
+
+    public function testGetOrThrow(): void
+    {
+        $this->assertEquals(1, Option::some(1)->getOrThrow(fn() => new RuntimeException('???')));
+        $this->expectExceptionMessage('???');
+        Option::none()->getOrThrow(fn() => new RuntimeException('???'));
     }
 
     public function testOrElse(): void
