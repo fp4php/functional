@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Static\Classes\Option;
 
+use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 
 final class OptionStaticTest
@@ -43,5 +44,14 @@ final class OptionStaticTest
         return Option::fromNullable(1)
             ->flatMap(fn(int $v) => Option::fromNullable((string) $v))
             ->get();
+    }
+
+    /**
+     * @return ArrayList<1>
+     */
+    public function testToArrayList(): ArrayList
+    {
+        return Option::fromNullable(1)
+            ->toArrayList(fn(int $v) => ArrayList::singleton($v));
     }
 }

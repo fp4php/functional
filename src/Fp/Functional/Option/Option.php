@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Option;
 
 use Error;
+use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
@@ -662,5 +663,37 @@ abstract class Option
         return $condition
             ? self::some($some())
             : self::none();
+    }
+
+    /**
+     * Convert optional value to ArrayList collection
+     * via transformation function $callback.
+     *
+     * ```php
+     * >>> Option::some(1)
+     *     ->toArrayList(ArrayList::singleton(...))
+     *     ->toArray();
+     * => [1]
+     *
+     * >>> Option::some([1])
+     *     ->toArrayList(ArrayList::collect(...))
+     *     ->toArray();
+     * => [1]
+     *
+     * >>> Option::none()
+     *     ->toArrayList(ArrayList::collect(...))
+     *     ->toArray();
+     * => []
+     * ```
+     *
+     * @template TOutValue
+     * @param callable(A): ArrayList<TOutValue> $callback
+     * @return ArrayList<TOutValue>
+     */
+    public function toArrayList(callable $callback): ArrayList
+    {
+        return $this->isSome()
+            ? $callback($this->value)
+            : new ArrayList([]);
     }
 }

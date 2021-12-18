@@ -6,6 +6,7 @@ namespace Tests\Runtime\Classes\Option;
 
 use Error;
 use Exception;
+use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
 use Fp\Functional\Option\None;
@@ -196,5 +197,23 @@ final class OptionTest extends TestCase
     {
         $this->assertEquals(1, Option::some(1)->flatTap(fn($e) => Option::some(2))->get());
         $this->assertNull(Option::some(1)->flatTap(fn($e) => Option::none())->get());
+    }
+
+    public function testToArrayList(): void
+    {
+        $this->assertEquals(
+            [1],
+            Option::some(1)->toArrayList(fn(int $val) => ArrayList::singleton($val))->toArray()
+        );
+
+        $this->assertEquals(
+            [1],
+            Option::some([1])->toArrayList(fn(array $val) => ArrayList::collect($val))->toArray()
+        );
+
+        $this->assertEquals(
+            [],
+            Option::none()->toArrayList(fn(array $val) => ArrayList::collect($val))->toArray()
+        );
     }
 }
