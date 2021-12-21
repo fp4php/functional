@@ -52,6 +52,7 @@ use LogicException;
 use SplFileObject;
 
 use function Fp\Callable\asGenerator;
+use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 
 /**
@@ -620,6 +621,24 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function toArray(): array
     {
         return $this->leaf(asList($this->emitter));
+    }
+
+    /**
+     * @inheritDoc
+     * @template TKO of array-key
+     * @template TVO
+     * @param callable(TV): array{TKO, TVO} $callback
+     * @return array<TKO, TVO>
+     */
+    public function toAssocArray(callable $callback): array
+    {
+        /** @psalm-suppress ImpureFunctionCall */
+        return $this->leaf(asArray(asGenerator(function () use ($callback) {
+            foreach ($this->emitter as $val) {
+                $pair = $callback($val);
+                yield $pair[0] => $pair[1];
+            }
+        })));
     }
 
     /**

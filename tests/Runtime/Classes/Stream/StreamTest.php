@@ -38,5 +38,10 @@ final class StreamTest extends TestCase
         $this->assertEquals([[0, 0], [1, 1]], Stream::emits([0, 1])->toHashMap(fn($e) => [$e, $e])->toArray());
         $this->assertInstanceOf(Some::class, Option::try(fn() => Stream::emits([0, 1])->toFile('/dev/null', false)));
         $this->assertInstanceOf(Some::class, Option::try(fn() => Stream::emits([0, 1])->toFile('/dev/null', true)));
+
+        $this->assertEquals(
+            [1 => 'a', 2 => 'b'],
+            Stream::emits([[1, 'a'], [2, 'b']])->toAssocArray(fn($pair) => $pair)
+        );
     }
 }

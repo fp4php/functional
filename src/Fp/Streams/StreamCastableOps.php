@@ -29,6 +29,19 @@ interface StreamCastableOps
 
     /**
      * ```php
+     * >>> Stream::emits([[1, 'a'], [2, 'b']])->toAssocArray(fn($pair) => $pair);
+     * => [1 => 'a', 2 => 'b']
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @param callable(TV): array{TKO, TVO} $callback
+     * @return array<TKO, TVO>
+     */
+    public function toAssocArray(callable $callback): array;
+
+    /**
+     * ```php
      * >>> Stream::emits([1, 2, 2])->toLinkedList();
      * => LinkedList(1, 2, 2)
      * ```
