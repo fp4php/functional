@@ -145,6 +145,22 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
     /**
      * @inheritDoc
+     * @template TKI
+     * @template TVI
+     * @param iterable<TKI, TVI> $source
+     * @return self<array{TKI, TVI}>
+     */
+    public static function emitsPairs(iterable $source): self
+    {
+        return self::emits(asGenerator(function () use ($source) {
+            foreach ($source as $key => $val) {
+                yield [$key, $val];
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
      * @param 0|positive-int $seconds
      * @return self<int>
      */

@@ -31,4 +31,9 @@ final class StreamEmitterTest extends TestCase
         $this->assertEquals([0, 1], Stream::range(0, 2)->toArray());
         $this->assertEquals([0, 2, 4], Stream::range(0, 5, 2)->toArray());
     }
+
+    public function testEmitsPairs(): void
+    {
+        $this->assertEquals([['a', 1]], Stream::emitsPairs(['a' => 1])->toArray());
+    }
 }
