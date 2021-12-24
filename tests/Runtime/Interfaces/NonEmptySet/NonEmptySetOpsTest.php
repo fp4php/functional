@@ -185,4 +185,21 @@ final class NonEmptySetOpsTest extends TestCase
             NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toArray()
         );
     }
+
+    public function testIntersectAndDiff(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])
+                ->intersect(HashSet::collect([2, 3]))
+                ->toArray()
+        );
+
+        $this->assertEquals(
+            [1],
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])
+                ->diff(HashSet::collect([2, 3]))
+                ->toArray()
+        );
+    }
 }

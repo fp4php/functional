@@ -155,4 +155,34 @@ interface NonEmptySetChainableOps
      * @psalm-return Set<TV>
      */
     public function tail(): Set;
+
+    /**
+     * Computes the intersection between this set and another set.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])
+     *     ->intersect(HashSet::collect([2, 3]))->toArray();
+     * => [2, 3]
+     * ```
+     *
+     * @param Set<TV>|NonEmptySet<TV> $that the set to intersect with.
+     * @return Set<TV> a new set consisting of all elements that are both in this
+     * set and in the given set `that`.
+     */
+    public function intersect(Set|NonEmptySet $that): Set;
+
+    /**
+     * Computes the difference of this set and another set.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])
+     *     ->diff(HashSet::collect([2, 3]))->toArray();
+     * => [1]
+     * ```
+     *
+     * @param Set<TV>|NonEmptySet<TV> $that the set of elements to exclude.
+     * @return Set<TV> a set containing those elements of this
+     * set that are not also contained in the given set `that`.
+     */
+    public function diff(Set|NonEmptySet $that): Set;
 }

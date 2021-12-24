@@ -192,4 +192,21 @@ final class SetOpsTest extends TestCase
             HashSet::collect([1, 2, 3])->tail()->toArray()
         );
     }
+
+    public function testIntersectAndDiff(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            HashSet::collect([1, 2, 3])
+                ->intersect(HashSet::collect([2, 3]))
+                ->toArray()
+        );
+
+        $this->assertEquals(
+            [1],
+            HashSet::collect([1, 2, 3])
+                ->diff(HashSet::collect([2, 3]))
+                ->toArray()
+        );
+    }
 }

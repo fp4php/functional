@@ -445,4 +445,24 @@ final class NonEmptyHashSet implements NonEmptySet
 
         return $isSubset;
     }
+
+    /**
+     * @inheritDoc
+     * @param Set<TV>|NonEmptySet<TV> $that
+     * @return Set<TV>
+     */
+    public function intersect(Set|NonEmptySet $that): Set
+    {
+        return $this->filter(fn($elem) => /** @var TV $elem */ $that($elem));
+    }
+
+    /**
+     * @inheritDoc
+     * @param Set<TV>|NonEmptySet<TV> $that
+     * @return Set<TV>
+     */
+    public function diff(Set|NonEmptySet $that): Set
+    {
+        return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
+    }
 }
