@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Callable;
+namespace Fp\Cast;
 
 use Generator;
 

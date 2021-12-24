@@ -7,7 +7,7 @@ namespace Fp\Functional\Semigroup;
 use Fp\Collections\NonEmptyHashSet;
 use Generator;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 
 /**
  * @template TV

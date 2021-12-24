@@ -51,7 +51,7 @@ use IteratorAggregate;
 use LogicException;
 use SplFileObject;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 

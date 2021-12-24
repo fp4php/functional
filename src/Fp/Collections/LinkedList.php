@@ -41,7 +41,7 @@ use Fp\Operations\ZipOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
 
 /**

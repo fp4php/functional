@@ -7,7 +7,7 @@ namespace Tests\Runtime\Functions\Cast;
 use Fp\Functional\Option\None;
 use PHPUnit\Framework\TestCase;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asBool;
 use function Fp\Cast\asFloat;
@@ -15,6 +15,8 @@ use function Fp\Cast\asInt;
 use function Fp\Cast\asList;
 use function Fp\Cast\asNonEmptyArray;
 use function Fp\Cast\asNonEmptyList;
+use function Fp\Cast\asPairs;
+use function Fp\Cast\asPairsGenerator;
 
 final class CastTest extends TestCase
 {
@@ -82,5 +84,11 @@ final class CastTest extends TestCase
         })));
 
         $this->assertEquals([1, 2], asList(asGenerator(fn() => [1, 2])));
+    }
+
+    public function testAsPairs(): void
+    {
+        $this->assertEquals([['a', 1], ['b', 2]], asList(asPairsGenerator(['a' => 1, 'b' => 2])));
+        $this->assertEquals([['a', 1], ['b', 2]], asPairs(['a' => 1, 'b' => 2]));
     }
 }

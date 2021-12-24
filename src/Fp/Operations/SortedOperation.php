@@ -7,7 +7,7 @@ namespace Fp\Operations;
 use Fp\Collections\ArrayList;
 use Generator;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 
 /**
  * @template TK

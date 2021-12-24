@@ -6,7 +6,7 @@ namespace Fp\Functional\Monoid;
 
 use Fp\Collections\HashSet;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 
 /**
  * @template TV

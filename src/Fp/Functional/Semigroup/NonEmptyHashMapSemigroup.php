@@ -6,7 +6,7 @@ namespace Fp\Functional\Semigroup;
 
 use Fp\Collections\NonEmptyHashMap;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 
 /**
  * @template TK

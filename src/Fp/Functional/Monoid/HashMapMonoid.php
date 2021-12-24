@@ -6,7 +6,7 @@ namespace Fp\Functional\Monoid;
 
 use Fp\Collections\HashMap;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 
 /**
  * @template TK

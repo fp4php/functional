@@ -27,7 +27,7 @@ use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 
 /**
  * @psalm-immutable

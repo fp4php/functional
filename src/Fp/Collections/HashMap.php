@@ -20,7 +20,7 @@ use Fp\Functional\Option\None;
 use Fp\Operations\ValuesOperation;
 use Generator;
 
-use function Fp\Callable\asGenerator;
+use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
 
 /**
