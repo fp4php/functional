@@ -255,7 +255,9 @@ final class ConditionallyPureAnalyzer implements AfterExpressionAnalysisInterfac
 
         if (is_null($whiteList)) {
             $whiteList = HashSet::collect([
-                'Fp\Callable\asGenerator',
+                'Fp\Cast\asGenerator',
+                'Fp\Cast\asPairs',
+                'Fp\Cast\asPairsGenerator',
             ]);
         }
 
