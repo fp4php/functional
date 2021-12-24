@@ -41,16 +41,6 @@ interface StreamEmitter
     public static function emits(iterable $source): Stream;
 
     /**
-     * Emits key/value pairs from iterable source
-     *
-     * @template TKI
-     * @template TVI
-     * @param iterable<TKI, TVI> $source
-     * @return self<array{TKI, TVI}>
-     */
-    public static function emitsPairs(iterable $source): self;
-
-    /**
      * Repeat this stream an infinite number of times.
      *
      * ```php
