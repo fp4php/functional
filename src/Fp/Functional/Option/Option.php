@@ -617,6 +617,8 @@ abstract class Option
     }
 
     /**
+     * @deprecated use {@see Option::when}
+     *
      * Fabric method.
      *
      * ```php
@@ -640,6 +642,8 @@ abstract class Option
     }
 
     /**
+     * @deprecated use {@see Option::when}
+     *
      * Fabric method.
      *
      * ```php
@@ -663,6 +667,56 @@ abstract class Option
         return $condition
             ? self::some($some())
             : self::none();
+    }
+
+    /**
+     * Fabric method.
+     *
+     * ```php
+     * >>> Option::when(true, fn() => 1);
+     * => Some(1)
+     *
+     * >>> Option::when(false, fn() => 1);
+     * => None
+     * ```
+     *
+     * Create {@see Some} from value if given condition is true
+     * Create {@see None} if given condition is false
+     *
+     * @psalm-pure
+     * @psalm-template AI
+     * @psalm-param pure-callable(): AI $callback
+     * @psalm-return Option<AI>
+     */
+    public static function when(bool $condition, callable $callback): Option
+    {
+        return $condition
+            ? self::some($callback())
+            : self::none();
+    }
+
+    /**
+     * Fabric method.
+     *
+     * ```php
+     * >>> Option::unless(false, fn() => 1);
+     * => Some(1)
+     *
+     * >>> Option::unless(true, fn() => 1);
+     * => None
+     * ```
+     *
+     * Create {@see Some} from value if given condition is false
+     * Create {@see None} if given condition is true
+     *
+     * @psalm-pure
+     * @psalm-template AI
+     * @psalm-param pure-callable(): AI $callback
+     * @psalm-return Option<AI>
+     */
+    public static function unless(bool $condition, callable $callback): Option
+    {
+        return self::when(!$condition, $callback);
     }
 
     /**

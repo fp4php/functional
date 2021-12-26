@@ -187,6 +187,15 @@ final class OptionTest extends TestCase
         $this->assertNull(Option::cond(false, 'some')->get());
     }
 
+    public function testWhenAndUnless(): void
+    {
+        $this->assertEquals('some', Option::when(true, fn() => 'some')->get());
+        $this->assertNull(Option::when(false, fn() => throw new Error())->get());
+
+        $this->assertEquals('some', Option::unless(false, fn() => 'some')->get());
+        $this->assertNull(Option::unless(true, fn() => throw new Error())->get());
+    }
+
     public function testTap(): void
     {
         $this->assertEquals(1, Option::some(1)->tap(fn($e) => $e)->get());

@@ -54,7 +54,7 @@ final class NonEmptyArrayList implements NonEmptySeq
     {
         $arrayList = ArrayList::collect($source);
 
-        return Option::condLazy(
+        return Option::when(
             $arrayList->isNonEmpty(),
             fn() => new self($arrayList)
         );

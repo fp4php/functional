@@ -92,7 +92,7 @@ final class NonEmptyHashMap implements NonEmptyMap
 
         $isEmpty = empty($hashTable->table);
 
-        return Option::condLazy(!$isEmpty, fn() => new HashMap($hashTable))
+        return Option::when(!$isEmpty, fn() => new HashMap($hashTable))
             ->map(fn(HashMap $map) => new self($map));
     }
 

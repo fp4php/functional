@@ -30,7 +30,7 @@ function at(iterable $collection, int|string $key): Option
 {
     return Option::some($collection)
         ->filter(fn($coll) => is_array($coll))
-        ->flatMap(fn(array $coll) => Option::condLazy(array_key_exists($key, $coll), fn() => $coll[$key]))
+        ->flatMap(fn(array $coll) => Option::when(array_key_exists($key, $coll), fn() => $coll[$key]))
         ->orElse(fn() => AtOperation::of($collection)($key));
 }
 

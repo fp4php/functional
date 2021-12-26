@@ -48,7 +48,7 @@ final class NonEmptyHashSet implements NonEmptySet
     public static function collect(iterable $source): Option
     {
         $hashset = HashSet::collect($source);
-        return Option::condLazy(!$hashset->isEmpty(), fn() => new self($hashset));
+        return Option::when(!$hashset->isEmpty(), fn() => new self($hashset));
     }
 
     /**

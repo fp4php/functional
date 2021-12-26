@@ -144,9 +144,9 @@ abstract class LinkedList implements Seq
     {
         $arrayList = $this->toArrayList();
 
-        return Option::cond(
+        return Option::when(
             $arrayList->isNonEmpty(),
-            new NonEmptyArrayList($arrayList)
+            fn() => new NonEmptyArrayList($arrayList)
         );
     }
 

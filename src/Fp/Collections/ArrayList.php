@@ -146,9 +146,10 @@ final class ArrayList implements Seq
      */
     public function toNonEmptyArrayList(): Option
     {
-        return Option::cond(
+        $that = $this;
+        return Option::when(
             $this->isNonEmpty(),
-            new NonEmptyArrayList($this)
+            fn() => new NonEmptyArrayList($that)
         );
     }
 
