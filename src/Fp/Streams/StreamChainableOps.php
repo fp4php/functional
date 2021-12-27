@@ -323,4 +323,20 @@ interface StreamChainableOps
      * @return Stream<array{D, Seq<TV>}>
      */
     public function groupAdjacentBy(callable $discriminator): Stream;
+
+    /**
+     * Sort streamed elements
+     *
+     * ```php
+     * >>> Stream::emits([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray();
+     * => [1, 2, 3]
+     *
+     * >>> Stream::emits([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray();
+     * => [3, 2, 1]
+     * ```
+     *
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return Stream<TV>
+     */
+    public function sorted(callable $cmp): Stream;
 }

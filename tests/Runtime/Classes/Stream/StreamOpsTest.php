@@ -243,4 +243,17 @@ final class StreamOpsTest extends TestCase
         $this->assertEquals('(0,1,2)', Stream::emits([0, 1, 2])->mkString('(', ',', ')'));
         $this->assertEquals('()', Stream::emits([])->mkString('(', ',', ')'));
     }
+
+    public function testSorted(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            Stream::emits([1, 3, 2])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+        );
+
+        $this->assertEquals(
+            [3, 2, 1],
+            Stream::emits([1, 3, 2])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+        );
+    }
 }

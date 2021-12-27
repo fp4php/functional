@@ -41,6 +41,7 @@ use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\RepeatNOperation;
 use Fp\Operations\RepeatOperation;
+use Fp\Operations\SortedOperation;
 use Fp\Operations\TailOperation;
 use Fp\Operations\TakeOperation;
 use Fp\Operations\TakeWhileOperation;
@@ -474,6 +475,16 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
             $pair[1] = new ArrayList($pair[1]);
             return $pair;
         }));
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV, TV): int $cmp
+     * @psalm-return self<TV>
+     */
+    public function sorted(callable $cmp): self
+    {
+        return $this->fork(SortedOperation::of($this->emitter)($cmp));
     }
 
     /**
