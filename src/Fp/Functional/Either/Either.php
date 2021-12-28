@@ -66,6 +66,25 @@ abstract class Either
     }
 
     /**
+     * ```php
+     * >>> Either::right(1)->getOrThrow(fn($err) => new RuntimeException($err));
+     * => 1
+     *
+     * >>> Either::left('error')->getOrThrow(fn($err) => new RuntimeException($err));
+     * RuntimeException with message 'error'
+     * ```
+     *
+     * @psalm-param callable(L): Throwable $fallback
+     * @psalm-return R
+     */
+    public function getOrThrow(callable $fallback): mixed
+    {
+        return $this->isRight()
+            ? $this->value
+            : throw $fallback($this->value);
+    }
+
+    /**
      * Combine two Either into one
      *
      * ```php

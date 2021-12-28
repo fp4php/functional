@@ -11,6 +11,7 @@ use Fp\Functional\Either\Right;
 use Fp\Functional\Validated\Invalid;
 use Fp\Functional\Validated\Valid;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class EitherTest extends TestCase
 {
@@ -136,8 +137,19 @@ final class EitherTest extends TestCase
     {
         $this->assertEquals(1, Either::right(1)->getOrElse(0));
         $this->assertEquals(0, Either::left('err')->getOrElse(0));
+    }
+
+    public function testGetOrCall(): void
+    {
         $this->assertEquals(1, Either::right(1)->getOrCall(fn() => 0));
         $this->assertEquals(0, Either::left('err')->getOrCall(fn() => 0));
+    }
+
+    public function testGetOrThrow(): void
+    {
+        $this->assertEquals(1, Either::right(1)->getOrThrow(fn($err) => new RuntimeException($err)));
+        $this->expectExceptionMessage('err');
+        Either::left('err')->getOrThrow(fn($err) => new RuntimeException($err));
     }
 
     public function testOrElse(): void
