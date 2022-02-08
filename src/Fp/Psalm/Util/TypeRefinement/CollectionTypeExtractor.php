@@ -83,7 +83,7 @@ final class CollectionTypeExtractor
             ->filter(fn($a) => $a instanceof TGenericObject)
             ->filter(fn($a) => classOf($a->value, Seq::class) || classOf($a->value, NonEmptySeq::class))
             ->filter(fn($a) => 1 === count($a->type_params))
-            ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[1]));
+            ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[0]));
     }
 
     /**
@@ -95,7 +95,7 @@ final class CollectionTypeExtractor
             ->filter(fn($a) => $a instanceof TGenericObject)
             ->filter(fn($a) => classOf($a->value, Set::class) || classOf($a->value, NonEmptySet::class))
             ->filter(fn($a) => 1 === count($a->type_params))
-            ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[1]));
+            ->map(fn($a) => new CollectionTypeParams(Type::getArrayKey(), $a->type_params[0]));
     }
 
     /**
