@@ -17,7 +17,7 @@ PHP Functional Programming library. Monads and common use functions.
 ### Composer 
 
 ```console
-$ composer require whsv26/functional
+$ composer require fp4php/functional
 ```
 
 ### Enable psalm plugin (optional)
