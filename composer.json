@@ -12,6 +12,11 @@
     "scripts": {
         "test": "vendor/bin/phpunit"
     },
+    "extra": {
+        "psalm": {
+            "pluginClass": "Fp\\Psalm\\FunctionalPlugin"
+        }
+    },
     "require": {
         "php": "^8.0",
         "ext-simplexml": "*"

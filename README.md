@@ -24,7 +24,7 @@ $ composer require fp4php/functional
 To improve type inference
 
 ```console
-$ vendor/bin/psalm-plugin enable Fp\\Psalm\\FunctionalPlugin
+$ vendor/bin/psalm-plugin enable fp4php/functional
 ```
 
 ## Overview
