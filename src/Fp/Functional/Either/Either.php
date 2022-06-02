@@ -80,8 +80,8 @@ abstract class Either
     public function getOrThrow(callable $fallback): mixed
     {
         return $this->isRight()
-            ? $this->value
-            : throw $fallback($this->value);
+            ? $this->get()
+            : throw $fallback($this->get());
     }
 
     /**
@@ -133,8 +133,8 @@ abstract class Either
     public function fold(callable $ifRight, callable $ifLeft): mixed
     {
         return $this->isRight()
-            ? $ifRight($this->value)
-            : $ifLeft($this->value);
+            ? $ifRight($this->get())
+            : $ifLeft($this->get());
     }
 
     /**
@@ -161,8 +161,8 @@ abstract class Either
     public function map(callable $callback): Either
     {
         return $this->isLeft()
-            ? new Left($this->value)
-            : new Right($callback($this->value));
+            ? new Left($this->get())
+            : new Right($callback($this->get()));
     }
 
     /**
@@ -220,8 +220,8 @@ abstract class Either
     public function flatMap(callable $callback): Either
     {
         return $this->isLeft()
-            ? new Left($this->value)
-            : $callback($this->value);
+            ? new Left($this->get())
+            : $callback($this->get());
     }
 
     /**
@@ -335,8 +335,8 @@ abstract class Either
     public function toValidated(): Validated
     {
         return $this->isRight()
-            ? Validated::valid($this->value)
-            : Validated::invalid($this->value);
+            ? Validated::valid($this->get())
+            : Validated::invalid($this->get());
     }
 
     /**
@@ -350,7 +350,7 @@ abstract class Either
      * => true
      * ```
      *
-     * @psalm-assert-if-true Left<L> $this
+     * @psalm-assert-if-true Left<L>&\Fp\Functional\Assertion<"must-be-left"> $this
      */
     public function isLeft(): bool
     {
@@ -368,7 +368,7 @@ abstract class Either
      * => false
      * ```
      *
-     * @psalm-assert-if-true Right<R> $this
+     * @psalm-assert-if-true Right<R>&\Fp\Functional\Assertion<"must-be-right"> $this
      */
     public function isRight(): bool
     {

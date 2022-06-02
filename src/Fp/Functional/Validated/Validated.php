@@ -46,7 +46,7 @@ abstract class Validated
     abstract public function get(): mixed;
 
     /**
-     * @psalm-assert-if-true Valid<A> $this
+     * @psalm-assert-if-true Valid<A>&\Fp\Functional\Assertion<"must-be-valid"> $this
      */
     public function isValid(): bool
     {
@@ -54,7 +54,7 @@ abstract class Validated
     }
 
     /**
-     * @psalm-assert-if-true Invalid<E> $this
+     * @psalm-assert-if-true Invalid<E>&\Fp\Functional\Assertion<"must-be-invalid"> $this
      */
     public function isInvalid(): bool
     {

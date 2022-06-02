@@ -7,18 +7,16 @@ namespace Tests\Static\Classes\Option;
 use Error;
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
-use Fp\Functional\Option\Some;
 
 final class OptionAssertionStaticTest
 {
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsSomeWithIfTrueBranch(Option $option): Option
+    public function testIsSomeWithIfTrueBranch(Option $option): int
     {
         if ($option->isSome()) {
-            return $option;
+            return $option->get();
         } else {
             throw new Error();
         }
@@ -26,25 +24,23 @@ final class OptionAssertionStaticTest
 
     /**
      * @param Option<int> $option
-     * @return None
      */
-    public function testIsSomeWithIfFalseBranch(Option $option): Option
+    public function testIsSomeWithIfFalseBranch(Option $option): int|null
     {
         if ($option->isSome()) {
             throw new Error();
         } else {
-            return $option;
+            return $option->get();
         }
     }
 
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsNonEmptyWithIfTrueBranch(Option $option): Some
+    public function testIsNonEmptyWithIfTrueBranch(Option $option): int
     {
         if ($option->isNonEmpty()) {
-            return $option;
+            return $option->get();
         } else {
             throw new Error();
         }
@@ -52,25 +48,23 @@ final class OptionAssertionStaticTest
 
     /**
      * @param Option<int> $option
-     * @return None
      */
-    public function testIsNonEmptyWithIfFalseBranch(Option $option): None
+    public function testIsNonEmptyWithIfFalseBranch(Option $option): int|null
     {
         if ($option->isNonEmpty()) {
             throw new Error();
         } else {
-            return $option;
+            return $option->get();
         }
     }
 
     /**
      * @param Option<int> $option
-     * @return None
      */
-    public function testIsNoneWithTrueBranch(Option $option): None
+    public function testIsNoneWithTrueBranch(Option $option): int|null
     {
         if ($option->isNone()) {
-            return $option;
+            return $option->get();
         } else {
             throw new Error();
         }
@@ -78,25 +72,23 @@ final class OptionAssertionStaticTest
 
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsNoneWithFalseBranch(Option $option): Some
+    public function testIsNoneWithFalseBranch(Option $option): int
     {
         if ($option->isNone()) {
             throw new Error();
         } else {
-            return $option;
+            return $option->get();
         }
     }
 
     /**
      * @param Option<int> $option
-     * @return None
      */
-    public function testIsEmptyWithTrueBranch(Option $option): None
+    public function testIsEmptyWithTrueBranch(Option $option): int|null
     {
         if ($option->isEmpty()) {
-            return $option;
+            return $option->get();
         } else {
             throw new Error();
         }
@@ -104,67 +96,54 @@ final class OptionAssertionStaticTest
 
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsNonEmptyWithTernaryTrueBranch(Option $option): Some
+    public function testIsNonEmptyWithTernaryTrueBranch(Option $option): int
     {
         return $option->isNonEmpty()
-            ? call_user_func(function() use ($option) {
-                return $option;
-            })
+            ? $option->get()
             : throw new Error();
     }
 
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsEmptyWithFalseBranch(Option $option): Some
+    public function testIsEmptyWithFalseBranch(Option $option): int
     {
         if ($option->isEmpty()) {
             throw new Error();
         } else {
-            return $option;
+            return $option->get();
         }
     }
 
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsSomeWithTernaryTrueBranch(Option $option): Some
+    public function testIsSomeWithTernaryTrueBranch(Option $option): int
     {
         return $option->isSome()
-            ? call_user_func(function() use ($option) {
-                return $option;
-            })
+            ? $option->get()
             : throw new Error();
     }
 
     /**
      * @param Option<int> $option
-     * @return None
      */
-    public function testIsSomeWithTernaryFalseBranch(Option $option): None
+    public function testIsSomeWithTernaryFalseBranch(Option $option): int|null
     {
         return $option->isSome()
             ? throw new Error()
-            : call_user_func(function() use ($option) {
-                return $option;
-            });
+            : $option->get();
     }
 
     /**
      * @param Option<int> $option
-     * @return None
      */
-    public function testIsNonEmptyWithTernaryFalseBranch(Option $option): None
+    public function testIsNonEmptyWithTernaryFalseBranch(Option $option): int|null
     {
         return $option->isNonEmpty()
             ? throw new Error()
-            : call_user_func(function() use ($option) {
-                return $option;
-            });
+            : $option->get();
     }
 
     /**
@@ -182,40 +161,31 @@ final class OptionAssertionStaticTest
 
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsNoneWithTernaryFalseBranch(Option $option): Some
+    public function testIsNoneWithTernaryFalseBranch(Option $option): int
     {
         return $option->isNone()
             ? throw new Error()
-            : call_user_func(function() use ($option) {
-                return $option;
-            });
+            : $option->get();
     }
 
     /**
      * @param Option<int> $option
-     * @return None
      */
-    public function testIsEmptyWithTernaryTrueBranch(Option $option): None
+    public function testIsEmptyWithTernaryTrueBranch(Option $option): int|null
     {
         return $option->isEmpty()
-            ? call_user_func(function() use ($option) {
-                return $option;
-            })
+            ? $option->get()
             : throw new Error();
     }
 
     /**
      * @param Option<int> $option
-     * @return Some<int>
      */
-    public function testIsEmptyWithTernaryFalseBranch(Option $option): Some
+    public function testIsEmptyWithTernaryFalseBranch(Option $option): int
     {
         return $option->isEmpty()
             ? throw new Error()
-            : call_user_func(function() use ($option) {
-                return $option;
-            });
+            : $option->get();
     }
 }

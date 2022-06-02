@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Tests\Static\Classes\Validated;
 
 use Error;
-use Fp\Functional\Validated\Invalid;
-use Fp\Functional\Validated\Valid;
 use Fp\Functional\Validated\Validated;
 
 final class ValidatedAssertionStaticTest
 {
     /**
      * @param Validated<string, int> $validated
-     * @return Valid<int>
      */
-    public function testIsValidWithIfTrueBranch(Validated $validated): Valid
+    public function testIsValidWithIfTrueBranch(Validated $validated): int
     {
         if ($validated->isValid()) {
-            return $validated;
+            return $validated->get();
         } else {
             throw new Error();
         }
@@ -26,67 +23,54 @@ final class ValidatedAssertionStaticTest
 
     /**
      * @param Validated<string, int> $validated
-     * @return Invalid<string>
      */
-    public function testIsValidWithIfFalseBranch(Validated $validated): Invalid
+    public function testIsValidWithIfFalseBranch(Validated $validated): string
     {
         if ($validated->isValid()) {
             throw new Error();
         } else {
-            return $validated;
+            return $validated->get();
         }
     }
 
 
     /**
      * @param Validated<string, int> $validated
-     * @return Valid<int>
      */
-    public function testIsValidWithTernaryTrueBranch(Validated $validated): Valid
+    public function testIsValidWithTernaryTrueBranch(Validated $validated): int
     {
         return $validated->isValid()
-            ? call_user_func(function() use ($validated) {
-                return $validated;
-            })
+            ? $validated->get()
             : throw new Error();
     }
 
     /**
      * @param Validated<string, int> $validated
-     * @return Invalid<string>
      */
-    public function testIsValidWithTernaryFalseBranch(Validated $validated): Invalid
+    public function testIsValidWithTernaryFalseBranch(Validated $validated): string
     {
         return $validated->isValid()
             ? throw new Error()
-            : call_user_func(function() use ($validated) {
-                return $validated;
-            });
+            : $validated->get();
     }
 
     /**
      * @param Validated<string, int> $validated
-     * @return Invalid<string>
      */
-    public function testIsInvalidWithTernaryTrueBranch(Validated $validated): Invalid
+    public function testIsInvalidWithTernaryTrueBranch(Validated $validated): string
     {
         return $validated->isInvalid()
-            ? call_user_func(function() use ($validated) {
-                return $validated;
-            })
+            ? $validated->get()
             : throw new Error();
     }
 
     /**
      * @param Validated<string, int> $validated
-     * @return Valid<int>
      */
-    public function testIsInvalidWithTernaryFalseBranch(Validated $validated): Valid
+    public function testIsInvalidWithTernaryFalseBranch(Validated $validated): int
     {
         return $validated->isInvalid()
             ? throw new Error()
-            : call_user_func(function() use ($validated) {
-                return $validated;
-            });
+            : $validated->get();
     }
 }

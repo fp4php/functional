@@ -6,19 +6,16 @@ namespace Tests\Static\Classes\Either;
 
 use Error;
 use Fp\Functional\Either\Either;
-use Fp\Functional\Either\Left;
-use Fp\Functional\Either\Right;
 
 final class EitherAssertionStaticTest
 {
     /**
      * @param Either<string, int> $either
-     * @return Right<int>
      */
-    public function testIsRightWithIfTrueBranch(Either $either): Right
+    public function testIsRightWithIfTrueBranch(Either $either): int
     {
         if ($either->isRight()) {
-            return $either;
+            return $either->get();
         } else {
             throw new Error();
         }
@@ -26,58 +23,54 @@ final class EitherAssertionStaticTest
 
     /**
      * @param Either<string, int> $either
-     * @return Left<string>
      */
-    public function testIsRightWithIfFalseBranch(Either $either): Left
+    public function testIsRightWithIfFalseBranch(Either $either): string
     {
         if ($either->isRight()) {
             throw new Error();
         } else {
-            return $either;
+            return $either->get();
         }
     }
 
     /**
      * @param Either<string, int> $either
-     * @return Right<int>
      */
-    public function testIsRightWithTernaryTrueBranch(Either $either): Right
+    public function testIsRightWithTernaryTrueBranch(Either $either): int
     {
         return $either->isRight()
-            ? $either
+            ? $either->get()
             : throw new Error();
     }
 
     /**
      * @param Either<string, int> $either
-     * @return Left<string>
+     * @return string
      */
-    public function testIsRightWithTernaryFalseBranch(Either $either): Left
+    public function testIsRightWithTernaryFalseBranch(Either $either): string
     {
         return $either->isRight()
             ? throw new Error()
-            : $either;
+            : $either->get();
     }
 
     /**
      * @param Either<string, int> $either
-     * @return Left<string>
      */
-    public function testIsLeftWithTernaryTrueBranch(Either $either): Left
+    public function testIsLeftWithTernaryTrueBranch(Either $either): string
     {
         return $either->isLeft()
-            ? $either
+            ? $either->get()
             : throw new Error();
     }
 
     /**
      * @param Either<string, int> $either
-     * @return Right<int>
      */
-    public function testIsLeftWithTernaryFalseBranch(Either $either): Right
+    public function testIsLeftWithTernaryFalseBranch(Either $either): int
     {
         return $either->isLeft()
             ? throw new Error()
-            : $either;
+            : $either->get();
     }
 }

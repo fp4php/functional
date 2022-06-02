@@ -75,7 +75,7 @@ abstract class Option
      * => false
      * ```
      *
-     * @psalm-assert-if-true Some<A> $this
+     * @psalm-assert-if-true Some<A>&\Fp\Functional\Assertion<"must-be-some"> $this
      */
     public function isSome(): bool
     {
@@ -91,7 +91,7 @@ abstract class Option
      * => true
      * ```
      *
-     * @psalm-assert-if-false Some<A> $this
+     * @psalm-assert-if-true None&\Fp\Functional\Assertion<"must-be-none"> $this
      */
     public function isNone(): bool
     {
