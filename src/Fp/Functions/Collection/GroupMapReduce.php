@@ -36,6 +36,10 @@ namespace Fp\Collection;
  * @param callable(A): B $map
  * @param callable(B, B): B $reduce
  * @return array<KOut, B>
+ *
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-array<KOut, B>
+ *     : array<KOut, B>)
  */
 function groupMapReduce(iterable $collection, callable $group, callable $map, callable $reduce): array
 {
