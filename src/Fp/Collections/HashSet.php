@@ -33,7 +33,7 @@ use function Fp\Cast\asList;
 
 /**
  * @template-covariant TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @implements Set<TV>
  */
 final class HashSet implements Set

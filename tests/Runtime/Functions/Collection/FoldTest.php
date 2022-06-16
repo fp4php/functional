@@ -14,13 +14,12 @@ final class FoldTest extends TestCase
     {
         $c = ['a', 'b', 'c'];
 
+        /** @var string $init */
+        $init = '';
+
         $this->assertEquals(
             'abc',
-            fold(
-                '',
-                $c,
-                fn(string $acc, string $v) => $acc . $v
-            )
+            fold($init, $c, fn(string $acc, string $v) => $acc . $v)
         );
     }
 }

@@ -11,7 +11,7 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @psalm-consistent-constructor
  * @psalm-consistent-templates
  */
@@ -32,7 +32,6 @@ class AbstractOperation
     }
 
     /**
-     * @psalm-pure
      * @template TKI
      * @template TVI
      * @param iterable<TKI, TVI> $input

@@ -32,7 +32,7 @@ use function Fp\objectOf;
  *
  * @template-covariant A
  * @psalm-yield A
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 abstract class Option
 {
@@ -340,7 +340,6 @@ abstract class Option
      * @psalm-template B
      * @psalm-param B|null $value
      * @psalm-return Option<B>
-     * @psalm-pure
      */
     public static function fromNullable(mixed $value): Option
     {
@@ -543,7 +542,6 @@ abstract class Option
      * @psalm-template B
      * @psalm-param B $value
      * @psalm-return Option<B>
-     * @psalm-pure
      */
     public static function some(mixed $value): Option
     {
@@ -559,7 +557,6 @@ abstract class Option
      * ```
      *
      * @psalm-return Option<empty>
-     * @psalm-pure
      */
     public static function none(): Option
     {
@@ -629,7 +626,6 @@ abstract class Option
      * => None
      * ```
      *
-     * @psalm-pure
      * @psalm-template AI
      * @psalm-param AI $some
      * @psalm-return Option<AI>
@@ -657,9 +653,8 @@ abstract class Option
      * Create {@see Some} from value if given condition is true
      * Create {@see None} if given condition is false
      *
-     * @psalm-pure
      * @psalm-template AI
-     * @psalm-param pure-callable(): AI $some
+     * @psalm-param callable(): AI $some
      * @psalm-return Option<AI>
      */
     public static function condLazy(bool $condition, callable $some): Option
@@ -683,9 +678,8 @@ abstract class Option
      * Create {@see Some} from value if given condition is true
      * Create {@see None} if given condition is false
      *
-     * @psalm-pure
      * @psalm-template AI
-     * @psalm-param pure-callable(): AI $callback
+     * @psalm-param callable(): AI $callback
      * @psalm-return Option<AI>
      */
     public static function when(bool $condition, callable $callback): Option
@@ -709,9 +703,8 @@ abstract class Option
      * Create {@see Some} from value if given condition is false
      * Create {@see None} if given condition is true
      *
-     * @psalm-pure
      * @psalm-template AI
-     * @psalm-param pure-callable(): AI $callback
+     * @psalm-param callable(): AI $callback
      * @psalm-return Option<AI>
      */
     public static function unless(bool $condition, callable $callback): Option

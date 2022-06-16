@@ -11,13 +11,12 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class MapValuesOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @template TVO
      * @param callable(TV, TK): TVO $f
      * @return Generator<TK, TVO>

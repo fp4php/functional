@@ -12,6 +12,7 @@ final class ReduceTest extends TestCase
 {
     public function testReduce(): void
     {
+        /** @var list<string> $c */
         $c = ['a', 'b', 'c'];
 
         $this->assertEquals(

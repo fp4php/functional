@@ -24,7 +24,6 @@ use function Fp\of;
  * @psalm-param TV $subject
  * @psalm-param class-string<TVO> $fqcn fully qualified class name
  * @psalm-return Option<TVO>
- * @psalm-pure
  */
 function proveOf(mixed $subject, string $fqcn, bool $invariant = false): Option
 {

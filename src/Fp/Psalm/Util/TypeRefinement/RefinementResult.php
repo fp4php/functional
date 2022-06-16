@@ -7,7 +7,7 @@ namespace Fp\Psalm\Util\TypeRefinement;
 use Psalm\Type\Union;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 final class RefinementResult
 {

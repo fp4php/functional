@@ -19,7 +19,7 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @implements NonEmptyMap<TK, TV>
  */
 final class NonEmptyHashMap implements NonEmptyMap

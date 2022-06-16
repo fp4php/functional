@@ -24,12 +24,14 @@ final class PartitionStaticTest
     }
 
     /**
-     * @return array{0: list<1>, 1: list<1>, 2: list<1>}
+     * @return array{0: list<int>, 1: list<int>, 2: list<int>}
      */
     public function testPartitionWithTwoPredicates(): array
     {
+        /** @var list<int> $nums */
+        $nums = [1];
         return partition(
-            [1],
+            $nums,
             fn(int $v) => $v % 2 === 0,
             fn(int $v) => $v % 2 === 1,
         );

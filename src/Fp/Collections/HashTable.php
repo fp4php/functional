@@ -21,7 +21,6 @@ final class HashTable
     public array $table = [];
 
     /**
-     * @psalm-pure
      * @template TKey
      * @template TValue
      * @param HashTable<TKey, TValue> $hashTable
@@ -43,7 +42,6 @@ final class HashTable
     }
 
     /**
-     * @psalm-pure
      * @template TKey
      * @template TValue
      * @param TKey $key

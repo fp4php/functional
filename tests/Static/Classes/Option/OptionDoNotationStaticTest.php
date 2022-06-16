@@ -44,6 +44,7 @@ final class OptionDoNotationStaticTest
     public function testWithFilter(): Option
     {
         return Option::do(function() {
+            /** @var int $num */
             $num = yield Option::some(10);
 
             if ($num < 10) {

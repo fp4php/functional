@@ -22,7 +22,7 @@
         "ext-simplexml": "*"
     },
     "require-dev": {
-        "vimeo/psalm": ">=4.11 <4.17",
+        "vimeo/psalm": "^4.23",
         "phpunit/phpunit": "^9",
         "symfony/process": "^5.2",
         "rregeer/phpunit-coverage-check": "^0.3.1",

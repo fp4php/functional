@@ -15,6 +15,7 @@ final class ExistsTest extends TestCase
 {
     public function testExists(): void
     {
+        /** @var list<int> $c */
         $c = [1, 2, 3];
 
         $this->assertTrue(exists($c, fn (int $v) => $v === 3));

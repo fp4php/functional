@@ -11,7 +11,7 @@ use Fp\Functional\Validated\Validated;
 /**
  * @template E
  * @template A
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<Validated<E, A>>
  */
 class ValidatedSemigroup extends Semigroup

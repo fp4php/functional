@@ -14,7 +14,7 @@ use Fp\Functional\Option\Some;
 /**
  * @template-covariant E
  * @template-covariant A
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 abstract class Validated
 {
@@ -22,7 +22,6 @@ abstract class Validated
      * @psalm-template EE
      * @psalm-param EE $value
      * @psalm-return Validated<EE, empty>
-     * @psalm-pure
      */
     public static function invalid(mixed $value): Validated
     {
@@ -33,7 +32,6 @@ abstract class Validated
      * @psalm-template AA
      * @psalm-param AA $value
      * @psalm-return Validated<empty, AA>
-     * @psalm-pure
      */
     public static function valid(mixed $value): Validated
     {
@@ -67,7 +65,6 @@ abstract class Validated
      * @psalm-param EE $invalid
      * @psalm-param AA $valid
      * @psalm-return Validated<EE, AA>
-     * @psalm-pure
      */
     public static function cond(
         bool $condition,
@@ -83,10 +80,9 @@ abstract class Validated
     /**
      * @psalm-template EE
      * @psalm-template AA
-     * @psalm-param pure-callable(): EE $invalid
-     * @psalm-param pure-callable(): AA $valid
+     * @psalm-param callable(): EE $invalid
+     * @psalm-param callable(): AA $valid
      * @psalm-return Validated<EE, AA>
-     * @psalm-pure
      */
     public static function condLazy(
         bool $condition,

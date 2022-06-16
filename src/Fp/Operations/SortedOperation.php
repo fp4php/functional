@@ -12,13 +12,12 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class SortedOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @psalm-param callable(TV, TV): int $f
      * @return Generator<TV>
      */

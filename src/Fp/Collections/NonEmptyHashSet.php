@@ -26,7 +26,7 @@ use function Fp\Cast\asNonEmptyList;
 
 /**
  * @template-covariant TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @implements NonEmptySet<TV>
  */
 final class NonEmptyHashSet implements NonEmptySet

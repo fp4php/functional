@@ -7,7 +7,6 @@ namespace Fp\Operations;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
 class MkStringOperation extends AbstractOperation

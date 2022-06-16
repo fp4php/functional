@@ -13,7 +13,7 @@ use Throwable;
  * @template-covariant L
  * @template-covariant R
  * @psalm-yield R
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 abstract class Either
 {
@@ -409,7 +409,6 @@ abstract class Either
      * @psalm-template LI
      * @psalm-param LI $value
      * @psalm-return Either<LI, empty>
-     * @psalm-pure
      */
     public static function left(mixed $value): Either
     {
@@ -429,7 +428,6 @@ abstract class Either
      * @psalm-template RI
      * @psalm-param RI $value
      * @psalm-return Either<empty, RI>
-     * @psalm-pure
      */
     public static function right(mixed $value): Either
     {
@@ -452,7 +450,6 @@ abstract class Either
      * @psalm-param LI $left
      * @psalm-param RI $right
      * @psalm-return Either<LI, RI>
-     * @psalm-pure
      */
     public static function cond(bool $condition, mixed $right, mixed $left): Either
     {
@@ -477,10 +474,9 @@ abstract class Either
      *
      * @psalm-template LI
      * @psalm-template RI
-     * @psalm-param pure-callable(): LI $left
-     * @psalm-param pure-callable(): RI $right
+     * @psalm-param callable(): LI $left
+     * @psalm-param callable(): RI $right
      * @psalm-return Either<LI, RI>
-     * @psalm-pure
      */
     public static function condLazy(bool $condition, callable $right, callable $left): Either
     {

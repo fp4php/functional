@@ -7,7 +7,6 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template-covariant TV
  */

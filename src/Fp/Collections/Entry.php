@@ -9,7 +9,7 @@ namespace Fp\Collections;
  * Exists only inside one iteration cycle
  * And destroyed after iteration
  *
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template TK
  * @template-covariant TV
  */

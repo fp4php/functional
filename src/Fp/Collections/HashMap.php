@@ -26,7 +26,7 @@ use function Fp\Cast\asList;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @implements Map<TK, TV>
  * @implements StaticStorage<empty>
  */

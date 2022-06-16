@@ -25,9 +25,12 @@ final class FoldAllTest extends TestCase
 
     public function testWithEmptyArray(): void
     {
+        /** @var array<string, int> $items */
+        $items = [];
+
         $buffer = [];
 
-        forAll([], function(int $v, string $k) use (&$buffer) {
+        forAll($items, function(int $v, string $k) use (&$buffer) {
             /** @var array<string, int> $buffer */
             $buffer[$k] = $v;
         });

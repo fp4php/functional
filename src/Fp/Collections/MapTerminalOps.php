@@ -9,7 +9,7 @@ use Fp\Functional\Option\Option;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 interface MapTerminalOps
 {

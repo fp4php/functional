@@ -47,7 +47,7 @@ use function Fp\Cast\asGenerator;
 /**
  * O(1) {@see Seq::at()} and {@see Seq::__invoke} operations
  *
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements Seq<TV>
  */

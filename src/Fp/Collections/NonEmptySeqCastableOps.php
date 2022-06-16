@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface NonEmptySeqCastableOps

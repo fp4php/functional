@@ -13,7 +13,7 @@ use Fp\Collections\Nil;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class GroupByOperation extends AbstractOperation

@@ -9,7 +9,6 @@ use Fp\Functional\Option\Some;
 use Fp\Functional\Option\None;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template-covariant TV
  */

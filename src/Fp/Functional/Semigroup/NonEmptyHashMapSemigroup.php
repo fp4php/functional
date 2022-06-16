@@ -11,13 +11,12 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<NonEmptyHashMap<TK, TV>>
  */
 class NonEmptyHashMapSemigroup extends Semigroup
 {
     /**
-     * @psalm-pure
      * @psalm-param NonEmptyHashMap<TK, TV> $lhs
      * @psalm-param NonEmptyHashMap<TK, TV> $rhs
      * @psalm-return NonEmptyHashMap<TK, TV>

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Option;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Option<empty>
  */
 final class None extends Option
@@ -18,7 +18,6 @@ final class None extends Option
     protected mixed $value = null;
 
     /**
-     * @psalm-pure
      * @psalm-suppress ImpureStaticProperty
      */
     public static function getInstance(): self

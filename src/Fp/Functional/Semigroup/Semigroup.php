@@ -6,12 +6,11 @@ namespace Fp\Functional\Semigroup;
 
 /**
  * @template A
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 abstract class Semigroup
 {
     /**
-     * @psalm-pure
      * @psalm-param A $lhs
      * @psalm-param A $rhs
      * @psalm-return A

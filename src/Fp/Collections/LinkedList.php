@@ -48,7 +48,7 @@ use function Fp\Cast\asList;
  * O(1) {@see Seq::prepended} operation
  * Fast {@see Seq::reverse} operation
  *
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements Seq<TV>
  */

@@ -12,7 +12,7 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface StreamCastableOps

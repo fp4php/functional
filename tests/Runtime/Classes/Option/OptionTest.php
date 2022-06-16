@@ -155,13 +155,16 @@ final class OptionTest extends TestCase
 
     public function testFilter(): void
     {
-        $some = Option::some(42)
+        /** @var int $num */
+        $num = 42;
+
+        $some = Option::some($num)
             ->filter(fn(int $v) => $v >= 42)
             ->get();
 
-        $this->assertEquals(42, $some);
+        $this->assertEquals($num, $some);
 
-        $none = Option::some(42)
+        $none = Option::some($num)
             ->filter(fn(int $v) => $v > 42)
             ->get();
 

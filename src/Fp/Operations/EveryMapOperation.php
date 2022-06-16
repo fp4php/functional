@@ -12,7 +12,6 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
 class EveryMapOperation extends AbstractOperation

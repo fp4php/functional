@@ -11,13 +11,12 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class ChunksOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @psalm-template TPreserve of bool
      * @psalm-param TPreserve $preserveKeys
      * @psalm-param positive-int $size

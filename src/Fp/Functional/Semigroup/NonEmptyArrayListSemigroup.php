@@ -8,13 +8,12 @@ use Fp\Collections\NonEmptyArrayList;
 
 /**
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<NonEmptyArrayList<TV>>
  */
 class NonEmptyArrayListSemigroup extends Semigroup
 {
     /**
-     * @psalm-pure
      * @psalm-param NonEmptyArrayList<TV> $lhs
      * @psalm-param NonEmptyArrayList<TV> $rhs
      * @psalm-return NonEmptyArrayList<TV>

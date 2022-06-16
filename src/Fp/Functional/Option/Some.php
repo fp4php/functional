@@ -6,7 +6,7 @@ namespace Fp\Functional\Option;
 
 /**
  * @template-covariant A
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Option<A>
  */
 final class Some extends Option

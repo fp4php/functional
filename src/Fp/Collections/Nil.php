@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends LinkedList<empty>
  */
 final class Nil extends LinkedList
@@ -13,7 +13,6 @@ final class Nil extends LinkedList
     private static ?self $instance = null;
 
     /**
-     * @psalm-pure
      * @psalm-suppress ImpureStaticProperty
      */
     public static function getInstance(): self

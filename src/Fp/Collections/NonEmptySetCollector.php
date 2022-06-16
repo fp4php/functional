@@ -7,7 +7,6 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
  * @template-covariant TV
  */
 interface NonEmptySetCollector

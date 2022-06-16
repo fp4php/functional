@@ -7,7 +7,7 @@ namespace Fp\Streams;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface StreamTerminalOps

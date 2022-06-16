@@ -8,7 +8,7 @@ use Fp\Functional\Semigroup\Semigroup;
 
 /**
  * @template A
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<A>
  */
 abstract class Monoid extends Semigroup

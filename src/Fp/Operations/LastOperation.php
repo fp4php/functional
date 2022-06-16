@@ -9,7 +9,7 @@ use Fp\Functional\Option\Option;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class LastOperation extends AbstractOperation

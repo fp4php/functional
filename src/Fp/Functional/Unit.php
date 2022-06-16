@@ -13,7 +13,6 @@ class Unit
     }
 
     /**
-     * @psalm-pure
      * @psalm-suppress ImpureMethodCall, ImpureStaticProperty
      */
     public static function getInstance(): self

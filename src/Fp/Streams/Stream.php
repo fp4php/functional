@@ -59,7 +59,7 @@ use function Fp\Cast\asList;
 /**
  * Note: stream iteration via foreach is terminal operation
  *
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements StreamOps<TV>
  * @implements StreamEmitter<TV>

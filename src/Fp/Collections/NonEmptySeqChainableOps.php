@@ -7,7 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface NonEmptySeqChainableOps

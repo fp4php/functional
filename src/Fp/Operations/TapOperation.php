@@ -11,13 +11,12 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class TapOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @param callable(TV, TK): void $f
      * @return Generator<TK, TV>
      */

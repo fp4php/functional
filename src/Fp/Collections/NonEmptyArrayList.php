@@ -30,7 +30,7 @@ use Iterator;
 use function Fp\Cast\asGenerator;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
  */

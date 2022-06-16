@@ -12,7 +12,7 @@ use function Fp\Cast\asGenerator;
  * @template TK
  * @template TV
  * @extends Monoid<HashMap<TK, TV>>
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 class HashMapMonoid extends Monoid
 {
@@ -25,7 +25,6 @@ class HashMapMonoid extends Monoid
     }
 
     /**
-     * @psalm-pure
      * @psalm-param HashMap<TK, TV> $lhs
      * @psalm-param HashMap<TK, TV> $rhs
      * @psalm-return HashMap<TK, TV>

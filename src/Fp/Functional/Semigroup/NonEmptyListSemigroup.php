@@ -6,13 +6,12 @@ namespace Fp\Functional\Semigroup;
 
 /**
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<non-empty-list<TV>>
  */
 class NonEmptyListSemigroup extends Semigroup
 {
     /**
-     * @psalm-pure
      * @psalm-param non-empty-list<TV> $lhs
      * @psalm-param non-empty-list<TV> $rhs
      * @psalm-return non-empty-list<TV>

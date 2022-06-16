@@ -6,7 +6,7 @@ namespace Fp\Functional\Either;
 
 /**
  * @template-covariant R
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Either<empty, R>
  */
 final class Right extends Either
@@ -20,7 +20,6 @@ final class Right extends Either
      * @template RI
      * @psalm-param RI $value
      * @psalm-return self<RI>
-     * @psalm-pure
      */
     public static function of(mixed $value): self
     {

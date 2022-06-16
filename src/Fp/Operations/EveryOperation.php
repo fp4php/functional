@@ -7,7 +7,7 @@ namespace Fp\Operations;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class EveryOperation extends AbstractOperation

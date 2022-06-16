@@ -9,7 +9,7 @@ use function Fp\of;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class ExistsOfOperation extends AbstractOperation

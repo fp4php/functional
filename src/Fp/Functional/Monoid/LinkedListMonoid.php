@@ -10,7 +10,7 @@ use Fp\Collections\Nil;
 /**
  * @template TV
  * @extends Monoid<LinkedList<TV>>
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 class LinkedListMonoid extends Monoid
 {
@@ -23,7 +23,6 @@ class LinkedListMonoid extends Monoid
     }
 
     /**
-     * @psalm-pure
      * @psalm-param LinkedList<TV> $lhs
      * @psalm-param LinkedList<TV> $rhs
      * @psalm-return LinkedList<TV>

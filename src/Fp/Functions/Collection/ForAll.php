@@ -17,8 +17,8 @@ use Fp\Streams\Stream;
  *
  * @psalm-template TK of array-key
  * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): void $callback
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV, TK): void $callback
  */
 function forAll(iterable $collection, callable $callback): void
 {

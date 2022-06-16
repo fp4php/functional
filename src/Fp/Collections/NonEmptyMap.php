@@ -9,7 +9,7 @@ use Iterator;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends NonEmptyCollection<array{TK, TV}>
  * @extends NonEmptyMapOps<TK, TV>
  * @extends NonEmptyMapCollector<TK, TV>

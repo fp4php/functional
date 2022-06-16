@@ -9,7 +9,7 @@ use Iterator;
 /**
  * Ordered list of elements
  *
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @extends Collection<TV>
  * @extends SeqOps<TV>

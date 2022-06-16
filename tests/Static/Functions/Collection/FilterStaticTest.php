@@ -9,6 +9,8 @@ use function Fp\Collection\filter;
 /**
  * @todo
  * @psalm-type Shape = array{name: string, postcode: int}
+ * @psalm-type ShapeWithPossiblyUndefinedPostcode = array{name?: string, postcode?: int|string}
+ *
  * @psalm-assert-if-true Shape $shape
  */
 function isValidShape(array $shape): bool
@@ -85,8 +87,7 @@ final class FilterStaticTest
     }
 
     /**
-     * @psalm-type Shape = array{name?: string, postcode?: int|string}
-     * @param array<string, Shape> $coll
+     * @param array<string, ShapeWithPossiblyUndefinedPostcode> $coll
      * @return list<array{name: string, postcode: int}>
      */
     public function testRefineShapeType(array $coll): array

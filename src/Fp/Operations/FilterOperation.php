@@ -11,13 +11,12 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class FilterOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @psalm-param callable(TV, TK): bool $f
      * @return Generator<TK, TV>
      */

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template-covariant TV
  */

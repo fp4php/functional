@@ -9,7 +9,6 @@ use Iterator;
 use IteratorAggregate;
 
 /**
- * @psalm-immutable
  * @template-covariant TV
  * @implements IteratorAggregate<empty, TV>
  */

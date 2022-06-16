@@ -6,7 +6,7 @@ namespace Fp\Functional\Validated;
 
 /**
  * @template A
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Validated<empty, A>
  */
 final class Valid extends Validated

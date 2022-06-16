@@ -57,6 +57,7 @@ final class EveryTest extends TestCase
 
     public function testEveryMap(): void
     {
+        /** @var list<int> $c */
         $c = [1, 2];
 
         $this->assertEquals(

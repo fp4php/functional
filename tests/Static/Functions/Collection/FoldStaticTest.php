@@ -14,8 +14,11 @@ final class FoldStaticTest
      */
     public function testWithArray(array $coll): int
     {
+        /** @var int $init */
+        $init = 0;
+
         return fold(
-            0,
+            $init,
             $coll,
             fn(int $acc, int $v) => $acc + $v
         );

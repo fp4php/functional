@@ -7,7 +7,6 @@ namespace Fp\Collections;
 use Iterator;
 
 /**
- * @psalm-immutable
  * @template-covariant TV
  * @extends Collection<TV>
  * @extends SetOps<TV>

@@ -12,13 +12,12 @@ use function Fp\Evidence\proveOf;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends AbstractOperation<TK, TV>
  */
 class FilterOfOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn
      * @psalm-return Generator<TK, TVO>

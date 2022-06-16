@@ -10,7 +10,7 @@ use Psalm\Context;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  */
 final class RefinementContext
 {

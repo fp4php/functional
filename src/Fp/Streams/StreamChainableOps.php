@@ -8,7 +8,7 @@ use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface StreamChainableOps

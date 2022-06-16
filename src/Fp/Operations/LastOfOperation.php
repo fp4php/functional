@@ -11,7 +11,6 @@ use function Fp\of;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
  * @extends AbstractOperation<TK, TV>
  */
 class LastOfOperation extends AbstractOperation

@@ -6,13 +6,12 @@ namespace Fp\Functional\Semigroup;
 
 /**
  * @template T
- * @psalm-immutable
+ * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<T>
  */
 class LhsSemigroup extends Semigroup
 {
     /**
-     * @psalm-pure
      * @psalm-param T $lhs
      * @psalm-param T $rhs
      * @psalm-return T
