@@ -34,6 +34,6 @@ trait ExprExtractor
     public static function getCallArgs(FuncCall|MethodCall|StaticCall $call): Option
     {
         return ArrayList::collect($call->args)
-            ->everyMap(fn($arg) => $arg instanceof Arg ? Option::some($arg) : Option::none());
+            ->traverseOption(fn($arg) => $arg instanceof Arg ? Option::some($arg) : Option::none());
     }
 }

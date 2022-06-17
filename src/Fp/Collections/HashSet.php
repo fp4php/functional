@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
-use Fp\Operations\EveryMapOperation;
+use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
@@ -161,9 +161,9 @@ final class HashSet implements Set
      * @param callable(TV): Option<TVO> $callback
      * @return Option<self<TVO>>
      */
-    public function everyMap(callable $callback): Option
+    public function traverseOption(callable $callback): Option
     {
-        return EveryMapOperation::of($this->getIterator())($callback)
+        return TraverseOptionOperation::of($this->getIterator())($callback)
             ->map(fn($gen) => HashSet::collect($gen));
     }
 

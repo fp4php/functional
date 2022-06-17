@@ -10,7 +10,7 @@ use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
 use Fp\Operations\DropOperation;
 use Fp\Operations\DropWhileOperation;
-use Fp\Operations\EveryMapOperation;
+use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
@@ -259,9 +259,9 @@ final class ArrayList implements Seq
      * @param callable(TV): Option<TVO> $callback
      * @return Option<self<TVO>>
      */
-    public function everyMap(callable $callback): Option
+    public function traverseOption(callable $callback): Option
     {
-        return EveryMapOperation::of($this->getIterator())($callback)
+        return TraverseOptionOperation::of($this->getIterator())($callback)
             ->map(fn($gen) => ArrayList::collect($gen));
     }
 

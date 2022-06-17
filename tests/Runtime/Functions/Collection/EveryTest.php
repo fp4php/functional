@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Tests\Mock\Foo;
 
 use function Fp\Collection\every;
-use function Fp\Collection\everyMap;
+use function Fp\Collection\traverseOption;
 use function Fp\Collection\everyOf;
 
 final class EveryTest extends TestCase
@@ -62,12 +62,12 @@ final class EveryTest extends TestCase
 
         $this->assertEquals(
             Option::some($c),
-            everyMap($c, fn(int $v) => $v < 3 ? Option::some($v) : Option::none())
+            traverseOption($c, fn(int $v) => $v < 3 ? Option::some($v) : Option::none())
         );
 
         $this->assertEquals(
             Option::none(),
-            everyMap($c, fn(int $v) => $v < 2 ? Option::some($v) : Option::none()),
+            traverseOption($c, fn(int $v) => $v < 2 ? Option::some($v) : Option::none()),
         );
     }
 }

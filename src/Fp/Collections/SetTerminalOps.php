@@ -84,10 +84,10 @@ interface SetTerminalOps
      * So the output type TVO can be different from the input type TV.
      *
      * ```php
-     * >>> HashSet::collect([1, 2, 3])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * >>> HashSet::collect([1, 2, 3])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
      * => Some(HashSet(1, 2, 3))
      *
-     * >>> HashSet::collect([0, 1, 2])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * >>> HashSet::collect([0, 1, 2])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
      * => None
      * ```
      *
@@ -95,7 +95,7 @@ interface SetTerminalOps
      * @psalm-param callable(TV): Option<TVO> $callback
      * @psalm-return Option<Set<TVO>>
      */
-    public function everyMap(callable $callback): Option;
+    public function traverseOption(callable $callback): Option;
 
     /**
      * Find if there is element which satisfies the condition

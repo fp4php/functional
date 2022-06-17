@@ -105,11 +105,11 @@ final class NonEmptySeqOpsTest extends TestCase
     {
         $this->assertEquals(
             Option::some($seq1),
-            $seq1->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+            $seq1->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
             Option::none(),
-            $seq2->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
+            $seq2->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
     }
 

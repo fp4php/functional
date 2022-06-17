@@ -57,11 +57,11 @@ final class SetOpsTest extends TestCase
 
         $this->assertEquals(
             Option::some($hs),
-            $hs->everyMap(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none()),
+            $hs->traverseOption(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
             Option::none(),
-            $hs->everyMap(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
+            $hs->traverseOption(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
         );
     }
 

@@ -68,10 +68,10 @@ interface NonEmptyMapTerminalOps
      * So the output type TVO can be different from the input type TV.
      *
      * ```php
-     * >>> NonEmptyHashMap::collectPairs(['a' => 1, 'b' => 2])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * >>> NonEmptyHashMap::collectPairs(['a' => 1, 'b' => 2])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
      * => Some(NonEmptyHashMap('a' -> 1, 'b' -> 2))
      *
-     * >>> NonEmptyHashMap::collectPairs(['a' => 0, 'b' => 1])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * >>> NonEmptyHashMap::collectPairs(['a' => 0, 'b' => 1])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
      * => None
      * ```
      *
@@ -79,5 +79,5 @@ interface NonEmptyMapTerminalOps
      * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
      * @psalm-return Option<NonEmptyMap<TK, TVO>>
      */
-    public function everyMap(callable $callback): Option;
+    public function traverseOption(callable $callback): Option;
 }

@@ -46,11 +46,11 @@ final class MapOpsTest extends TestCase
 
         $this->assertEquals(
             Option::some($hm),
-            $hm->everyMap(fn($x) => $x->value->a >= 1 ? Option::some($x->value) : Option::none())
+            $hm->traverseOption(fn($x) => $x->value->a >= 1 ? Option::some($x->value) : Option::none())
         );
         $this->assertEquals(
             Option::none(),
-            $hm->everyMap(fn($x) => $x->value->a >= 2 ? Option::some($x->value) : Option::none())
+            $hm->traverseOption(fn($x) => $x->value->a >= 2 ? Option::some($x->value) : Option::none())
         );
     }
 

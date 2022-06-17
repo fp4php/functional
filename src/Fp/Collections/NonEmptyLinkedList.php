@@ -8,7 +8,7 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
 use Fp\Operations\AtOperation;
-use Fp\Operations\EveryMapOperation;
+use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\ExistsOfOperation;
@@ -335,9 +335,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
      * @param callable(TV): Option<TVO> $callback
      * @return Option<self<TVO>>
      */
-    public function everyMap(callable $callback): Option
+    public function traverseOption(callable $callback): Option
     {
-        return EveryMapOperation::of($this->getIterator())($callback)
+        return TraverseOptionOperation::of($this->getIterator())($callback)
             ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
     }
 

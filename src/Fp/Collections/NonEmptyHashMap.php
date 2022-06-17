@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\CountOperation;
-use Fp\Operations\EveryMapOperation;
+use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\KeysOperation;
 use Fp\Operations\MapKeysOperation;
@@ -242,9 +242,9 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
      * @psalm-return Option<self<TK, TVO>>
      */
-    public function everyMap(callable $callback): Option
+    public function traverseOption(callable $callback): Option
     {
-        $hs = EveryMapOperation::of($this->getKeyValueIterator())(
+        $hs = TraverseOptionOperation::of($this->getKeyValueIterator())(
             fn($value, $key) => $callback(new Entry($key, $value))
         );
 

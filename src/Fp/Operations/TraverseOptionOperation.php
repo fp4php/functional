@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  * @template TV
  * @extends AbstractOperation<TK, TV>
  */
-class EveryMapOperation extends AbstractOperation
+class TraverseOptionOperation extends AbstractOperation
 {
     /**
      * @template TVO

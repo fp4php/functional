@@ -57,6 +57,7 @@
             "src/Fp/Functions/Collection/Filter.php",
             "src/Fp/Functions/Collection/First.php",
             "src/Fp/Functions/Collection/FlatMap.php",
+            "src/Fp/Functions/Collection/Traverse.php",
             "src/Fp/Functions/Collection/Fold.php",
             "src/Fp/Functions/Collection/ForAll.php",
             "src/Fp/Functions/Collection/GroupBy.php",
