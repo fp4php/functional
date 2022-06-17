@@ -6,27 +6,24 @@ namespace Tests\Static\Interfaces\Map;
 
 use Fp\Collections\Map;
 use Fp\Collections\Seq;
-use Fp\Functional\Option\None;
-use Fp\Functional\Option\Option;
-use Fp\Functional\Option\Some;
 use Tests\Mock\Foo;
 
 final class MapStaticTest
 {
     /**
      * @param Map<Foo, int> $coll
-     * @return None
+     * @return never-return
      */
-    public function testToAssocArrayWithInvalidInput(Map $coll): Option
+    public function testToAssocArrayWithInvalidInput(Map $coll): void
     {
-        return $coll->toAssocArray();
+        $coll->toAssocArray();
     }
 
     /**
      * @param Map<string, int> $coll
-     * @return Some<array<string, int>>
+     * @return array<string, int>
      */
-    public function testToAssocArrayWithValidInput(Map $coll): Option
+    public function testToAssocArrayWithValidInput(Map $coll): array
     {
         return $coll->toAssocArray();
     }
@@ -39,7 +36,6 @@ final class MapStaticTest
     {
         return $coll
             ->toHashMap(fn($pair) => $pair)
-            ->toAssocArray()
-            ->get();
+            ->toAssocArray();
     }
 }

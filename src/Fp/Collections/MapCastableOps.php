@@ -31,9 +31,9 @@ interface MapCastableOps
      * >>> HashMap::collectPairs([[new Foo(), 1], [new Foo(), 2]])->toAssocArray();
      * => None
      * ```
-     * @psalm-return (TK is array-key ? Some<array<TK, TV>> : None)
+     * @psalm-return (TK is array-key ? array<TK, TV> : never)
      */
-    public function toAssocArray(): Option;
+    public function toAssocArray(): array;
 
     /**
      * ```php

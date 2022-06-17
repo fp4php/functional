@@ -20,16 +20,12 @@ final class MapTest extends TestCase
 
         $this->assertEquals(
             [],
-            HashMap::collectPairs([])->toAssocArray()->get(),
+            HashMap::collectPairs([])->toAssocArray(),
         );
 
         $this->assertEquals(
             ['a' => 1, 'b' => 2],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toAssocArray()->get(),
-        );
-
-        $this->assertNull(
-            HashMap::collectPairs([['a', 1], [new Foo(1), 2]])->toAssocArray()->get(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toAssocArray(),
         );
 
         $this->assertEquals(
