@@ -12,10 +12,11 @@ use Generator;
  * => Generator(1, 2)
  * ```
  *
- * @psalm-template TK
- * @psalm-template TV
- * @psalm-param callable(): iterable<TK, TV> $callback
- * @psalm-return Generator<TK, TV>
+ * @template TK
+ * @template TV
+ *
+ * @param callable(): iterable<TK, TV> $callback
+ * @return Generator<TK, TV>
  */
 function asGenerator(callable $callback): Generator
 {

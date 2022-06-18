@@ -21,12 +21,11 @@ use function Fp\Collection\head;
  * ```
  *
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
+ * @template TK of array-key
+ * @template TV
  *
- * @psalm-param iterable<TK, TV> $collection
- *
- * @psalm-return Option<list<TV>>
+ * @param iterable<TK, TV> $collection
+ * @return Option<list<TV>>
  */
 function proveList(iterable $collection): Option
 {
@@ -66,12 +65,11 @@ function proveList(iterable $collection): Option
  * => None
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
+ * @template TK of array-key
+ * @template TV
  *
- * @psalm-param iterable<TK, TV> $collection
- *
- * @psalm-return Option<non-empty-list<TV>>
+ * @param iterable<TK, TV> $collection
+ * @return Option<non-empty-list<TV>>
  */
 function proveNonEmptyList(iterable $collection): Option
 {
@@ -96,15 +94,15 @@ function proveNonEmptyList(iterable $collection): Option
  * => None
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
  *
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
+ * @param iterable<TK, TV> $collection
+ * @param class-string<TVO> $fqcn fully qualified class name
+ * @param bool $invariant if turned on then subclasses are not allowed
  *
- * @psalm-return Option<list<TVO>>
+ * @return Option<list<TVO>>
  */
 function proveListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
 {
@@ -132,15 +130,15 @@ function proveListOf(iterable $collection, string $fqcn, bool $invariant = false
  * => None
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
  *
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
+ * @param iterable<TK, TV> $collection
+ * @param class-string<TVO> $fqcn fully qualified class name
+ * @param bool $invariant if turned on then subclasses are not allowed
  *
- * @psalm-return Option<non-empty-list<TVO>>
+ * @return Option<non-empty-list<TVO>>
  */
 function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
 {
@@ -165,14 +163,14 @@ function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant
  * => None
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
  *
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param 'string'|'non-empty-string'|'int'|'float'|'bool' $type
+ * @param iterable<TK, TV> $collection
+ * @param 'string'|'non-empty-string'|'int'|'float'|'bool' $type
  *
- * @psalm-return (
+ * @return (
  *     $type is 'string'           ? Option<list<string>> : (
  *     $type is 'non-empty-string' ? Option<list<non-empty-string>> : (
  *     $type is 'int'              ? Option<list<int>> : (

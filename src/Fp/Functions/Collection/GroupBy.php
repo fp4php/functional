@@ -15,12 +15,13 @@ namespace Fp\Collection;
  * => [1 => [1], 2 => [2], 3 => [3]]
  * ```
  *
- * @psalm-template TKG of array-key
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): TKG $callback
- * @psalm-return (
+ * @template TKG of array-key
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV, TK): TKG $callback
+ * @return (
  *		$collection is non-empty-array
  *          ? non-empty-array<TKG, non-empty-array<TK, TV>>
  *          : array<TKG, array<TK, TV>>

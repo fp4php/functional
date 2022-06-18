@@ -21,10 +21,12 @@ use function Fp\of;
  * => [[2], [1]]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool ...$predicates
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV, TK): bool ...$predicates
+ *
  * @see PartitionFunctionReturnTypeProvider
  */
 function partition(iterable $collection, callable ...$predicates): array
@@ -58,10 +60,12 @@ function partition(iterable $collection, callable ...$predicates): array
  * => [[Foo(1)], [Bar(2)], []]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string ...$classes
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param class-string ...$classes
+ *
  * @see PartitionOfFunctionReturnTypeProvider
  */
 function partitionOf(iterable $collection, bool $invariant, string ...$classes): array

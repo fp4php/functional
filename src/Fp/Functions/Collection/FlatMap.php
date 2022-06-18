@@ -21,12 +21,13 @@ use function Fp\Cast\asList;
  * => [0, 1, 2, 3, 4, 5]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): iterable<TVO> $callback
- * @psalm-return list<TVO>
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV, TK): iterable<TVO> $callback
+ * @return list<TVO>
  */
 function flatMap(iterable $collection, callable $callback): array
 {

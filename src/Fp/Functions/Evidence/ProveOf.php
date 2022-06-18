@@ -19,11 +19,12 @@ use function Fp\of;
  * => None
  * ```
  *
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-param TV $subject
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-return Option<TVO>
+ * @template TV
+ * @template TVO
+ *
+ * @param TV $subject
+ * @param class-string<TVO> $fqcn fully qualified class name
+ * @return Option<TVO>
  */
 function proveOf(mixed $subject, string $fqcn, bool $invariant = false): Option
 {

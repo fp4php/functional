@@ -15,8 +15,9 @@ use Fp\Streams\Stream;
  * => 123
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
+ * @template TK of array-key
+ * @template TV
+ *
  * @param iterable<TK, TV> $collection
  * @param callable(TV, TK): void $callback
  */

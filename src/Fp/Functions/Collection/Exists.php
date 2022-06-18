@@ -16,11 +16,11 @@ use Fp\Operations\ExistsOperation;
  * => true
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool $predicate
- * @psalm-return bool
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV, TK): bool $predicate
  */
 function exists(iterable $collection, callable $predicate): bool
 {
@@ -36,13 +36,13 @@ function exists(iterable $collection, callable $predicate): bool
  * => true
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
- * @psalm-return bool
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param class-string<TVO> $fqcn fully qualified class name
+ * @param bool $invariant if turned on then subclasses are not allowed
  */
 function existsOf(iterable $collection, string $fqcn, bool $invariant = false): bool
 {

@@ -18,9 +18,7 @@ use Fp\Functional\Option\Option;
  * => None
  * ```
  *
- * @psalm-template T
- * @psalm-param T $subject
- * @psalm-return Option<int>
+ * @return Option<int>
  */
 function asInt(mixed $subject): Option
 {

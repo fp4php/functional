@@ -12,12 +12,13 @@ namespace Fp\Cast;
  * => [1, 2]
  * ```
  *
- * @psalm-template TP of bool
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
+ * @template TP of bool
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param TP $preserveKeys
+ * @return (TP is true ? array<TK, TV> : list<TV>)
  */
 function asArray(iterable $collection, bool $preserveKeys = true): array
 {

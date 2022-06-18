@@ -18,8 +18,8 @@ use function Fp\Evidence\proveNonEmptyString;
  * => Some('c')
  * ```
  *
- * @psalm-param positive-int|0 $capturingGroup
- * @psalm-return Option<non-empty-string>
+ * @param positive-int|0 $capturingGroup
+ * @return Option<non-empty-string>
  */
 function regExpMatch(string $expr, string $text, int $capturingGroup = 0): Option
 {

@@ -16,11 +16,12 @@ use Fp\Operations\LastOperation;
  * => 3
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param null|callable(TV, TK): bool $predicate
- * @psalm-return Option<TV>
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param null|callable(TV, TK): bool $predicate
+ * @return Option<TV>
  */
 function last(iterable $collection, ?callable $predicate = null): Option
 {

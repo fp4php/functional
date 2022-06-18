@@ -48,11 +48,9 @@ function groupMapReduce(iterable $collection, callable $group, callable $map, ca
     foreach ($collection as $item) {
         $key = $group($item);
 
-        if (array_key_exists($key, $grouped)) {
-            $grouped[$key] = $reduce($grouped[$key], $map($item));
-        } else {
-            $grouped[$key] = $map($item);
-        }
+        $grouped[$key] = array_key_exists($key, $grouped)
+            ? $reduce($grouped[$key], $map($item))
+            : $map($item);
     }
 
     return $grouped;

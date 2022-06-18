@@ -16,12 +16,13 @@ use function Fp\Cast\asArray;
  * => [1 => 1, 2 => 2]
  * ```
  *
- * @psalm-template TKI of array-key
- * @psalm-template TKO of array-key
- * @psalm-template TV
- * @psalm-param iterable<TKI, TV> $collection
- * @psalm-param callable(TV, TKI): TKO $callback
- * @psalm-return array<TKO, TV>
+ * @template TKI of array-key
+ * @template TKO of array-key
+ * @template TV
+ *
+ * @param iterable<TKI, TV> $collection
+ * @param callable(TV, TKI): TKO $callback
+ * @return array<TKO, TV>
  */
 function reindex(iterable $collection, callable $callback): array
 {

@@ -20,12 +20,13 @@ use function Fp\Collection\head;
  * => None
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? Option<non-empty-array<TK, TV>> : Option<non-empty-array<int, TV>>)
+ * @template TK of array-key
+ * @template TV
+ * @template TP of bool
+ *
+ * @param iterable<TK, TV> $collection
+ * @param TP $preserveKeys
+ * @return (TP is true ? Option<non-empty-array<TK, TV>> : Option<non-empty-array<int, TV>>)
  */
 function asNonEmptyArray(iterable $collection, bool $preserveKeys = true): Option
 {

@@ -21,6 +21,7 @@ use Fp\Operations\FoldOperation;
  * @template TK of array-key
  * @template TV
  * @template TA
+ *
  * @param TA $init initial accumulator value
  * @param iterable<TK, TV> $collection
  * @param callable(TA, TV): TA $callback (accumulator, current element): new accumulator

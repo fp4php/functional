@@ -20,11 +20,12 @@ use Fp\Operations\AtOperation;
  * => 2
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param TK $key
- * @psalm-return Option<TV>
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param TK $key
+ * @return Option<TV>
  */
 function at(iterable $collection, int|string $key): Option
 {

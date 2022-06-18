@@ -20,14 +20,14 @@ use function Fp\Cast\asArray;
  * ```
  *
  *
- * @psalm-template TK of array-key
- * @psalm-template TVI
- * @psalm-template TVO
+ * @template TK of array-key
+ * @template TVI
+ * @template TVO
  *
- * @psalm-param iterable<TK, TVI> $collection
- * @psalm-param callable(TVI, TK): TVO $callback
+ * @param iterable<TK, TVI> $collection
+ * @param callable(TVI, TK): TVO $callback
  *
- * @psalm-return (
+ * @return (
  *    $collection is non-empty-list  ? non-empty-list<TVO>      : (
  *    $collection is list            ? list<TVO>                : (
  *    $collection is non-empty-array ? non-empty-array<TK, TVO> : (

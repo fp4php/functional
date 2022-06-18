@@ -9,12 +9,13 @@ use Fp\Operations\TraverseOptionOperation;
 use function Fp\Cast\asArray;
 
 /**
- * @psalm-template TK of array-key
- * @psalm-template TVI
- * @psalm-template TVO
- * @psalm-param iterable<TK, TVI> $collection
- * @psalm-param callable(TVI, TK): Option<TVO> $callback
- * @psalm-return (
+ * @template TK of array-key
+ * @template TVI
+ * @template TVO
+ *
+ * @param iterable<TK, TVI> $collection
+ * @param callable(TVI, TK): Option<TVO> $callback
+ * @return (
  *    $collection is non-empty-list  ? Option<non-empty-list<TVO>>      : (
  *    $collection is list            ? Option<list<TVO>>                : (
  *    $collection is non-empty-array ? Option<non-empty-array<TK, TVO>> : (

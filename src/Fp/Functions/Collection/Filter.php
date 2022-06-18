@@ -22,13 +22,14 @@ use function Fp\Cast\asList;
  * => [2]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool $predicate
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
+ * @template TK of array-key
+ * @template TV
+ * @template TP of bool
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV, TK): bool $predicate
+ * @param TP $preserveKeys
+ * @return (TP is true ? array<TK, TV> : list<TV>)
  */
 function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
@@ -47,12 +48,13 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  * => [1, 2]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV|null> $collection
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
+ * @template TK of array-key
+ * @template TV
+ * @template TP of bool
+ *
+ * @param iterable<TK, TV|null> $collection
+ * @param TP $preserveKeys
+ * @return (TP is true ? array<TK, TV> : list<TV>)
  */
 function filterNotNull(iterable $collection, bool $preserveKeys = false): array
 {
@@ -71,15 +73,16 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  * => [Foo(1)]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param TP $preserveKeys
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
- * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ * @template TP of bool
+ *
+ * @param iterable<TK, TV> $collection
+ * @param class-string<TVO> $fqcn fully qualified class name
+ * @param TP $preserveKeys
+ * @param bool $invariant if turned on then subclasses are not allowed
+ * @return (TP is true ? array<TK, TVO> : list<TVO>)
  */
 function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false, bool $invariant = false): array
 {
@@ -101,14 +104,15 @@ function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false
  * => [2]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): Option<TVO> $predicate
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ * @template TP of bool
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV, TK): Option<TVO> $predicate
+ * @param TP $preserveKeys
+ * @return (TP is true ? array<TK, TVO> : list<TVO>)
  */
 function filterMap(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {

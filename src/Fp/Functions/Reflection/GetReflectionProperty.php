@@ -17,8 +17,9 @@ use Throwable;
  * ```
  *
  * @template T of object
- * @psalm-param T|class-string<T> $class
- * @psalm-return Either<Throwable, ReflectionProperty>
+ *
+ * @param T|class-string<T> $class
+ * @return Either<Throwable, ReflectionProperty>
  */
 function getReflectionProperty(object|string $class, string $property): Either
 {

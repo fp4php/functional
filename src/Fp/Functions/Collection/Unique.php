@@ -22,11 +22,12 @@ use function Fp\Cast\asList;
  * => [User(1), User(2)]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV): array-key $callback returns element unique id
- * @psalm-return list<TV>
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): array-key $callback returns element unique id
+ * @return list<TV>
  */
 function unique(iterable $collection, callable $callback): array
 {

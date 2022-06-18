@@ -12,10 +12,11 @@ namespace Fp\Cast;
  * => [1, 2, 3, 4]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> ...$collections
- * @psalm-return (
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> ...$collections
+ * @return (
  *     $collections is non-empty-array
  *         ? non-empty-list<TV>
  *         : list<TV>

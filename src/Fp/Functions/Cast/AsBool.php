@@ -21,9 +21,7 @@ use Fp\Functional\Option\Option;
  * => None
  * ```
  *
- * @psalm-template T
- * @psalm-param T $subject
- * @psalm-return Option<bool>
+ * @return Option<bool>
  */
 function asBool(mixed $subject): Option
 {

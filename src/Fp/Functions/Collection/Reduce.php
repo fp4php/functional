@@ -22,6 +22,7 @@ use Fp\Operations\ReduceOperation;
  * @template TK of array-key
  * @template TV
  * @template TA
+ *
  * @param iterable<TK, TV> $collection
  * @param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
  * @return Option<TV|TA>

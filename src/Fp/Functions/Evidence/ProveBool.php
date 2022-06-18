@@ -17,9 +17,7 @@ use Fp\Functional\Option\Option;
  * => None
  * ```
  *
- * @psalm-template T
- * @psalm-param T $subject
- * @psalm-return Option<bool>
+ * @return Option<bool>
  */
 function proveBool(mixed $subject): Option
 {
@@ -38,9 +36,7 @@ function proveBool(mixed $subject): Option
  * => None
  * ```
  *
- * @psalm-template T
- * @psalm-param T $subject
- * @psalm-return Option<true>
+ * @return Option<true>
  */
 function proveTrue(mixed $subject): Option
 {
@@ -59,9 +55,7 @@ function proveTrue(mixed $subject): Option
  * => None
  * ```
  *
- * @psalm-template T
- * @psalm-param T $subject
- * @psalm-return Option<false>
+ * @return Option<false>
  */
 function proveFalse(mixed $subject): Option
 {

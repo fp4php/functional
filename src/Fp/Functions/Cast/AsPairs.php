@@ -12,8 +12,9 @@ use Generator;
  * => [['a', 1], ['b', 2]]
  * ```
  *
- * @psalm-template TK
- * @psalm-template TV
+ * @template TK
+ * @template TV
+ *
  * @psalm-param iterable<TK, TV> $collection
  * @psalm-return list<array{TK, TV}>
  */
@@ -32,10 +33,11 @@ function asPairs(iterable $collection): array
  * => [['a', 1], ['b', 2]]
  * ```
  *
- * @psalm-template TK
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-return Generator<int, array{TK, TV}>
+ * @template TK
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @return Generator<int, array{TK, TV}>
  */
 function asPairsGenerator(iterable $collection): Generator
 {

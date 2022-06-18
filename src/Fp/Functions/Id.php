@@ -14,9 +14,10 @@ const id = '\Fp\id';
  * => 1
  * ```
  *
- * @psalm-template T
- * @psalm-param T $value
- * @psalm-return T
+ * @template T
+ *
+ * @param T $value
+ * @return T
  */
 function id(mixed $value): mixed
 {
