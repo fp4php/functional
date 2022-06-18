@@ -8,10 +8,11 @@ use Fp\Functional\Option\Option;
 
 /**
  * @internal
+ *
  * @template TK
  * @template TV
+ *
  * @psalm-type hash = string
- * @psalm-suppress ImpureMethodCall, ImpurePropertyFetch
  */
 final class HashTable
 {
@@ -23,6 +24,7 @@ final class HashTable
     /**
      * @template TKey
      * @template TValue
+     *
      * @param HashTable<TKey, TValue> $hashTable
      * @param TKey $key
      * @return Option<TValue>
@@ -44,10 +46,12 @@ final class HashTable
     /**
      * @template TKey
      * @template TValue
+     *
      * @param TKey $key
      * @param TValue $value
      * @param HashTable<TKey, TValue> $hashTable
      * @return HashTable<TKey, TValue>
+     *
      * @psalm-suppress PropertyTypeCoercion
      */
     public static function update(HashTable $hashTable, mixed $key, mixed $value): HashTable
