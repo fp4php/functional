@@ -27,14 +27,8 @@ final class GroupMapReduceTest extends TestCase
                     ['id' => 20, 'sum' => 15],
                     ['id' => 30, 'sum' => 20],
                 ],
-                /** @param array{id: int, sum: int} $a */
                 fn(array $a) => $a['id'],
-                /** @param array{id: int, sum: int} $a */
                 fn(array $a) => [$a['sum']],
-                /**
-                 * @param list<int> $old
-                 * @param list<int> $new
-                 */
                 fn(array $old, array $new) => array_merge($old, $new),
             )
         );
