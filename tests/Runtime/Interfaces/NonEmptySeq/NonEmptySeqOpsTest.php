@@ -334,6 +334,24 @@ final class NonEmptySeqOpsTest extends TestCase
         );
     }
 
+    public function provideTestMapWithKeyData(): Generator
+    {
+        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
+        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
+    }
+
+    /**
+     * @dataProvider provideTestMapWithKeyData
+     * @param NonEmptySeq<int> $seq
+     */
+    public function testMapWithKey(NonEmptySeq $seq): void
+    {
+        $this->assertEquals(
+            ['0-1', '1-2', '2-3'],
+            $seq->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray()
+        );
+    }
+
     public function provideTestReduceData(): Generator
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
@@ -432,16 +450,16 @@ final class NonEmptySeqOpsTest extends TestCase
     public function testGroupBy(NonEmptySeq $seq, Foo $f1, Foo $f2, Foo $f3, Foo $f4): void
     {
         $res1 = $seq->groupBy(fn(Foo $foo) => $foo)
-            ->map(fn($entry) => $entry->value->toArray())
+            ->map(fn($entry) => $entry->toArray())
             ->toArray();
 
         $res2 = $seq->groupBy(fn(Foo $foo) => $foo->a)
-            ->map(fn($entry) => $entry->value->toArray())
+            ->map(fn($entry) => $entry->toArray())
             ->toArray();
 
         $res3 = $seq->map(fn(Foo $foo) => $foo->a)
             ->groupBy(fn(int $a) => $a)
-            ->map(fn($entry) => $entry->value->toArray())
+            ->map(fn($entry) => $entry->toArray())
             ->toArray();
 
         $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);

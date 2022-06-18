@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Operations\MapValuesOperation;
+use Fp\Operations\MapOperation;
 
 use function Fp\Cast\asArray;
 
@@ -25,16 +25,47 @@ use function Fp\Cast\asArray;
  * @template TVO
  *
  * @param iterable<TK, TVI> $collection
- * @param callable(TVI, TK): TVO $callback
+ * @param callable(TVI): TVO $callback
  *
  * @return (
- *    $collection is non-empty-list  ? non-empty-list<TVO>      : (
- *    $collection is list            ? list<TVO>                : (
- *    $collection is non-empty-array ? non-empty-array<TK, TVO> : (
+ *    $collection is non-empty-list<TVI>      ? non-empty-list<TVO>      :
+ *    $collection is list<TVI>                ? list<TVO>                :
+ *    $collection is non-empty-array<TK, TVI> ? non-empty-array<TK, TVO> :
  *    array<TK, TVO>
- * ))))
+ * )
  */
 function map(iterable $collection, callable $callback): array
 {
-    return asArray(MapValuesOperation::of($collection)($callback));
+    return asArray(MapOperation::withoutKey($collection, $callback));
+}
+
+/**
+ * Produces a new array of elements by mapping each element in collection
+ * through a transformation function (callback).
+ *
+ * Keys are preserved
+ *
+ * ```php
+ * >>> mapWithKey(['one' => 1, 'two' => 2, 'three' => 3], fn(string $k, int $v) => "{$k}-{$v}");
+ * => ['one-1', 'two-2', 'three-3']
+ * ```
+ *
+ *
+ * @template TK of array-key
+ * @template TVI
+ * @template TVO
+ *
+ * @param iterable<TK, TVI> $collection
+ * @param callable(TK, TVI): TVO $callback
+ *
+ * @return (
+ *    $collection is non-empty-list<TVI>      ? non-empty-list<TVO>      :
+ *    $collection is list<TVI>                ? list<TVO>                :
+ *    $collection is non-empty-array<TK, TVI> ? non-empty-array<TK, TVO> :
+ *    array<TK, TVO>
+ * )
+ */
+function mapWithKey(iterable $collection, callable $callback): array
+{
+    return asArray(MapOperation::of($collection)($callback));
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
+use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\FilterMapOperation;
@@ -13,7 +14,6 @@ use Fp\Operations\FlatMapOperation;
 use Fp\Operations\FoldOperation;
 use Fp\Operations\KeysOperation;
 use Fp\Operations\MapKeysOperation;
-use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 use Fp\Operations\ValuesOperation;
 use Generator;
@@ -286,28 +286,28 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @psalm-param callable(Entry<TK, TV>): TVO $callback
-     * @psalm-return self<TK, TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return self<TK, TVO>
      */
     public function map(callable $callback): self
     {
-        return $this->mapValues($callback);
+        return self::collect(MapOperation::withoutKey($this->getKeyValueIterator(), $callback));
     }
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @psalm-param callable(Entry<TK, TV>): TVO $callback
-     * @psalm-return self<TK, TVO>
+     *
+     * @param callable(TK, TV): TVO $callback
+     * @return self<TK, TVO>
      */
-    public function mapValues(callable $callback): self
+    public function mapWithKey(callable $callback): self
     {
-        return self::collect(
-            MapValuesOperation::of($this->getKeyValueIterator())(
-                fn($value, $key) => $callback(new Entry($key, $value))
-            )
-        );
+        return self::collect(MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

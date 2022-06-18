@@ -75,13 +75,13 @@ final class NonEmptyMapOpsTest extends TestCase
         $hm = NonEmptyHashMap::collectPairsNonEmpty([['2', 22], ['3', 33]]);
 
         $this->assertEquals(
-            [['2', '2'], ['3', '3']],
-            $hm->map(fn($e) => $e->key)->toArray()
+            [['2', 23], ['3', 34]],
+            $hm->map(fn($e) => $e + 1)->toArray()
         );
 
         $this->assertEquals(
-            [['2', '2'], ['3', '3']],
-            $hm->mapValues(fn($e) => $e->key)->toArray()
+            [['2', '2-22'], ['3', '3-33']],
+            $hm->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray()
         );
 
         $this->assertEquals(

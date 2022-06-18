@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
+use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -20,7 +21,6 @@ use Fp\Operations\FlatMapOperation;
 use Fp\Operations\FoldOperation;
 use Fp\Operations\HeadOperation;
 use Fp\Operations\LastOperation;
-use Fp\Operations\MapValuesOperation;
 use Fp\Functional\Option\Option;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\TailOperation;
@@ -363,13 +363,28 @@ final class HashSet implements Set
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return self<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return self<TVO>
      */
     public function map(callable $callback): self
     {
-        return self::collect(MapValuesOperation::of($this)($callback));
+        return self::collect(MapOperation::withoutKey($this->getIterator(), $callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TVO
+     *
+     * @param callable(int, TV): TVO $callback
+     * @return self<TVO>
+     */
+    public function mapWithKey(callable $callback): self
+    {
+        return self::collect(MapOperation::of($this->getIterator())($callback));
     }
 
     /**

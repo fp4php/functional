@@ -11,6 +11,7 @@ use Fp\Operations\AtOperation;
 use Fp\Operations\CountOperation;
 use Fp\Operations\DropOperation;
 use Fp\Operations\DropWhileOperation;
+use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -28,7 +29,6 @@ use Fp\Operations\GroupByOperation;
 use Fp\Operations\IntersperseOperation;
 use Fp\Operations\LastOfOperation;
 use Fp\Operations\LastOperation;
-use Fp\Operations\MapValuesOperation;
 use Fp\Operations\MkStringOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\ReduceOperation;
@@ -413,13 +413,28 @@ abstract class LinkedList implements Seq
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return self<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return self<TVO>
      */
     public function map(callable $callback): self
     {
-        return self::collect(MapValuesOperation::of($this->getIterator())($callback));
+        return self::collect(MapOperation::withoutKey($this->getIterator(), $callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TVO
+     *
+     * @param callable(int, TV): TVO $callback
+     * @return self<TVO>
+     */
+    public function mapWithKey(callable $callback): self
+    {
+        return self::collect(MapOperation::of($this->getIterator())($callback));
     }
 
     /**

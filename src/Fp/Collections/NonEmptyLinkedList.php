@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
 use Fp\Operations\AtOperation;
+use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -18,7 +19,6 @@ use Fp\Operations\FirstOperation;
 use Fp\Operations\GroupByOperation;
 use Fp\Operations\LastOfOperation;
 use Fp\Operations\LastOperation;
-use Fp\Operations\MapValuesOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
@@ -206,13 +206,29 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
+     * @inheritDoc
+     *
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return self<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return self<TVO>
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(MapValuesOperation::of($this->getIterator())($callback));
+        return self::collectUnsafe(MapOperation::withoutKey($this->getIterator(), $callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TVO
+     *
+     * @param callable(int, TV): TVO $callback
+     * @return self<TVO>
+     */
+    public function mapWithKey(callable $callback): self
+    {
+        return self::collectUnsafe(MapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -458,10 +474,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
          */
         $nonEmptyGrouped = new NonEmptyHashMap($grouped);
 
-        return $nonEmptyGrouped->mapValues(fn(Entry $entry) => new NonEmptyLinkedList(
-            $entry->value->head,
-            $entry->value->tail
-        ));
+        return $nonEmptyGrouped
+            ->map(fn($elem) => new NonEmptyLinkedList($elem->head, $elem->tail));
     }
 
     /**

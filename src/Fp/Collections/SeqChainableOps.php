@@ -153,10 +153,27 @@ interface SeqChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return Seq<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return Seq<TVO>
      */
     public function map(callable $callback): Seq;
+
+    /**
+     * Produces a new collection of elements by mapping each element in collection
+     * through a transformation function (callback)
+     *
+     * ```php
+     * >>> LinkedList::collect(['one', 'two'])->map(fn($index, $elem) => "{$index}-{$elem}")->toArray();
+     * => ['1-one', '2-two']
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(int, TV): TVO $callback
+     * @return Seq<TVO>
+     */
+    public function mapWithKey(callable $callback): Seq;
 
     /**
      * Copy collection in reversed order

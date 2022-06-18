@@ -9,13 +9,14 @@ use Generator;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\map;
+use function Fp\Collection\mapWithKey;
 
 final class MapTest extends TestCase
 {
     /**
      * @param iterable<array-key, int> $source
      *
-     * @dataProvider provideCases
+     * @dataProvider provideMapCases
      */
     public function testMap(iterable $source, array $expected): void
     {
@@ -29,11 +30,12 @@ final class MapTest extends TestCase
     }
 
     /**
-     * @psalm-type ShapeToYield = array{source: iterable<array-key, int>, shouldBe: array<array-key, string>}
-     *
-     * @return Generator<string, ShapeToYield, mixed, void>
+     * @return Generator<string, array{
+     *     source: iterable<array-key, int>,
+     *     shouldBe: array<array-key, string>
+     * }>
      */
-    public function provideCases(): Generator
+    public function provideMapCases(): Generator
     {
         yield 'array' => [
             'source' => ['a' => 1, 'b' => 2, 'c' => 3],
@@ -63,6 +65,61 @@ final class MapTest extends TestCase
         yield 'Generator from list' => [
             'source' => (fn() => yield from [1, 2, 3])(),
             'shouldBe' => ['2', '3', '4']
+        ];
+    }
+
+    /**
+     * @param iterable<array-key, int> $source
+     *
+     * @dataProvider provideMapWithKeyCases
+     */
+    public function testMapWithKeys(iterable $source, array $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            mapWithKey(
+                $source,
+                fn(string|int $key, int $v) => "{$key}-{$v}"
+            )
+        );
+    }
+
+    /**
+     * @return Generator<string, array{
+     *     source: iterable<array-key, int>,
+     *     shouldBe: array<array-key, string>
+     * }>
+     */
+    public function provideMapWithKeyCases(): Generator
+    {
+        yield 'array' => [
+            'source' => ['a' => 1, 'b' => 2, 'c' => 3],
+            'shouldBe' => ['a' => 'a-1', 'b' => 'b-2', 'c' => 'c-3'],
+        ];
+
+        yield 'list' => [
+            'source' => [1, 2, 3],
+            'shouldBe' => ['0-1', '1-2', '2-3']
+        ];
+
+        yield 'ArrayIterator' => [
+            'source' => new  ArrayIterator(['a' => 1, 'b' => 2, 'c' => 3]),
+            'shouldBe' => ['a' => 'a-1', 'b' => 'b-2', 'c' => 'c-3']
+        ];
+
+        yield 'ArrayIterator from list' => [
+            'source' => new  ArrayIterator([1, 2, 3]),
+            'shouldBe' => ['0-1', '1-2', '2-3']
+        ];
+
+        yield 'Generator' => [
+            'source' => (fn() => yield from ['a' => 1, 'b' => 2, 'c' => 3])(),
+            'shouldBe' => ['a' => 'a-1', 'b' => 'b-2', 'c' => 'c-3']
+        ];
+
+        yield 'Generator from list' => [
+            'source' => (fn() => yield from [1, 2, 3])(),
+            'shouldBe' => ['0-1', '1-2', '2-3']
         ];
     }
 }

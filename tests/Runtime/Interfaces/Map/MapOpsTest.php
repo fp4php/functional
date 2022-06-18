@@ -105,13 +105,13 @@ final class MapOpsTest extends TestCase
         $hm = HashMap::collectPairs([['2', 22], ['3', 33]]);
 
         $this->assertEquals(
-            [['2', '2'], ['3', '3']],
-            $hm->map(fn($e) => $e->key)->toArray()
+            [['2', 'val-22'], ['3', 'val-33']],
+            $hm->map(fn($e) => "val-{$e}")->toArray()
         );
 
         $this->assertEquals(
-            [['2', '2'], ['3', '3']],
-            $hm->mapValues(fn($e) => $e->key)->toArray()
+            [['2', 'key-2-val-22'], ['3', 'key-3-val-33']],
+            $hm->mapWithKey(fn($key, $elem) => "key-{$key}-val-{$elem}")->toArray()
         );
 
         $this->assertEquals(

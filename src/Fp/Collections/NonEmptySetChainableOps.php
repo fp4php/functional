@@ -109,10 +109,27 @@ interface NonEmptySetChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return NonEmptySet<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return NonEmptySet<TVO>
      */
     public function map(callable $callback): NonEmptySet;
+
+    /**
+     * Produces a new collection of elements by mapping each element in collection
+     * through a transformation function (callback)
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray();
+     * => ['0-1', '1-2']
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(int, TV): TVO $callback
+     * @return NonEmptySet<TVO>
+     */
+    public function mapWithKey(callable $callback): NonEmptySet;
 
     /**
      * ```php

@@ -137,6 +137,11 @@ final class NonEmptySetOpsTest extends TestCase
             ['2', '3', '4'],
             NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
         );
+
+        $this->assertEquals(
+            ['0-1', '1-2', '2-3'],
+            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->mapWithKey(fn($k, $e) => "{$k}-{$e}")->toArray()
+        );
     }
 
     public function testFlatMap(): void

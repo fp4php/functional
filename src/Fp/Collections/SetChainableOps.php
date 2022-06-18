@@ -126,6 +126,22 @@ interface SetChainableOps
     public function map(callable $callback): Set;
 
     /**
+     * Produces a new collection of elements by mapping each element in collection
+     * through a transformation function (callback)
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2, 2])->mapWithKey(fn($index, $elem) => "{$index}-{$key}")->toArray();
+     * => ['0-1', '1-2']
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(int, TV): TVO $callback
+     * @return Set<TVO>
+     */
+    public function mapWithKey(callable $callback): Set;
+
+    /**
      * Call a function for every collection element
      *
      * ```php

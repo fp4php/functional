@@ -6,11 +6,11 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\CountOperation;
+use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\KeysOperation;
 use Fp\Operations\MapKeysOperation;
-use Fp\Operations\MapValuesOperation;
 use Fp\Operations\ValuesOperation;
 use Generator;
 
@@ -317,28 +317,28 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @psalm-param callable(Entry<TK, TV>): TVO $callback
-     * @psalm-return self<TK, TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return self<TK, TVO>
      */
     public function map(callable $callback): self
     {
-        return $this->mapValues($callback);
+        return self::collectUnsafe(MapOperation::withoutKey($this->getKeyValueIterator(), $callback));
     }
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @psalm-param callable(Entry<TK, TV>): TVO $callback
-     * @psalm-return self<TK, TVO>
+     *
+     * @param callable(TK, TV): TVO $callback
+     * @return self<TK, TVO>
      */
-    public function mapValues(callable $callback): self
+    public function mapWithKey(callable $callback): self
     {
-        return self::collectUnsafe(
-            MapValuesOperation::of($this->getKeyValueIterator())(
-                fn($value, $key) => $callback(new Entry($key, $value))
-            )
-        );
+        return self::collectUnsafe(MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

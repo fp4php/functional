@@ -334,6 +334,24 @@ final class SeqOpsTest extends TestCase
         );
     }
 
+    public function provideTestMapWithKeyData(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect(['one', 'two', 'three'])];
+        yield LinkedList::class => [LinkedList::collect(['one', 'two', 'three'])];
+    }
+
+    /**
+     * @dataProvider provideTestMapWithKeyData
+     * @param Seq<string> $seq
+     */
+    public function testMapWithKey(Seq $seq): void
+    {
+        $this->assertEquals(
+            ['0-one', '1-two', '2-three'],
+            $seq->mapWithKey(fn($index, $elem) => "{$index}-{$elem}")->toArray()
+        );
+    }
+
     public function provideTestReduceData(): Generator
     {
         yield ArrayList::class => [ArrayList::collect(['1', '2', '3'])];
@@ -450,16 +468,16 @@ final class SeqOpsTest extends TestCase
     public function testGroupBy(Seq $seq, Foo $f1, Foo $f2, Foo $f3, Foo $f4): void
     {
         $res1 = $seq->groupBy(fn(Foo $foo) => $foo)
-            ->map(fn($entry) => $entry->value->toArray())
+            ->map(fn($entry) => $entry->toArray())
             ->toArray();
 
         $res2 = $seq->groupBy(fn(Foo $foo) => $foo->a)
-            ->map(fn($entry) => $entry->value->toArray())
+            ->map(fn($entry) => $entry->toArray())
             ->toArray();
 
         $res3 = $seq->map(fn(Foo $foo) => $foo->a)
             ->groupBy(fn(int $a) => $a)
-            ->map(fn($entry) => $entry->value->toArray())
+            ->map(fn($entry) => $entry->toArray())
             ->toArray();
 
         $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);
