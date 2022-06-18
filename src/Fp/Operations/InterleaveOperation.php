@@ -9,14 +9,15 @@ use Generator;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class InterleaveOperation extends AbstractOperation
 {
     /**
      * @template TVI
-     * @param iterable<TVI> $that
+     *
+     * @param iterable<mixed, TVI> $that
      * @return Generator<int, TV|TVI>
      */
     public function __invoke(iterable $that): Generator

@@ -11,14 +11,15 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class AppendedOperation extends AbstractOperation
 {
     /**
      * @template TVI
-     * @psalm-param TVI $elem
+     *
+     * @param TVI $elem
      * @return Generator<TV|TVI>
      */
     public function __invoke(mixed $elem): Generator

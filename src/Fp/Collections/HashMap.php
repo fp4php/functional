@@ -362,7 +362,6 @@ final class HashMap implements Map, StaticStorage
      * @inheritDoc
      * @param TK $key
      * @return Option<TV>
-     * @psalm-suppress ImpureMethodCall
      */
     public function get(mixed $key): Option
     {

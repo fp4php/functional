@@ -9,15 +9,16 @@ use Fp\Functional\Option\Option;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class ReduceOperation extends AbstractOperation
 {
     /**
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $f
-     * @psalm-return Option<TV|TA>
+     *
+     * @param callable(TV|TA, TV): (TV|TA) $f
+     * @return Option<TV|TA>
      */
     public function __invoke(callable $f): Option
     {

@@ -12,9 +12,6 @@ class Unit
     {
     }
 
-    /**
-     * @psalm-suppress ImpureMethodCall, ImpureStaticProperty
-     */
     public static function getInstance(): self
     {
         return is_null(self::$instance)

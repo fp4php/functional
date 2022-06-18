@@ -40,10 +40,6 @@ final class LinkedListBuffer
         if (0 === $this->length) {
             $this->first = $appended;
         } elseif (isset($this->last)) {
-            /**
-             * @dies-from-psalm-suppress
-             * @psalm-suppress InaccessibleProperty
-             */
             $this->last->tail = $appended;
         }
 

@@ -7,13 +7,13 @@ namespace Fp\Operations;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class ExistsOperation extends AbstractOperation
 {
     /**
-     * @psalm-param callable(TV, TK): bool $f
+     * @param callable(TV, TK): bool $f
      */
     public function __invoke(callable $f): bool
     {

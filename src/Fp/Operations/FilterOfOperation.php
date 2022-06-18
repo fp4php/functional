@@ -12,15 +12,16 @@ use function Fp\Evidence\proveOf;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class FilterOfOperation extends AbstractOperation
 {
     /**
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-return Generator<TK, TVO>
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @return Generator<TK, TVO>
      */
     public function __invoke(string $fqcn, bool $invariant = false): Generator
     {

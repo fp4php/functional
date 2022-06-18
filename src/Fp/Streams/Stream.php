@@ -156,7 +156,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
             $prevTime = time();
 
             while (true) {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 sleep($seconds);
 
                 $curTime = time();
@@ -643,7 +642,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toAssocArray(callable $callback): array
     {
-        /** @psalm-suppress ImpureFunctionCall */
         return $this->leaf(asArray(asGenerator(function () use ($callback) {
             foreach ($this->emitter as $val) {
                 $pair = $callback($val);
@@ -713,7 +711,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
         $file = new SplFileObject($path, $append ? 'a' : 'w');
 
         foreach ($this as $elem) {
-            /** @psalm-suppress ImpureMethodCall */
             $file->fwrite((string) $elem);
         }
 

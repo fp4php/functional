@@ -7,6 +7,7 @@ namespace Fp\Operations;
 /**
  * @template TK
  * @template TV
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class MkStringOperation extends AbstractOperation

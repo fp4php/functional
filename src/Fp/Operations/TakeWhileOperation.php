@@ -11,14 +11,15 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class TakeWhileOperation extends AbstractOperation
 {
     /**
      * @template TKO
-     * @psalm-param callable(TV, TK): bool $f
+     *
+     * @param callable(TV, TK): bool $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator

@@ -11,13 +11,14 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class GroupAdjacentByOperationOperation extends AbstractOperation
 {
     /**
      * @template D
+     *
      * @param callable(TV): D $discriminator
      * @return Generator<int, array{D, non-empty-list<TV>}>
      */

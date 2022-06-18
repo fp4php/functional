@@ -11,14 +11,15 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class FlatMapOperation extends AbstractOperation
 {
     /**
-     * @psalm-template TVO
-     * @psalm-param callable(TV, TK): iterable<TVO> $f
+     * @template TVO
+     *
+     * @param callable(TV, TK): iterable<mixed, TVO> $f
      * @return Generator<int, TVO>
      */
     public function __invoke(callable $f): Generator

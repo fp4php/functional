@@ -11,16 +11,17 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class ChunksOperation extends AbstractOperation
 {
     /**
-     * @psalm-template TPreserve of bool
-     * @psalm-param TPreserve $preserveKeys
-     * @psalm-param positive-int $size
-     * @psalm-return (TPreserve is true
+     * @template TPreserve of bool
+     *
+     * @param TPreserve $preserveKeys
+     * @param positive-int $size
+     * @return (TPreserve is true
      *     ? Generator<int, non-empty-array<TK, TV>>
      *     : Generator<int, non-empty-list<TV>>
      * )

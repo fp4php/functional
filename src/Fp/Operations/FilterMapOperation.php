@@ -12,14 +12,15 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class FilterMapOperation extends AbstractOperation
 {
     /**
      * @template TVO
-     * @psalm-param callable(TV, TK): Option<TVO> $f
+     *
+     * @param callable(TV, TK): Option<TVO> $f
      * @return Generator<TK, TVO>
      */
     public function __invoke(callable $f): Generator

@@ -12,6 +12,7 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class TraverseOptionOperation extends AbstractOperation

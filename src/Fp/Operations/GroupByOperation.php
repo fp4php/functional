@@ -13,21 +13,20 @@ use Fp\Collections\Nil;
 /**
  * @template TK
  * @template TV
- * @psalm-suppress InvalidTemplateParam
+ *
  * @extends AbstractOperation<TK, TV>
  */
 class GroupByOperation extends AbstractOperation
 {
     /**
      * @template TKO
-     * @psalm-param callable(TV, TK): TKO $f
-     * @psalm-return HashMap<TKO, LinkedList<TV>>
+     *
+     * @param callable(TV, TK): TKO $f
+     * @return HashMap<TKO, LinkedList<TV>>
      */
     public function __invoke(callable $f): Map
     {
-        /**
-         * @psalm-var HashTable<TKO, LinkedList<TV>> $hashTable
-         */
+        /** @psalm-var HashTable<TKO, LinkedList<TV>> $hashTable */
         $hashTable = new HashTable();
 
         foreach ($this->gen as $key => $value) {
