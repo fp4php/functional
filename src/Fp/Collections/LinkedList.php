@@ -11,6 +11,7 @@ use Fp\Operations\AtOperation;
 use Fp\Operations\CountOperation;
 use Fp\Operations\DropOperation;
 use Fp\Operations\DropWhileOperation;
+use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
@@ -421,7 +422,7 @@ abstract class LinkedList implements Seq
      */
     public function map(callable $callback): self
     {
-        return self::collect(MapOperation::withoutKey($this->getIterator(), $callback));
+        return self::collect(MapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -434,7 +435,7 @@ abstract class LinkedList implements Seq
      */
     public function mapWithKey(callable $callback): self
     {
-        return self::collect(MapOperation::of($this->getIterator())($callback));
+        return self::collect(MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**

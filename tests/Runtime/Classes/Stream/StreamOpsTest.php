@@ -121,6 +121,11 @@ final class StreamOpsTest extends TestCase
             ['2', '3', '4'],
             Stream::emits([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
         );
+
+        $this->assertEquals(
+            ['0-1', '1-2', '2-3'],
+            Stream::emits([1, 2, 3])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray()
+        );
     }
 
     public function testTap(): void

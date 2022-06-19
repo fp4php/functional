@@ -34,7 +34,8 @@ use Fp\Operations\HeadOperation;
 use Fp\Operations\InterleaveOperation;
 use Fp\Operations\IntersperseOperation;
 use Fp\Operations\LastOperation;
-use Fp\Operations\MapValuesOperation;
+use Fp\Operations\MapOperation;
+use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MkStringOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
@@ -227,7 +228,17 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function map(callable $callback): self
     {
-        return $this->fork(MapValuesOperation::of($this->emitter)($callback));
+        return $this->fork(MapOperation::of($this->emitter)($callback));
+    }
+
+    /**
+     * @template TVO
+     * @psalm-param callable(int, TV): TVO $callback
+     * @psalm-return self<TVO>
+     */
+    public function mapWithKey(callable $callback): self
+    {
+        return $this->fork(MapWithKeyOperation::of($this->emitter)($callback));
     }
 
     /**
@@ -455,9 +466,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     {
         $chunks = ChunksOperation::of($this->emitter)($size);
 
-        return $this->fork(MapValuesOperation::of($chunks)(function (array $chunk) {
-            return new ArrayList($chunk);
-        }));
+        return $this->fork(
+            MapOperation::of($chunks)(fn(array $chunk) => new ArrayList($chunk))
+        );
     }
 
     /**
@@ -470,7 +481,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     {
         $adjacent = GroupAdjacentByOperationOperation::of($this->emitter)($discriminator);
 
-        return $this->fork(MapValuesOperation::of($adjacent)(function (array $pair) {
+        return $this->fork(MapOperation::of($adjacent)(function (array $pair) {
             $pair[1] = new ArrayList($pair[1]);
             return $pair;
         }));
@@ -621,6 +632,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function drain(): void
     {
+        /** @noinspection PhpStatementHasEmptyBodyInspection */
         foreach ($this as $ignored) { }
     }
 
@@ -700,7 +712,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toHashMap(callable $callback): HashMap
     {
-        return $this->leaf(HashMap::collectPairs(MapValuesOperation::of($this->emitter)($callback)));
+        return $this->leaf(HashMap::collectPairs(MapOperation::of($this->emitter)($callback)));
     }
 
     /**

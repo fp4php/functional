@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
 use Fp\Operations\AtOperation;
+use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
@@ -215,7 +216,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(MapOperation::withoutKey($this->getIterator(), $callback));
+        return self::collectUnsafe(MapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -228,7 +229,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function mapWithKey(callable $callback): self
     {
-        return self::collectUnsafe(MapOperation::of($this->getIterator())($callback));
+        return self::collectUnsafe(MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**

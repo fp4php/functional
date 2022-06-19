@@ -160,6 +160,21 @@ interface StreamChainableOps
     public function map(callable $callback): Stream;
 
     /**
+     * Produces a new stream of elements by mapping each element in stream
+     * through a transformation function (callback)
+     *
+     * ```php
+     * >>> Stream::emits([1, 2])->mapWithKey(fn($index, $elem) => "{$index}-{$elem}")->toArray();
+     * => ['0-1', '1-2']
+     * ```
+     *
+     * @template TVO
+     * @psalm-param callable(int, TV): TVO $callback
+     * @psalm-return Stream<TVO>
+     */
+    public function mapWithKey(callable $callback): Stream;
+
+    /**
      * Returns every stream element except first
      *
      * ```php

@@ -14,19 +14,19 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-final class MapOperation extends AbstractOperation
+final class MapWithKeyOperation extends AbstractOperation
 {
     /**
      * @template TVO
      *
-     * @param callable(TV): TVO $f
+     * @param callable(TK, TV): TVO $f
      * @return Generator<TK, TVO>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                yield $key => $f($value);
+                yield $key => $f($key, $value);
             }
         });
     }

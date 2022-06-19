@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
+use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
@@ -294,7 +295,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function map(callable $callback): self
     {
-        return self::collect(MapOperation::withoutKey($this->getKeyValueIterator(), $callback));
+        return self::collect(MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -307,7 +308,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function mapWithKey(callable $callback): self
     {
-        return self::collect(MapOperation::of($this->getKeyValueIterator())($callback));
+        return self::collect(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

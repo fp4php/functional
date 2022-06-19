@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\CountOperation;
+use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
@@ -325,7 +326,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function map(callable $callback): self
     {
-        return self::collectUnsafe(MapOperation::withoutKey($this->getKeyValueIterator(), $callback));
+        return self::collectUnsafe(MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -338,7 +339,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function mapWithKey(callable $callback): self
     {
-        return self::collectUnsafe(MapOperation::of($this->getKeyValueIterator())($callback));
+        return self::collectUnsafe(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
