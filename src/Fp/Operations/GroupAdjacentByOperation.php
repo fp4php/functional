@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class GroupAdjacentByOperationOperation extends AbstractOperation
+class GroupAdjacentByOperation extends AbstractOperation
 {
     /**
      * @template D

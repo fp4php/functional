@@ -29,7 +29,7 @@ use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use Fp\Operations\FlatMapOperation;
 use Fp\Operations\FoldOperation;
-use Fp\Operations\GroupAdjacentByOperationOperation;
+use Fp\Operations\GroupAdjacentByOperation;
 use Fp\Operations\HeadOperation;
 use Fp\Operations\InterleaveOperation;
 use Fp\Operations\IntersperseOperation;
@@ -479,7 +479,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function groupAdjacentBy(callable $discriminator): Stream
     {
-        $adjacent = GroupAdjacentByOperationOperation::of($this->emitter)($discriminator);
+        $adjacent = GroupAdjacentByOperation::of($this->emitter)($discriminator);
 
         return $this->fork(MapOperation::of($adjacent)(function (array $pair) {
             $pair[1] = new ArrayList($pair[1]);
