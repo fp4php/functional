@@ -24,10 +24,13 @@ final class MapOperation extends AbstractOperation
      */
     public function __invoke(callable $f): Generator
     {
-        return asGenerator(function () use ($f) {
-            foreach ($this->gen as $key => $value) {
-                yield $key => $f($value);
-            }
-        });
+        $withKey =
+            /**
+             * @param TV $value
+             * @return TVO
+             */
+            fn(mixed $_, mixed $value) => $f($value);
+
+        return MapWithKeyOperation::of($this->gen)($withKey);
     }
 }
