@@ -63,10 +63,9 @@ interface MapTerminalOps
     public function every(callable $predicate): bool;
 
     /**
-     * A combined {@see Map::map} and {@see Map::every}.
-     *
-     * Predicate satisfying is handled via Option instead of Boolean.
-     * So the output type TVO can be different from the input type TV.
+     * Suppose you have an HashMap<TV> and you want to format each element with a function that returns an Option<TVO>.
+     * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<HashMap<TVO>>
+     * i.e. an Some<HashMap<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
      *
      * ```php
      * >>> HashMap::collectPairs(['a' => 1, 'b' => 2])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
@@ -76,9 +75,10 @@ interface MapTerminalOps
      * => None
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
-     * @psalm-return Option<Map<TK, TVO>>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<Map<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option;
 

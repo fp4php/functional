@@ -62,10 +62,9 @@ interface NonEmptyMapTerminalOps
     public function every(callable $predicate): bool;
 
     /**
-     * A combined {@see NonEmptyMap::map} and {@see NonEmptyMap::every}.
-     *
-     * Predicate satisfying is handled via Option instead of Boolean.
-     * So the output type TVO can be different from the input type TV.
+     * Suppose you have an NonEmptyHashMap<TV> and you want to format each element with a function that returns an Option<TVO>.
+     * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<NonEmptyHashMap<TVO>>
+     * i.e. an Some<NonEmptyHashMap<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
      *
      * ```php
      * >>> NonEmptyHashMap::collectPairs(['a' => 1, 'b' => 2])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
@@ -75,9 +74,10 @@ interface NonEmptyMapTerminalOps
      * => None
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
-     * @psalm-return Option<NonEmptyMap<TK, TVO>>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<NonEmptyMap<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option;
 }

@@ -19,7 +19,7 @@ class TraverseOptionOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param callable(TV, TK): Option<TVO> $f
+     * @param callable(TV): Option<TVO> $f
      * @return Option<Generator<TK, TVO>>
      */
     public function __invoke(callable $f): Option
@@ -28,7 +28,7 @@ class TraverseOptionOperation extends AbstractOperation
         $hashTable = new HashTable();
 
         foreach ($this->gen as $key => $value) {
-            $mapped = $f($value, $key);
+            $mapped = $f($value);
 
             if ($mapped->isNone()) {
                 return Option::none();

@@ -75,10 +75,9 @@ interface NonEmptySeqTerminalOps
     public function everyOf(string $fqcn, bool $invariant = false): bool;
 
     /**
-     * A combined {@see NonEmptySeq::map} and {@see NonEmptySeq::every}.
-     *
-     * Predicate satisfying is handled via Option instead of Boolean.
-     * So the output type TVO can be different from the input type TV.
+     * Suppose you have an NonEmptyArrayList<TV> and you want to format each element with a function that returns an Option<TVO>.
+     * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<NonEmptyArrayList<TVO>>
+     * i.e. an Some<NonEmptyArrayList<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
      *
      * ```php
      * >>> NonEmptyArrayList::collect([1, 2, 3])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
@@ -88,9 +87,10 @@ interface NonEmptySeqTerminalOps
      * => None
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return Option<NonEmptySeq<TVO>>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<NonEmptySeq<TVO>>
      */
     public function traverseOption(callable $callback): Option;
 

@@ -183,17 +183,16 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
-     * @psalm-return Option<self<TK, TVO>>
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<self<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
-        $hs = TraverseOptionOperation::of($this->getKeyValueIterator())(
-            fn($value, $key) => $callback(new Entry($key, $value))
-        );
-
-        return $hs->map(fn($gen) => HashMap::collect($gen));
+        return TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
+            ->map(fn($gen) => HashMap::collect($gen));
     }
 
     /**
