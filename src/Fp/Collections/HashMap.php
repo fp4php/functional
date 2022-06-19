@@ -172,13 +172,12 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
+     *
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->getKeyValueIterator())(
-            fn($value, $key) => $predicate(new Entry($key, $value))
-        );
+        return EveryOperation::of($this->getKeyValueIterator())($predicate);
     }
 
     /**

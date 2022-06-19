@@ -58,7 +58,7 @@ interface MapTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool;
 

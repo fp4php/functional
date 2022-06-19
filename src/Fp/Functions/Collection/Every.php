@@ -20,7 +20,7 @@ use Fp\Operations\EveryOperation;
  * @template TV
  *
  * @param iterable<TK, TV> $collection
- * @param callable(TV, TK): bool $predicate
+ * @param callable(TV): bool $predicate
  */
 function every(iterable $collection, callable $predicate): bool
 {

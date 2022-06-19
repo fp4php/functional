@@ -32,9 +32,8 @@ final class NonEmptyMapOpsTest extends TestCase
     {
         $hm = NonEmptyHashMap::collectPairsUnsafe([['a', 0], ['b', 1]]);
 
-        $this->assertTrue($hm->every(fn($entry) => $entry->value >= 0));
-        $this->assertFalse($hm->every(fn($entry) => $entry->value > 0));
-        $this->assertTrue($hm->every(fn($entry) => in_array($entry->key, ['a', 'b'])));
+        $this->assertTrue($hm->every(fn($entry) => $entry >= 0));
+        $this->assertFalse($hm->every(fn($entry) => $entry > 0));
     }
 
     public function testEveryMap(): void

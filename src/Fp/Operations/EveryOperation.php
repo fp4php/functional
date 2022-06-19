@@ -13,15 +13,15 @@ namespace Fp\Operations;
 class EveryOperation extends AbstractOperation
 {
     /**
-     * @param callable(TV, TK): bool $f
+     * @param callable(TV): bool $f
      * @return bool
      */
     public function __invoke(callable $f): bool
     {
         $res = true;
 
-        foreach ($this->gen as $key => $value) {
-            if (!$f($value, $key)) {
+        foreach ($this->gen as $value) {
+            if (!$f($value)) {
                 $res = false;
                 break;
             }
