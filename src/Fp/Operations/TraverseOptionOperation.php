@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
+use Fp\Collections\HashTable;
 use Fp\Functional\Option\Option;
 use Generator;
-
-use function Fp\Cast\asGenerator;
 
 /**
  * @template TK
@@ -25,7 +24,8 @@ class TraverseOptionOperation extends AbstractOperation
      */
     public function __invoke(callable $f): Option
     {
-        $collection = [];
+        /** @psalm-var HashTable<TK, TVO> $hashTable */
+        $hashTable = new HashTable();
 
         foreach ($this->gen as $key => $value) {
             $mapped = $f($value, $key);
@@ -34,13 +34,9 @@ class TraverseOptionOperation extends AbstractOperation
                 return Option::none();
             }
 
-            $collection[] = [$key, $mapped->get()];
+            $hashTable->update($key, $mapped->get());
         }
 
-        return Option::some(asGenerator(function() use ($collection) {
-            foreach ($collection as [$key, $value]) {
-                yield $key => $value;
-            }
-        }));
+        return Option::some($hashTable->getKeyValueIterator());
     }
 }

@@ -74,7 +74,7 @@ final class HashMap implements Map, StaticStorage
         $hashTable = new HashTable();
 
         foreach ($source as [$key, $value]) {
-            $hashTable = $hashTable->update($hashTable, $key, $value);
+            $hashTable->update($key, $value);
         }
 
         return new HashMap($hashTable);
@@ -85,11 +85,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function getIterator(): Generator
     {
-        foreach ($this->hashTable->table as $bucket) {
-            foreach ($bucket as $pair) {
-                yield $pair;
-            }
-        }
+        return $this->hashTable->getPairsGenerator();
     }
 
     /**
@@ -97,9 +93,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function getKeyValueIterator(): Generator
     {
-        foreach ($this as [$key, $value]) {
-            yield $key => $value;
-        }
+        return $this->hashTable->getKeyValueIterator();
     }
 
     /**

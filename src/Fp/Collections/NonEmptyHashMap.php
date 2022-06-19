@@ -88,7 +88,7 @@ final class NonEmptyHashMap implements NonEmptyMap
         $hashTable = new HashTable();
 
         foreach ($source as [$key, $value]) {
-            $hashTable = $hashTable->update($hashTable, $key, $value);
+            $hashTable->update($key, $value);
         }
 
         $isEmpty = empty($hashTable->table);

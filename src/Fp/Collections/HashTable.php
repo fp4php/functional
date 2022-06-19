@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Generator;
 
 /**
  * @internal
@@ -22,19 +23,15 @@ final class HashTable
     public array $table = [];
 
     /**
-     * @template TKey
-     * @template TValue
-     *
-     * @param HashTable<TKey, TValue> $hashTable
-     * @param TKey $key
-     * @return Option<TValue>
+     * @param TK $key
+     * @return Option<TV>
      */
-    public static function get(HashTable $hashTable, mixed $key): Option
+    public function get(mixed $key): Option
     {
         $hash = (string) HashComparator::computeHash($key);
         $elem = null;
 
-        foreach ($hashTable->table[$hash] ?? [] as [$k, $v]) {
+        foreach ($this->table[$hash] ?? [] as [$k, $v]) {
             if (HashComparator::hashEquals($key, $k)) {
                 $elem = $v;
             }
@@ -44,37 +41,54 @@ final class HashTable
     }
 
     /**
-     * @template TKey
-     * @template TValue
-     *
-     * @param TKey $key
-     * @param TValue $value
-     * @param HashTable<TKey, TValue> $hashTable
-     * @return HashTable<TKey, TValue>
+     * @param TK $key
+     * @param TV $value
      *
      * @psalm-suppress PropertyTypeCoercion
      */
-    public static function update(HashTable $hashTable, mixed $key, mixed $value): HashTable
+    public function update(mixed $key, mixed $value): void
     {
         $hash = (string) HashComparator::computeHash($key);
 
-        if (!isset($hashTable->table[$hash])) {
-            $hashTable->table[$hash] = [];
+        if (!isset($this->table[$hash])) {
+            $this->table[$hash] = [];
         }
 
         $replacedPos = -1;
 
-        foreach ($hashTable->table[$hash] as $idx => [$k, $v]) {
+        foreach ($this->table[$hash] as $idx => [$k, $v]) {
             if (HashComparator::hashEquals($key, $k)) {
                 $replacedPos = $idx;
-                $hashTable->table[$hash][$idx][1] = $value;
+                $this->table[$hash][$idx][1] = $value;
             }
         }
 
         if ($replacedPos < 0) {
-            $hashTable->table[$hash][] = [$key, $value];
+            $this->table[$hash][] = [$key, $value];
         }
+    }
 
-        return $hashTable;
+    /**
+     * @return Generator<int, array{TK, TV}>
+     */
+    public function getPairsGenerator(): Generator
+    {
+        foreach ($this->table as $bucket) {
+            foreach ($bucket as $pair) {
+                yield $pair;
+            }
+        }
+    }
+
+    /**
+     * @return Generator<TK, TV>
+     */
+    public function getKeyValueIterator(): Generator
+    {
+        foreach ($this->table as $bucket) {
+            foreach ($bucket as [$key, $value]) {
+                yield $key => $value;
+            }
+        }
     }
 }

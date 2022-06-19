@@ -6,9 +6,7 @@ namespace Fp\Operations;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\HashTable;
-use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
-use Fp\Collections\Nil;
 use Fp\Collections\NonEmptyLinkedList;
 
 /**
@@ -33,10 +31,9 @@ class GroupByOperation extends AbstractOperation
         foreach ($this->gen as $value) {
             $groupKey = $f($value);
 
-            HashTable::update(
-                $hashTable,
+            $hashTable->update(
                 $groupKey,
-                HashTable::get($hashTable, $groupKey)
+                $hashTable->get($groupKey)
                     ->map(fn(NonEmptyLinkedList $group) => $group->prepended($value))
                     ->getOrCall(fn() => NonEmptyLinkedList::collectNonEmpty([$value]))
             );
