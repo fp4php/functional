@@ -122,15 +122,34 @@ interface NonEmptyMapChainableOps
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->mapKeys(fn(Entry $e) => $e->value + 1);
+     * >>> $collection->reindex(fn($v) => $v + 1);
      * => NonEmptyHashMap(2 -> 1, 3 -> 2)
      * ```
      *
      * @template TKO
-     * @psalm-param callable(Entry<TK, TV>): TKO $callback
-     * @psalm-return NonEmptyMap<TKO, TV>
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyMap<TKO, TV>
      */
-    public function mapKeys(callable $callback): NonEmptyMap;
+    public function reindex(callable $callback): NonEmptyMap;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::reindex}, but with a transformation function which takes also the key as input.
+     *
+     * ```php
+     * >>> $collection = NonEmptyHashMap::collectPairs([['1', 1], ['2', 2]]);
+     * => HashMap('1' -> 1, '2' -> 2)
+     *
+     * >>> $collection->reindexWithKey(fn($k, $v) => "{$k}-{$v}");
+     * => NonEmptyHashMap('1-1' -> 1, '2-2' -> 2)
+     * ```
+     *
+     * @template TKO
+     *
+     * @param callable(TK, TV): TKO $callback
+     * @return NonEmptyMap<TKO, TV>
+     */
+    public function reindexWithKey(callable $callback): NonEmptyMap;
 
     /**
      * Returns sequence of collection keys

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Operations\MapKeysOperation;
+use Fp\Operations\ReindexOperation;
+use Fp\Operations\ReindexWithKeyOperation;
 
 use function Fp\Cast\asArray;
 
@@ -16,15 +17,35 @@ use function Fp\Cast\asArray;
  * => [1 => 1, 2 => 2]
  * ```
  *
- * @template TKI of array-key
  * @template TKO of array-key
  * @template TV
  *
- * @param iterable<TKI, TV> $collection
- * @param callable(TV, TKI): TKO $callback
+ * @param iterable<mixed, TV> $collection
+ * @param callable(TV): TKO $callback
  * @return array<TKO, TV>
  */
 function reindex(iterable $collection, callable $callback): array
 {
-    return asArray(MapKeysOperation::of($collection)($callback));
+    return asArray(ReindexOperation::of($collection)($callback));
+}
+
+/**
+ * Same as {@see reindex()}, but with a transformation function which takes also the key as input.
+ *
+ * ```php
+ * >>> reindex(['a' => 1, 'b' => 2], fn (string $key, int $value) => "{$key}-{$value}");
+ * => ['a-1' => 1, 'b-2' => 2]
+ * ```
+ *
+ * @template TKO of array-key
+ * @template TK
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): TKO $callback
+ * @return array<TKO, TV>
+ */
+function reindexWithKey(iterable $collection, callable $callback): array
+{
+    return asArray(ReindexWithKeyOperation::of($collection)($callback));
 }

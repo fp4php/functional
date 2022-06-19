@@ -144,15 +144,34 @@ interface MapChainableOps
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->mapKeys(fn(Entry $e) => $e->value + 1);
+     * >>> $collection->reindex(fn($v) => $v + 1);
      * => HashMap(2 -> 1, 3 -> 2)
      * ```
      *
      * @template TKO
-     * @psalm-param callable(Entry<TK, TV>): TKO $callback
-     * @psalm-return Map<TKO, TV>
+     *
+     * @param callable(TV): TKO $callback
+     * @return Map<TKO, TV>
      */
-    public function mapKeys(callable $callback): Map;
+    public function reindex(callable $callback): Map;
+
+    /**
+     * Same as {@see MapChainableOps::reindex}, but with a transformation function which takes also the key as input.
+     *
+     * ```php
+     * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
+     * => HashMap('1' -> 1, '2' -> 2)
+     *
+     * >>> $collection->reindexWithKey(fn($k, $v) => "{$k}-{$v}");
+     * => HashMap('1-1' -> 1, '2-2' -> 2)
+     * ```
+     *
+     * @template TKO
+     *
+     * @param callable(TK, TV): TKO $callback
+     * @return Map<TKO, TV>
+     */
+    public function reindexWithKey(callable $callback): Map;
 
     /**
      * Returns sequence of collection keys

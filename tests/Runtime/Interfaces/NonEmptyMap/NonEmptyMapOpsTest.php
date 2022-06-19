@@ -82,10 +82,19 @@ final class NonEmptyMapOpsTest extends TestCase
             [['2', '2-22'], ['3', '3-33']],
             $hm->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray()
         );
+    }
+    public function testReindex(): void
+    {
+        $hm = NonEmptyHashMap::collectPairsNonEmpty([['2', 22], ['3', 33]]);
 
         $this->assertEquals(
-            [[22, 22], [33, 33]],
-            $hm->mapKeys(fn($e) => $e->value)->toArray()
+            [[23, 22], [34, 33]],
+            $hm->reindex(fn($v) => $v + 1)->toArray(),
+        );
+
+        $this->assertEquals(
+            [['2-22', 22], ['3-33', 33]],
+            $hm->reindexWithKey(fn($k, $v) => "{$k}-{$v}")->toArray(),
         );
     }
 

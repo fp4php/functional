@@ -8,10 +8,11 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\CountOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
+use Fp\Operations\ReindexOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\KeysOperation;
-use Fp\Operations\MapKeysOperation;
+use Fp\Operations\ReindexWithKeyOperation;
 use Fp\Operations\ValuesOperation;
 use Generator;
 
@@ -342,17 +343,28 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     *
      * @template TKO
-     * @psalm-param callable(Entry<TK, TV>): TKO $callback
-     * @psalm-return self<TKO, TV>
+     *
+     * @param callable(TV): TKO $callback
+     * @return self<TKO, TV>
      */
-    public function mapKeys(callable $callback): self
+    public function reindex(callable $callback): self
     {
-        return self::collectUnsafe(
-            MapKeysOperation::of($this->getKeyValueIterator())(
-                fn($value, $key) => $callback(new Entry($key, $value))
-            )
-        );
+        return self::collectUnsafe(ReindexOperation::of($this->getKeyValueIterator())($callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     *
+     * @param callable(TK, TV): TKO $callback
+     * @return self<TKO, TV>
+     */
+    public function reindexWithKey(callable $callback): NonEmptyMap
+    {
+        return self::collectUnsafe(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

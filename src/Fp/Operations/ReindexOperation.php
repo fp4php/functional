@@ -14,20 +14,23 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class MapKeysOperation extends AbstractOperation
+final class ReindexOperation extends AbstractOperation
 {
     /**
      * @template TKO
      *
-     * @param callable(TV, TK): TKO $f
+     * @param callable(TV): TKO $f
      * @return Generator<TKO, TV>
      */
     public function __invoke(callable $f): Generator
     {
-        return asGenerator(function () use ($f) {
-            foreach ($this->gen as $key => $value) {
-                yield $f($value, $key) => $value;
-            }
-        });
+        $withKey =
+            /**
+             * @param TV $value
+             * @return TKO
+             */
+            fn(mixed $_, mixed $value) => $f($value);
+
+        return ReindexWithKeyOperation::of($this->gen)($withKey);
     }
 }
