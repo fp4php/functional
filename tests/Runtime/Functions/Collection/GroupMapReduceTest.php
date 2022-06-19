@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
-use function Fp\Collection\groupBy;
 use function Fp\Collection\groupMapReduce;
 
 final class GroupMapReduceTest extends TestCase

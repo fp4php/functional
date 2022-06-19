@@ -376,7 +376,7 @@ final class ArrayList implements Seq
      * @inheritDoc
      * @template TKO
      * @psalm-param callable(TV): TKO $callback
-     * @psalm-return Map<TKO, Seq<TV>>
+     * @psalm-return Map<TKO, NonEmptySeq<TV>>
      */
     public function groupBy(callable $callback): Map
     {

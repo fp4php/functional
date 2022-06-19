@@ -9,6 +9,7 @@ use Fp\Collections\HashTable;
 use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
 use Fp\Collections\Nil;
+use Fp\Collections\NonEmptyLinkedList;
 
 /**
  * @template TK
@@ -21,23 +22,23 @@ class GroupByOperation extends AbstractOperation
     /**
      * @template TKO
      *
-     * @param callable(TV, TK): TKO $f
-     * @return HashMap<TKO, LinkedList<TV>>
+     * @param callable(TV): TKO $f
+     * @return HashMap<TKO, NonEmptyLinkedList<TV>>
      */
     public function __invoke(callable $f): Map
     {
-        /** @psalm-var HashTable<TKO, LinkedList<TV>> $hashTable */
+        /** @psalm-var HashTable<TKO, NonEmptyLinkedList<TV>> $hashTable */
         $hashTable = new HashTable();
 
-        foreach ($this->gen as $key => $value) {
-            $groupKey = $f($value, $key);
+        foreach ($this->gen as $value) {
+            $groupKey = $f($value);
 
             HashTable::update(
                 $hashTable,
                 $groupKey,
                 HashTable::get($hashTable, $groupKey)
-                    ->getOrElse(Nil::getInstance())
-                    ->prepended($value)
+                    ->map(fn(NonEmptyLinkedList $group) => $group->prepended($value))
+                    ->getOrCall(fn() => NonEmptyLinkedList::collectNonEmpty([$value]))
             );
         }
 

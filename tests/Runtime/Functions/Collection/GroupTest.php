@@ -14,10 +14,10 @@ final class GroupTest extends TestCase
         $c = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
 
         $this->assertEquals(
-            ['y' => ['a' => 1, 'c' => 3], 'x' => ['b' => 2, 'd' => 4]],
+            ['y' => [3, 1], 'x' => [4, 2]],
             groupBy(
                 $c,
-                fn(int $v, string $k) => ($v % 2 === 0) ? 'x' : 'y'
+                fn(int $v) => ($v % 2 === 0) ? 'x' : 'y'
             )
         );
     }
