@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Operations\GroupMapReduceOperation;
+
 /**
  * Partitions this iterable collection into a map according to a discriminator function key.
  * All the values that have the same discriminator are then transformed by the value function and
@@ -26,32 +28,21 @@ namespace Fp\Collection;
  * => [10 => [10, 15, 20], 20 => [10, 15], 30 => [20]]
  * ```
  *
- * @template K of array-key
- * @template A
- * @template KOut of array-key
- * @template B
+ * @template TV
+ * @template TKO of array-key
+ * @template TVO
  *
- * @param iterable<K, A> $collection
- * @param callable(A): KOut $group
- * @param callable(A): B $map
- * @param callable(B, B): B $reduce
- * @return array<KOut, B>
+ * @param iterable<mixed, TV> $collection
+ * @param callable(TV): TKO $group
+ * @param callable(TV): TVO $map
+ * @param callable(TVO, TVO): TVO $reduce
+ * @return array<KOut, TVO>
  *
  * @psalm-return ($collection is non-empty-array
- *     ? non-empty-array<KOut, B>
- *     : array<KOut, B>)
+ *     ? non-empty-array<TKO, TVO>
+ *     : array<TKO, TVO>)
  */
 function groupMapReduce(iterable $collection, callable $group, callable $map, callable $reduce): array
 {
-    $grouped = [];
-
-    foreach ($collection as $item) {
-        $key = $group($item);
-
-        $grouped[$key] = array_key_exists($key, $grouped)
-            ? $reduce($grouped[$key], $map($item))
-            : $map($item);
-    }
-
-    return $grouped;
+    return GroupMapReduceOperation::of($collection)($group, $map, $reduce)->toAssocArray();
 }
