@@ -39,4 +39,23 @@ class TraverseOptionOperation extends AbstractOperation
 
         return Option::some($hashTable->getKeyValueIterator());
     }
+
+    /**
+     * @template TKI
+     * @template TVI
+     *
+     * @param iterable<TKI, Option<TVI>> $collection
+     * @return Option<Generator<TKI, TVI>>
+     */
+    public static function id(iterable $collection): Option
+    {
+        $id =
+            /**
+             * @param Option<TVI> $I
+             * @return Option<TVI>
+             */
+            fn(Option $i): Option => $i;
+
+        return self::of($collection)($id);
+    }
 }

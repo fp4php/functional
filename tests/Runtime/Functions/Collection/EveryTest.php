@@ -54,20 +54,4 @@ final class EveryTest extends TestCase
             Foo::class
         ));
     }
-
-    public function testEveryMap(): void
-    {
-        /** @var list<int> $c */
-        $c = [1, 2];
-
-        $this->assertEquals(
-            Option::some($c),
-            traverseOption($c, fn(int $v) => $v < 3 ? Option::some($v) : Option::none())
-        );
-
-        $this->assertEquals(
-            Option::none(),
-            traverseOption($c, fn(int $v) => $v < 2 ? Option::some($v) : Option::none()),
-        );
-    }
 }
