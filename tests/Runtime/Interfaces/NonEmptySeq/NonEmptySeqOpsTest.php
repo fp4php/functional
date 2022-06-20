@@ -445,6 +445,7 @@ final class NonEmptySeqOpsTest extends TestCase
     }
 
     /**
+     * @param NonEmptySeq<Foo> $seq
      * @dataProvider provideTestGroupByData
      */
     public function testGroupBy(NonEmptySeq $seq, Foo $f1, Foo $f2, Foo $f3, Foo $f4): void

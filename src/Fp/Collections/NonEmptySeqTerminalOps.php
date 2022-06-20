@@ -95,6 +95,23 @@ interface NonEmptySeqTerminalOps
     public function traverseOption(callable $callback): Option;
 
     /**
+     * Group elements
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 1, 3])
+     * >>>     ->groupBy(fn($e) => $e)
+     * >>>     ->map(fn(Seq $e) => $e->toArray())
+     * >>>     ->toArray();
+     * => [[1, [1, 1]], [3, [3]]]
+     * ```
+     *
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return NonEmptyMap<TKO, NonEmptySeq<TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyMap;
+
+    /**
      * Find if there is element which satisfies the condition
      *
      * ```php

@@ -463,6 +463,7 @@ final class SeqOpsTest extends TestCase
     }
 
     /**
+     * @param Seq<Foo> $seq
      * @dataProvider provideTestGroupByData
      */
     public function testGroupBy(Seq $seq, Foo $f1, Foo $f2, Foo $f3, Foo $f4): void

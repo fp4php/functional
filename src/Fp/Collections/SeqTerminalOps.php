@@ -95,6 +95,23 @@ interface SeqTerminalOps
     public function traverseOption(callable $callback): Option;
 
     /**
+     * Group elements
+     *
+     * ```php
+     * >>> LinkedList::collect([1, 1, 3])
+     * >>>     ->groupBy(fn($e) => $e)
+     * >>>     ->map(fn(Seq $e) => $e->toArray())
+     * >>>     ->toArray();
+     * => [[1, [1, 1]], [3, [3]]]
+     * ```
+     *
+     * @template TKO
+     * @psalm-param callable(TV): TKO $callback
+     * @psalm-return Map<TKO, NonEmptySeq<TV>>
+     */
+    public function groupBy(callable $callback): Map;
+
+    /**
      * Find if there is element which satisfies the condition
      *
      * ```php

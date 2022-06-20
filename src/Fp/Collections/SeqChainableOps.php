@@ -296,23 +296,6 @@ interface SeqChainableOps
     public function tap(callable $callback): Seq;
 
     /**
-     * Group elements
-     *
-     * ```php
-     * >>> LinkedList::collect([1, 1, 3])
-     * >>>     ->groupBy(fn($e) => $e)
-     * >>>     ->map(fn(Seq $e) => $e->toArray())
-     * >>>     ->toArray();
-     * => [[1, [1, 1]], [3, [3]]]
-     * ```
-     *
-     * @template TKO
-     * @psalm-param callable(TV): TKO $callback
-     * @psalm-return Map<TKO, NonEmptySeq<TV>>
-     */
-    public function groupBy(callable $callback): Map;
-
-    /**
      * Add specified separator between every pair of elements in the source collection.
      *
      * ```php
