@@ -7,7 +7,6 @@ namespace Fp\Operations;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashTable;
 use Fp\Collections\Map;
-use Generator;
 
 /**
  * @template TK
@@ -34,20 +33,20 @@ final class GroupMapReduceOperation extends AbstractOperation
 
         foreach ($this->gen as $item) {
             $key = $group($item);
-            $out = $map($item);
+            $new = $map($item);
 
             $toReduced =
                 /**
-                 * @param TVO $lhs
+                 * @param TVO $old
                  * @return TVO
                  */
-                fn(mixed $lhs) => $reduce($lhs, $out);
+                fn(mixed $old) => $reduce($old, $new);
 
             $hashTable->update(
                 $key,
                 $hashTable->get($key)
                     ->map($toReduced)
-                    ->getOrElse($out)
+                    ->getOrElse($new)
             );
         }
 
