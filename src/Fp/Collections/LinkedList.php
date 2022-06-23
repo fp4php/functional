@@ -11,6 +11,7 @@ use Fp\Operations\AtOperation;
 use Fp\Operations\CountOperation;
 use Fp\Operations\DropOperation;
 use Fp\Operations\DropWhileOperation;
+use Fp\Operations\GroupMapReduceOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
@@ -410,6 +411,23 @@ abstract class LinkedList implements Seq
     public function groupBy(callable $callback): Map
     {
         return GroupByOperation::of($this->getIterator())($callback);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return Map<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): Map
+    {
+        return GroupMapReduceOperation::of($this->getIterator())($group, $map, $reduce);
     }
 
     /**

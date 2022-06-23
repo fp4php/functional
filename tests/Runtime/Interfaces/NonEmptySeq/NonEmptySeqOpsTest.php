@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Interfaces\NonEmptySeq;
 
 use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
 use Fp\Functional\Option\Option;
@@ -20,6 +21,49 @@ final class NonEmptySeqOpsTest extends TestCase
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
         yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
+    }
+
+    public function testGroupMapReduce(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                10 => [10, 15, 20],
+                20 => [10, 15],
+                30 => [20],
+            ]),
+            NonEmptyArrayList::collectNonEmpty([
+                ['id' => 10, 'sum' => 10],
+                ['id' => 10, 'sum' => 15],
+                ['id' => 10, 'sum' => 20],
+                ['id' => 20, 'sum' => 10],
+                ['id' => 20, 'sum' => 15],
+                ['id' => 30, 'sum' => 20],
+            ])->groupMapReduce(
+                fn(array $a) => $a['id'],
+                fn(array $a) => [$a['sum']],
+                fn(array $old, array $new) => array_merge($old, $new),
+            )
+        );
+
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                10 => [10, 15, 20],
+                20 => [10, 15],
+                30 => [20],
+            ]),
+            NonEmptyLinkedList::collectNonEmpty([
+                ['id' => 10, 'sum' => 10],
+                ['id' => 10, 'sum' => 15],
+                ['id' => 10, 'sum' => 20],
+                ['id' => 20, 'sum' => 10],
+                ['id' => 20, 'sum' => 15],
+                ['id' => 30, 'sum' => 20],
+            ])->groupMapReduce(
+                fn(array $a) => $a['id'],
+                fn(array $a) => [$a['sum']],
+                fn(array $old, array $new) => array_merge($old, $new),
+            )
+        );
     }
 
     /**

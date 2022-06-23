@@ -112,6 +112,38 @@ interface SeqTerminalOps
     public function groupBy(callable $callback): Map;
 
     /**
+     * Partitions this Seq<TV> into a Map<TKO, TVO> according to a discriminator function $group.
+     * All the values that have the same discriminator are then transformed by the $map and
+     * then reduced into a single value with the $reduce.
+     *
+     *  * ```php
+     * >>> ArrayList::collect([
+     * >>>      ['id' => 10, 'val' => 10],
+     * >>>      ['id' => 10, 'val' => 15],
+     * >>>      ['id' => 10, 'val' => 20],
+     * >>>      ['id' => 20, 'val' => 10],
+     * >>>      ['id' => 20, 'val' => 15],
+     * >>>      ['id' => 30, 'val' => 20],
+     * >>> ])->groupMapReduce(
+     * >>>     fn(array $a) => $a['id'],
+     * >>>     fn(array $a) => $a['val'],
+     * >>>     fn(int $old, int $new) => $old + $new,
+     * >>> );
+     * => HashMap([10 => 45, 20 => 25, 30 => 20])
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return Map<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): Map;
+
+    /**
      * Find if there is element which satisfies the condition
      *
      * ```php

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Interfaces\Seq;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\HashMap;
 use Fp\Collections\LinkedList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
@@ -484,6 +485,49 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);
         $this->assertEquals([[1, [$f1, $f3]], [2, [$f2]], [3, [$f4]]], $res2);
         $this->assertEquals([[1, [1, 1]], [2, [2]], [3, [3]]], $res3);
+    }
+
+    public function testGroupMapReduce(): void
+    {
+        $this->assertEquals(
+            HashMap::collect([
+                10 => [10, 15, 20],
+                20 => [10, 15],
+                30 => [20],
+            ]),
+            ArrayList::collect([
+                ['id' => 10, 'sum' => 10],
+                ['id' => 10, 'sum' => 15],
+                ['id' => 10, 'sum' => 20],
+                ['id' => 20, 'sum' => 10],
+                ['id' => 20, 'sum' => 15],
+                ['id' => 30, 'sum' => 20],
+            ])->groupMapReduce(
+                fn(array $a) => $a['id'],
+                fn(array $a) => [$a['sum']],
+                fn(array $old, array $new) => array_merge($old, $new),
+            )
+        );
+
+        $this->assertEquals(
+            HashMap::collect([
+                10 => [10, 15, 20],
+                20 => [10, 15],
+                30 => [20],
+            ]),
+            LinkedList::collect([
+                ['id' => 10, 'sum' => 10],
+                ['id' => 10, 'sum' => 15],
+                ['id' => 10, 'sum' => 20],
+                ['id' => 20, 'sum' => 10],
+                ['id' => 20, 'sum' => 15],
+                ['id' => 30, 'sum' => 20],
+            ])->groupMapReduce(
+                fn(array $a) => $a['id'],
+                fn(array $a) => [$a['sum']],
+                fn(array $old, array $new) => array_merge($old, $new),
+            )
+        );
     }
 
     public function provideTestTapData(): Generator

@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
 use Fp\Operations\AtOperation;
+use Fp\Operations\GroupMapReduceOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\TraverseOptionOperation;
@@ -356,6 +357,23 @@ final class NonEmptyLinkedList implements NonEmptySeq
     {
         return TraverseOptionOperation::of($this->getIterator())($callback)
             ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap(GroupMapReduceOperation::of($this->getIterator())($group, $map, $reduce));
     }
 
     /**

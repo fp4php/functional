@@ -6,7 +6,6 @@ namespace Fp\Operations;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\HashTable;
-use Fp\Collections\Map;
 
 /**
  * @template TK
@@ -24,9 +23,9 @@ final class GroupMapReduceOperation extends AbstractOperation
      * @param callable(TV): TVO $map
      * @param callable(TVO, TVO): TVO $reduce
      *
-     * @return Map<TKO, TVO>
+     * @return HashMap<TKO, TVO>
      */
-    public function __invoke(callable $group, callable $map, callable $reduce): Map
+    public function __invoke(callable $group, callable $map, callable $reduce): HashMap
     {
         /** @psalm-var HashTable<TKO, TVO> $hashTable */
         $hashTable = new HashTable();
@@ -42,12 +41,9 @@ final class GroupMapReduceOperation extends AbstractOperation
                  */
                 fn(mixed $old) => $reduce($old, $new);
 
-            $hashTable->update(
-                $key,
-                $hashTable->get($key)
-                    ->map($toReduced)
-                    ->getOrElse($new)
-            );
+            $hashTable->update($key, $hashTable->get($key)
+                ->map($toReduced)
+                ->getOrElse($new));
         }
 
         return new HashMap($hashTable);
