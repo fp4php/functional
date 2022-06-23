@@ -23,6 +23,8 @@ use RuntimeException;
 
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
+use function Fp\Evidence\proveNonEmptyArray;
+use function Fp\Evidence\proveNonEmptyList;
 
 /**
  * @template TK
@@ -116,6 +118,15 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
+     * @return Option<non-empty-list<array{TK, TV}>>
+     */
+    public function toNonEmptyArray(): Option
+    {
+        return proveNonEmptyList($this->toArray());
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-return (TK is array-key ? array<TK, TV> : never)
      */
     public function toAssocArray(): array
@@ -137,11 +148,39 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
+     * @psalm-return (TK is array-key ? Option<non-empty-array<TK, TV>> : never)
+     * @psalm-suppress MixedInferredReturnType
+     */
+    public function toNonEmptyAssocArray(): Option
+    {
+        /** @psalm-suppress NoValue */
+        $assoc = $this->toAssocArray();
+
+        /** @psalm-suppress UnevaluatedCode */
+        return proveNonEmptyArray($assoc);
+    }
+
+    /**
+     * @inheritDoc
      * @return LinkedList<array{TK, TV}>
      */
     public function toLinkedList(): LinkedList
     {
         return LinkedList::collect($this->getIterator());
+    }
+
+    /**
+     * @inheritDoc
+     * @return Option<NonEmptyLinkedList<array{TK, TV}>>
+     */
+    public function toNonEmptyLinkedList(): Option
+    {
+        $linkedList = $this->toLinkedList();
+
+        return Option::when(
+            !$linkedList->isEmpty(),
+            fn() => new NonEmptyLinkedList($linkedList->head()->getUnsafe(), $linkedList->tail()),
+        );
     }
 
     /**
@@ -155,6 +194,20 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
+     * @return Option<NonEmptyArrayList<array{TK, TV}>>
+     */
+    public function toNonEmptyArrayList(): Option
+    {
+        $arrayList = $this->toArrayList();
+
+        return Option::when(
+            !$arrayList->isEmpty(),
+            fn() => new NonEmptyArrayList($arrayList),
+        );
+    }
+
+    /**
+     * @inheritDoc
      * @return HashSet<array{TK, TV}>
      */
     public function toHashSet(): HashSet
@@ -164,11 +217,37 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
+     * @return Option<NonEmptyHashSet<array{TK, TV}>>
+     */
+    public function toNonEmptyHashSet(): Option
+    {
+        $hashSet = $this->toHashSet();
+
+        return Option::when(
+            !$hashSet->isEmpty(),
+            fn() => new NonEmptyHashSet($hashSet),
+        );
+    }
+
+    /**
+     * @inheritDoc
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
     {
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     * @return Option<NonEmptyHashMap<TK, TV>>
+     */
+    public function toNonEmptyHashMap(): Option
+    {
+        return Option::when(
+            !$this->isEmpty(),
+            fn() => new NonEmptyHashMap($this),
+        );
     }
 
     /**
