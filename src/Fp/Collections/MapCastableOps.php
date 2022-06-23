@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Functional\Option\Option;
-use Fp\Functional\Option\Some;
-use Fp\Functional\Option\None;
-
 /**
  * @template TK
  * @template-covariant TV
@@ -27,9 +23,7 @@ interface MapCastableOps
     /**
      * ```php
      * >>> HashMap::collectPairs([['a',  1], ['b', 2]])->toAssocArray();
-     * => Some(['a' => 1, 'b' => 2])
-     * >>> HashMap::collectPairs([[new Foo(), 1], [new Foo(), 2]])->toAssocArray();
-     * => None
+     * => ['a' => 1, 'b' => 2]
      * ```
      * @psalm-return (TK is array-key ? array<TK, TV> : never)
      */
