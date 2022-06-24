@@ -22,6 +22,7 @@ final class NonEmptySetTest extends TestCase
     public function testCasts(NonEmptySet $set): void
     {
         $this->assertEquals([1, 2, 3], $set->toArray());
+        $this->assertEquals([1, 2, 3], $set->toNonEmptyArray());
         $this->assertEquals([1, 2, 3], $set->toLinkedList()->toArray());
         $this->assertEquals([1, 2, 3], $set->toNonEmptyLinkedList()->toArray());
         $this->assertEquals([1, 2, 3], $set->toArrayList()->toArray());
