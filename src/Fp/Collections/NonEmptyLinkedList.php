@@ -499,7 +499,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
 
     /**
      * @inheritDoc
-     * @return non-empty-list<TV>
+     * @return list<TV>
      */
     public function toArray(): array
     {
@@ -510,6 +510,16 @@ final class NonEmptyLinkedList implements NonEmptySeq
         }
 
         return $buffer;
+    }
+
+    /**
+     * @inheritDoc
+     * @return non-empty-list<TV>
+     */
+    public function toNonEmptyArray(): array
+    {
+        /** @var non-empty-list<TV> */
+        return $this->toArray();
     }
 
     /**

@@ -33,6 +33,6 @@ use Fp\Operations\GroupByOperation;
 function groupBy(iterable $collection, callable $callback): array
 {
     return GroupByOperation::of($collection)($callback)
-        ->map(fn(NonEmptyLinkedList $group) => $group->toArray())
+        ->map(fn(NonEmptyLinkedList $group) => $group->toNonEmptyArray())
         ->toAssocArray();
 }

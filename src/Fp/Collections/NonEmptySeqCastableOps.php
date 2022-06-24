@@ -16,9 +16,19 @@ interface NonEmptySeqCastableOps
      * => [1, 2]
      * ```
      *
-     * @return non-empty-list<TV>
+     * @return list<TV>
      */
     public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([1, 2])->toArray();
+     * => [1, 2]
+     * ```
+     *
+     * @return non-empty-list<TV>
+     */
+    public function toNonEmptyArray(): array;
 
     /**
      * ```php

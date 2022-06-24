@@ -152,7 +152,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toArray(): array
     {
-        return $this->toNonEmptyArrayList()->toArray();
+        return $this->toNonEmptyArrayList()->toNonEmptyArray();
     }
 
     /**

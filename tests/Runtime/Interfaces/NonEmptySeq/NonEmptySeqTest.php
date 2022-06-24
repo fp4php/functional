@@ -24,6 +24,7 @@ final class NonEmptySeqTest extends TestCase
     public function testCasts(NonEmptySeq $seq): void
     {
         $this->assertEquals([1, 2, 3], $seq->toArray());
+        $this->assertEquals([1, 2, 3], $seq->toNonEmptyArray());
         $this->assertEquals([1, 2, 3], $seq->toLinkedList()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toNonEmptyLinkedList()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toArrayList()->toArray());
