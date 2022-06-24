@@ -24,6 +24,18 @@ interface SeqCastableOps
 
     /**
      * ```php
+     * >>> ArrayList::collect([1, 2])->toNonEmptyArray();
+     * => Some([1, 2])
+     * >>> ArrayList::collect([])->toNonEmptyArray();
+     * => None
+     * ```
+     *
+     * @return Option<non-empty-list<TV>>
+     */
+    public function toNonEmptyArray(): Option;
+
+    /**
+     * ```php
      * >>> ArrayList::collect([1, 2])->toLinkedList();
      * => LinkedList(1, 2)
      * ```
@@ -31,6 +43,18 @@ interface SeqCastableOps
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList;
+
+    /**
+     * ```php
+     * >>> ArrayList::collect([1, 2])->toNonEmptyLinkedList();
+     * => Some(NonEmptyLinkedList(1, 2))
+     * >>> ArrayList::collect([])->toNonEmptyLinkedList();
+     * => None
+     * ```
+     *
+     * @return Option<NonEmptyLinkedList<TV>>
+     */
+    public function toNonEmptyLinkedList(): Option;
 
     /**
      * ```php
@@ -66,6 +90,18 @@ interface SeqCastableOps
 
     /**
      * ```php
+     * >>> ArrayList::collect([1, 2, 2])->toNonEmptyHashSet();
+     * => Some(NonEmptyHashSet(1, 2))
+     * >>> ArrayList::collect([])->toNonEmptyHashSet();
+     * => None
+     * ```
+     *
+     * @return Option<NonEmptyHashSet<TV>>
+     */
+    public function toNonEmptyHashSet(): Option;
+
+    /**
+     * ```php
      * >>> ArrayList::collect([1, 2])
      * >>>     ->toHashMap(fn($elem) => [(string) $elem, $elem]);
      * => HashMap('1' -> 1, '2' -> 2)
@@ -73,8 +109,27 @@ interface SeqCastableOps
      *
      * @template TKI
      * @template TVI
+     *
      * @param callable(TV): array{TKI, TVI} $callback
      * @return HashMap<TKI, TVI>
      */
     public function toHashMap(callable $callback): HashMap;
+
+    /**
+     * ```php
+     * >>> ArrayList::collect([1, 2])
+     * >>>     ->toNonEmptyHashMap(fn($elem) => [(string) $elem, $elem]);
+     * => Some(HashMap('1' -> 1, '2' -> 2))
+     * >>> ArrayList::collect([])
+     * >>>     ->toNonEmptyHashMap(fn($elem) => [(string) $elem, $elem]);
+     * => None
+     * ```
+     *
+     * @template TKI
+     * @template TVI
+     *
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return Option<NonEmptyHashMap<TKI, TVI>>
+     */
+    public function toNonEmptyHashMap(callable $callback): Option;
 }

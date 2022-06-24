@@ -45,6 +45,7 @@ use Iterator;
 
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
+use function Fp\Evidence\proveNonEmptyList;
 
 /**
  * O(1) {@see Seq::prepended} operation
@@ -122,11 +123,29 @@ abstract class LinkedList implements Seq
 
     /**
      * @inheritDoc
+     * @return Option<non-empty-list<TV>>
+     */
+    public function toNonEmptyArray(): Option
+    {
+        return proveNonEmptyList($this->toArray());
+    }
+
+    /**
+     * @inheritDoc
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
     {
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     * @return Option<NonEmptyLinkedList<TV>>
+     */
+    public function toNonEmptyLinkedList(): Option
+    {
+        return NonEmptyLinkedList::collect($this);
     }
 
     /**
@@ -144,12 +163,7 @@ abstract class LinkedList implements Seq
      */
     public function toNonEmptyArrayList(): Option
     {
-        $arrayList = $this->toArrayList();
-
-        return Option::when(
-            $arrayList->isNonEmpty(),
-            fn() => new NonEmptyArrayList($arrayList)
-        );
+        return NonEmptyArrayList::collect($this);
     }
 
     /**
@@ -163,6 +177,15 @@ abstract class LinkedList implements Seq
 
     /**
      * @inheritDoc
+     * @return Option<NonEmptyHashSet<TV>>
+     */
+    public function toNonEmptyHashSet(): Option
+    {
+        return NonEmptyHashSet::collect($this);
+    }
+
+    /**
+     * @inheritDoc
      * @template TKI
      * @template TVI
      * @param callable(TV): array{TKI, TVI} $callback
@@ -171,6 +194,24 @@ abstract class LinkedList implements Seq
     public function toHashMap(callable $callback): HashMap
     {
         return HashMap::collectPairs(asGenerator(function () use ($callback) {
+            foreach ($this as $elem) {
+                yield $callback($elem);
+            }
+        }));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKI
+     * @template TVI
+     *
+     * @param callable(TV): array{TKI, TVI} $callback
+     * @return Option<NonEmptyHashMap<TKI, TVI>>
+     */
+    public function toNonEmptyHashMap(callable $callback): Option
+    {
+        return NonEmptyHashMap::collectPairs(asGenerator(function () use ($callback) {
             foreach ($this as $elem) {
                 yield $callback($elem);
             }
