@@ -16,9 +16,19 @@ interface NonEmptyMapCastableOps
      * => [['a', 1], ['b', 2]]
      * ```
      *
-     * @return non-empty-list<array{TK, TV}>
+     * @return list<array{TK, TV}>
      */
     public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toArray();
+     * => [['a', 1], ['b', 2]]
+     * ```
+     *
+     * @return non-empty-list<array{TK, TV}>
+     */
+    public function toNonEmptyArray(): array;
 
     /**
      * ```php

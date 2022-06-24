@@ -92,11 +92,21 @@ final class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @inheritDoc
-     * @return non-empty-list<TV>
+     * @return list<TV>
      */
     public function toArray(): array
     {
         return asNonEmptyList($this->getIterator())->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
+     * @return non-empty-list<TV>
+     */
+    public function toNonEmptyArray(): array
+    {
+        /** @var non-empty-list */
+        return $this->toArray();
     }
 
     /**

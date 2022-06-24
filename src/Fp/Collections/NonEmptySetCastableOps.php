@@ -16,9 +16,19 @@ interface NonEmptySetCastableOps
      * => [1, 2]
      * ```
      *
-     * @return non-empty-list<TV>
+     * @return list<TV>
      */
     public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toArray();
+     * => [1, 2]
+     * ```
+     *
+     * @return non-empty-list<TV>
+     */
+    public function toNonEmptyArray(): array;
 
     /**
      * ```php

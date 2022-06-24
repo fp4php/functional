@@ -148,11 +148,21 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
-     * @return non-empty-list<array{TK, TV}>
+     * @return list<array{TK, TV}>
      */
     public function toArray(): array
     {
         return $this->toNonEmptyArrayList()->toNonEmptyArray();
+    }
+
+    /**
+     * @inheritDoc
+     * @return non-empty-list<array{TK, TV}>
+     */
+    public function toNonEmptyArray(): array
+    {
+        /** @var non-empty-list<array{TK, TV}> */
+        return $this->toArray();
     }
 
     /**
