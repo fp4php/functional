@@ -100,8 +100,8 @@ interface SeqTerminalOps
      * ```php
      * >>> LinkedList::collect([1, 1, 3])
      * >>>     ->groupBy(fn($e) => $e)
-     * >>>     ->map(fn(Seq $e) => $e->toArray())
-     * >>>     ->toArray();
+     * >>>     ->map(fn(Seq $e) => $e->toList())
+     * >>>     ->toList();
      * => [[1, [1, 1]], [3, [3]]]
      * ```
      *

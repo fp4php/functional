@@ -67,17 +67,17 @@ final class SeqTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            $seq->toArray(),
+            $seq->toList(),
         );
 
         $this->assertEquals(
             Option::some([1, 2, 3]),
-            $seq->toNonEmptyArray(),
+            $seq->toNonEmptyList(),
         );
 
         $this->assertEquals(
             Option::none(),
-            $emptySeq->toNonEmptyArray(),
+            $emptySeq->toNonEmptyList(),
         );
 
         $this->assertEquals(

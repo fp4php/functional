@@ -16,7 +16,7 @@ interface NonEmptySetChainableOps
      * Produces new set with given element included
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->updated(3)->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->updated(3)->toList();
      * => [1, 2, 3]
      * ```
      *
@@ -30,7 +30,7 @@ interface NonEmptySetChainableOps
      * Produces new set with given element excluded
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->removed(2)->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2])->removed(2)->toList();
      * => [1]
      * ```
      *
@@ -43,7 +43,7 @@ interface NonEmptySetChainableOps
      * Filter collection by condition
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->filter(fn($elem) => $elem > 1)->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->filter(fn($elem) => $elem > 1)->toList();
      * => [2]
      * ```
      *
@@ -56,7 +56,7 @@ interface NonEmptySetChainableOps
      * Filter elements of given class
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, new Foo(2)])->filterOf(Foo::class)->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, new Foo(2)])->filterOf(Foo::class)->toList();
      * => [Foo(2)]
      * ```
      *
@@ -77,7 +77,7 @@ interface NonEmptySetChainableOps
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [1, 2]
      * ```
      *
@@ -91,7 +91,7 @@ interface NonEmptySetChainableOps
      * Exclude null elements
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, null])->filterNotNull()->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, null])->filterNotNull()->toList();
      * => [1]
      * ```
      *
@@ -104,7 +104,7 @@ interface NonEmptySetChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->map(fn($elem) => (string) $elem)->toList();
      * => ['1', '2']
      * ```
      *
@@ -120,7 +120,7 @@ interface NonEmptySetChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList();
      * => ['0-1', '1-2']
      * ```
      *
@@ -135,7 +135,7 @@ interface NonEmptySetChainableOps
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([2, 5])
      * >>>     ->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [1, 2, 3, 4, 5, 6]
      * ```
      *
@@ -152,7 +152,7 @@ interface NonEmptySetChainableOps
      * >>> NonEmptyHashSet::collectNonEmpty([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [2, 3]
      * ```
      *
@@ -165,7 +165,7 @@ interface NonEmptySetChainableOps
      * Returns every collection element except first
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toList();
      * => [2, 3]
      * ```
      *
@@ -178,7 +178,7 @@ interface NonEmptySetChainableOps
      *
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])
-     *     ->intersect(HashSet::collect([2, 3]))->toArray();
+     *     ->intersect(HashSet::collect([2, 3]))->toList();
      * => [2, 3]
      * ```
      *
@@ -193,7 +193,7 @@ interface NonEmptySetChainableOps
      *
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 3])
-     *     ->diff(HashSet::collect([2, 3]))->toArray();
+     *     ->diff(HashSet::collect([2, 3]))->toList();
      * => [1]
      * ```
      *

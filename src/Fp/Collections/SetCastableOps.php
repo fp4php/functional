@@ -14,25 +14,25 @@ interface SetCastableOps
 {
     /**
      * ```php
-     * >>> HashSet::collect([1, 2, 2])->toArray();
+     * >>> HashSet::collect([1, 2, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @return list<TV>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> HashSet::collect([1, 2, 2])->toNonEmptyArray();
+     * >>> HashSet::collect([1, 2, 2])->toNonEmptyList();
      * => Some([1, 2])
-     * >>> HashSet::collect([])->toNonEmptyArray();
+     * >>> HashSet::collect([])->toNonEmptyList();
      * => None
      * ```
      *
      * @return Option<non-empty-list<TV>>
      */
-    public function toNonEmptyArray(): Option;
+    public function toNonEmptyList(): Option;
 
     /**
      * ```php

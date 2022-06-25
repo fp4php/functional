@@ -120,7 +120,7 @@ final class ArrayList implements Seq
      * @inheritDoc
      * @return list<TV>
      */
-    public function toArray(): array
+    public function toList(): array
     {
         return $this->elements;
     }
@@ -129,9 +129,9 @@ final class ArrayList implements Seq
      * @inheritDoc
      * @return Option<non-empty-list<TV>>
      */
-    public function toNonEmptyArray(): Option
+    public function toNonEmptyList(): Option
     {
-        return proveNonEmptyList($this->toArray());
+        return proveNonEmptyList($this->toList());
     }
 
     /**

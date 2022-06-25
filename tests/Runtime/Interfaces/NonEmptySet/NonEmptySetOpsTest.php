@@ -32,7 +32,7 @@ final class NonEmptySetOpsTest extends TestCase
         /** @psalm-var NonEmptyHashSet<int> $hs */
         $hs = NonEmptyHashSet::collectNonEmpty([1, 2, 2])->updated(3)->removed(1);
 
-        $this->assertEquals([2, 3], $hs->toArray());
+        $this->assertEquals([2, 3], $hs->toList());
     }
 
     public function testEvery(): void
@@ -86,8 +86,8 @@ final class NonEmptySetOpsTest extends TestCase
     public function testFilter(): void
     {
         $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);
-        $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toArray());
-        $this->assertEquals([1], NonEmptyHashSet::collectNonEmpty([1, null])->filterNotNull()->toArray());
+        $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toList());
+        $this->assertEquals([1], NonEmptyHashSet::collectNonEmpty([1, null])->filterNotNull()->toList());
     }
 
     public function testFilterOf(): void
@@ -102,7 +102,7 @@ final class NonEmptySetOpsTest extends TestCase
             [1, 2],
             NonEmptyHashSet::collectNonEmpty(['zero', '1', '2'])
                 ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
-                ->toArray()
+                ->toList()
         );
     }
 
@@ -135,12 +135,12 @@ final class NonEmptySetOpsTest extends TestCase
     {
         $this->assertEquals(
             ['2', '3', '4'],
-            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
+            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toList()
         );
 
         $this->assertEquals(
             ['0-1', '1-2', '2-3'],
-            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->mapWithKey(fn($k, $e) => "{$k}-{$e}")->toArray()
+            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->mapWithKey(fn($k, $e) => "{$k}-{$e}")->toList()
         );
     }
 
@@ -150,7 +150,7 @@ final class NonEmptySetOpsTest extends TestCase
             [1, 2, 3, 4, 5, 6],
             NonEmptyHashSet::collectNonEmpty([2, 5])
                 ->flatMap(fn($e) => [$e - 1, $e, $e + 1])
-                ->toArray()
+                ->toList()
         );
     }
 
@@ -161,7 +161,7 @@ final class NonEmptySetOpsTest extends TestCase
             NonEmptyHashSet::collectNonEmpty([new Foo(1), new Foo(2)])
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
-                ->toArray()
+                ->toList()
         );
     }
 
@@ -187,7 +187,7 @@ final class NonEmptySetOpsTest extends TestCase
     {
         $this->assertEquals(
             [2, 3],
-            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toArray()
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->tail()->toList()
         );
     }
 
@@ -197,14 +197,14 @@ final class NonEmptySetOpsTest extends TestCase
             [2, 3],
             NonEmptyHashSet::collectNonEmpty([1, 2, 3])
                 ->intersect(HashSet::collect([2, 3]))
-                ->toArray()
+                ->toList()
         );
 
         $this->assertEquals(
             [1],
             NonEmptyHashSet::collectNonEmpty([1, 2, 3])
                 ->diff(HashSet::collect([2, 3]))
-                ->toArray()
+                ->toList()
         );
     }
 }

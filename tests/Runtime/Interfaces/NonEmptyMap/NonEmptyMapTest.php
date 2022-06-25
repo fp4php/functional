@@ -22,12 +22,12 @@ final class NonEmptyMapTest extends TestCase
 
         $this->assertEquals(
             $expected,
-            NonEmptyHashMap::collectPairsNonEmpty($expected)->toArray(),
+            NonEmptyHashMap::collectPairsNonEmpty($expected)->toList(),
         );
 
         $this->assertEquals(
             $expected,
-            NonEmptyHashMap::collectPairsNonEmpty($expected)->toNonEmptyArray(),
+            NonEmptyHashMap::collectPairsNonEmpty($expected)->toNonEmptyList(),
         );
 
         $this->assertEquals(

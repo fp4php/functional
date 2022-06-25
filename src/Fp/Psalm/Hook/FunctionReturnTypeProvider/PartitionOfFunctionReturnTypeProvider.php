@@ -49,7 +49,7 @@ class PartitionOfFunctionReturnTypeProvider implements FunctionReturnTypeProvide
                 ->map(fn(TNamedObject $no) => new TList(new Union([$no])))
                 ->appended(new TList($collection_value_type_param))
                 ->map(fn(TList $list) => new Union([$list]))
-                ->toArray();
+                ->toList();
 
             $tuple = new TKeyedArray(yield proveNonEmptyArrayOf($partitions, Union::class));
             $tuple->is_list = true;

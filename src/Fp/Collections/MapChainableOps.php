@@ -17,7 +17,7 @@ interface MapChainableOps
      * Produces new collection with given element
      *
      * ```php
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->updated('b', 3)->toArray();
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->updated('b', 3)->toList();
      * => [['a', 1], ['b', 3]]
      * ```
      *
@@ -33,7 +33,7 @@ interface MapChainableOps
      * Produces new collection without an element with given key
      *
      * ```php
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->removed('b')->toArray();
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->removed('b')->toList();
      * => [['a', 1]]
      * ```
      *
@@ -46,7 +46,7 @@ interface MapChainableOps
      * Filter collection by condition
      *
      * ```php
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->filter(fn(Entry $e) => $e->value > 1)->toArray();
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->filter(fn(Entry $e) => $e->value > 1)->toList();
      * => [['b', 2]]
      * ```
      *
@@ -64,7 +64,7 @@ interface MapChainableOps
      * ```php
      * >>> HashMap::collectPairs([['a', 'zero'], ['b', '1'], ['c', '2']])
      * >>>     ->filterMap(fn(Entry $e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [['b', 1], ['c', 2]]
      * ```
      *
@@ -87,7 +87,7 @@ interface MapChainableOps
      * >>>         [$e->value, $e->value],
      * >>>         [$e->value + 1, $e->value + 1]
      * >>>     ])
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
      * ```
      *
@@ -180,7 +180,7 @@ interface MapChainableOps
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->keys(fn($elem) => $elem + 1)->toArray();
+     * >>> $collection->keys(fn($elem) => $elem + 1)->toList();
      * => ['1', '2']
      * ```
      *
@@ -195,7 +195,7 @@ interface MapChainableOps
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->values(fn($elem) => $elem + 1)->toArray();
+     * >>> $collection->values(fn($elem) => $elem + 1)->toList();
      * => [1, 2]
      * ```
      *

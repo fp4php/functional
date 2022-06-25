@@ -503,7 +503,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @inheritDoc
      * @return list<TV>
      */
-    public function toArray(): array
+    public function toList(): array
     {
         /** @var non-empty-list<TV> */
         return $this->arrayList->elements;
@@ -513,7 +513,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @inheritDoc
      * @return non-empty-list<TV>
      */
-    public function toNonEmptyArray(): array
+    public function toNonEmptyList(): array
     {
         /** @var non-empty-list<TV> */
         return $this->arrayList->elements;

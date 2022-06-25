@@ -12,23 +12,23 @@ interface NonEmptyMapCastableOps
 {
     /**
      * ```php
-     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toArray();
+     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toList();
      * => [['a', 1], ['b', 2]]
      * ```
      *
      * @return list<array{TK, TV}>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toArray();
+     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toList();
      * => [['a', 1], ['b', 2]]
      * ```
      *
      * @return non-empty-list<array{TK, TV}>
      */
-    public function toNonEmptyArray(): array;
+    public function toNonEmptyList(): array;
 
     /**
      * ```php

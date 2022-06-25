@@ -24,7 +24,7 @@ class SortedOperation extends AbstractOperation
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
-            $sorted = ArrayList::collect($this->gen)->toArray();
+            $sorted = ArrayList::collect($this->gen)->toList();
             usort($sorted, $f);
 
             foreach ($sorted as $value) {

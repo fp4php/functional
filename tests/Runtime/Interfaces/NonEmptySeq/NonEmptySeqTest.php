@@ -53,12 +53,12 @@ final class NonEmptySeqTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            $seq->toArray(),
+            $seq->toList(),
         );
 
         $this->assertEquals(
             [1, 2, 3],
-            $seq->toNonEmptyArray(),
+            $seq->toNonEmptyList(),
         );
 
         $this->assertEquals(

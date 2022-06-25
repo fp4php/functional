@@ -169,7 +169,7 @@ final class SemigroupTest extends TestCase
 
         $this->assertEquals(
             [1, 2],
-            $semigroup->combine(NonEmptyLinkedList::collectNonEmpty([1]), NonEmptyLinkedList::collectNonEmpty([2]))->toArray()
+            $semigroup->combine(NonEmptyLinkedList::collectNonEmpty([1]), NonEmptyLinkedList::collectNonEmpty([2]))->toList()
         );
     }
 
@@ -180,7 +180,7 @@ final class SemigroupTest extends TestCase
 
         $this->assertEquals(
             [1, 2],
-            $semigroup->combine(NonEmptyArrayList::collectNonEmpty([1]), NonEmptyArrayList::collectNonEmpty([2]))->toArray()
+            $semigroup->combine(NonEmptyArrayList::collectNonEmpty([1]), NonEmptyArrayList::collectNonEmpty([2]))->toList()
         );
     }
 
@@ -191,7 +191,7 @@ final class SemigroupTest extends TestCase
 
         $this->assertEquals(
             [1, 2],
-            $semigroup->combine(NonEmptyHashSet::collectNonEmpty([1]), NonEmptyHashSet::collectNonEmpty([2]))->toArray()
+            $semigroup->combine(NonEmptyHashSet::collectNonEmpty([1]), NonEmptyHashSet::collectNonEmpty([2]))->toList()
         );
     }
 
@@ -202,7 +202,7 @@ final class SemigroupTest extends TestCase
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            $semigroup->combine(NonEmptyHashMap::collectPairsNonEmpty([['a', 1]]), NonEmptyHashMap::collectPairsNonEmpty([['b', 2]]))->toArray()
+            $semigroup->combine(NonEmptyHashMap::collectPairsNonEmpty([['a', 1]]), NonEmptyHashMap::collectPairsNonEmpty([['b', 2]]))->toList()
         );
     }
 }

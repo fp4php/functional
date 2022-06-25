@@ -17,7 +17,7 @@ interface NonEmptyMapChainableOps
      * Produces new collection with given element
      *
      * ```php
-     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->updated('b', 3)->toArray();
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->updated('b', 3)->toList();
      * => [['a', 1], ['b', 3]]
      * ```
      *
@@ -33,7 +33,7 @@ interface NonEmptyMapChainableOps
      * Produces new collection without an element with given key
      *
      * ```php
-     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->removed('b')->toArray();
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->removed('b')->toList();
      * => [['a', 1]]
      * ```
      *
@@ -48,7 +48,7 @@ interface NonEmptyMapChainableOps
      * ```php
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])
      * >>>     ->filter(fn(Entry $e) => $e->value > 1)
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [['b', 2]]
      * ```
      *
@@ -67,7 +67,7 @@ interface NonEmptyMapChainableOps
      * ```php
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
      * >>>     ->filterMap(fn(Entry $e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [['b', 1], ['c', 2]]
      * ```
      *
@@ -158,7 +158,7 @@ interface NonEmptyMapChainableOps
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->keys(fn($elem) => $elem + 1)->toArray();
+     * >>> $collection->keys(fn($elem) => $elem + 1)->toList();
      * => ['1', '2']
      * ```
      *
@@ -173,7 +173,7 @@ interface NonEmptyMapChainableOps
      * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
      * => NonEmptyHashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->values(fn($elem) => $elem + 1)->toArray();
+     * >>> $collection->values(fn($elem) => $elem + 1)->toList();
      * => [1, 2]
      * ```
      *

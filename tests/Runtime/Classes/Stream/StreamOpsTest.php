@@ -53,8 +53,8 @@ final class StreamOpsTest extends TestCase
     {
         $hs = Stream::emits([new Foo(1), 1, new Foo(1)]);
 
-        $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toArray());
-        $this->assertEquals([1], Stream::emits([1, null])->filterNotNull()->toArray());
+        $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toList());
+        $this->assertEquals([1], Stream::emits([1, null])->filterNotNull()->toList());
     }
 
     public function testFilterOf(): void
@@ -69,7 +69,7 @@ final class StreamOpsTest extends TestCase
             [1, 2],
             Stream::emits(['zero', '1', '2'])
                 ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
-                ->toArray()
+                ->toList()
         );
     }
 
@@ -89,7 +89,7 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3, 4, 5, 6],
-            Stream::emits([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
+            Stream::emits([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList()
         );
     }
 
@@ -119,12 +119,12 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(
             ['2', '3', '4'],
-            Stream::emits([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
+            Stream::emits([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toList()
         );
 
         $this->assertEquals(
             ['0-1', '1-2', '2-3'],
-            Stream::emits([1, 2, 3])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray()
+            Stream::emits([1, 2, 3])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList()
         );
     }
 
@@ -135,15 +135,15 @@ final class StreamOpsTest extends TestCase
             Stream::emits([new Foo(1), new Foo(2)])
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
-                ->toArray()
+                ->toList()
         );
     }
 
     public function testRepeat(): void
     {
-        $this->assertEquals([1, 2, 1, 2, 1], Stream::emits([1,2])->repeat()->take(5)->toArray());
-        $this->assertEquals([1], Stream::emit(1)->repeatN(1)->toArray());
-        $this->assertEquals([1, 1, 1], Stream::emit(1)->repeatN(3)->toArray());
+        $this->assertEquals([1, 2, 1, 2, 1], Stream::emits([1,2])->repeat()->take(5)->toList());
+        $this->assertEquals([1], Stream::emit(1)->repeatN(1)->toList());
+        $this->assertEquals([1, 1, 1], Stream::emit(1)->repeatN(3)->toList());
     }
 
     public function testAppendedAndPrepended(): void
@@ -155,7 +155,7 @@ final class StreamOpsTest extends TestCase
                 ->appended(4)
                 ->appendedAll([5, 6])
                 ->prependedAll([-2, -1])
-                ->toArray()
+                ->toList()
         );
     }
 
@@ -163,22 +163,22 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(
             [2, 3],
-            Stream::emits([1, 2, 3])->tail()->toArray()
+            Stream::emits([1, 2, 3])->tail()->toList()
         );
     }
 
     public function testTakeAndDrop(): void
     {
-        $this->assertEquals([0, 1], Stream::emits([0, 1, 2])->takeWhile(fn($e) => $e < 2)->toArray());
-        $this->assertEquals([2], Stream::emits([0, 1, 2])->dropWhile(fn($e) => $e < 2)->toArray());
-        $this->assertEquals([0, 1], Stream::emits([0, 1, 2])->take(2)->toArray());
-        $this->assertEquals([2], Stream::emits([0, 1, 2])->drop(2)->toArray());
+        $this->assertEquals([0, 1], Stream::emits([0, 1, 2])->takeWhile(fn($e) => $e < 2)->toList());
+        $this->assertEquals([2], Stream::emits([0, 1, 2])->dropWhile(fn($e) => $e < 2)->toList());
+        $this->assertEquals([0, 1], Stream::emits([0, 1, 2])->take(2)->toList());
+        $this->assertEquals([2], Stream::emits([0, 1, 2])->drop(2)->toList());
     }
 
     public function testIntersperse(): void
     {
-        $this->assertEquals([0, '.', 1, '.', 2], Stream::emits([0, 1, 2])->intersperse('.')->toArray());
-        $this->assertEquals([], Stream::emits([])->intersperse('.')->toArray());
+        $this->assertEquals([0, '.', 1, '.', 2], Stream::emits([0, 1, 2])->intersperse('.')->toList());
+        $this->assertEquals([], Stream::emits([])->intersperse('.')->toList());
     }
 
     public function testLines(): void
@@ -191,12 +191,12 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(
             [0, 'a', 1, 'b'],
-            Stream::emits([0, 1, 2])->interleave(['a', 'b'])->toArray()
+            Stream::emits([0, 1, 2])->interleave(['a', 'b'])->toList()
         );
 
         $this->assertEquals(
             [0, 'a', 1, 'b'],
-            Stream::emits([0, 1])->interleave(['a', 'b', 'c'])->toArray()
+            Stream::emits([0, 1])->interleave(['a', 'b', 'c'])->toList()
         );
     }
 
@@ -204,12 +204,12 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(
             [[0, 'a'], [1, 'b']],
-            Stream::emits([0, 1, 2])->zip(['a', 'b'])->toArray()
+            Stream::emits([0, 1, 2])->zip(['a', 'b'])->toList()
         );
 
         $this->assertEquals(
             [[0, 'a'], [1, 'b']],
-            Stream::emits([0, 1])->zip(['a', 'b', 'c'])->toArray()
+            Stream::emits([0, 1])->zip(['a', 'b', 'c'])->toList()
         );
     }
 
@@ -219,8 +219,8 @@ final class StreamOpsTest extends TestCase
             [[1, 2], [3, 4], [5]],
             Stream::emits([1, 2, 3, 4, 5])
                 ->chunks(2)
-                ->map(fn(Seq $seq) => $seq->toArray())
-                ->toArray()
+                ->map(fn(Seq $seq) => $seq->toList())
+                ->toList()
         );
     }
 
@@ -230,8 +230,8 @@ final class StreamOpsTest extends TestCase
             [["H", ["Hello", "Hi"]], ["G", ["Greetings"]], ["H", ["Hey"]]],
             Stream::emits(["Hello", "Hi", "Greetings", "Hey"])
                 ->groupAdjacentBy(fn($str) => $str[0])
-                ->map(fn($pair) => [$pair[0], $pair[1]->toArray()])
-                ->toArray()
+                ->map(fn($pair) => [$pair[0], $pair[1]->toList()])
+                ->toList()
         );
     }
 
@@ -253,12 +253,12 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            Stream::emits([1, 3, 2])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray()
+            Stream::emits([1, 3, 2])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList()
         );
 
         $this->assertEquals(
             [3, 2, 1],
-            Stream::emits([1, 3, 2])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray()
+            Stream::emits([1, 3, 2])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList()
         );
     }
 }

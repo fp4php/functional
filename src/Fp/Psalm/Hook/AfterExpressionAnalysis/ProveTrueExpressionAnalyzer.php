@@ -42,7 +42,7 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
                 $statements_analyzer,
                 new VirtualFuncCall(
                     new VirtualFullyQualified('assert'),
-                    $prove_true_args->toArray(),
+                    $prove_true_args->toList(),
                 ),
                 $event->getContext(),
             );

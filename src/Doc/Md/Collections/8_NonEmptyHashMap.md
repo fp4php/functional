@@ -37,6 +37,6 @@ $collection(new Foo(2))->getOrElse(0); // 2
 $collection
     ->mapValues(fn(Entry $entry) => $entry->value + 1)
     ->mapKeys(fn(Entry $entry) => $entry->key->a)
-    ->toArray(); // [[1, 2], [2, 3], [3, 4], [4, 5]]
+    ->toList(); // [[1, 2], [2, 3], [3, 4], [4, 5]]
 ```
 

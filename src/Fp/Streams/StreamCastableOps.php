@@ -22,29 +22,29 @@ interface StreamCastableOps
 {
     /**
      * ```php
-     * >>> Stream::emits([1, 2, 2])->toArray();
+     * >>> Stream::emits([1, 2, 2])->toList();
      * => [1, 2, 2]
      * ```
      *
      * @return list<TV>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> Stream::emits([1, 2, 3])->toNonEmptyArray();
+     * >>> Stream::emits([1, 2, 3])->toNonEmptyList();
      * => Some([1, 2, 3])
-     * >>> Stream::emits([])->toNonEmptyArray();
+     * >>> Stream::emits([])->toNonEmptyList();
      * => None
      * ```
      *
      * @return Option<non-empty-list<TV>>
      */
-    public function toNonEmptyArray(): Option;
+    public function toNonEmptyList(): Option;
 
     /**
      * ```php
-     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toAssocArray();
+     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toArray();
      * => ['fst' => 1, 'snd' => 2]
      * ```
      *
@@ -54,13 +54,13 @@ interface StreamCastableOps
      *
      * @return array<TKO, TVO>
      */
-    public function toAssocArray(): array;
+    public function toArray(): array;
 
     /**
      * ```php
-     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toNonEmptyAssocArray();
+     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toNonEmptyArray();
      * => Some(['fst' => 1, 'snd' => 2])
-     * >>> Stream::emits([])->toNonEmptyAssocArray();
+     * >>> Stream::emits([])->toNonEmptyArray();
      * => None
      * ```
      *
@@ -70,7 +70,7 @@ interface StreamCastableOps
      *
      * @return Option<non-empty-array<TKO, TVO>>
      */
-    public function toNonEmptyAssocArray(): Option;
+    public function toNonEmptyArray(): Option;
 
     /**
      * ```php

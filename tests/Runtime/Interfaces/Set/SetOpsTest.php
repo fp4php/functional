@@ -31,7 +31,7 @@ final class SetOpsTest extends TestCase
         /** @psalm-var HashSet<int> $hs */
         $hs = HashSet::collect([1, 2, 2])->updated(3)->removed(1);
 
-        $this->assertEquals([2, 3], $hs->toArray());
+        $this->assertEquals([2, 3], $hs->toList());
     }
 
     public function testEvery(): void
@@ -85,8 +85,8 @@ final class SetOpsTest extends TestCase
     public function testFilter(): void
     {
         $hs = HashSet::collect([new Foo(1), 1, 1, new Foo(1)]);
-        $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toArray());
-        $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toArray());
+        $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toList());
+        $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toList());
     }
 
     public function testFilterOf(): void
@@ -101,7 +101,7 @@ final class SetOpsTest extends TestCase
             [1, 2],
             HashSet::collect(['zero', '1', '2'])
                 ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
-                ->toArray()
+                ->toList()
         );
     }
 
@@ -123,7 +123,7 @@ final class SetOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3, 4, 5, 6],
-            HashSet::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray()
+            HashSet::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList()
         );
     }
 
@@ -153,12 +153,12 @@ final class SetOpsTest extends TestCase
     {
         $this->assertEquals(
             ['2', '3', '4'],
-            HashSet::collect([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toArray()
+            HashSet::collect([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toList()
         );
 
         $this->assertEquals(
             ['0-1', '1-2', '2-3'],
-            HashSet::collect([1, 2, 2, 3])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray()
+            HashSet::collect([1, 2, 2, 3])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList()
         );
     }
 
@@ -169,7 +169,7 @@ final class SetOpsTest extends TestCase
             HashSet::collect([new Foo(1), new Foo(2)])
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
-                ->toArray()
+                ->toList()
         );
     }
 
@@ -194,7 +194,7 @@ final class SetOpsTest extends TestCase
     {
         $this->assertEquals(
             [2, 3],
-            HashSet::collect([1, 2, 3])->tail()->toArray()
+            HashSet::collect([1, 2, 3])->tail()->toList()
         );
     }
 
@@ -204,14 +204,14 @@ final class SetOpsTest extends TestCase
             [2, 3],
             HashSet::collect([1, 2, 3])
                 ->intersect(HashSet::collect([2, 3]))
-                ->toArray()
+                ->toList()
         );
 
         $this->assertEquals(
             [1],
             HashSet::collect([1, 2, 3])
                 ->diff(HashSet::collect([2, 3]))
-                ->toArray()
+                ->toList()
         );
     }
 }

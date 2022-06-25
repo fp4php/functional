@@ -81,12 +81,12 @@ final class MonoidTest extends TestCase
 
         $this->assertEquals(
             [1],
-            $monoid->combine(LinkedList::collect([1]), $monoid->empty())->toArray()
+            $monoid->combine(LinkedList::collect([1]), $monoid->empty())->toList()
         );
 
         $this->assertEquals(
             [1, 2],
-            $monoid->combine(LinkedList::collect([1]), LinkedList::collect([2]))->toArray()
+            $monoid->combine(LinkedList::collect([1]), LinkedList::collect([2]))->toList()
         );
     }
 
@@ -101,12 +101,12 @@ final class MonoidTest extends TestCase
 
         $this->assertEquals(
             [1],
-            $monoid->combine(ArrayList::collect([1]), $monoid->empty())->toArray()
+            $monoid->combine(ArrayList::collect([1]), $monoid->empty())->toList()
         );
 
         $this->assertEquals(
             [1, 2],
-            $monoid->combine(ArrayList::collect([1]), ArrayList::collect([2]))->toArray()
+            $monoid->combine(ArrayList::collect([1]), ArrayList::collect([2]))->toList()
         );
     }
 
@@ -121,12 +121,12 @@ final class MonoidTest extends TestCase
 
         $this->assertEquals(
             [1],
-            $monoid->combine(HashSet::collect([1]), $monoid->empty())->toArray()
+            $monoid->combine(HashSet::collect([1]), $monoid->empty())->toList()
         );
 
         $this->assertEquals(
             [1, 2],
-            $monoid->combine(HashSet::collect([1]), HashSet::collect([2]))->toArray()
+            $monoid->combine(HashSet::collect([1]), HashSet::collect([2]))->toList()
         );
     }
 
@@ -141,12 +141,12 @@ final class MonoidTest extends TestCase
 
         $this->assertEquals(
             [['a', 1]],
-            $monoid->combine(HashMap::collectPairs([['a', 1]]), $monoid->empty())->toArray()
+            $monoid->combine(HashMap::collectPairs([['a', 1]]), $monoid->empty())->toList()
         );
 
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            $monoid->combine(HashMap::collectPairs([['a', 1]]), HashMap::collectPairs([['b', 2]]))->toArray()
+            $monoid->combine(HashMap::collectPairs([['a', 1]]), HashMap::collectPairs([['b', 2]]))->toList()
         );
     }
 }

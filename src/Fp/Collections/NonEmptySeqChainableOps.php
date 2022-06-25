@@ -16,7 +16,7 @@ interface NonEmptySeqChainableOps
      * Add element to the collection end
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->appended(3)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->appended(3)->toList();
      * => [1, 2, 3]
      * ```
      *
@@ -30,7 +30,7 @@ interface NonEmptySeqChainableOps
      * Add elements to the collection end
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->appendedAll([3, 4])->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->appendedAll([3, 4])->toList();
      * => [1, 2, 3, 4]
      * ```
      *
@@ -44,7 +44,7 @@ interface NonEmptySeqChainableOps
      * Add element to the collection start
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->prepended(0)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->prepended(0)->toList();
      * => [0, 1, 2]
      * ```
      *
@@ -58,7 +58,7 @@ interface NonEmptySeqChainableOps
      * Add elements to the collection start
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->prependedAll(-1, 0)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->prependedAll(-1, 0)->toList();
      * => [-1, 0, 1, 2]
      * ```
      *
@@ -74,7 +74,7 @@ interface NonEmptySeqChainableOps
      * false - exclude element from new collection.
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->filter(fn($elem) => $elem > 1)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->filter(fn($elem) => $elem > 1)->toList();
      * => [2]
      * ```
      *
@@ -93,7 +93,7 @@ interface NonEmptySeqChainableOps
      * ```php
      * >>> NonEmptyLinkedList::collectNonEmpty(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [1, 2]
      * ```
      *
@@ -107,7 +107,7 @@ interface NonEmptySeqChainableOps
      * Exclude null elements
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, null])->filterNotNull()->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, null])->filterNotNull()->toList();
      * => [1, 2]
      * ```
      *
@@ -119,7 +119,7 @@ interface NonEmptySeqChainableOps
      * Filter elements of given class
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, new Foo(2)])->filterOf(Foo::class)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, new Foo(2)])->filterOf(Foo::class)->toList();
      * => [Foo(2)]
      * ```
      *
@@ -132,7 +132,7 @@ interface NonEmptySeqChainableOps
 
     /**
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList();
      * => [1, 2, 3, 4, 5, 6]
      * ```
      *
@@ -147,7 +147,7 @@ interface NonEmptySeqChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->map(fn($elem) => (string) $elem)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->map(fn($elem) => (string) $elem)->toList();
      * => ['1', '2']
      * ```
      *
@@ -162,7 +162,7 @@ interface NonEmptySeqChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList();
      * => ['0-1', '1-2']
      * ```
      *
@@ -177,7 +177,7 @@ interface NonEmptySeqChainableOps
      * Copy collection in reversed order
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->reverse()->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->reverse()->toList();
      * => [2, 1]
      * ```
      *
@@ -189,7 +189,7 @@ interface NonEmptySeqChainableOps
      * Returns every collection element except first
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->tail()->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->tail()->toList();
      * => [2, 3]
      * ```
      *
@@ -201,7 +201,7 @@ interface NonEmptySeqChainableOps
      * Returns collection unique elements
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 1, 2])->unique(fn($elem) => $elem)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 1, 2])->unique(fn($elem) => $elem)->toList();
      * => [1, 2]
      * ```
      *
@@ -214,7 +214,7 @@ interface NonEmptySeqChainableOps
      * Take collection elements while predicate is true
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toList();
      * => [1, 2]
      * ```
      *
@@ -227,7 +227,7 @@ interface NonEmptySeqChainableOps
      * Drop collection elements while predicate is true
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toList();
      * => [3]
      * ```
      *
@@ -240,7 +240,7 @@ interface NonEmptySeqChainableOps
      * Take N collection elements
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->take(2)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->take(2)->toList();
      * => [1, 2]
      * ```
      *
@@ -252,7 +252,7 @@ interface NonEmptySeqChainableOps
      * Drop N collection elements
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->drop(2)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->drop(2)->toList();
      * => [3]
      * ```
      *
@@ -264,10 +264,10 @@ interface NonEmptySeqChainableOps
      * Sort collection
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList();
      * => [1, 2, 3]
      *
-     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray();
+     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList();
      * => [3, 2, 1]
      * ```
      *
@@ -283,7 +283,7 @@ interface NonEmptySeqChainableOps
      * >>> NonEmptyLinkedList::collectNonEmpty([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [2, 3]
      * ```
      *

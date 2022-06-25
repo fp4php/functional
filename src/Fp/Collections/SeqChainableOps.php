@@ -16,7 +16,7 @@ interface SeqChainableOps
      * Add element to the collection end
      *
      * ```php
-     * >>> LinkedList::collect([1, 2])->appended(3)->toArray();
+     * >>> LinkedList::collect([1, 2])->appended(3)->toList();
      * => [1, 2, 3]
      * ```
      *
@@ -30,7 +30,7 @@ interface SeqChainableOps
      * Add elements to the collection end
      *
      * ```php
-     * >>> LinkedList::collect([1, 2])->appendedAll([3, 4])->toArray();
+     * >>> LinkedList::collect([1, 2])->appendedAll([3, 4])->toList();
      * => [1, 2, 3, 4]
      * ```
      *
@@ -44,7 +44,7 @@ interface SeqChainableOps
      * Add element to the collection start
      *
      * ```php
-     * >>> LinkedList::collect([1, 2])->prepended(0)->toArray();
+     * >>> LinkedList::collect([1, 2])->prepended(0)->toList();
      * => [0, 1, 2]
      * ```
      *
@@ -58,7 +58,7 @@ interface SeqChainableOps
      * Add elements to the collection start
      *
      * ```php
-     * >>> LinkedList::collect([1, 2])->prependedAll(-1, 0)->toArray();
+     * >>> LinkedList::collect([1, 2])->prependedAll(-1, 0)->toList();
      * => [-1, 0, 1, 2]
      * ```
      *
@@ -74,7 +74,7 @@ interface SeqChainableOps
      * false - exclude element from new collection.
      *
      * ```php
-     * >>> LinkedList::collect([1, 2])->filter(fn($elem) => $elem > 1)->toArray();
+     * >>> LinkedList::collect([1, 2])->filter(fn($elem) => $elem > 1)->toList();
      * => [2]
      * ```
      *
@@ -87,7 +87,7 @@ interface SeqChainableOps
      * Exclude null elements
      *
      * ```php
-     * >>> LinkedList::collect([1, 2, null])->filterNotNull()->toArray();
+     * >>> LinkedList::collect([1, 2, null])->filterNotNull()->toList();
      * => [1, 2]
      * ```
      *
@@ -99,7 +99,7 @@ interface SeqChainableOps
      * Filter elements of given class
      *
      * ```php
-     * >>> LinkedList::collect([1, new Foo(2)])->filterOf(Foo::class)->toArray();
+     * >>> LinkedList::collect([1, new Foo(2)])->filterOf(Foo::class)->toList();
      * => [Foo(2)]
      * ```
      *
@@ -119,7 +119,7 @@ interface SeqChainableOps
      * ```php
      * >>> LinkedList::collect(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [1, 2]
      * ```
      *
@@ -133,7 +133,7 @@ interface SeqChainableOps
      * Map collection and then flatten the result
      *
      * ```php
-     * >>> LinkedList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toArray();
+     * >>> LinkedList::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList();
      * => [1, 2, 3, 4, 5, 6]
      * ```
      *
@@ -148,7 +148,7 @@ interface SeqChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> LinkedList::collect([1, 2])->map(fn($elem) => (string) $elem)->toArray();
+     * >>> LinkedList::collect([1, 2])->map(fn($elem) => (string) $elem)->toList();
      * => ['1', '2']
      * ```
      *
@@ -164,7 +164,7 @@ interface SeqChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> LinkedList::collect(['one', 'two'])->map(fn($index, $elem) => "{$index}-{$elem}")->toArray();
+     * >>> LinkedList::collect(['one', 'two'])->map(fn($index, $elem) => "{$index}-{$elem}")->toList();
      * => ['1-one', '2-two']
      * ```
      *
@@ -179,7 +179,7 @@ interface SeqChainableOps
      * Copy collection in reversed order
      *
      * ```php
-     * >>> LinkedList::collect([1, 2])->reverse()->toArray();
+     * >>> LinkedList::collect([1, 2])->reverse()->toList();
      * => [2, 1]
      * ```
      *
@@ -191,7 +191,7 @@ interface SeqChainableOps
      * Returns every collection element except first
      *
      * ```php
-     * >>> LinkedList::collect([1, 2, 3])->tail()->toArray();
+     * >>> LinkedList::collect([1, 2, 3])->tail()->toList();
      * => [2, 3]
      * ```
      *
@@ -203,7 +203,7 @@ interface SeqChainableOps
      * Returns collection unique elements
      *
      * ```php
-     * >>> LinkedList::collect([1, 1, 2])->unique(fn($elem) => $elem)->toArray();
+     * >>> LinkedList::collect([1, 1, 2])->unique(fn($elem) => $elem)->toList();
      * => [1, 2]
      * ```
      *
@@ -217,7 +217,7 @@ interface SeqChainableOps
      * Take collection elements while predicate is true
      *
      * ```php
-     * >>> LinkedList::collect([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toArray();
+     * >>> LinkedList::collect([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toList();
      * => [1, 2]
      * ```
      *
@@ -230,7 +230,7 @@ interface SeqChainableOps
      * Drop collection elements while predicate is true
      *
      * ```php
-     * >>> LinkedList::collect([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toArray();
+     * >>> LinkedList::collect([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toList();
      * => [3]
      * ```
      *
@@ -243,7 +243,7 @@ interface SeqChainableOps
      * Take N collection elements
      *
      * ```php
-     * >>> LinkedList::collect([1, 2, 3])->take(2)->toArray();
+     * >>> LinkedList::collect([1, 2, 3])->take(2)->toList();
      * => [1, 2]
      * ```
      *
@@ -255,7 +255,7 @@ interface SeqChainableOps
      * Drop N collection elements
      *
      * ```php
-     * >>> LinkedList::collect([1, 2, 3])->drop(2)->toArray();
+     * >>> LinkedList::collect([1, 2, 3])->drop(2)->toList();
      * => [3]
      * ```
      *
@@ -267,10 +267,10 @@ interface SeqChainableOps
      * Sort collection
      *
      * ```php
-     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toArray();
+     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList();
      * => [1, 2, 3]
      *
-     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toArray();
+     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList();
      * => [3, 2, 1]
      * ```
      *
@@ -286,7 +286,7 @@ interface SeqChainableOps
      * >>> LinkedList::collect([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [2, 3]
      * ```
      *
@@ -299,7 +299,7 @@ interface SeqChainableOps
      * Add specified separator between every pair of elements in the source collection.
      *
      * ```php
-     * >>> ArrayList::collect([1, 2, 3])->intersperse(0)->toArray();
+     * >>> ArrayList::collect([1, 2, 3])->intersperse(0)->toList();
      * => [1, 0, 2, 0, 3]
      * ```
      *
@@ -313,7 +313,7 @@ interface SeqChainableOps
      * Deterministically zips elements, terminating when the end of either branch is reached naturally.
      *
      * ```php
-     * >>> ArrayList::collect([1, 2, 3])->zip([4, 5, 6, 7])->toArray();
+     * >>> ArrayList::collect([1, 2, 3])->zip([4, 5, 6, 7])->toList();
      * => [[1, 4], [2, 5], [3, 6]]
      * ```
      *

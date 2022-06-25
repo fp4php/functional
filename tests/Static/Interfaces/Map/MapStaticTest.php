@@ -16,7 +16,7 @@ final class MapStaticTest
      */
     public function testToAssocArrayWithInvalidInput(Map $coll): void
     {
-        $coll->toAssocArray();
+        $coll->toArray();
     }
 
     /**
@@ -25,7 +25,7 @@ final class MapStaticTest
      */
     public function testToAssocArrayWithValidInput(Map $coll): array
     {
-        return $coll->toAssocArray();
+        return $coll->toArray();
     }
 
     /**
@@ -36,6 +36,6 @@ final class MapStaticTest
     {
         return $coll
             ->toHashMap()
-            ->toAssocArray();
+            ->toArray();
     }
 }

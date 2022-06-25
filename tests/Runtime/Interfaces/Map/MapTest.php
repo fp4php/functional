@@ -23,36 +23,36 @@ final class MapTest extends TestCase
     {
         $this->assertEquals(
             [['a', 1], ['b', 2]],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toList(),
         );
 
         $this->assertEquals(
             Option::some([['a', 1], ['b', 2]]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyList(),
         );
 
+        $this->assertEquals(
+            Option::none(),
+            HashMap::collectPairs([])->toNonEmptyList(),
+        );
+
+        $this->assertEquals(
+            [],
+            HashMap::collectPairs([])->toArray(),
+        );
         $this->assertEquals(
             Option::none(),
             HashMap::collectPairs([])->toNonEmptyArray(),
         );
 
         $this->assertEquals(
-            [],
-            HashMap::collectPairs([])->toAssocArray(),
-        );
-        $this->assertEquals(
-            Option::none(),
-            HashMap::collectPairs([])->toNonEmptyAssocArray(),
-        );
-
-        $this->assertEquals(
             ['a' => 1, 'b' => 2],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toAssocArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toArray(),
         );
 
         $this->assertEquals(
             Option::some(['a' => 1, 'b' => 2]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyAssocArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyArray(),
         );
 
         $this->assertEquals(

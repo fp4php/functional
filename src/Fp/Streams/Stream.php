@@ -645,7 +645,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      * @inheritDoc
      * @return list<TV>
      */
-    public function toArray(): array
+    public function toList(): array
     {
         return $this->leaf(asList($this->emitter));
     }
@@ -654,7 +654,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      * @inheritDoc
      * @return Option<non-empty-list<TV>>
      */
-    public function toNonEmptyArray(): Option
+    public function toNonEmptyList(): Option
     {
         return $this->leaf(asNonEmptyList($this->emitter));
     }
@@ -668,7 +668,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @return array<TKO, TVO>
      */
-    public function toAssocArray(): array
+    public function toArray(): array
     {
         return $this->leaf(asArray(
             asGenerator(function() {
@@ -691,7 +691,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @return Option<non-empty-array<TKO, TVO>>
      */
-    public function toNonEmptyAssocArray(): Option
+    public function toNonEmptyArray(): Option
     {
         return $this->leaf(asNonEmptyArray(
             asGenerator(function() {

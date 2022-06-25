@@ -21,17 +21,17 @@ final class SetTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toArray(),
+            HashSet::collect([1, 2, 3, 3])->toList(),
         );
 
         $this->assertEquals(
             Option::some([1, 2, 3]),
-            HashSet::collect([1, 2, 3, 3])->toNonEmptyArray(),
+            HashSet::collect([1, 2, 3, 3])->toNonEmptyList(),
         );
 
         $this->assertEquals(
             Option::none(),
-            HashSet::collect([])->toNonEmptyArray(),
+            HashSet::collect([])->toNonEmptyList(),
         );
 
         $this->assertEquals(

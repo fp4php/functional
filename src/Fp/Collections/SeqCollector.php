@@ -24,7 +24,7 @@ interface SeqCollector
 
     /**
      * ```php
-     * >>> LinkedList::singleton(1)->toArray();
+     * >>> LinkedList::singleton(1)->toList();
      * => [1]
      * ```
      *
@@ -36,7 +36,7 @@ interface SeqCollector
 
     /**
      * ```php
-     * >>> LinkedList::empty()->toArray();
+     * >>> LinkedList::empty()->toList();
      * => []
      * ```
      *
@@ -49,13 +49,13 @@ interface SeqCollector
      * from $start to $stopExclusive with step $by.
      *
      * ```php
-     * >>> LinkedList::range(0, 10, 2)->toArray();
+     * >>> LinkedList::range(0, 10, 2)->toList();
      * => [0, 2, 4, 6, 8]
      *
-     * >>> LinkedList::range(0, 3)->toArray();
+     * >>> LinkedList::range(0, 3)->toList();
      * => [0, 1, 2]
      *
-     * >>> LinkedList::range(0, 0)->toArray();
+     * >>> LinkedList::range(0, 0)->toList();
      * => []
      * ```
      *

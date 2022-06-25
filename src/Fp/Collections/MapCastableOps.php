@@ -14,47 +14,47 @@ interface MapCastableOps
 {
     /**
      * ```php
-     * >>> HashMap::collect(['a' => 1, 'b' => 2])->toArray();
+     * >>> HashMap::collect(['a' => 1, 'b' => 2])->toList();
      * => [['a', 1], ['b', 2]]
      * ```
      *
      * @return list<array{TK, TV}>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> HashMap::collect(['a' => 1, 'b' => 2])->toNonEmptyArray();
+     * >>> HashMap::collect(['a' => 1, 'b' => 2])->toNonEmptyList();
      * => Some([['a', 1], ['b', 2]])
-     * >>> HashMap::collect([])->toNonEmptyArray();
+     * >>> HashMap::collect([])->toNonEmptyList();
      * => None
      * ```
      *
      * @return Option<non-empty-list<array{TK, TV}>>
      */
-    public function toNonEmptyArray(): Option;
+    public function toNonEmptyList(): Option;
 
     /**
      * ```php
-     * >>> HashMap::collectPairs([['a',  1], ['b', 2]])->toAssocArray();
+     * >>> HashMap::collectPairs([['a',  1], ['b', 2]])->toArray();
      * => ['a' => 1, 'b' => 2]
      * ```
      *
      * @psalm-return (TK is array-key ? array<TK, TV> : never)
      */
-    public function toAssocArray(): array;
+    public function toArray(): array;
 
     /**
      * ```php
-     * >>> HashMap::collectPairs([['a',  1], ['b', 2]])->toNonEmptyAssocArray();
+     * >>> HashMap::collectPairs([['a',  1], ['b', 2]])->toNonEmptyArray();
      * => Some(['a' => 1, 'b' => 2])
-     * >>> HashMap::collectPairs([])->toNonEmptyAssocArray();
+     * >>> HashMap::collectPairs([])->toNonEmptyArray();
      * => None
      * ```
      *
      * @psalm-return (TK is array-key ? Option<non-empty-array<TK, TV>> : never)
      */
-    public function toNonEmptyAssocArray(): Option;
+    public function toNonEmptyArray(): Option;
 
     /**
      * ```php

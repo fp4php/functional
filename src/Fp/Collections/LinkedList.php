@@ -116,7 +116,7 @@ abstract class LinkedList implements Seq
      * @inheritDoc
      * @return list<TV>
      */
-    public function toArray(): array
+    public function toList(): array
     {
         return asList($this->getIterator());
     }
@@ -125,9 +125,9 @@ abstract class LinkedList implements Seq
      * @inheritDoc
      * @return Option<non-empty-list<TV>>
      */
-    public function toNonEmptyArray(): Option
+    public function toNonEmptyList(): Option
     {
-        return proveNonEmptyList($this->toArray());
+        return proveNonEmptyList($this->toList());
     }
 
     /**

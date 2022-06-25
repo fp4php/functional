@@ -719,17 +719,17 @@ abstract class Option
      * ```php
      * >>> Option::some(1)
      *     ->toArrayList(ArrayList::singleton(...))
-     *     ->toArray();
+     *     ->toList();
      * => [1]
      *
      * >>> Option::some([1])
      *     ->toArrayList(ArrayList::collect(...))
-     *     ->toArray();
+     *     ->toList();
      * => [1]
      *
      * >>> Option::none()
      *     ->toArrayList(ArrayList::collect(...))
-     *     ->toArray();
+     *     ->toList();
      * => []
      * ```
      *

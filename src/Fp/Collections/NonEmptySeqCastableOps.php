@@ -12,23 +12,23 @@ interface NonEmptySeqCastableOps
 {
     /**
      * ```php
-     * >>> NonEmptyArrayList::collectNonEmpty([1, 2])->toArray();
+     * >>> NonEmptyArrayList::collectNonEmpty([1, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @return list<TV>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> NonEmptyArrayList::collectNonEmpty([1, 2])->toArray();
+     * >>> NonEmptyArrayList::collectNonEmpty([1, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @return non-empty-list<TV>
      */
-    public function toNonEmptyArray(): array;
+    public function toNonEmptyList(): array;
 
     /**
      * ```php

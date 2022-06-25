@@ -44,5 +44,5 @@ use Fp\Operations\GroupMapReduceOperation;
  */
 function groupMapReduce(iterable $collection, callable $group, callable $map, callable $reduce): array
 {
-    return GroupMapReduceOperation::of($collection)($group, $map, $reduce)->toAssocArray();
+    return GroupMapReduceOperation::of($collection)($group, $map, $reduce)->toArray();
 }

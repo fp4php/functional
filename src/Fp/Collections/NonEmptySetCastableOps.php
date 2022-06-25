@@ -12,23 +12,23 @@ interface NonEmptySetCastableOps
 {
     /**
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @return list<TV>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @return non-empty-list<TV>
      */
-    public function toNonEmptyArray(): array;
+    public function toNonEmptyList(): array;
 
     /**
      * ```php

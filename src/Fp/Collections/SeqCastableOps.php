@@ -14,25 +14,25 @@ interface SeqCastableOps
 {
     /**
      * ```php
-     * >>> ArrayList::collect([1, 2])->toArray();
+     * >>> ArrayList::collect([1, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @return list<TV>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> ArrayList::collect([1, 2])->toNonEmptyArray();
+     * >>> ArrayList::collect([1, 2])->toNonEmptyList();
      * => Some([1, 2])
-     * >>> ArrayList::collect([])->toNonEmptyArray();
+     * >>> ArrayList::collect([])->toNonEmptyList();
      * => None
      * ```
      *
      * @return Option<non-empty-list<TV>>
      */
-    public function toNonEmptyArray(): Option;
+    public function toNonEmptyList(): Option;
 
     /**
      * ```php

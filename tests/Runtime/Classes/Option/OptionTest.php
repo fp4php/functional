@@ -215,17 +215,17 @@ final class OptionTest extends TestCase
     {
         $this->assertEquals(
             [1],
-            Option::some(1)->toArrayList(fn(int $val) => ArrayList::singleton($val))->toArray()
+            Option::some(1)->toArrayList(fn(int $val) => ArrayList::singleton($val))->toList()
         );
 
         $this->assertEquals(
             [1],
-            Option::some([1])->toArrayList(fn(array $val) => ArrayList::collect($val))->toArray()
+            Option::some([1])->toArrayList(fn(array $val) => ArrayList::collect($val))->toList()
         );
 
         $this->assertEquals(
             [],
-            Option::none()->toArrayList(fn(array $val) => ArrayList::collect($val))->toArray()
+            Option::none()->toArrayList(fn(array $val) => ArrayList::collect($val))->toList()
         );
     }
 }

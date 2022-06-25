@@ -39,17 +39,17 @@ final class StreamTest extends TestCase
     {
         $this->assertEquals(
             [0, 1],
-            Stream::emits([0, 1])->toArray(),
+            Stream::emits([0, 1])->toList(),
         );
 
         $this->assertEquals(
             Option::some([0, 1]),
-            Stream::emits([0, 1])->toNonEmptyArray(),
+            Stream::emits([0, 1])->toNonEmptyList(),
         );
 
         $this->assertEquals(
             Option::none(),
-            Stream::emits([])->toNonEmptyArray(),
+            Stream::emits([])->toNonEmptyList(),
         );
 
         $this->assertEquals(
@@ -124,17 +124,17 @@ final class StreamTest extends TestCase
 
         $this->assertEquals(
             [1 => 'a', 2 => 'b'],
-            Stream::emits([[1, 'a'], [2, 'b']])->toAssocArray()
+            Stream::emits([[1, 'a'], [2, 'b']])->toArray()
         );
 
         $this->assertEquals(
             Option::some([1 => 'a', 2 => 'b']),
-            Stream::emits([[1, 'a'], [2, 'b']])->toNonEmptyAssocArray(),
+            Stream::emits([[1, 'a'], [2, 'b']])->toNonEmptyArray(),
         );
 
         $this->assertEquals(
             Option::none(),
-            Stream::emits([])->toNonEmptyAssocArray(),
+            Stream::emits([])->toNonEmptyArray(),
         );
     }
 }

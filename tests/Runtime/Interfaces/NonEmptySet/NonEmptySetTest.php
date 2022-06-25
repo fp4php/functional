@@ -33,12 +33,12 @@ final class NonEmptySetTest extends TestCase
     {
         $this->assertEquals(
             $expected,
-            $set->toArray(),
+            $set->toList(),
         );
 
         $this->assertEquals(
             $expected,
-            $set->toNonEmptyArray(),
+            $set->toNonEmptyList(),
         );
 
         $this->assertEquals(

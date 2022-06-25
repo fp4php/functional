@@ -71,6 +71,6 @@ use Fp\Operations\GroupMapOperation;
 function groupMap(iterable $collection, callable $group, callable $map): array
 {
     return GroupMapOperation::of($collection)($group, $map)
-        ->map(fn(NonEmptyLinkedList $group) => $group->toNonEmptyArray())
-        ->toAssocArray();
+        ->map(fn(NonEmptyLinkedList $group) => $group->toNonEmptyList())
+        ->toArray();
 }

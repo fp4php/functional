@@ -94,7 +94,7 @@ final class NonEmptyHashSet implements NonEmptySet
      * @inheritDoc
      * @return list<TV>
      */
-    public function toArray(): array
+    public function toList(): array
     {
         return asNonEmptyList($this->getIterator())->getUnsafe();
     }
@@ -103,10 +103,10 @@ final class NonEmptyHashSet implements NonEmptySet
      * @inheritDoc
      * @return non-empty-list<TV>
      */
-    public function toNonEmptyArray(): array
+    public function toNonEmptyList(): array
     {
         /** @var non-empty-list */
-        return $this->toArray();
+        return $this->toList();
     }
 
     /**

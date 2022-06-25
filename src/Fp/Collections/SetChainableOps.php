@@ -16,7 +16,7 @@ interface SetChainableOps
      * Produces new set with given element included
      *
      * ```php
-     * >>> HashSet::collect([1, 1, 2])->updated(3)->toArray();
+     * >>> HashSet::collect([1, 1, 2])->updated(3)->toList();
      * => [1, 2, 3]
      * ```
      *
@@ -30,7 +30,7 @@ interface SetChainableOps
      * Produces new set with given element excluded
      *
      * ```php
-     * >>> HashSet::collect([1, 1, 2])->removed(2)->toArray();
+     * >>> HashSet::collect([1, 1, 2])->removed(2)->toList();
      * => [1]
      * ```
      *
@@ -43,7 +43,7 @@ interface SetChainableOps
      * Filter collection by condition
      *
      * ```php
-     * >>> HashSet::collect([1, 2, 2])->filter(fn($elem) => $elem > 1)->toArray();
+     * >>> HashSet::collect([1, 2, 2])->filter(fn($elem) => $elem > 1)->toList();
      * => [2]
      * ```
      *
@@ -56,7 +56,7 @@ interface SetChainableOps
      * Filter elements of given class
      *
      * ```php
-     * >>> HashSet::collect([1, 1, new Foo(2)])->filterOf(Foo::class)->toArray();
+     * >>> HashSet::collect([1, 1, new Foo(2)])->filterOf(Foo::class)->toList();
      * => [Foo(2)]
      * ```
      *
@@ -71,7 +71,7 @@ interface SetChainableOps
      * Exclude null elements
      *
      * ```php
-     * >>> HashSet::collect([1, 1, null])->filterNotNull()->toArray();
+     * >>> HashSet::collect([1, 1, null])->filterNotNull()->toList();
      * => [1]
      * ```
      *
@@ -88,7 +88,7 @@ interface SetChainableOps
      * ```php
      * >>> HashSet::collect(['zero', '1', '2'])
      * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [1, 2]
      * ```
      *
@@ -100,7 +100,7 @@ interface SetChainableOps
 
     /**
      * ```php
-     * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toArray();
+     * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toList();
      * => [1, 2, 3, 4, 5, 6]
      * ```
      *
@@ -115,7 +115,7 @@ interface SetChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> HashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toArray();
+     * >>> HashSet::collect([1, 2, 2])->map(fn($elem) => (string) $elem)->toList();
      * => ['1', '2']
      * ```
      *
@@ -130,7 +130,7 @@ interface SetChainableOps
      * through a transformation function (callback)
      *
      * ```php
-     * >>> HashSet::collect([1, 2, 2])->mapWithKey(fn($index, $elem) => "{$index}-{$key}")->toArray();
+     * >>> HashSet::collect([1, 2, 2])->mapWithKey(fn($index, $elem) => "{$index}-{$key}")->toList();
      * => ['0-1', '1-2']
      * ```
      *
@@ -148,7 +148,7 @@ interface SetChainableOps
      * >>> HashSet::collect([new Foo(1), new Foo(2)])
      * >>>     ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
      * >>>     ->map(fn(Foo $foo) => $foo->a)
-     * >>>     ->toArray();
+     * >>>     ->toList();
      * => [2, 3]
      * ```
      *
@@ -161,7 +161,7 @@ interface SetChainableOps
      * Returns every collection element except first
      *
      * ```php
-     * >>> HashSet::collect([1, 2, 3])->tail()->toArray();
+     * >>> HashSet::collect([1, 2, 3])->tail()->toList();
      * => [2, 3]
      * ```
      *
@@ -174,7 +174,7 @@ interface SetChainableOps
      *
      * ```php
      * >>> HashSet::collect([1, 2, 3])
-     *     ->intersect(HashSet::collect([2, 3]))->toArray();
+     *     ->intersect(HashSet::collect([2, 3]))->toList();
      * => [2, 3]
      * ```
      *
@@ -189,7 +189,7 @@ interface SetChainableOps
      *
      * ```php
      * >>> HashSet::collect([1, 2, 3])
-     *     ->diff(HashSet::collect([2, 3]))->toArray();
+     *     ->diff(HashSet::collect([2, 3]))->toList();
      * => [1]
      * ```
      *

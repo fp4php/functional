@@ -111,7 +111,7 @@ final class HashMap implements Map, StaticStorage
      * @inheritDoc
      * @return list<array{TK, TV}>
      */
-    public function toArray(): array
+    public function toList(): array
     {
         return asList($this->getIterator());
     }
@@ -120,16 +120,16 @@ final class HashMap implements Map, StaticStorage
      * @inheritDoc
      * @return Option<non-empty-list<array{TK, TV}>>
      */
-    public function toNonEmptyArray(): Option
+    public function toNonEmptyList(): Option
     {
-        return proveNonEmptyList($this->toArray());
+        return proveNonEmptyList($this->toList());
     }
 
     /**
      * @inheritDoc
      * @psalm-return (TK is array-key ? array<TK, TV> : never)
      */
-    public function toAssocArray(): array
+    public function toArray(): array
     {
         $acc = [];
 
@@ -151,10 +151,10 @@ final class HashMap implements Map, StaticStorage
      * @psalm-return (TK is array-key ? Option<non-empty-array<TK, TV>> : never)
      * @psalm-suppress MixedInferredReturnType
      */
-    public function toNonEmptyAssocArray(): Option
+    public function toNonEmptyArray(): Option
     {
         /** @psalm-suppress NoValue */
-        $assoc = $this->toAssocArray();
+        $assoc = $this->toArray();
 
         /** @psalm-suppress UnevaluatedCode */
         return proveNonEmptyArray($assoc);
@@ -302,7 +302,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function updated(mixed $key, mixed $value): self
     {
-        return self::collectPairs([...$this->toArray(), [$key, $value]]);
+        return self::collectPairs([...$this->toList(), [$key, $value]]);
     }
 
     /**
