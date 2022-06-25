@@ -18,6 +18,28 @@ final class NonEmptySeqTest extends TestCase
         yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
     }
 
+    public function provideTestCastsToHashMapData(): Generator
+    {
+        $pairs = [
+            ['fst', 1],
+            ['snd', 2],
+            ['trd', 3],
+        ];
+        yield NonEmptyArrayList::class => [$pairs, NonEmptyArrayList::collectNonEmpty($pairs)];
+        yield NonEmptyLinkedList::class => [$pairs, NonEmptyLinkedList::collectNonEmpty($pairs)];
+    }
+
+    /**
+     * @param list<array{string, int}> $expected
+     * @param NonEmptySeq<array{string, int}> $seq
+     * @dataProvider provideTestCastsToHashMapData
+     */
+    public function testCastsToHashMap(array $expected, NonEmptySeq $seq): void
+    {
+        $this->assertEquals($expected, $seq->toHashMap()->toArray());
+        $this->assertEquals($expected, $seq->toNonEmptyHashMap()->toArray());
+    }
+
     /**
      * @dataProvider provideTestCastsData
      */
@@ -31,8 +53,6 @@ final class NonEmptySeqTest extends TestCase
         $this->assertEquals([1, 2, 3], $seq->toNonEmptyArrayList()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toHashSet()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toNonEmptyHashSet()->toArray());
-        $this->assertEquals([[1, 1], [2, 2], [3, 3]], $seq->toHashMap(fn($e) => [$e, $e])->toArray());
-        $this->assertEquals([[1, 1], [2, 2], [3, 3]], $seq->toNonEmptyHashMap(fn($e) => [$e, $e])->toArray());
     }
 
     /**

@@ -102,34 +102,31 @@ interface SetCastableOps
 
     /**
      * ```php
-     * >>> HashSet::collect([1, 2, 2])
-     * >>>     ->toHashMap(fn($elem) => [(string) $elem, $elem]);
-     * => HashMap('1' -> 1, '2' -> 2)
+     * >>> HashSet::collect([['one', 1], ['two', 2], ['two', 2]])->toHashMap();
+     * => HashMap('one' -> 1, 'two' -> 2)
      * ```
      *
      * @template TKI
      * @template TVI
+     * @psalm-if-this-is Set<array{TKI, TVI}>
      *
-     * @param callable(TV): array{TKI, TVI} $callback
      * @return HashMap<TKI, TVI>
      */
-    public function toHashMap(callable $callback): HashMap;
+    public function toHashMap(): HashMap;
 
     /**
      * ```php
-     * >>> HashSet::collect([1, 2, 2])
-     * >>>     ->toNonEmptyHashMap(fn($elem) => [(string) $elem, $elem]);
-     * => Some(NonEmptyHashMap('1' -> 1, '2' -> 2))
-     * >>> HashSet::collect([])
-     * >>>     ->toNonEmptyHashMap(fn($elem) => [(string) $elem, $elem]);
+     * >>> HashSet::collect([['one', 1], ['two', 2], ['two', 2]])->toNonEmptyHashMap();
+     * => Some(NonEmptyHashMap('one' -> 1, 'two' -> 2))
+     * >>> HashSet::collect([])->toNonEmptyHashMap();
      * => None
      * ```
      *
      * @template TKI
      * @template TVI
+     * @psalm-if-this-is Set<array{TKI, TVI}>
      *
-     * @param callable(TV): array{TKI, TVI} $callback
      * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
-    public function toNonEmptyHashMap(callable $callback): Option;
+    public function toNonEmptyHashMap(): Option;
 }

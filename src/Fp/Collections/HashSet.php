@@ -53,7 +53,7 @@ final class HashSet implements Set
      */
     public static function collect(iterable $source): self
     {
-        return new self(ArrayList::collect($source)->toHashMap(fn(mixed $elem) => [$elem, $elem]));
+        return new self(ArrayList::collect($source)->map(fn(mixed $elem) => [$elem, $elem])->toHashMap());
     }
 
     /**
@@ -150,18 +150,16 @@ final class HashSet implements Set
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is HashSet<array{TKI, TVI}>
+     *
      * @return HashMap<TKI, TVI>
      */
-    public function toHashMap(callable $callback): HashMap
+    public function toHashMap(): HashMap
     {
-        return HashMap::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
+        return HashMap::collectPairs($this);
     }
 
     /**
@@ -169,17 +167,13 @@ final class HashSet implements Set
      *
      * @template TKI
      * @template TVI
+     * @psalm-if-this-is HashSet<array{TKI, TVI}>
      *
-     * @param callable(TV): array{TKI, TVI} $callback
      * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
-    public function toNonEmptyHashMap(callable $callback): Option
+    public function toNonEmptyHashMap(): Option
     {
-        return NonEmptyHashMap::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
+        return NonEmptyHashMap::collectPairs($this);
     }
 
     /**

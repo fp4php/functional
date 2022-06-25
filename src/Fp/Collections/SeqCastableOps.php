@@ -102,34 +102,31 @@ interface SeqCastableOps
 
     /**
      * ```php
-     * >>> ArrayList::collect([1, 2])
-     * >>>     ->toHashMap(fn($elem) => [(string) $elem, $elem]);
-     * => HashMap('1' -> 1, '2' -> 2)
+     * >>> ArrayList::collect([['one', 1], ['two', 2]])->toHashMap();
+     * => HashMap('one' -> 1, 'two' -> 2)
      * ```
      *
      * @template TKI
      * @template TVI
+     * @psalm-if-this-is Seq<array{TKI, TVI}>
      *
-     * @param callable(TV): array{TKI, TVI} $callback
      * @return HashMap<TKI, TVI>
      */
-    public function toHashMap(callable $callback): HashMap;
+    public function toHashMap(): HashMap;
 
     /**
      * ```php
-     * >>> ArrayList::collect([1, 2])
-     * >>>     ->toNonEmptyHashMap(fn($elem) => [(string) $elem, $elem]);
-     * => Some(HashMap('1' -> 1, '2' -> 2))
-     * >>> ArrayList::collect([])
-     * >>>     ->toNonEmptyHashMap(fn($elem) => [(string) $elem, $elem]);
+     * >>> ArrayList::collect([['one', 1], ['two', 2]])->toNonEmptyHashMap();
+     * => Some(NonEmptyHashMap('one' -> 1, 'two' -> 2))
+     * >>> ArrayList::collect([])->toNonEmptyHashMap();
      * => None
      * ```
      *
      * @template TKI
      * @template TVI
+     * @psalm-if-this-is Seq<array{TKI, TVI}>
      *
-     * @param callable(TV): array{TKI, TVI} $callback
      * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
-    public function toNonEmptyHashMap(callable $callback): Option;
+    public function toNonEmptyHashMap(): Option;
 }

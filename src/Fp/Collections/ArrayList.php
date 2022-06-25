@@ -190,18 +190,16 @@ final class ArrayList implements Seq
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is ArrayList<array{TKI, TVI}>
+     *
      * @return HashMap<TKI, TVI>
      */
-    public function toHashMap(callable $callback): HashMap
+    public function toHashMap(): HashMap
     {
-        return HashMap::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
+        return HashMap::collectPairs($this);
     }
 
     /**
@@ -209,17 +207,13 @@ final class ArrayList implements Seq
      *
      * @template TKI
      * @template TVI
+     * @psalm-if-this-is ArrayList<array{TKI, TVI}>
      *
-     * @param callable(TV): array{TKI, TVI} $callback
      * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
-    public function toNonEmptyHashMap(callable $callback): Option
+    public function toNonEmptyHashMap(): Option
     {
-        return NonEmptyHashMap::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
+        return NonEmptyHashMap::collectPairs($this);
     }
 
     /**

@@ -35,7 +35,7 @@ final class MapStaticTest
     public function testToAssocArrayFromSeq(Seq $coll): array
     {
         return $coll
-            ->toHashMap(fn($pair) => $pair)
+            ->toHashMap()
             ->toAssocArray();
     }
 }

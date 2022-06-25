@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\Set;
 
+use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
@@ -77,18 +78,18 @@ final class SetTest extends TestCase
         );
 
         $this->assertEquals(
-            [[1, 1], [2, 2], [3, 3]],
-            HashSet::collect([1, 2, 3])->toHashMap(fn($e) => [$e, $e])->toArray(),
+            HashMap::collectPairs([['fst', 1], ['snd', 2], ['thd', 3]]),
+            HashSet::collect([['fst', 1], ['snd', 2], ['thd', 3]])->toHashMap(),
         );
 
         $this->assertEquals(
-            Option::some(NonEmptyHashMap::collectPairsNonEmpty([[1, 1], [2, 2], [3, 3]])),
-            HashSet::collect([1, 2, 3])->toNonEmptyHashMap(fn($e) => [$e, $e]),
+            Option::some(NonEmptyHashMap::collectPairsNonEmpty([['fst', 1], ['snd', 2], ['thd', 3]])),
+            HashSet::collect([['fst', 1], ['snd', 2], ['thd', 3]])->toNonEmptyHashMap(),
         );
 
         $this->assertEquals(
             Option::none(),
-            HashSet::collect([])->toNonEmptyHashMap(fn($e) => [$e, $e]),
+            HashSet::collect([])->toNonEmptyHashMap(),
         );
     }
 

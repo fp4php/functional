@@ -18,6 +18,30 @@ final class SeqTest extends TestCase
         yield LinkedList::class => [LinkedList::collect([1, 2, 3]), LinkedList::collect([])];
     }
 
+    public function provideTestCastsToHashMapData(): Generator
+    {
+        $pairs = [
+            ['fst', 1],
+            ['snd', 2],
+            ['trd', 3],
+        ];
+        yield ArrayList::class => [$pairs, ArrayList::collect($pairs), ArrayList::empty()];
+        yield LinkedList::class => [$pairs, LinkedList::collect($pairs), LinkedList::empty()];
+    }
+
+    /**
+     * @param list<array{string, int}> $expected
+     * @param Seq<array{string, int}> $seq
+     * @param Seq<array{string, int}> $emptySeq
+     * @dataProvider provideTestCastsToHashMapData
+     */
+    public function testCastsToHashMap(array $expected, Seq $seq, Seq $emptySeq): void
+    {
+        $this->assertEquals($expected, $seq->toHashMap()->toArray());
+        $this->assertEquals($expected, $seq->toNonEmptyHashMap()->getUnsafe()->toArray());
+        $this->assertNull($emptySeq->toNonEmptyHashMap()->get());
+    }
+
     /**
      * @dataProvider provideTestCastsData
      */
@@ -37,9 +61,6 @@ final class SeqTest extends TestCase
         $this->assertEquals([1, 2, 3], $seq->toHashSet()->toArray());
         $this->assertEquals([1, 2, 3], $seq->toNonEmptyHashSet()->getUnsafe()->toArray());
         $this->assertNull($emptySeq->toNonEmptyHashSet()->get());
-        $this->assertEquals([[1, 1], [2, 2], [3, 3]], $seq->toHashMap(fn($e) => [$e, $e])->toArray());
-        $this->assertEquals([[1, 1], [2, 2], [3, 3]], $seq->toNonEmptyHashMap(fn($e) => [$e, $e])->getUnsafe()->toArray());
-        $this->assertNull($emptySeq->toNonEmptyHashMap(fn($e) => [$e, $e])->get());
     }
 
     /**

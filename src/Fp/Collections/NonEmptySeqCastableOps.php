@@ -92,29 +92,29 @@ interface NonEmptySeqCastableOps
 
     /**
      * ```php
-     * >>> NonEmptyArrayList::collectNonEmpty([1, 2])
-     * >>>     ->toHashMap(fn($elem) => [(sting) $elem, $elem]);
-     * => HashMap('1' -> 1, '2' -> 2)
+     * >>> NonEmptyArrayList::collectNonEmpty([['fst', 1], ['snd', 2]])->toHashMap();
+     * => HashMap('fst' -> 1, 'snd' -> 2)
      * ```
      *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is NonEmptySeq<array{TKI, TVI}>
+     *
      * @return HashMap<TKI, TVI>
      */
-    public function toHashMap(callable $callback): HashMap;
+    public function toHashMap(): HashMap;
 
     /**
      * ```php
-     * >>> NonEmptyArrayList::collectNonEmpty([1, 2])
-     * >>>     ->toNonEmptyHashMap(fn($elem) => [(sting) $elem, $elem]);
-     * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     * >>> NonEmptyArrayList::collectNonEmpty([['fst', 1], ['snd', 2]])->toNonEmptyHashMap();
+     * => NonEmptyHashMap('fst' -> 1, 'snd' -> 2)
      * ```
      *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is NonEmptySeq<array{TKI, TVI}>
+     *
      * @return NonEmptyHashMap<TKI, TVI>
      */
-    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap;
+    public function toNonEmptyHashMap(): NonEmptyHashMap;
 }

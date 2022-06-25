@@ -165,34 +165,30 @@ final class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is NonEmptyHashSet<array{TKI, TVI}>
+     *
      * @return HashMap<TKI, TVI>
      */
-    public function toHashMap(callable $callback): HashMap
+    public function toHashMap(): HashMap
     {
-        return HashMap::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
+        return HashMap::collectPairs($this);
     }
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is NonEmptyHashSet<array{TKI, TVI}>
+     *
      * @return NonEmptyHashMap<TKI, TVI>
      */
-    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap
+    public function toNonEmptyHashMap(): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsUnsafe(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
+        return NonEmptyHashMap::collectPairsNonEmpty($this);
     }
 
     /**
