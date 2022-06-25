@@ -91,11 +91,11 @@ interface MapChainableOps
      * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
      * ```
      *
-     * @experimental
-     * @psalm-template TKO
-     * @psalm-template TVO
-     * @psalm-param callable(Entry<TK, TV>): iterable<array{TKO, TVO}> $callback
-     * @psalm-return Map<TKO, TVO>
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): iterable<array{TKO, TVO}> $callback
+     * @return Map<TKO, TVO>
      */
     public function flatMap(callable $callback): Map;
 

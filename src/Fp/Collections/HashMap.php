@@ -342,19 +342,16 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
-     * @experimental
-     * @psalm-template TKO
-     * @psalm-template TVO
-     * @psalm-param callable(Entry<TK, TV>): iterable<array{TKO, TVO}> $callback
-     * @psalm-return self<TKO, TVO>
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): iterable<array{TKO, TVO}> $callback
+     * @return self<TKO, TVO>
      */
     public function flatMap(callable $callback): self
     {
-        return self::collectPairs(
-            FlatMapOperation::of($this->getKeyValueIterator())(
-                fn($value, $key) => $callback(new Entry($key, $value))
-            )
-        );
+        return self::collectPairs(FlatMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

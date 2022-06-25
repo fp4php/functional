@@ -75,16 +75,16 @@ final class MapOpsTest extends TestCase
 
         $this->assertEquals(
             [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]],
-            $hm->flatMap(fn($e) => [
-                [$e->value - 1, $e->value - 1],
-                [$e->value, $e->value],
-                [$e->value + 1, $e->value + 1]
+            $hm->flatMap(fn($val) => [
+                [$val - 1, $val - 1],
+                [$val, $val],
+                [$val + 1, $val + 1]
             ])->toList()
         );
 
         $this->assertEquals(
             [['2', 20], ['5', 5]],
-            $hm->flatMap(fn($e) => [['2', 20], [$e->key, $e->value]])->toList()
+            $hm->flatMap(fn($val) => [['2', 20], [(string) $val, $val]])->toList()
         );
     }
 

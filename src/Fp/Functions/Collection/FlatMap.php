@@ -21,12 +21,11 @@ use function Fp\Cast\asList;
  * => [0, 1, 2, 3, 4, 5]
  * ```
  *
- * @template TK of array-key
  * @template TV
  * @template TVO
  *
- * @param iterable<TK, TV> $collection
- * @param callable(TV, TK): iterable<TVO> $callback
+ * @param iterable<mixed, TV> $collection
+ * @param callable(TV): iterable<TVO> $callback
  * @return list<TVO>
  */
 function flatMap(iterable $collection, callable $callback): array

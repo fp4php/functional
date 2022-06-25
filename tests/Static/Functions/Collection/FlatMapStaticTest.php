@@ -16,7 +16,7 @@ final class FlatMapStaticTest
     {
         return flatMap(
             $coll,
-            fn(int $v, string $k) => [$v - 1, $v + 1]
+            fn(int $v) => [$v - 1, $v + 1]
         );
     }
 }
