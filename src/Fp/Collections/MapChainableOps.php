@@ -63,7 +63,7 @@ interface MapChainableOps
      *
      * ```php
      * >>> HashMap::collectPairs([['a', 'zero'], ['b', '1'], ['c', '2']])
-     * >>>     ->filterMap(fn(Entry $e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
+     * >>>     ->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
      * >>>     ->toList();
      * => [['b', 1], ['c', 2]]
      * ```
@@ -83,10 +83,10 @@ interface MapChainableOps
      * => HashMap('2' -> 2, '5' -> 5)
      *
      * >>> $collection
-     * >>>     ->flatMap(fn(Entry $e) => [
-     * >>>         [$e->value - 1, $e->value - 1],
-     * >>>         [$e->value, $e->value],
-     * >>>         [$e->value + 1, $e->value + 1]
+     * >>>     ->flatMap(fn(int $val) => [
+     * >>>         [$val - 1, $val - 1],
+     * >>>         [$val, $val],
+     * >>>         [$val + 1, $val + 1]
      * >>>     ])
      * >>>     ->toList();
      * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
@@ -127,7 +127,7 @@ interface MapChainableOps
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->map(fn(Entry $e) => $e->value + 1);
+     * >>> $collection->map(fn($val) => $val + 1);
      * => HashMap('1' -> 2, '2' -> 3)
      * ```
      *

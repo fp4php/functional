@@ -51,10 +51,10 @@ interface MapTerminalOps
      * false otherwise
      *
      * ```php
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 0);
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->every(fn($value) => $value > 0);
      * => true
      *
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 1);
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->every(fn($value) => $value > 1);
      * => false
      * ```
      *

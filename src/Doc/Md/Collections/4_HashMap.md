@@ -35,9 +35,8 @@ $collection = HashMap::collectPairs([
 $collection(new Foo(2))->getOrElse(0); // 2
 
 $collection
-    ->mapValues(fn(Entry $entry) => $entry->value + 1)
-    ->filter(fn(Entry $entry) => $entry->value > 2)
-    ->mapKeys(fn(Entry $entry) => $entry->key->a)
-    ->fold(0, fn(int $acc, Entry $entry) => $acc + $entry->value); // 3+4+5=12 
+    ->map(fn(int $value) => $value + 1)
+    ->filter(fn(int $value) => $value > 2)
+    ->fold(0, fn(int $acc, int $value) => $acc + $value); // 3+4+5=12 
 ```
 

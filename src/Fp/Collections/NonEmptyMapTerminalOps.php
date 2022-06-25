@@ -51,10 +51,10 @@ interface NonEmptyMapTerminalOps
      * false otherwise
      *
      * ```php
-     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 0);
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->every(fn($value) => $value > 0);
      * => true
      *
-     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->every(fn($entry) => $entry->value > 1);
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->every(fn($value) => $value > 1);
      * => false
      * ```
      *

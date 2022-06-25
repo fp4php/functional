@@ -47,7 +47,7 @@ interface NonEmptyMapChainableOps
      *
      * ```php
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])
-     * >>>     ->filter(fn(Entry $e) => $e > 1)
+     * >>>     ->filter(fn(int $value) => $value > 1)
      * >>>     ->toList();
      * => [['b', 2]]
      * ```
@@ -66,7 +66,7 @@ interface NonEmptyMapChainableOps
      *
      * ```php
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
-     * >>>     ->filterMap(fn(Entry $e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
+     * >>>     ->filterMap(fn($value) => is_numeric($value) ? Option::some((int) $value) : Option::none())
      * >>>     ->toList();
      * => [['b', 1], ['c', 2]]
      * ```
