@@ -329,15 +329,15 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @param callable(Entry<TK, TV>): Option<TVO> $callback
+     *
+     * @param callable(TV): Option<TVO> $callback
      * @return self<TK, TVO>
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(FilterMapOperation::of($this->getKeyValueIterator())(
-            fn($value, $key) => $callback(new Entry($key, $value))
-        ));
+        return self::collect(FilterMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

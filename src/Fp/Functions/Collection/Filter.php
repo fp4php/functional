@@ -110,7 +110,7 @@ function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false
  * @template TP of bool
  *
  * @param iterable<TK, TV> $collection
- * @param callable(TV, TK): Option<TVO> $predicate
+ * @param callable(TV): Option<TVO> $predicate
  * @param TP $preserveKeys
  * @return (TP is true ? array<TK, TVO> : list<TVO>)
  */

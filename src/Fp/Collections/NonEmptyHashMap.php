@@ -316,8 +316,10 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     *
      * @template TVO
-     * @param callable(Entry<TK, TV>): Option<TVO> $callback
+     *
+     * @param callable(TV): Option<TVO> $callback
      * @return HashMap<TK, TVO>
      */
     public function filterMap(callable $callback): HashMap

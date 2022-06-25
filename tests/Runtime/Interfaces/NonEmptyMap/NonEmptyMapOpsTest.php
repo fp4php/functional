@@ -64,7 +64,7 @@ final class NonEmptyMapOpsTest extends TestCase
         $this->assertEquals(
             [['b', 1], ['c', 2]],
             NonEmptyHashMap::collectPairsNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
-                ->filterMap(fn($e) => is_numeric($e->value) ? Option::some((int) $e->value) : Option::none())
+                ->filterMap(fn($val) => is_numeric($val) ? Option::some((int) $val) : Option::none())
                 ->toList()
         );
     }

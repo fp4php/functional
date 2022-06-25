@@ -20,14 +20,14 @@ class FilterMapOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param callable(TV, TK): Option<TVO> $f
+     * @param callable(TV): Option<TVO> $f
      * @return Generator<TK, TVO>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                $res = $f($value, $key);
+                $res = $f($value);
 
                 if ($res->isSome()) {
                     yield $key => $res->get();

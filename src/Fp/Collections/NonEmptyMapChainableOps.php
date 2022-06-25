@@ -71,9 +71,10 @@ interface NonEmptyMapChainableOps
      * => [['b', 1], ['c', 2]]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
-     * @psalm-return Map<TK, TVO>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Map<TK, TVO>
      */
     public function filterMap(callable $callback): Map;
 
