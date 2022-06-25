@@ -9,6 +9,9 @@ use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyHashSet;
+use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Unit;
@@ -56,6 +59,8 @@ use SplFileObject;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
+use function Fp\Cast\asNonEmptyArray;
+use function Fp\Cast\asNonEmptyList;
 
 /**
  * Note: stream iteration via foreach is terminal operation
@@ -114,9 +119,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     private function leaf(mixed $iter): mixed
     {
-        $this->drained = !$this->drained
-            ? true
-            : throw new LogicException('Can not drain already drained stream');
+        $this->drained = $this->drained
+            ? throw new LogicException('Can not drain already drained stream')
+            : true;
 
         return $iter;
     }
@@ -214,9 +219,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     private function fork(Generator $gen): self
     {
-        $this->forked = !$this->forked
-            ? $this->forked = true
-            : throw new LogicException('multiple stream forks detected');
+        $this->forked = $this->forked
+            ? throw new LogicException('multiple stream forks detected')
+            : true;
 
         return self::emits($gen);
     }
@@ -647,19 +652,57 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
     /**
      * @inheritDoc
+     * @return Option<non-empty-list<TV>>
+     */
+    public function toNonEmptyArray(): Option
+    {
+        return $this->leaf(asNonEmptyList($this->emitter));
+    }
+
+    /**
+     * @inheritDoc
+     *
      * @template TKO of array-key
      * @template TVO
-     * @param callable(TV): array{TKO, TVO} $callback
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
      * @return array<TKO, TVO>
      */
-    public function toAssocArray(callable $callback): array
+    public function toAssocArray(): array
     {
-        return $this->leaf(asArray(asGenerator(function () use ($callback) {
-            foreach ($this->emitter as $val) {
-                $pair = $callback($val);
-                yield $pair[0] => $pair[1];
-            }
-        })));
+        return $this->leaf(asArray(
+            asGenerator(function() {
+                /** @var Generator<int, array{TKO, TVO}> $emitter */
+                $emitter = $this->emitter;
+
+                foreach ($emitter as [$key, $value]) {
+                    yield $key => $value;
+                }
+            }),
+        ));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyAssocArray(): Option
+    {
+        return $this->leaf(asNonEmptyArray(
+            asGenerator(function() {
+                /** @var Generator<int, array{TKO, TVO}> $emitter */
+                $emitter = $this->emitter;
+
+                foreach ($emitter as [$key, $value]) {
+                    yield $key => $value;
+                }
+            }),
+        ));
     }
 
     /**
@@ -669,6 +712,15 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function toLinkedList(): LinkedList
     {
         return $this->leaf(LinkedList::collect($this->emitter));
+    }
+
+    /**
+     * @inheritDoc
+     * @return Option<NonEmptyLinkedList<TV>>
+     */
+    public function toNonEmptyLinkedList(): Option
+    {
+        return $this->leaf(NonEmptyLinkedList::collect($this->emitter));
     }
 
     /**
@@ -705,14 +757,39 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
     /**
      * @inheritDoc
-     * @template TKI
-     * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
-     * @return HashMap<TKI, TVI>
+     * @return Option<NonEmptyHashSet<TV>>
      */
-    public function toHashMap(callable $callback): HashMap
+    public function toNonEmptyHashSet(): Option
     {
-        return $this->leaf(HashMap::collectPairs(MapOperation::of($this->emitter)($callback)));
+        return $this->leaf(NonEmptyHashSet::collect($this->emitter));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
+     * @return HashMap<TKO, TVO>
+     */
+    public function toHashMap(): HashMap
+    {
+        return $this->leaf(HashMap::collectPairs($this->emitter));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
+     * @return Option<NonEmptyHashMap<TKO, TVO>>
+     */
+    public function toNonEmptyHashMap(): Option
+    {
+        return $this->leaf(NonEmptyHashMap::collectPairs($this->emitter));
     }
 
     /**
