@@ -27,7 +27,7 @@ use function Fp\Cast\asList;
  * @template TP of bool
  *
  * @param iterable<TK, TV> $collection
- * @param callable(TV, TK): bool $predicate
+ * @param callable(TV): bool $predicate
  * @param TP $preserveKeys
  * @return (TP is true ? array<TK, TV> : list<TV>)
  */

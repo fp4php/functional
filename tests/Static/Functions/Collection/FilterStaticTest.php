@@ -30,7 +30,7 @@ final class FilterStaticTest
     {
         return filter(
             $coll,
-            fn(int $v, string $k) => true,
+            fn(int $v) => true,
             preserveKeys: true
         );
     }
@@ -43,7 +43,7 @@ final class FilterStaticTest
     {
         return filter(
             $coll,
-            fn(int $v, string $k) => true,
+            fn(int $v) => true,
             preserveKeys: false
         );
     }
@@ -56,7 +56,7 @@ final class FilterStaticTest
     {
         return filter(
             $coll,
-            fn(int $v, string $k) => true,
+            fn(int $v) => true,
         );
     }
 
@@ -68,7 +68,7 @@ final class FilterStaticTest
     {
         return filter(
             $coll,
-            fn(int $v, string $k) => true,
+            fn(int $v) => true,
             preserveKeys: (bool) rand(0, 1)
         );
     }

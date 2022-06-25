@@ -89,14 +89,15 @@ interface MapTerminalOps
      * >>> $collection = HashMap::collectPairs([['2', 2], ['3', 3]]);
      * => HashMap('2' -> 2, '3' -> 3)
      *
-     * >>> $collection->fold(1, fn(int $acc, Entry $cur): int => $acc + $cur->value]);
+     * >>> $collection->fold(1, fn(int $acc, $cur): int => $acc + $cur]);
      * => 6
      * ```
      *
      * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, Entry<TK, TV>): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
+     *
+     * @param TA $init initial accumulator value
+     * @param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
+     * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed;
 }

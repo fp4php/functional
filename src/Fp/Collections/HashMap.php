@@ -278,18 +278,12 @@ final class HashMap implements Map, StaticStorage
      * @inheritDoc
      * @template TA
      * @psalm-param TA $init
-     * @psalm-param callable(TA, Entry<TK, TV>): TA $callback
+     * @psalm-param callable(TA, TV): TA $callback
      * @psalm-return TA
      */
     public function fold(mixed $init, callable $callback): mixed
     {
-        return FoldOperation::of($this->getKeyValueIterator())(
-            $init,
-            function (mixed $acc, $value, $key) use ($callback) {
-                /** @psalm-var TA $acc */
-                return $callback($acc, new Entry($key, $value));
-            }
-        );
+        return FoldOperation::of($this->getKeyValueIterator())($init, $callback);
     }
 
     /**
@@ -312,19 +306,24 @@ final class HashMap implements Map, StaticStorage
      */
     public function removed(mixed $key): self
     {
-        return $this->filter(fn(Entry $e) => $e->key !== $key);
+        return self::collect(asGenerator(function() use ($key) {
+            foreach ($this->getKeyValueIterator() as $k => $v) {
+                if ($k !== $key) {
+                    yield $k => $v;
+                }
+            }
+        }));
     }
 
     /**
      * @inheritDoc
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
-     * @psalm-return self<TK, TV>
+     *
+     * @param callable(TV): bool $predicate
+     * @return self<TK, TV>
      */
     public function filter(callable $predicate): self
     {
-        return self::collect(FilterOperation::of($this->getKeyValueIterator())(
-            fn($value, $key) => $predicate(new Entry($key, $value))
-        ));
+        return self::collect(FilterOperation::of($this->getKeyValueIterator())($predicate));
     }
 
     /**

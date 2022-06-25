@@ -16,15 +16,15 @@ class FoldOperation extends AbstractOperation
      * @template TA
      *
      * @param TA $init
-     * @param callable(TA, TV, TK): TA $f
+     * @param callable(TA, TV): TA $f
      * @return TA
      */
     public function __invoke(mixed $init, callable $f): mixed
     {
         $acc = $init;
 
-        foreach ($this->gen as $key => $value) {
-            $acc = $f($acc, $value, $key);
+        foreach ($this->gen as $value) {
+            $acc = $f($acc, $value);
         }
 
         return $acc;

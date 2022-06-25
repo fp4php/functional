@@ -46,12 +46,12 @@ interface MapChainableOps
      * Filter collection by condition
      *
      * ```php
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->filter(fn(Entry $e) => $e->value > 1)->toList();
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->filter(fn($e) => $e > 1)->toList();
      * => [['b', 2]]
      * ```
      *
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
-     * @psalm-return Map<TK, TV>
+     * @param callable(TV): bool $predicate
+     * @return Map<TK, TV>
      */
     public function filter(callable $predicate): Map;
 

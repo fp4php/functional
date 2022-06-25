@@ -47,12 +47,12 @@ interface NonEmptyMapChainableOps
      *
      * ```php
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])
-     * >>>     ->filter(fn(Entry $e) => $e->value > 1)
+     * >>>     ->filter(fn(Entry $e) => $e > 1)
      * >>>     ->toList();
      * => [['b', 2]]
      * ```
      *
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
+     * @psalm-param callable(TV): bool $predicate
      * @psalm-return Map<TK, TV>
      */
     public function filter(callable $predicate): Map;

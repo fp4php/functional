@@ -56,7 +56,7 @@ final class MapOpsTest extends TestCase
     public function testFilter(): void
     {
         $hm = HashMap::collect(['a' => new Foo(1), 'b' => 1, 'c' => new Foo(2)]);
-        $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toList());
+        $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e === 1)->toList());
     }
 
     public function testFilterMap(): void
@@ -95,7 +95,7 @@ final class MapOpsTest extends TestCase
 
         $this->assertEquals(
             6,
-            $hm->fold(1, fn(int $acc, $cur) => $acc + $cur->value)
+            $hm->fold(1, fn(int $acc, $cur) => $acc + $cur)
         );
     }
 

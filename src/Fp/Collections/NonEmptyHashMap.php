@@ -306,8 +306,9 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
-     * @psalm-return HashMap<TK, TV>
+     *
+     * @param callable(TV): bool $predicate
+     * @return HashMap<TK, TV>
      */
     public function filter(callable $predicate): HashMap
     {

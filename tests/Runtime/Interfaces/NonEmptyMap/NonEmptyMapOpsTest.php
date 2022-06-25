@@ -56,7 +56,7 @@ final class NonEmptyMapOpsTest extends TestCase
     public function testFilter(): void
     {
         $hm = NonEmptyHashMap::collectPairsUnsafe([['a', new Foo(1)], ['b', 1], ['c',  new Foo(2)]]);
-        $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e->value === 1)->toList());
+        $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e === 1)->toList());
     }
 
     public function testFilterMap(): void
