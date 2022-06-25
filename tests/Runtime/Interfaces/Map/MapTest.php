@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\Map;
 
+use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
+use Fp\Collections\HashSet;
+use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
@@ -53,8 +56,8 @@ final class MapTest extends TestCase
         );
 
         $this->assertEquals(
-            [['a', 1], ['b', 2]],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toLinkedList()->toArray(),
+            LinkedList::collect([['a', 1], ['b', 2]]),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toLinkedList(),
         );
 
         $this->assertEquals(
@@ -68,8 +71,8 @@ final class MapTest extends TestCase
         );
 
         $this->assertEquals(
-            [['a', 1], ['b', 2]],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toArrayList()->toArray(),
+            ArrayList::collect([['a', 1], ['b', 2]]),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toArrayList(),
         );
 
         $this->assertEquals(
@@ -83,8 +86,8 @@ final class MapTest extends TestCase
         );
 
         $this->assertEquals(
-            [['a', 1], ['b', 2]],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashSet()->toArray(),
+            HashSet::collect([['a', 1], ['b', 2]]),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashSet(),
         );
 
         $this->assertEquals(
@@ -98,8 +101,8 @@ final class MapTest extends TestCase
         );
 
         $this->assertEquals(
-            [['a', 1], ['b', 2]],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashMap()->toArray(),
+            HashMap::collectPairs([['a', 1], ['b', 2]]),
+            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashMap(),
         );
 
         $this->assertEquals(

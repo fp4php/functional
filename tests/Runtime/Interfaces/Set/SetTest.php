@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\Set;
 
+use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
+use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
@@ -33,8 +35,8 @@ final class SetTest extends TestCase
         );
 
         $this->assertEquals(
-            [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toLinkedList()->toArray(),
+            LinkedList::collect([1, 2, 3]),
+            HashSet::collect([1, 2, 3, 3])->toLinkedList(),
         );
 
         $this->assertEquals(
@@ -48,8 +50,8 @@ final class SetTest extends TestCase
         );
 
         $this->assertEquals(
-            [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toArrayList()->toArray(),
+            ArrayList::collect([1, 2, 3]),
+            HashSet::collect([1, 2, 3, 3])->toArrayList(),
         );
 
         $this->assertEquals(
@@ -63,8 +65,8 @@ final class SetTest extends TestCase
         );
 
         $this->assertEquals(
-            [1, 2, 3],
-            HashSet::collect([1, 2, 3, 3])->toHashSet()->toArray(),
+            HashSet::collect([1, 2, 3]),
+            HashSet::collect([1, 2, 3, 3])->toHashSet(),
         );
 
         $this->assertEquals(

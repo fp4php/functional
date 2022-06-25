@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace Tests\Runtime\Interfaces\Seq;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\HashMap;
+use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
+use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyHashSet;
+use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Seq;
+use Fp\Functional\Option\Option;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
@@ -37,9 +44,20 @@ final class SeqTest extends TestCase
      */
     public function testCastsToHashMap(array $expected, Seq $seq, Seq $emptySeq): void
     {
-        $this->assertEquals($expected, $seq->toHashMap()->toArray());
-        $this->assertEquals($expected, $seq->toNonEmptyHashMap()->getUnsafe()->toArray());
-        $this->assertNull($emptySeq->toNonEmptyHashMap()->get());
+        $this->assertEquals(
+            HashMap::collectPairs($expected),
+            $seq->toHashMap(),
+        );
+
+        $this->assertEquals(
+            Option::some(NonEmptyHashMap::collectPairsUnsafe($expected)),
+            $seq->toNonEmptyHashMap(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySeq->toNonEmptyHashMap(),
+        );
     }
 
     /**
@@ -47,20 +65,65 @@ final class SeqTest extends TestCase
      */
     public function testCasts(Seq $seq, Seq $emptySeq): void
     {
-        $this->assertEquals([1, 2, 3], $seq->toArray());
-        $this->assertEquals([1, 2, 3], $seq->toNonEmptyArray()->getUnsafe());
-        $this->assertNull($emptySeq->toNonEmptyArrayList()->get());
-        $this->assertEquals([1, 2, 3], $seq->toLinkedList()->toArray());
-        $this->assertEquals([1, 2, 3], $seq->toLinkedList()->toArray());
-        $this->assertEquals([1, 2, 3], $seq->toNonEmptyLinkedList()->getUnsafe()->toArray());
-        $this->assertNull($emptySeq->toNonEmptyLinkedList()->get());
-        $this->assertEquals([1, 2, 3], $seq->toArrayList()->toArray());
-        $this->assertEquals([1, 2, 3], $seq->toNonEmptyArrayList()->getUnsafe()->toArray());
-        $this->assertNull($emptySeq->toNonEmptyArrayList()->get());
-        $this->assertEquals([1, 2, 3], $seq->toArrayList()->toArray());
-        $this->assertEquals([1, 2, 3], $seq->toHashSet()->toArray());
-        $this->assertEquals([1, 2, 3], $seq->toNonEmptyHashSet()->getUnsafe()->toArray());
-        $this->assertNull($emptySeq->toNonEmptyHashSet()->get());
+        $this->assertEquals(
+            [1, 2, 3],
+            $seq->toArray(),
+        );
+
+        $this->assertEquals(
+            Option::some([1, 2, 3]),
+            $seq->toNonEmptyArray(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySeq->toNonEmptyArray(),
+        );
+
+        $this->assertEquals(
+            LinkedList::collect([1, 2, 3]),
+            $seq->toLinkedList(),
+        );
+
+        $this->assertEquals(
+            Option::some(NonEmptyLinkedList::collectNonEmpty([1, 2, 3])),
+            $seq->toNonEmptyLinkedList(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySeq->toNonEmptyLinkedList(),
+        );
+
+        $this->assertEquals(
+            ArrayList::collect([1, 2, 3]),
+            $seq->toArrayList(),
+        );
+
+        $this->assertEquals(
+            Option::some(NonEmptyArrayList::collectNonEmpty([1, 2, 3])),
+            $seq->toNonEmptyArrayList(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySeq->toNonEmptyArrayList(),
+        );
+
+        $this->assertEquals(
+            HashSet::collect([1, 2, 3]),
+            $seq->toHashSet(),
+        );
+
+        $this->assertEquals(
+            Option::some(NonEmptyHashSet::collectNonEmpty([1, 2, 3])),
+            $seq->toNonEmptyHashSet(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySeq->toNonEmptyHashSet(),
+        );
     }
 
     /**
