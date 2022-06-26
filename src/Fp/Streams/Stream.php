@@ -241,7 +241,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      * @psalm-param callable(int, TV): TVO $callback
      * @psalm-return self<TVO>
      */
-    public function mapWithKey(callable $callback): self
+    public function mapKV(callable $callback): self
     {
         return $this->fork(MapWithKeyOperation::of($this->emitter)($callback));
     }

@@ -124,7 +124,7 @@ final class StreamOpsTest extends TestCase
 
         $this->assertEquals(
             ['0-1', '1-2', '2-3'],
-            Stream::emits([1, 2, 3])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList()
+            Stream::emits([1, 2, 3])->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
         );
     }
 

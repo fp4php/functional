@@ -110,7 +110,7 @@ final class MapOpsTest extends TestCase
 
         $this->assertEquals(
             [['2', 'key-2-val-22'], ['3', 'key-3-val-33']],
-            $hm->mapWithKey(fn($key, $elem) => "key-{$key}-val-{$elem}")->toList()
+            $hm->mapKV(fn($key, $elem) => "key-{$key}-val-{$elem}")->toList()
         );
     }
 

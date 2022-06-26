@@ -158,7 +158,7 @@ final class SetOpsTest extends TestCase
 
         $this->assertEquals(
             ['0-1', '1-2', '2-3'],
-            HashSet::collect([1, 2, 2, 3])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList()
+            HashSet::collect([1, 2, 2, 3])->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
         );
     }
 

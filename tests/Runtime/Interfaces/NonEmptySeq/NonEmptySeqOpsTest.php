@@ -388,11 +388,11 @@ final class NonEmptySeqOpsTest extends TestCase
      * @dataProvider provideTestMapWithKeyData
      * @param NonEmptySeq<int> $seq
      */
-    public function testMapWithKey(NonEmptySeq $seq): void
+    public function testMapKV(NonEmptySeq $seq): void
     {
         $this->assertEquals(
             ['0-1', '1-2', '2-3'],
-            $seq->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList()
+            $seq->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
         );
     }
 

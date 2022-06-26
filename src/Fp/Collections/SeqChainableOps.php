@@ -160,11 +160,12 @@ interface SeqChainableOps
     public function map(callable $callback): Seq;
 
     /**
-     * Produces a new collection of elements by mapping each element in collection
-     * through a transformation function (callback)
+     * Same as {@see SeqChainableOps::map()}, but passing also the key to the $callback function.
      *
      * ```php
-     * >>> LinkedList::collect(['one', 'two'])->map(fn($index, $elem) => "{$index}-{$elem}")->toList();
+     * >>> LinkedList::collect(['one', 'two'])
+     * >>>     ->mapKV(fn($index, $elem) => "{$index}-{$elem}")
+     * >>>     ->toList();
      * => ['1-one', '2-two']
      * ```
      *
@@ -173,7 +174,7 @@ interface SeqChainableOps
      * @param callable(int, TV): TVO $callback
      * @return Seq<TVO>
      */
-    public function mapWithKey(callable $callback): Seq;
+    public function mapKV(callable $callback): Seq;
 
     /**
      * Copy collection in reversed order

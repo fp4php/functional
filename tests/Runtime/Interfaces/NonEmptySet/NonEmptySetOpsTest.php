@@ -140,7 +140,7 @@ final class NonEmptySetOpsTest extends TestCase
 
         $this->assertEquals(
             ['0-1', '1-2', '2-3'],
-            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->mapWithKey(fn($k, $e) => "{$k}-{$e}")->toList()
+            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->mapKV(fn($k, $e) => "{$k}-{$e}")->toList()
         );
     }
 

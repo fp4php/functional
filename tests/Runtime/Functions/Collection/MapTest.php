@@ -9,7 +9,7 @@ use Generator;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\map;
-use function Fp\Collection\mapWithKey;
+use function Fp\Collection\mapKV;
 
 final class MapTest extends TestCase
 {
@@ -77,7 +77,7 @@ final class MapTest extends TestCase
     {
         $this->assertEquals(
             $expected,
-            mapWithKey(
+            mapKV(
                 $source,
                 fn(string|int $key, int $v) => "{$key}-{$v}"
             )

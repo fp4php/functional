@@ -41,13 +41,10 @@ function map(iterable $collection, callable $callback): array
 }
 
 /**
- * Produces a new array of elements by mapping each element in collection
- * through a transformation function (callback).
- *
- * Keys are preserved
+ * Same as {@see map()}, but passing also the key to the $callback function.
  *
  * ```php
- * >>> mapWithKey(['one' => 1, 'two' => 2, 'three' => 3], fn(string $k, int $v) => "{$k}-{$v}");
+ * >>> mapKV(['one' => 1, 'two' => 2, 'three' => 3], fn(string $k, int $v) => "{$k}-{$v}");
  * => ['one-1', 'two-2', 'three-3']
  * ```
  *
@@ -66,7 +63,7 @@ function map(iterable $collection, callable $callback): array
  *    array<TK, TVO>
  * )
  */
-function mapWithKey(iterable $collection, callable $callback): array
+function mapKV(iterable $collection, callable $callback): array
 {
     return asArray(MapWithKeyOperation::of($collection)($callback));
 }

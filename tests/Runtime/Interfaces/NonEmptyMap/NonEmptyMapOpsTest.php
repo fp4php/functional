@@ -80,7 +80,7 @@ final class NonEmptyMapOpsTest extends TestCase
 
         $this->assertEquals(
             [['2', '2-22'], ['3', '3-33']],
-            $hm->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList()
+            $hm->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
         );
     }
     public function testReindex(): void

@@ -349,7 +349,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @param callable(TK, TV): TVO $callback
      * @return self<TK, TVO>
      */
-    public function mapWithKey(callable $callback): self
+    public function mapKV(callable $callback): self
     {
         return self::collectUnsafe(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }

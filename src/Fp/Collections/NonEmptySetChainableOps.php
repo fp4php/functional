@@ -116,11 +116,12 @@ interface NonEmptySetChainableOps
     public function map(callable $callback): NonEmptySet;
 
     /**
-     * Produces a new collection of elements by mapping each element in collection
-     * through a transformation function (callback)
+     * Same as {@see NonEmptySetChainableOps::map()}, but passing also the key to the $callback function.
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->mapWithKey(fn($key, $elem) => "{$key}-{$elem}")->toList();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])
+     * >>>     ->mapKV(fn($key, $elem) => "{$key}-{$elem}")
+     * >>>     ->toList();
      * => ['0-1', '1-2']
      * ```
      *
@@ -129,7 +130,7 @@ interface NonEmptySetChainableOps
      * @param callable(int, TV): TVO $callback
      * @return NonEmptySet<TVO>
      */
-    public function mapWithKey(callable $callback): NonEmptySet;
+    public function mapKV(callable $callback): NonEmptySet;
 
     /**
      * ```php

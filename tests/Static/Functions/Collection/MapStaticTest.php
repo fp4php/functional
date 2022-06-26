@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Static\Functions\Collection;
 
 use function Fp\Collection\map;
-use function Fp\Collection\mapWithKey;
+use function Fp\Collection\mapKV;
 
 final class MapStaticTest
 {
@@ -51,7 +51,7 @@ final class MapStaticTest
      */
     public function testMapWithKeyListToList(array $coll): array
     {
-        return mapWithKey($coll, fn(int $key, int $value) => "{$key}-{$value}");
+        return mapKV($coll, fn(int $key, int $value) => "{$key}-{$value}");
     }
 
     /**
@@ -60,7 +60,7 @@ final class MapStaticTest
      */
     public function testMapWithKeyNonEmptyListToNonEmptyList(array $coll): array
     {
-        return mapWithKey($coll, fn(int $key, int $value) => "{$key}-{$value}");
+        return mapKV($coll, fn(int $key, int $value) => "{$key}-{$value}");
     }
 
     /**
@@ -69,7 +69,7 @@ final class MapStaticTest
      */
     public function testMapWithKeyArrayToArray(array $coll): array
     {
-        return mapWithKey($coll, fn(string $key, int $value) => "{$key}-{$value}");
+        return mapKV($coll, fn(string $key, int $value) => "{$key}-{$value}");
     }
 
     /**
@@ -78,6 +78,6 @@ final class MapStaticTest
      */
     public function testMapWithKeyNonEmptyArrayToNonEmptyToArray(array $coll): array
     {
-        return mapWithKey($coll, fn(string $key, int $value) => "{$key}-{$value}");
+        return mapKV($coll, fn(string $key, int $value) => "{$key}-{$value}");
     }
 }

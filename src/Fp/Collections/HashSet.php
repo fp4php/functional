@@ -432,7 +432,7 @@ final class HashSet implements Set
      * @param callable(int, TV): TVO $callback
      * @return self<TVO>
      */
-    public function mapWithKey(callable $callback): self
+    public function mapKV(callable $callback): self
     {
         return self::collect(MapWithKeyOperation::of($this->getIterator())($callback));
     }

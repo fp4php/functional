@@ -345,11 +345,11 @@ final class SeqOpsTest extends TestCase
      * @dataProvider provideTestMapWithKeyData
      * @param Seq<string> $seq
      */
-    public function testMapWithKey(Seq $seq): void
+    public function testMapKV(Seq $seq): void
     {
         $this->assertEquals(
             ['0-one', '1-two', '2-three'],
-            $seq->mapWithKey(fn($index, $elem) => "{$index}-{$elem}")->toList()
+            $seq->mapKV(fn($index, $elem) => "{$index}-{$elem}")->toList()
         );
     }
 

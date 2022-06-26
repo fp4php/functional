@@ -374,7 +374,7 @@ final class HashMap implements Map, StaticStorage
      * @param callable(TK, TV): TVO $callback
      * @return self<TK, TVO>
      */
-    public function mapWithKey(callable $callback): self
+    public function mapKV(callable $callback): self
     {
         return self::collect(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
