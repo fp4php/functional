@@ -15,7 +15,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class SortedOperation extends AbstractOperation
+final class SortedOperation extends AbstractOperation
 {
     /**
      * @param callable(TV, TV): int $f

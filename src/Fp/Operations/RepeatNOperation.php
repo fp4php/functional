@@ -15,7 +15,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class RepeatNOperation extends AbstractOperation
+final class RepeatNOperation extends AbstractOperation
 {
     /**
      * @return Generator<int, TV>

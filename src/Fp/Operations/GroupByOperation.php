@@ -15,7 +15,7 @@ use Fp\Collections\NonEmptyLinkedList;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class GroupByOperation extends AbstractOperation
+final class GroupByOperation extends AbstractOperation
 {
     /**
      * @template TKO

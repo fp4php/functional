@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class TapOperation extends AbstractOperation
+final class TapOperation extends AbstractOperation
 {
     /**
      * @param callable(TV): void $f

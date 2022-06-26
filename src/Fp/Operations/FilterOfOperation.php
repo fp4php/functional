@@ -15,7 +15,7 @@ use function Fp\Evidence\proveOf;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class FilterOfOperation extends AbstractOperation
+final class FilterOfOperation extends AbstractOperation
 {
     /**
      * @template TVO

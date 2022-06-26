@@ -12,7 +12,7 @@ use Generator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class FilterWithKeyOperation extends AbstractOperation
+final class FilterWithKeyOperation extends AbstractOperation
 {
     /**
      * @param callable(TK, TV): bool $f

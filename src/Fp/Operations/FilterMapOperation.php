@@ -15,7 +15,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class FilterMapOperation extends AbstractOperation
+final class FilterMapOperation extends AbstractOperation
 {
     /**
      * @template TVO

@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class DropWhileOperation extends AbstractOperation
+final class DropWhileOperation extends AbstractOperation
 {
     /**
      * @template TKO

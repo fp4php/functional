@@ -14,7 +14,7 @@ use Generator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class TraverseOptionOperation extends AbstractOperation
+final class TraverseOptionOperation extends AbstractOperation
 {
     /**
      * @template TVO

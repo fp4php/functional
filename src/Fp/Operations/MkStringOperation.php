@@ -10,7 +10,7 @@ namespace Fp\Operations;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class MkStringOperation extends AbstractOperation
+final class MkStringOperation extends AbstractOperation
 {
     public function __invoke(string $start, string $sep, string $end): string
     {

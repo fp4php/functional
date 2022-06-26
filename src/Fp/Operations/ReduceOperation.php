@@ -12,7 +12,7 @@ use Fp\Functional\Option\Option;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class ReduceOperation extends AbstractOperation
+final class ReduceOperation extends AbstractOperation
 {
     /**
      * @template TA

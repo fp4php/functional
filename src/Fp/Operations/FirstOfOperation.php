@@ -14,7 +14,7 @@ use function Fp\of;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class FirstOfOperation extends AbstractOperation
+final class FirstOfOperation extends AbstractOperation
 {
     /**
      * @template TVO

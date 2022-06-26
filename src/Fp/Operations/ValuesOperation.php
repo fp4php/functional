@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class ValuesOperation extends AbstractOperation
+final class ValuesOperation extends AbstractOperation
 {
     /**
      * @return Generator<int, TV>

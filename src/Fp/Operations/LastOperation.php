@@ -12,7 +12,7 @@ use Fp\Functional\Option\Option;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class LastOperation extends AbstractOperation
+final class LastOperation extends AbstractOperation
 {
     /**
      * @param null|callable(TV): bool $f

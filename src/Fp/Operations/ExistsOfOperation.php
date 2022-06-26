@@ -12,7 +12,7 @@ use function Fp\of;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class ExistsOfOperation extends AbstractOperation
+final class ExistsOfOperation extends AbstractOperation
 {
     /**
      * @template TVO

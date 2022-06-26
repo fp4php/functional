@@ -12,7 +12,7 @@ use Generator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class InterleaveOperation extends AbstractOperation
+final class InterleaveOperation extends AbstractOperation
 {
     /**
      * @template TVI

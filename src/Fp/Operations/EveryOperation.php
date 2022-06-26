@@ -10,7 +10,7 @@ namespace Fp\Operations;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class EveryOperation extends AbstractOperation
+final class EveryOperation extends AbstractOperation
 {
     /**
      * @param callable(TV): bool $f

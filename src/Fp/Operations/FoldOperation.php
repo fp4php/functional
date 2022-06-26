@@ -10,7 +10,7 @@ namespace Fp\Operations;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class FoldOperation extends AbstractOperation
+final class FoldOperation extends AbstractOperation
 {
     /**
      * @template TA

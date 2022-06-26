@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class UniqueOperation extends AbstractOperation
+final class UniqueOperation extends AbstractOperation
 {
     /**
      * @param callable(TV): (int|string) $f

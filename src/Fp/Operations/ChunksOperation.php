@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-class ChunksOperation extends AbstractOperation
+final class ChunksOperation extends AbstractOperation
 {
     /**
      * @template TPreserve of bool
