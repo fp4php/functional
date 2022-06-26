@@ -11,6 +11,8 @@ use Fp\Operations\AtOperation;
 use Fp\Operations\GroupMapReduceOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
+use Fp\Operations\ReindexOperation;
+use Fp\Operations\ReindexWithKeyOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -374,6 +376,36 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
     {
         return new NonEmptyHashMap(GroupMapReduceOperation::of($this->getIterator())($group, $map, $reduce));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindex(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap(
+            HashMap::collect(ReindexOperation::of($this->getIterator())($callback)),
+        );
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     *
+     * @param callable(int, TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindexKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap(
+            HashMap::collect(ReindexWithKeyOperation::of($this->getIterator())($callback)),
+        );
     }
 
     /**

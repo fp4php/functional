@@ -7,6 +7,8 @@ namespace Fp\Collections;
 use Fp\Operations\CountOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
+use Fp\Operations\ReindexOperation;
+use Fp\Operations\ReindexWithKeyOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -215,6 +217,32 @@ final class HashSet implements Set
     {
         return TraverseOptionOperation::of($this->getIterator())($callback)
             ->map(fn($gen) => HashSet::collect($gen));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindex(callable $callback): HashMap
+    {
+        return HashMap::collect(ReindexOperation::of($this->getIterator())($callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     *
+     * @param callable(int, TV): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindexKV(callable $callback): HashMap
+    {
+        return HashMap::collect(ReindexWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**

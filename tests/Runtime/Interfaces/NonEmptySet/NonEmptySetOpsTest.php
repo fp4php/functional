@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Interfaces\NonEmptySet;
 
 use Fp\Collections\HashSet;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
@@ -205,6 +206,27 @@ final class NonEmptySetOpsTest extends TestCase
             NonEmptyHashSet::collectNonEmpty([1, 2, 3])
                 ->diff(HashSet::collect([2, 3]))
                 ->toList()
+        );
+    }
+
+    public function testReindex(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['key-1', 1],
+                ['key-2', 2],
+            ]),
+            NonEmptyHashSet::collectNonEmpty([1, 2, 2])
+                ->reindex(fn($value) => "key-{$value}"),
+        );
+
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['key-01', 1],
+                ['key-12', 2],
+            ]),
+            NonEmptyHashSet::collectNonEmpty([1, 2, 2])
+                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

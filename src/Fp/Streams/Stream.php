@@ -43,6 +43,8 @@ use Fp\Operations\MkStringOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
+use Fp\Operations\ReindexOperation;
+use Fp\Operations\ReindexWithKeyOperation;
 use Fp\Operations\RepeatNOperation;
 use Fp\Operations\RepeatOperation;
 use Fp\Operations\SortedOperation;
@@ -540,6 +542,32 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
         return $this->leaf(ExistsOfOperation::of($this->emitter)($fqcn, $invariant));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindex(callable $callback): HashMap
+    {
+        return $this->leaf(HashMap::collect(ReindexOperation::of($this->emitter)($callback)));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     *
+     * @param callable(int, TV): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindexKV(callable $callback): HashMap
+    {
+        return $this->leaf(HashMap::collect(ReindexWithKeyOperation::of($this->emitter)($callback)));
     }
 
     /**

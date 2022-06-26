@@ -570,4 +570,50 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals([0, 1], $seq->take(2)->toList());
         $this->assertEquals([2], $seq->drop(2)->toList());
     }
+
+    public function testArrayListReindex(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['key-1', 1],
+                ['key-2', 2],
+                ['key-3', 3],
+            ]),
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3])
+                ->reindex(fn($value) => "key-{$value}"),
+        );
+
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['key-01', 1],
+                ['key-12', 2],
+                ['key-23', 3],
+            ]),
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3])
+                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
+        );
+    }
+
+    public function testLinkedListReindex(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['key-1', 1],
+                ['key-2', 2],
+                ['key-3', 3],
+            ]),
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])
+                ->reindex(fn($value) => "key-{$value}"),
+        );
+
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['key-01', 1],
+                ['key-12', 2],
+                ['key-23', 3],
+            ]),
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])
+                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
+        );
+    }
 }

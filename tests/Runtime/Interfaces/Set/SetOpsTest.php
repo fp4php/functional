@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\Set;
 
+use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
@@ -212,6 +213,27 @@ final class SetOpsTest extends TestCase
             HashSet::collect([1, 2, 3])
                 ->diff(HashSet::collect([2, 3]))
                 ->toList()
+        );
+    }
+
+    public function testReindex(): void
+    {
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-1', 1],
+                ['key-2', 2],
+            ]),
+            HashSet::collect([1, 2, 2])
+                ->reindex(fn($value) => "key-{$value}"),
+        );
+
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-01', 1],
+                ['key-12', 2],
+            ]),
+            HashSet::collect([1, 2, 2])
+                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

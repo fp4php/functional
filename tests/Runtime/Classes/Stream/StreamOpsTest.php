@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\Stream;
 
+use Fp\Collections\HashMap;
 use Fp\Collections\Seq;
 use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
@@ -259,6 +260,29 @@ final class StreamOpsTest extends TestCase
         $this->assertEquals(
             [3, 2, 1],
             Stream::emits([1, 3, 2])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList()
+        );
+    }
+
+    public function testReindex(): void
+    {
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-1', 1],
+                ['key-2', 2],
+                ['key-3', 3],
+            ]),
+            Stream::emits([1, 2, 3])
+                ->reindex(fn($value) => "key-{$value}"),
+        );
+
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-01', 1],
+                ['key-12', 2],
+                ['key-23', 3],
+            ]),
+            Stream::emits([1, 2, 3])
+                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

@@ -648,4 +648,50 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals('(0,1,2)', $seq->mkString('(', ',', ')'));
         $this->assertEquals('()', $emptySeq->mkString('(', ',', ')'));
     }
+
+    public function testArrayListReindex(): void
+    {
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-1', 1],
+                ['key-2', 2],
+                ['key-3', 3],
+            ]),
+            ArrayList::collect([1, 2, 3])
+                ->reindex(fn($value) => "key-{$value}"),
+        );
+
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-01', 1],
+                ['key-12', 2],
+                ['key-23', 3],
+            ]),
+            ArrayList::collect([1, 2, 3])
+                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
+        );
+    }
+
+    public function testLinkedListReindex(): void
+    {
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-1', 1],
+                ['key-2', 2],
+                ['key-3', 3],
+            ]),
+            LinkedList::collect([1, 2, 3])
+                ->reindex(fn($value) => "key-{$value}"),
+        );
+
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['key-01', 1],
+                ['key-12', 2],
+                ['key-23', 3],
+            ]),
+            LinkedList::collect([1, 2, 3])
+                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
+        );
+    }
 }
