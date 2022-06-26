@@ -112,6 +112,17 @@ final class NonEmptyLinkedList implements NonEmptySeq
 
     /**
      * @inheritDoc
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function filterKV(callable $predicate): LinkedList
+    {
+        return $this->toLinkedList()->filterKV($predicate);
+    }
+
+    /**
+     * @inheritDoc
      * @template TVO
      * @param callable(TV): Option<TVO> $callback
      * @return LinkedList<TVO>

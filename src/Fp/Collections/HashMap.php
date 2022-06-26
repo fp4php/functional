@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
+use Fp\Operations\FilterWithKeyOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
@@ -324,6 +325,17 @@ final class HashMap implements Map, StaticStorage
     public function filter(callable $predicate): self
     {
         return self::collect(FilterOperation::of($this->getKeyValueIterator())($predicate));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return self<TK, TV>
+     */
+    public function filterKV(callable $predicate): Map
+    {
+        return self::collect(FilterWithKeyOperation::of($this->getKeyValueIterator())($predicate));
     }
 
     /**

@@ -318,6 +318,17 @@ final class NonEmptyHashMap implements NonEmptyMap
     /**
      * @inheritDoc
      *
+     * @param callable(TK, TV): bool $predicate
+     * @return Map<TK, TV>
+     */
+    public function filterKV(callable $predicate): Map
+    {
+        return $this->hashMap->filterKV($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     *
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback

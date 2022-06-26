@@ -58,6 +58,14 @@ interface NonEmptyMapChainableOps
     public function filter(callable $predicate): Map;
 
     /**
+     * Same as {@see NonEmptyMapChainableOps::filter()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Map<TK, TV>
+     */
+    public function filterKV(callable $predicate): Map;
+
+    /**
      * A combined {@see NonEmptyHashMap::map} and {@see NonEmptyHashMap::filter}.
      *
      * Filtering is handled via Option instead of Boolean.

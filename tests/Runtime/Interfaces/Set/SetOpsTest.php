@@ -85,9 +85,9 @@ final class SetOpsTest extends TestCase
 
     public function testFilter(): void
     {
-        $hs = HashSet::collect([new Foo(1), 1, 1, new Foo(1)]);
-        $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toList());
+        $this->assertEquals([1], HashSet::collect([new Foo(1), 1, 1, new Foo(1)])->filter(fn($i) => $i === 1)->toList());
         $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toList());
+        $this->assertEquals([1, 3, 5], HashSet::collect([1, 2, 3, 4, 5])->filterKV(fn($key) => $key % 2 === 0)->toList());
     }
 
     public function testFilterOf(): void

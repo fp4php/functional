@@ -53,6 +53,14 @@ interface NonEmptySetChainableOps
     public function filter(callable $predicate): Set;
 
     /**
+     * Same as {@see NonEmptySetChainableOps::filter()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return Set<TV>
+     */
+    public function filterKV(callable $predicate): Set;
+
+    /**
      * Filter elements of given class
      *
      * ```php

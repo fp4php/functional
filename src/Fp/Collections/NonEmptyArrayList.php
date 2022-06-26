@@ -7,6 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
+use Fp\Operations\FilterWithKeyOperation;
 use Fp\Operations\GroupMapReduceOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
@@ -110,6 +111,17 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function filter(callable $predicate): ArrayList
     {
         return $this->arrayList->filter($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function filterKV(callable $predicate): ArrayList
+    {
+        return $this->arrayList->filterKV($predicate);
     }
 
     /**

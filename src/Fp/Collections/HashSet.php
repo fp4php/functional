@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
+use Fp\Operations\FilterWithKeyOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
@@ -394,6 +395,17 @@ final class HashSet implements Set
     public function filter(callable $predicate): self
     {
         return self::collect(FilterOperation::of($this->getIterator())($predicate));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return self<TV>
+     */
+    public function filterKV(callable $predicate): self
+    {
+        return self::collect(FilterWithKeyOperation::of($this->getIterator())($predicate));
     }
 
     /**

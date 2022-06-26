@@ -405,6 +405,17 @@ final class NonEmptyHashSet implements NonEmptySet
 
     /**
      * @inheritDoc
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return HashSet<TV>
+     */
+    public function filterKV(callable $predicate): HashSet
+    {
+        return $this->set->filterKV($predicate);
+    }
+
+    /**
+     * @inheritDoc
      * @psalm-template TVO
      * @psalm-param class-string<TVO> $fqcn
      * @psalm-param bool $invariant

@@ -9,6 +9,7 @@ use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterNotNullOperation;
 use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
+use Fp\Operations\FilterWithKeyOperation;
 
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
@@ -34,6 +35,32 @@ use function Fp\Cast\asList;
 function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
     $gen = FilterOperation::of($collection)($predicate);
+    return $preserveKeys
+        ? asArray($gen)
+        : asList($gen);
+}
+
+/**
+ * Filter collection by condition
+ * Do not preserve keys by default
+ *
+ * ```php
+ * >>> filterKV(['fst' => 1, 'snd' => 2, 'thd' => 3], fn($k, $v) => $k !== 'fst' && $v !== 3);
+ * => [2]
+ * ```
+ *
+ * @template TK of array-key
+ * @template TV
+ * @template TP of bool
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
+ * @param TP $preserveKeys
+ * @return (TP is true ? array<TK, TV> : list<TV>)
+ */
+function filterKV(iterable $collection, callable $predicate, bool $preserveKeys = false): array
+{
+    $gen = FilterWithKeyOperation::of($collection)($predicate);
     return $preserveKeys
         ? asArray($gen)
         : asList($gen);

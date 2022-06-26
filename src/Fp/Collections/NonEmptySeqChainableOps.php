@@ -84,6 +84,14 @@ interface NonEmptySeqChainableOps
     public function filter(callable $predicate): Seq;
 
     /**
+     * Same as {@see NonEmptySeqChainableOps::filter()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return Seq<TV>
+     */
+    public function filterKV(callable $predicate): Seq;
+
+    /**
      * A combined {@see NonEmptySeq::map} and {@see NonEmptySeq::filter}.
      *
      * Filtering is handled via Option instead of Boolean.

@@ -6,6 +6,7 @@ namespace Tests\Runtime\Interfaces\NonEmptySeq;
 
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
 use Fp\Functional\Option\Option;
@@ -205,6 +206,19 @@ final class NonEmptySeqOpsTest extends TestCase
     public function testFilter(NonEmptySeq $seq): void
     {
         $this->assertEquals([1], $seq->filter(fn($i) => $i === 1)->toList());
+    }
+
+    public function testFilterKV(): void
+    {
+        $this->assertEquals(
+            [1, 3, 5],
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3, 4, 5])->filterKV(fn($key) => $key % 2 === 0)->toList(),
+        );
+
+        $this->assertEquals(
+            [1, 3, 5],
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3, 4, 5])->filterKV(fn($key) => $key % 2 === 0)->toList(),
+        );
     }
 
     public function provideTestFilterMapData(): Generator

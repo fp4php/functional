@@ -13,6 +13,7 @@ use Tests\Mock\Foo;
 use Tests\Mock\SubBar;
 
 use function Fp\Collection\filter;
+use function Fp\Collection\filterKV;
 use function Fp\Collection\filterMap;
 use function Fp\Collection\filterOf;
 use function Fp\Collection\filterNotNull;
@@ -31,6 +32,26 @@ final class FilterTest extends TestCase
             fn(int $v) => $v < 2,
             true
         ));
+    }
+
+    public function testFilterKV(): void
+    {
+        $this->assertEquals(
+            [2],
+            filterKV(
+                ['fst' => 1, 'snd' => 2, 'thd' => 3],
+                fn($k, $v): bool => $k !== 'fst' && $v !== 3,
+            ),
+        );
+
+        $this->assertEquals(
+            ['snd' => 2],
+            filterKV(
+                ['fst' => 1, 'snd' => 2, 'thd' => 3],
+                fn($k, $v): bool => $k !== 'fst' && $v !== 3,
+                true,
+            ),
+        );
     }
 
     public function testFilterNotNull(): void

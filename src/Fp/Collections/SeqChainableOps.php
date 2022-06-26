@@ -84,6 +84,14 @@ interface SeqChainableOps
     public function filter(callable $predicate): Seq;
 
     /**
+     * Same as {@see SeqChainableOps::filter()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return Seq<TV>
+     */
+    public function filterKV(callable $predicate): Seq;
+
+    /**
      * Exclude null elements
      *
      * ```php

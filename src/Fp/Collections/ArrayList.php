@@ -10,6 +10,7 @@ use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
 use Fp\Operations\DropOperation;
 use Fp\Operations\DropWhileOperation;
+use Fp\Operations\FilterWithKeyOperation;
 use Fp\Operations\GroupMapReduceOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
@@ -560,6 +561,17 @@ final class ArrayList implements Seq
     public function filter(callable $predicate): self
     {
         return self::collect(FilterOperation::of($this->getIterator())($predicate));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(int, TV): bool $predicate
+     * @return self<TV>
+     */
+    public function filterKV(callable $predicate): self
+    {
+        return self::collect(FilterWithKeyOperation::of($this->getIterator())($predicate));
     }
 
     /**
