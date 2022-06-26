@@ -13,14 +13,14 @@ namespace Fp\Operations;
 class ExistsOperation extends AbstractOperation
 {
     /**
-     * @param callable(TV, TK): bool $f
+     * @param callable(TV): bool $f
      */
     public function __invoke(callable $f): bool
     {
         $exists = false;
 
-        foreach ($this->gen as $key => $value) {
-            if ($f($value, $key)) {
+        foreach ($this->gen as $value) {
+            if ($f($value)) {
                 $exists = true;
                 break;
             }

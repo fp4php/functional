@@ -20,7 +20,7 @@ use Fp\Operations\LastOperation;
  * @template TV
  *
  * @param iterable<TK, TV> $collection
- * @param null|callable(TV, TK): bool $predicate
+ * @param null|callable(TV): bool $predicate
  * @return Option<TV>
  */
 function last(iterable $collection, ?callable $predicate = null): Option

@@ -17,7 +17,7 @@ use function Fp\Cast\asGenerator;
 class UniqueOperation extends AbstractOperation
 {
     /**
-     * @param callable(TV, TK): (int|string) $f
+     * @param callable(TV): (int|string) $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
@@ -26,7 +26,7 @@ class UniqueOperation extends AbstractOperation
             $hashTable = [];
 
             foreach ($this->gen as $key => $value) {
-                $disc = $f($value, $key);
+                $disc = $f($value);
 
                 if (!array_key_exists($disc, $hashTable)) {
                     $hashTable[$disc] = true;

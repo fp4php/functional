@@ -20,7 +20,7 @@ use Fp\Operations\SecondOperation;
  * @template TV
  *
  * @param iterable<TK, TV> $collection
- * @param null|callable(TV, TK): bool $predicate
+ * @param null|callable(TV): bool $predicate
  *
  * @return Option<TV>
  */

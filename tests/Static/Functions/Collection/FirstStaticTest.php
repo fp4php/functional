@@ -16,9 +16,6 @@ final class FirstStaticTest
      */
     public function testWithArray(array $coll): Option
     {
-        return first(
-            $coll,
-            fn(int $v, string $k) => true
-        );
+        return first($coll, fn(int $v) => true);
     }
 }

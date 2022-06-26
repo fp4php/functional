@@ -15,25 +15,25 @@ use Fp\Functional\Option\Option;
 class SecondOperation extends AbstractOperation
 {
     /**
-     * @param null|callable(TV, TK): bool $f
+     * @param null|callable(TV): bool $f
      * @return Option<TV>
      */
     public function __invoke(?callable $f = null): Option
     {
         if (is_null($f)) {
-            $f = fn(mixed $value, mixed $key): bool => true;
+            $f = fn(mixed $value): bool => true;
         }
 
         $i = 0;
         $second = null;
 
-        foreach ($this->gen as $key => $value) {
-            if ($f($value, $key) && 1 === $i) {
+        foreach ($this->gen as $value) {
+            if ($f($value) && 1 === $i) {
                 $second = $value;
                 break;
             }
 
-            if ($f($value, $key)) {
+            if ($f($value)) {
                 $i++;
             }
         }

@@ -19,7 +19,7 @@ use Fp\Streams\Stream;
  * @template TV
  *
  * @param iterable<TK, TV> $collection
- * @param callable(TV, TK): void $callback
+ * @param callable(TV): void $callback
  */
 function forAll(iterable $collection, callable $callback): void
 {

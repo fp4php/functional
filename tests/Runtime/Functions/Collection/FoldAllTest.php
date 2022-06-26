@@ -15,12 +15,12 @@ final class FoldAllTest extends TestCase
         $c = ['a' => 1, 'b' => 2, 'c' => 3];
         $buffer = [];
 
-        forAll($c, function(int $v, string $k) use (&$buffer) {
-            /** @var array<string, int> $buffer */
-            $buffer[$k] = $v;
+        forAll($c, function(int $v) use (&$buffer) {
+            /** @var list<int> $buffer */
+            $buffer[] = $v;
         });
 
-        $this->assertEquals($c, $buffer);
+        $this->assertEquals([1, 2, 3], $buffer);
     }
 
     public function testWithEmptyArray(): void
@@ -30,9 +30,9 @@ final class FoldAllTest extends TestCase
 
         $buffer = [];
 
-        forAll($items, function(int $v, string $k) use (&$buffer) {
-            /** @var array<string, int> $buffer */
-            $buffer[$k] = $v;
+        forAll($items, function(int $v) use (&$buffer) {
+            /** @var list<int> $buffer */
+            $buffer[] = $v;
         });
 
         $this->assertEquals([], $buffer);

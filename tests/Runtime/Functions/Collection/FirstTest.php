@@ -18,10 +18,7 @@ final class FirstTest extends TestCase
         $c = [1, 2, 3];
 
         $this->assertEquals(1, first($c)->get());
-        $this->assertEquals(
-            2,
-            first($c, fn(int $v, int $k) => $k === 1)->get()
-        );
+        $this->assertEquals(2, first($c, fn(int $v) => $v === 2)->get());
     }
 
     public function testFirstInstanceOf(): void

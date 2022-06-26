@@ -19,7 +19,7 @@ class DropWhileOperation extends AbstractOperation
     /**
      * @template TKO
      *
-     * @param callable(TV, TK): bool $f
+     * @param callable(TV): bool $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
@@ -28,7 +28,7 @@ class DropWhileOperation extends AbstractOperation
             $toggle = true;
 
             foreach ($this->gen as $key => $value) {
-                if (!($toggle = $toggle && $f($value, $key))) {
+                if (!($toggle = $toggle && $f($value))) {
                     yield $key => $value;
                 }
             }
