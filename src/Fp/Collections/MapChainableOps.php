@@ -156,13 +156,13 @@ interface MapChainableOps
     public function reindex(callable $callback): Map;
 
     /**
-     * Same as {@see MapChainableOps::reindex}, but with a transformation function which takes also the key as input.
+     * Same as {@see MapChainableOps::reindex()}, but passing also the key to the $callback function.
      *
      * ```php
      * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->reindexWithKey(fn($k, $v) => "{$k}-{$v}");
+     * >>> $collection->reindexKV(fn($k, $v) => "{$k}-{$v}");
      * => HashMap('1-1' -> 1, '2-2' -> 2)
      * ```
      *
@@ -171,7 +171,7 @@ interface MapChainableOps
      * @param callable(TK, TV): TKO $callback
      * @return Map<TKO, TV>
      */
-    public function reindexWithKey(callable $callback): Map;
+    public function reindexKV(callable $callback): Map;
 
     /**
      * Returns sequence of collection keys

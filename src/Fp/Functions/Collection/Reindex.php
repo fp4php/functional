@@ -30,7 +30,7 @@ function reindex(iterable $collection, callable $callback): array
 }
 
 /**
- * Same as {@see reindex()}, but with a transformation function which takes also the key as input.
+ * Same as {@see reindex()}, but passing also the key to the $callback function.
  *
  * ```php
  * >>> reindex(['a' => 1, 'b' => 2], fn (string $key, int $value) => "{$key}-{$value}");
@@ -45,7 +45,7 @@ function reindex(iterable $collection, callable $callback): array
  * @param callable(TK, TV): TKO $callback
  * @return array<TKO, TV>
  */
-function reindexWithKey(iterable $collection, callable $callback): array
+function reindexKV(iterable $collection, callable $callback): array
 {
     return asArray(ReindexWithKeyOperation::of($collection)($callback));
 }

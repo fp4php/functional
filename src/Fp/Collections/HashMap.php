@@ -400,7 +400,7 @@ final class HashMap implements Map, StaticStorage
      * @param callable(TK, TV): TKO $callback
      * @return self<TKO, TV>
      */
-    public function reindexWithKey(callable $callback): Map
+    public function reindexKV(callable $callback): Map
     {
         return self::collect(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }

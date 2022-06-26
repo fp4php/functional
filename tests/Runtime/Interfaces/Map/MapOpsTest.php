@@ -125,7 +125,7 @@ final class MapOpsTest extends TestCase
 
         $this->assertEquals(
             [['2-22', 22], ['3-33', 33]],
-            $hm->reindexWithKey(fn($k, $v) => "{$k}-{$v}")->toList()
+            $hm->reindexKV(fn($k, $v) => "{$k}-{$v}")->toList()
         );
     }
 

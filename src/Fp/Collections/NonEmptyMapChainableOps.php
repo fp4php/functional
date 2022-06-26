@@ -134,13 +134,13 @@ interface NonEmptyMapChainableOps
     public function reindex(callable $callback): NonEmptyMap;
 
     /**
-     * Same as {@see NonEmptyMapChainableOps::reindex}, but with a transformation function which takes also the key as input.
+     * Same as {@see NonEmptyMapChainableOps::reindex()}, but passing also the key to the $callback function.
      *
      * ```php
      * >>> $collection = NonEmptyHashMap::collectPairs([['1', 1], ['2', 2]]);
      * => HashMap('1' -> 1, '2' -> 2)
      *
-     * >>> $collection->reindexWithKey(fn($k, $v) => "{$k}-{$v}");
+     * >>> $collection->reindexKV(fn($k, $v) => "{$k}-{$v}");
      * => NonEmptyHashMap('1-1' -> 1, '2-2' -> 2)
      * ```
      *
@@ -149,7 +149,7 @@ interface NonEmptyMapChainableOps
      * @param callable(TK, TV): TKO $callback
      * @return NonEmptyMap<TKO, TV>
      */
-    public function reindexWithKey(callable $callback): NonEmptyMap;
+    public function reindexKV(callable $callback): NonEmptyMap;
 
     /**
      * Returns sequence of collection keys

@@ -375,7 +375,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @param callable(TK, TV): TKO $callback
      * @return self<TKO, TV>
      */
-    public function reindexWithKey(callable $callback): NonEmptyMap
+    public function reindexKV(callable $callback): NonEmptyMap
     {
         return self::collectUnsafe(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }

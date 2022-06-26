@@ -6,7 +6,7 @@ namespace Tests\Static\Functions\Collection;
 
 use Fp\Collections\ArrayList;
 use function Fp\Collection\reindex;
-use function Fp\Collection\reindexWithKey;
+use function Fp\Collection\reindexKV;
 
 final class ReindexStaticTest
 {
@@ -25,6 +25,6 @@ final class ReindexStaticTest
      */
     public function testReindexWithKeyArray(array $coll): array
     {
-        return reindexWithKey($coll, fn(string $k, int $v) => "key-{$k}-{$v}");
+        return reindexKV($coll, fn(string $k, int $v) => "key-{$k}-{$v}");
     }
 }
