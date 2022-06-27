@@ -18,7 +18,8 @@ use Iterator;
 interface Seq extends Collection, SeqOps, SeqCollector
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Iterator<TV>
      */
     public function getIterator(): Iterator;

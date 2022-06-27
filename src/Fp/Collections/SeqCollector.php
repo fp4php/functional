@@ -17,10 +17,11 @@ interface SeqCollector
      * ```
      *
      * @template TVI
-     * @param iterable<TVI> $source
-     * @return self<TVI>
+     *
+     * @param Collection<TVI> | iterable<mixed, TVI> $source
+     * @return Seq<TVI>
      */
-    public static function collect(iterable $source): self;
+    public static function collect(iterable $source): Seq;
 
     /**
      * ```php
@@ -29,10 +30,11 @@ interface SeqCollector
      * ```
      *
      * @template TVI
+     *
      * @param TVI $val
-     * @return self<TVI>
+     * @return Seq<TVI>
      */
-    public static function singleton(mixed $val): self;
+    public static function singleton(mixed $val): Seq;
 
     /**
      * ```php
@@ -40,9 +42,9 @@ interface SeqCollector
      * => []
      * ```
      *
-     * @return self<empty>
+     * @return Seq<never>
      */
-    public static function empty(): self;
+    public static function empty(): Seq;
 
     /**
      * Collect elements
@@ -59,8 +61,8 @@ interface SeqCollector
      * => []
      * ```
      *
-     * @psalm-param positive-int $by
-     * @psalm-return self<int>
+     * @param positive-int $by
+     * @return Seq<int>
      */
-    public static function range(int $start, int $stopExclusive, int $by = 1): self;
+    public static function range(int $start, int $stopExclusive, int $by = 1): Seq;
 }

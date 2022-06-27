@@ -6,48 +6,11 @@ namespace Fp\Collections;
 
 use ArrayIterator;
 use Fp\Functional\Option\Option;
-use Fp\Operations\AppendedAllOperation;
-use Fp\Operations\AppendedOperation;
-use Fp\Operations\DropOperation;
-use Fp\Operations\DropWhileOperation;
-use Fp\Operations\FilterWithKeyOperation;
-use Fp\Operations\GroupMapReduceOperation;
-use Fp\Operations\MapWithKeyOperation;
-use Fp\Operations\MapOperation;
-use Fp\Operations\ReindexOperation;
-use Fp\Operations\ReindexWithKeyOperation;
-use Fp\Operations\TraverseOptionOperation;
-use Fp\Operations\EveryOfOperation;
-use Fp\Operations\EveryOperation;
-use Fp\Operations\ExistsOfOperation;
-use Fp\Operations\ExistsOperation;
-use Fp\Operations\FilterMapOperation;
-use Fp\Operations\FilterNotNullOperation;
-use Fp\Operations\FilterOfOperation;
-use Fp\Operations\FilterOperation;
-use Fp\Operations\FirstOfOperation;
-use Fp\Operations\FirstOperation;
-use Fp\Operations\FlatMapOperation;
-use Fp\Operations\FoldOperation;
-use Fp\Operations\GroupByOperation;
-use Fp\Operations\IntersperseOperation;
-use Fp\Operations\LastOfOperation;
-use Fp\Operations\LastOperation;
-use Fp\Operations\MkStringOperation;
-use Fp\Operations\PrependedAllOperation;
-use Fp\Operations\PrependedOperation;
-use Fp\Operations\ReduceOperation;
-use Fp\Operations\SortedOperation;
-use Fp\Operations\TailOperation;
-use Fp\Operations\TakeOperation;
-use Fp\Operations\TakeWhileOperation;
-use Fp\Operations\TapOperation;
-use Fp\Operations\UniqueOperation;
-use Fp\Operations\ZipOperation;
+use Fp\Operations as Ops;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Cast\asGenerator;
+use function Fp\Collection\at;
 use function Fp\Evidence\proveNonEmptyList;
 
 /**
@@ -65,12 +28,14 @@ final class ArrayList implements Seq
     public function __construct(public array $elements) { }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @param iterable<TVI> $source
-     * @return self<TVI>
+     *
+     * @param Collection<TVI> | iterable<mixed, TVI> $source
+     * @return ArrayList<TVI>
      */
-    public static function collect(iterable $source): self
+    public static function collect(iterable $source): ArrayList
     {
         $buffer = [];
 
@@ -78,35 +43,39 @@ final class ArrayList implements Seq
             $buffer[] = $elem;
         }
 
-        return new self($buffer);
+        return new ArrayList($buffer);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $val
-     * @return self<TVI>
+     * @return ArrayList<TVI>
      */
-    public static function singleton(mixed $val): self
+    public static function singleton(mixed $val): ArrayList
     {
-        return new self([$val]);
+        return new ArrayList([$val]);
     }
 
     /**
-     * @inheritDoc
-     * @return self<empty>
+     * {@inheritDoc}
+     *
+     * @return ArrayList<never>
      */
-    public static function empty(): self
+    public static function empty(): ArrayList
     {
-        return new self([]);
+        return new ArrayList([]);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param positive-int $by
-     * @psalm-return self<int>
+     * {@inheritDoc}
+     *
+     * @param positive-int $by
+     * @return ArrayList<int>
      */
-    public static function range(int $start, int $stopExclusive, int $by = 1): self
+    public static function range(int $start, int $stopExclusive, int $by = 1): ArrayList
     {
         return Stream::range($start, $stopExclusive, $by)->toArrayList();
     }
@@ -120,7 +89,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return list<TV>
      */
     public function toList(): array
@@ -129,7 +99,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<non-empty-list<TV>>
      */
     public function toNonEmptyList(): Option
@@ -138,7 +109,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -147,7 +119,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyLinkedList<TV>>
      */
     public function toNonEmptyLinkedList(): Option
@@ -156,7 +129,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList
@@ -165,7 +139,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyArrayList<TV>>
      */
     public function toNonEmptyArrayList(): Option
@@ -174,7 +149,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet
@@ -183,7 +159,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyHashSet<TV>>
      */
     public function toNonEmptyHashSet(): Option
@@ -192,7 +169,7 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -206,7 +183,7 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -220,7 +197,7 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -228,8 +205,9 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function __invoke(int $index): Option
     {
@@ -237,10 +215,10 @@ final class ArrayList implements Seq
     }
 
     /**
+     * {{@inheritDoc}}
      * O(1) time/space complexity
      *
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function at(int $index): Option
     {
@@ -248,8 +226,9 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function head(): Option
     {
@@ -257,122 +236,139 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
      */
-    public function tail(): self
+    public function tail(): ArrayList
     {
-        return self::collect(TailOperation::of($this->getIterator())());
+        return ArrayList::collect(Ops\TailOperation::of($this->getIterator())());
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
      */
-    public function reverse(): self
+    public function reverse(): ArrayList
     {
-        return new self(array_reverse($this->elements));
+        return new ArrayList(array_reverse($this->elements));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->getIterator())($predicate);
+        return Ops\EveryOperation::of($this->getIterator())($predicate);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
+     *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TVO>>
+     * @return Option<ArrayList<TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
-        return TraverseOptionOperation::of($this->getIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getIterator())($callback)
             ->map(fn($gen) => ArrayList::collect($gen));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
-        return ExistsOperation::of($this->getIterator())($predicate);
+        return Ops\ExistsOperation::of($this->getIterator())($predicate);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option
     {
-        return FirstOperation::of($this->getIterator())($predicate);
+        return Ops\FirstOperation::of($this->getIterator())($predicate);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        return FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function lastOf(string $fqcn, bool $invariant = false): Option
     {
-        return LastOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\LastOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option
     {
-        return LastOperation::of($this->getIterator())($predicate);
+        return Ops\LastOperation::of($this->getIterator())($predicate);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function firstElement(): Option
     {
@@ -380,51 +376,58 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function lastElement(): Option
     {
-        // TODO known size optimization
-        return LastOperation::of($this->getIterator())();
+        return Option::fromNullable(array_key_last($this->elements))
+            ->flatMap(fn($index) => at($this->elements, $index));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
+     *
+     * @param TA $init
+     * @param callable(TA, TV): TA $callback
+     * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed
     {
-        return FoldOperation::of($this->getIterator())($init, $callback);
+        return Ops\FoldOperation::of($this->getIterator())($init, $callback);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return Option<TV|TA>
+     *
+     * @param callable(TV|TA, TV): (TV|TA) $callback
+     * @return Option<TV|TA>
      */
     public function reduce(callable $callback): Option
     {
-        return ReduceOperation::of($this->getIterator())($callback);
+        return Ops\ReduceOperation::of($this->getIterator())($callback);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKO
-     * @psalm-param callable(TV): TKO $callback
-     * @psalm-return Map<TKO, NonEmptySeq<TV>>
+     *
+     * @param callable(TV): TKO $callback
+     * @return Map<TKO, NonEmptySeq<TV>>
      */
     public function groupBy(callable $callback): Map
     {
-        return GroupByOperation::of($this->getIterator())($callback);
+        return Ops\GroupByOperation::of($this->getIterator())($callback);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -437,11 +440,11 @@ final class ArrayList implements Seq
      */
     public function groupMapReduce(callable $group, callable $map, callable $reduce): Map
     {
-        return GroupMapReduceOperation::of($this->getIterator())($group, $map, $reduce);
+        return Ops\GroupMapReduceOperation::of($this->getIterator())($group, $map, $reduce);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -450,11 +453,11 @@ final class ArrayList implements Seq
      */
     public function reindex(callable $callback): HashMap
     {
-        return HashMap::collect(ReindexOperation::of($this->getIterator())($callback));
+        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -463,11 +466,11 @@ final class ArrayList implements Seq
      */
     public function reindexKV(callable $callback): HashMap
     {
-        return HashMap::collect(ReindexWithKeyOperation::of($this->getIterator())($callback));
+        return HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function isEmpty(): bool
     {
@@ -475,7 +478,8 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @psalm-assert-if-true non-empty-list<TV> $this->elements
      */
     public function isNonEmpty(): bool
@@ -484,236 +488,262 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(TV): TVO $callback
-     * @return self<TVO>
+     * @return ArrayList<TVO>
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): ArrayList
     {
-        return self::collect(MapOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\MapOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(int, TV): TVO $callback
-     * @return self<TVO>
+     * @return ArrayList<TVO>
      */
-    public function mapKV(callable $callback): self
+    public function mapKV(callable $callback): ArrayList
     {
-        return self::collect(MapWithKeyOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return ArrayList<TV|TVI>
      */
-    public function appended(mixed $elem): self
+    public function appended(mixed $elem): ArrayList
     {
-        return self::collect(AppendedOperation::of($this->getIterator())($elem));
+        return ArrayList::collect(Ops\AppendedOperation::of($this->getIterator())($elem));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return self<TV|TVI>
+     *
+     * @param Collection<TVI> | iterable<mixed, TVI> $suffix
+     * @return ArrayList<TV|TVI>
      */
-    public function appendedAll(iterable $suffix): self
+    public function appendedAll(iterable $suffix): ArrayList
     {
-        return self::collect(AppendedAllOperation::of($this->getIterator())($suffix));
+        return ArrayList::collect(Ops\AppendedAllOperation::of($this->getIterator())($suffix));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return ArrayList<TV|TVI>
      */
-    public function prepended(mixed $elem): self
+    public function prepended(mixed $elem): ArrayList
     {
-        return self::collect(PrependedOperation::of($this->getIterator())($elem));
+        return ArrayList::collect(Ops\PrependedOperation::of($this->getIterator())($elem));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return self<TV|TVI>
+     *
+     * @param Collection<TVI> | iterable<mixed, TVI> $prefix
+     * @return ArrayList<TV|TVI>
      */
-    public function prependedAll(iterable $prefix): self
+    public function prependedAll(iterable $prefix): ArrayList
     {
-        return self::collect(PrependedAllOperation::of($this->getIterator())($prefix));
+        return ArrayList::collect(Ops\PrependedAllOperation::of($this->getIterator())($prefix));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
      */
-    public function filter(callable $predicate): self
+    public function filter(callable $predicate): ArrayList
     {
-        return self::collect(FilterOperation::of($this->getIterator())($predicate));
+        return ArrayList::collect(Ops\FilterOperation::of($this->getIterator())($predicate));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(int, TV): bool $predicate
-     * @return self<TV>
+     * @return ArrayList<TV>
      */
-    public function filterKV(callable $predicate): self
+    public function filterKV(callable $predicate): ArrayList
     {
-        return self::collect(FilterWithKeyOperation::of($this->getIterator())($predicate));
+        return ArrayList::collect(Ops\FilterWithKeyOperation::of($this->getIterator())($predicate));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return ArrayList<TVO>
      */
-    public function filterMap(callable $callback): self
+    public function filterMap(callable $callback): ArrayList
     {
-        return self::collect(FilterMapOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\FilterMapOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
      */
-    public function filterNotNull(): self
+    public function filterNotNull(): ArrayList
     {
-        return self::collect(FilterNotNullOperation::of($this->getIterator())());
+        return ArrayList::collect(Ops\FilterNotNullOperation::of($this->getIterator())());
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return ArrayList<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): self
+    public function filterOf(string $fqcn, bool $invariant = false): ArrayList
     {
-        return self::collect(FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
+        return ArrayList::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @return ArrayList<TVO>
      */
-    public function flatMap(callable $callback): self
+    public function flatMap(callable $callback): ArrayList
     {
-        return self::collect(FlatMapOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\FlatMapOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
      */
-    public function takeWhile(callable $predicate): self
+    public function takeWhile(callable $predicate): ArrayList
     {
-        return self::collect(TakeWhileOperation::of($this->getIterator())($predicate));
+        return ArrayList::collect(Ops\TakeWhileOperation::of($this->getIterator())($predicate));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
      */
-    public function dropWhile(callable $predicate): self
+    public function dropWhile(callable $predicate): ArrayList
     {
-        return self::collect(DropWhileOperation::of($this->getIterator())($predicate));
+        return ArrayList::collect(Ops\DropWhileOperation::of($this->getIterator())($predicate));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
      */
-    public function take(int $length): self
+    public function take(int $length): ArrayList
     {
-        return self::collect(TakeOperation::of($this->getIterator())($length));
+        return ArrayList::collect(Ops\TakeOperation::of($this->getIterator())($length));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
      */
-    public function drop(int $length): self
+    public function drop(int $length): ArrayList
     {
-        return self::collect(DropOperation::of($this->getIterator())($length));
+        return ArrayList::collect(Ops\DropOperation::of($this->getIterator())($length));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
-     * @psalm-return self<TV>
+     * @return ArrayList<TV>
      */
-    public function tap(callable $callback): self
+    public function tap(callable $callback): ArrayList
     {
-        Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
+        Stream::emits(Ops\TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
     }
 
     /**
-     * @inheritDoc
-     * @experimental
-     * @psalm-param callable(TV): (int|string) $callback
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): (int|string) $callback
+     * @return ArrayList<TV>
      */
-    public function unique(callable $callback): self
+    public function unique(callable $callback): ArrayList
     {
-        return self::collect(UniqueOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\UniqueOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV, TV): int $cmp
+     * @return ArrayList<TV>
      */
-    public function sorted(callable $cmp): self
+    public function sorted(callable $cmp): ArrayList
     {
-        return self::collect(SortedOperation::of($this->getIterator())($cmp));
+        return ArrayList::collect(Ops\SortedOperation::of($this->getIterator())($cmp));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $separator
-     * @psalm-return self<TV|TVI>
+     * @return ArrayList<TV|TVI>
      */
-    public function intersperse(mixed $separator): self
+    public function intersperse(mixed $separator): ArrayList
     {
-        return self::collect(IntersperseOperation::of($this->getIterator())($separator));
+        return ArrayList::collect(Ops\IntersperseOperation::of($this->getIterator())($separator));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @param iterable<TVI> $that
-     * @return self<array{TV, TVI}>
+     *
+     * @param Collection<TVI> | iterable<mixed, TVI> $that
+     * @return ArrayList<array{TV, TVI}>
      */
-    public function zip(iterable $that): self
+    public function zip(iterable $that): ArrayList
     {
-        return self::collect(ZipOperation::of($this->getIterator())($that));
+        return ArrayList::collect(Ops\ZipOperation::of($this->getIterator())($that));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
-        return MkStringOperation::of($this->getIterator())($start, $sep, $end);
+        return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
     }
 }

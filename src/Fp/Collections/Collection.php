@@ -15,7 +15,8 @@ use IteratorAggregate;
 interface Collection extends IteratorAggregate, Countable
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Iterator<TV>
      */
     public function getIterator(): Iterator;
