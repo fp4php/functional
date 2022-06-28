@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Streams;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\Collection;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
@@ -144,7 +145,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * @inheritDoc
      * @template TVI
-     * @param iterable<TVI> $source
+     * @param Collection<TVI> | iterable<mixed, TVI> $source
      * @return self<TVI>
      */
     public static function emits(iterable $source): self

@@ -12,6 +12,7 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
+use Fp\Streams\Stream;
 use PHPUnit\Framework\TestCase;
 
 final class NonEmptyMapTest extends TestCase
@@ -70,6 +71,10 @@ final class NonEmptyMapTest extends TestCase
             NonEmptyHashMap::collectPairsNonEmpty($expected)->toNonEmptyHashMap(),
         );
 
+        $this->assertEquals(
+            Stream::emits($expected)->toList(),
+            NonEmptyHashMap::collectPairsNonEmpty($expected)->toStream()->toList(),
+        );
     }
 
     public function testCount(): void

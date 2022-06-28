@@ -194,6 +194,16 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this);
+    }
+
+    /**
      * @inheritDoc
      * @psalm-param TV $element
      */

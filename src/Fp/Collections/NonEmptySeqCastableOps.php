@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Streams\Stream;
+
 /**
  * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
@@ -117,4 +119,19 @@ interface NonEmptySeqCastableOps
      * @return NonEmptyHashMap<TKI, TVI>
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap;
+
+    /**
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty(['fst', 'snd', 'thd'])
+     * >>>     ->toStream()
+     * >>>     ->lines()
+     * >>>     ->drain();
+     * => 'fst'
+     * => 'snd'
+     * => 'thd'
+     * ```
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream;
 }

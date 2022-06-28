@@ -232,6 +232,16 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return LinkedList<TV>
      */
     public function reverse(): LinkedList

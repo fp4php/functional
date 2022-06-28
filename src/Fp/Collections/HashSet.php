@@ -180,6 +180,16 @@ final class HashSet implements Set
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this);
+    }
+
+    /**
      * @inheritDoc
      * @psalm-param TV $element
      */

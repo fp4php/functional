@@ -646,4 +646,14 @@ final class NonEmptyLinkedList implements NonEmptySeq
     {
         return NonEmptyHashMap::collectPairsNonEmpty($this);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this);
+    }
 }

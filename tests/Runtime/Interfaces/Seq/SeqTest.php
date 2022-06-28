@@ -14,6 +14,7 @@ use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
+use Fp\Streams\Stream;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
@@ -123,6 +124,11 @@ final class SeqTest extends TestCase
         $this->assertEquals(
             Option::none(),
             $emptySeq->toNonEmptyHashSet(),
+        );
+
+        $this->assertEquals(
+            Stream::emits([1, 2, 3])->toList(),
+            $seq->toStream()->toList(),
         );
     }
 

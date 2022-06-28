@@ -13,6 +13,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
+use Fp\Streams\Stream;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
@@ -89,6 +90,11 @@ final class NonEmptySeqTest extends TestCase
         $this->assertEquals(
             NonEmptyHashSet::collectNonEmpty([1, 2, 3]),
             $seq->toNonEmptyHashSet(),
+        );
+
+        $this->assertEquals(
+            Stream::emits([1, 2, 3])->toList(),
+            $seq->toStream()->toList(),
         );
     }
 

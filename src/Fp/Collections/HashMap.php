@@ -19,6 +19,7 @@ use Fp\Operations\KeysOperation;
 use Fp\Operations\ReindexWithKeyOperation;
 use Fp\Functional\Option\Option;
 use Fp\Operations\ValuesOperation;
+use Fp\Streams\Stream;
 use Generator;
 use RuntimeException;
 
@@ -252,6 +253,16 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return Stream<array{TK, TV}>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this->getIterator());
+    }
+
+    /**
      * @inheritDoc
      *
      * @param callable(TV): bool $predicate
@@ -307,13 +318,7 @@ final class HashMap implements Map, StaticStorage
      */
     public function removed(mixed $key): self
     {
-        return self::collect(asGenerator(function() use ($key) {
-            foreach ($this->getKeyValueIterator() as $k => $v) {
-                if ($k !== $key) {
-                    yield $k => $v;
-                }
-            }
-        }));
+        return $this->filterKV(fn($k) => $k !== $key);
     }
 
     /**

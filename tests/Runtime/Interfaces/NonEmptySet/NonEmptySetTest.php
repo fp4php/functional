@@ -14,6 +14,7 @@ use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySet;
 use Fp\Functional\Option\Option;
+use Fp\Streams\Stream;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
@@ -71,6 +72,10 @@ final class NonEmptySetTest extends TestCase
             $set->toNonEmptyHashSet(),
         );
 
+        $this->assertEquals(
+            Stream::emits($expected)->toList(),
+            $set->toStream()->toList(),
+        );
     }
 
     public function testCastToHashMap(): void

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Streams\Stream;
+
 /**
  * @template TK
  * @template-covariant TV
@@ -109,4 +111,19 @@ interface NonEmptyMapCastableOps
      * @return NonEmptyHashMap<TK, TV>
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['fst', 1], ['snd', 2], ['thr', 3]])
+     * >>>     ->toStream()
+     * >>>     ->lines()
+     * >>>     ->drain();
+     * => Array([0] => fst, [1] => 1)
+     * => Array([0] => snd, [1] => 2)
+     * => Array([0] => thr, [1] => 3)
+     * ```
+     *
+     * @return Stream<array{TK, TV}>
+     */
+    public function toStream(): Stream;
 }

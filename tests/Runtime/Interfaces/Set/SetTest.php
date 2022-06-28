@@ -13,6 +13,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
+use Fp\Streams\Stream;
 use PHPUnit\Framework\TestCase;
 
 final class SetTest extends TestCase
@@ -92,6 +93,11 @@ final class SetTest extends TestCase
         $this->assertEquals(
             Option::none(),
             HashSet::collect([])->toNonEmptyHashMap(),
+        );
+
+        $this->assertEquals(
+            Stream::emits([1, 2])->toList(),
+            HashSet::collect([1, 2, 2])->toStream()->toList()
         );
     }
 

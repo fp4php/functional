@@ -14,6 +14,7 @@ use Fp\Operations\EveryOperation;
 use Fp\Operations\KeysOperation;
 use Fp\Operations\ReindexWithKeyOperation;
 use Fp\Operations\ValuesOperation;
+use Fp\Streams\Stream;
 use Generator;
 
 use function Fp\Cast\asGenerator;
@@ -235,6 +236,16 @@ final class NonEmptyHashMap implements NonEmptyMap
     public function toNonEmptyHashMap(): NonEmptyHashMap
     {
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Stream<array{TK, TV}>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this->getIterator());
     }
 
     /**

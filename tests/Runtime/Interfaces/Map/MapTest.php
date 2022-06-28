@@ -13,6 +13,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
+use Fp\Streams\Stream;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -113,6 +114,11 @@ final class MapTest extends TestCase
         $this->assertEquals(
             Option::none(),
             HashMap::collectPairs([])->toNonEmptyHashMap(),
+        );
+
+        $this->assertEquals(
+            Stream::emits([['fst', 1], ['snd', 2], ['thd', 3]])->toList(),
+            HashMap::collectPairs([['fst', 1], ['snd', 2], ['thd', 3]])->toStream()->toList(),
         );
     }
 

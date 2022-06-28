@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Streams\Stream;
 
 /**
  * @psalm-suppress InvalidTemplateParam
@@ -129,4 +130,19 @@ interface SetCastableOps
      * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
     public function toNonEmptyHashMap(): Option;
+
+    /**
+     * ```php
+     * >>> HashSet::collect(['fst', 'fst', 'snd', 'thd'])
+     * >>>     ->toStream()
+     * >>>     ->lines()
+     * >>>     ->drain();
+     * => 'fst'
+     * => 'snd'
+     * => 'thd'
+     * ```
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream;
 }

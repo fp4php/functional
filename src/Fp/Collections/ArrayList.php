@@ -198,6 +198,16 @@ final class ArrayList implements Seq
 
     /**
      * {@inheritDoc}
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function count(): int
     {
