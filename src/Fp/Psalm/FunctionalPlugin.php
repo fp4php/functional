@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
-use Fp\Psalm\Hook\AfterExpressionAnalysis\ConditionallyPureAnalyzer;
 use Fp\Psalm\Hook\AfterExpressionAnalysis\StaticStorageRefinementAnalyzer;
 use Fp\Psalm\Hook\AfterExpressionAnalysis\ProveTrueExpressionAnalyzer;
-use Fp\Psalm\Hook\AfterExpressionAnalysis\UnusedCallAnalyzer;
 use Fp\Psalm\Hook\AfterMethodCallAnalysis\OptionAssertionAnalyzer;
 use Fp\Psalm\Hook\AfterMethodCallAnalysis\StaticStorageCollectorAnalyzer;
 use Fp\Psalm\Hook\AfterMethodCallAnalysis\ValidatedAssertionAnalyzer;
@@ -50,8 +48,6 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(MapGetMethodReturnTypeProvider::class);
 
         $register(ProveTrueExpressionAnalyzer::class);
-        $register(ConditionallyPureAnalyzer::class);
-        $register(UnusedCallAnalyzer::class);
         $register(StaticStorageCollectorAnalyzer::class);
         $register(StaticStorageRefinementAnalyzer::class);
         $register(EitherGetReturnTypeProvider::class);
