@@ -6,6 +6,7 @@ namespace Fp\Functional\Either;
 
 use Fp\Functional\Option\Option;
 use Fp\Functional\Validated\Validated;
+use Fp\Operations\ToStringOperation;
 use Generator;
 use Throwable;
 
@@ -496,4 +497,13 @@ abstract class Either
      * @psalm-return L|R
      */
     abstract public function get(): mixed;
+
+    public function __toString(): string
+    {
+        $value = ToStringOperation::of($this->get());
+
+        return $this instanceof Left
+            ? "Left({$value})"
+            : "Right({$value})";
+    }
 }

@@ -9,6 +9,7 @@ use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
+use Fp\Operations\ToStringOperation;
 use Generator;
 use Throwable;
 
@@ -742,5 +743,12 @@ abstract class Option
         return $this->isSome()
             ? $callback($this->value)
             : new ArrayList([]);
+    }
+
+    public function __toString(): string
+    {
+        $value = ToStringOperation::of($this->get());
+
+        return $this instanceof None ? 'None' : "Some({$value})";
     }
 }

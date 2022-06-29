@@ -15,6 +15,12 @@ use RuntimeException;
 
 final class EitherTest extends TestCase
 {
+    public function testToString(): void
+    {
+        $this->assertEquals('Left(42)', (string) Either::left(42));
+        $this->assertEquals('Right(42)', (string) Either::right(42));
+    }
+
     public function testCreation(): void
     {
         $this->assertInstanceOf(Right::class, Either::right(1));

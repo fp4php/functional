@@ -19,6 +19,12 @@ use Tests\Mock\Foo;
 
 final class OptionTest extends TestCase
 {
+    public function testToString(): void
+    {
+        $this->assertEquals('None', (string) Option::none());
+        $this->assertEquals('Some(42)', (string) Option::some(42));
+    }
+
     public function testCreation(): void
     {
         $this->assertInstanceOf(Some::class, Option::fromNullable(1));
