@@ -51,7 +51,6 @@ final class OptionStaticTest
      */
     public function testToArrayList(): ArrayList
     {
-        return Option::fromNullable(1)
-            ->toArrayList(fn(int $v) => ArrayList::singleton($v));
+        return Option::fromNullable(1)->toArrayList();
     }
 }

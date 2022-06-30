@@ -714,35 +714,21 @@ abstract class Option
     }
 
     /**
-     * Convert optional value to ArrayList collection
-     * via transformation function $callback.
+     * Convert Option<A> to ArrayList<A> with 0 or 1 element.
      *
      * ```php
-     * >>> Option::some(1)
-     *     ->toArrayList(ArrayList::singleton(...))
-     *     ->toList();
-     * => [1]
+     * >>> Option::some(1)->toArrayList();
+     * => ArrayList(1)
      *
-     * >>> Option::some([1])
-     *     ->toArrayList(ArrayList::collect(...))
-     *     ->toList();
-     * => [1]
-     *
-     * >>> Option::none()
-     *     ->toArrayList(ArrayList::collect(...))
-     *     ->toList();
-     * => []
+     * >>> Option::none()->toArrayList();
+     * => ArrayList()
      * ```
      *
-     * @template TOutValue
-     * @param callable(A): ArrayList<TOutValue> $callback
-     * @return ArrayList<TOutValue>
+     * @return ArrayList<A>
      */
-    public function toArrayList(callable $callback): ArrayList
+    public function toArrayList(): ArrayList
     {
-        return $this->isSome()
-            ? $callback($this->value)
-            : new ArrayList([]);
+        return ArrayList::collect($this->isSome() ? [$this->value] : []);
     }
 
     public function __toString(): string
