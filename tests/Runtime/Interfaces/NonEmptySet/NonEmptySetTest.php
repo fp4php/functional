@@ -20,6 +20,22 @@ use PHPUnit\Framework\TestCase;
 
 final class NonEmptySetTest extends TestCase
 {
+    public function testToString(): void
+    {
+        $this->assertEquals(
+            'NonEmptyHashSet(1, 2, 3)',
+            (string) NonEmptyHashSet::collectNonEmpty([1, 2, 3]),
+        );
+        $this->assertEquals(
+            'NonEmptyHashSet(Some(1), Some(2), None)',
+            (string) NonEmptyHashSet::collectNonEmpty([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ]),
+        );
+    }
+
     public function provideTestCastsData(): Generator
     {
         yield NonEmptyHashSet::class => [NonEmptyHashSet::collectNonEmpty([1, 2, 3, 3]), [1, 2, 3]];

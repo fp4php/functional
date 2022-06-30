@@ -756,4 +756,11 @@ final class ArrayList implements Seq
     {
         return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
     }
+
+    public function __toString(): string
+    {
+        return $this
+            ->map(fn($value) => Ops\ToStringOperation::of($value))
+            ->mkString('ArrayList(', ', ', ')');
+    }
 }

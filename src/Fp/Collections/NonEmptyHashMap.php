@@ -9,6 +9,7 @@ use Fp\Operations\CountOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
+use Fp\Operations\ToStringOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\KeysOperation;
@@ -418,5 +419,14 @@ final class NonEmptyHashMap implements NonEmptyMap
     public function values(): NonEmptySeq
     {
         return NonEmptyArrayList::collectUnsafe(ValuesOperation::of($this->getKeyValueIterator())());
+    }
+
+    public function __toString(): string
+    {
+        return $this
+            ->mapKV(fn($key, $value) => ToStringOperation::of($key) . ' => ' . ToStringOperation::of($value))
+            ->values()
+            ->toArrayList()
+            ->mkString('NonEmptyHashMap(', ', ', ')');
     }
 }

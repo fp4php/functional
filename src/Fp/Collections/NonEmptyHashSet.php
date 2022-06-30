@@ -10,6 +10,7 @@ use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
 use Fp\Operations\ReindexWithKeyOperation;
+use Fp\Operations\ToStringOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -24,7 +25,6 @@ use Fp\Operations\TapOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Cast\asGenerator;
 use function Fp\Cast\asNonEmptyList;
 
 /**
@@ -539,5 +539,13 @@ final class NonEmptyHashSet implements NonEmptySet
     public function diff(Set|NonEmptySet $that): Set
     {
         return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
+    }
+
+    public function __toString(): string
+    {
+        return $this
+            ->map(fn($value) => ToStringOperation::of($value))
+            ->toArrayList()
+            ->mkString('NonEmptyHashSet(', ', ', ')');
     }
 }

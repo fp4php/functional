@@ -7,12 +7,12 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AppendedAllOperation;
 use Fp\Operations\AppendedOperation;
-use Fp\Operations\FilterWithKeyOperation;
 use Fp\Operations\GroupMapReduceOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
 use Fp\Operations\ReindexWithKeyOperation;
+use Fp\Operations\ToStringOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -31,8 +31,6 @@ use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
 use Iterator;
-
-use function Fp\Cast\asGenerator;
 
 /**
  * @psalm-suppress InvalidTemplateParam
@@ -653,5 +651,13 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function toStream(): Stream
     {
         return Stream::emits($this);
+    }
+
+    public function __toString(): string
+    {
+        return $this
+            ->map(fn($value) => ToStringOperation::of($value))
+            ->toArrayList()
+            ->mkString('NonEmptyArrayList(', ', ', ')');
     }
 }

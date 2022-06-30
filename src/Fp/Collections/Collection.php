@@ -20,4 +20,6 @@ interface Collection extends IteratorAggregate, Countable
      * @return Iterator<TV>
      */
     public function getIterator(): Iterator;
+
+    public function __toString(): string;
 }

@@ -9,6 +9,7 @@ use Fp\Operations\FilterWithKeyOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
+use Fp\Operations\ToStringOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOperation;
 use Fp\Operations\FilterMapOperation;
@@ -475,5 +476,13 @@ final class HashMap implements Map, StaticStorage
         }
 
         return Option::fromNullable($elem);
+    }
+
+    public function __toString(): string
+    {
+        return $this
+            ->mapKV(fn($key, $value) => ToStringOperation::of($key) . ' => ' . ToStringOperation::of($value))
+            ->values()
+            ->mkString('HashMap(', ', ', ')');
     }
 }

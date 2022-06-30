@@ -17,6 +17,7 @@ use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
 use Fp\Operations\ReindexWithKeyOperation;
+use Fp\Operations\ToStringOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -46,7 +47,6 @@ use Fp\Operations\ZipOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
 use function Fp\Evidence\proveNonEmptyList;
 
@@ -802,5 +802,12 @@ abstract class LinkedList implements Seq
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
         return MkStringOperation::of($this->getIterator())($start, $sep, $end);
+    }
+
+    public function __toString(): string
+    {
+        return $this
+            ->map(fn($value) => ToStringOperation::of($value))
+            ->mkString('LinkedList(', ', ', ')');
     }
 }

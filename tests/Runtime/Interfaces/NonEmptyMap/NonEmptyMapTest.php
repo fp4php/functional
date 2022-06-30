@@ -12,11 +12,32 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
+use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 use PHPUnit\Framework\TestCase;
 
 final class NonEmptyMapTest extends TestCase
 {
+    public function testToString(): void
+    {
+        $this->assertEquals(
+            "NonEmptyHashMap('k1' => 1, 'k2' => 2, 'k3' => 3)",
+            (string) NonEmptyHashMap::collectPairsNonEmpty([
+                ['k1', 1],
+                ['k2', 2],
+                ['k3', 3],
+            ]),
+        );
+        $this->assertEquals(
+            "NonEmptyHashMap('k1' => Some(1), 'k2' => Some(2), 'k3' => None)",
+            (string) NonEmptyHashMap::collectPairsNonEmpty([
+                ['k1', Option::some(1)],
+                ['k2', Option::some(2)],
+                ['k3', Option::none()],
+            ]),
+        );
+    }
+
     public function testCasts(): void
     {
         $expected = [['a', 1], ['b', 2]];

@@ -13,6 +13,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Seq;
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 use Generator;
@@ -20,6 +21,58 @@ use PHPUnit\Framework\TestCase;
 
 final class SeqTest extends TestCase
 {
+    public function provideToStringData(): Generator
+    {
+        yield 'ArrayList<int>' => [
+            ArrayList::collect([1, 2, 3]),
+            'ArrayList(1, 2, 3)',
+        ];
+        yield 'ArrayList<Option<int>>' => [
+            ArrayList::collect([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ]),
+            'ArrayList(Some(1), Some(2), None)',
+        ];
+        yield 'ArrayList<Either<string, int>>' => [
+            ArrayList::collect([
+                Either::right(1),
+                Either::right(2),
+                Either::left('err'),
+            ]),
+            'ArrayList(Right(1), Right(2), Left(\'err\'))',
+        ];
+        yield 'LinkedList<int>' => [
+            LinkedList::collect([1, 2, 3]),
+            'LinkedList(1, 2, 3)',
+        ];
+        yield 'LinkedList<Option<int>>' => [
+            LinkedList::collect([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ]),
+            'LinkedList(Some(1), Some(2), None)',
+        ];
+        yield 'LinkedList<Either<string, int>>' => [
+            LinkedList::collect([
+                Either::right(1),
+                Either::right(2),
+                Either::left('err'),
+            ]),
+            'LinkedList(Right(1), Right(2), Left(\'err\'))',
+        ];
+    }
+
+    /**
+     * @dataProvider provideToStringData
+     */
+    public function testToString(Seq $seq, string $expected): void
+    {
+        $this->assertEquals($expected, (string)$seq);
+    }
+
     public function provideTestCastsData(): Generator
     {
         yield ArrayList::class => [ArrayList::collect([1, 2, 3]), ArrayList::collect([])];

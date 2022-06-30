@@ -13,12 +13,66 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
+use Fp\Functional\Either\Either;
+use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
 final class NonEmptySeqTest extends TestCase
 {
+    public function provideToStringData(): Generator
+    {
+        yield 'NonEmptyArrayList<int>' => [
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3]),
+            'NonEmptyArrayList(1, 2, 3)',
+        ];
+        yield 'NonEmptyArrayList<Option<int>>' => [
+            NonEmptyArrayList::collectNonEmpty([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ]),
+            'NonEmptyArrayList(Some(1), Some(2), None)',
+        ];
+        yield 'NonEmptyArrayList<Either<string, int>>' => [
+            NonEmptyArrayList::collectNonEmpty([
+                Either::right(1),
+                Either::right(2),
+                Either::left('err'),
+            ]),
+            'NonEmptyArrayList(Right(1), Right(2), Left(\'err\'))',
+        ];
+        yield 'NonEmptyLinkedList<int>' => [
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3]),
+            'NonEmptyLinkedList(1, 2, 3)',
+        ];
+        yield 'NonEmptyLinkedList<Option<int>>' => [
+            NonEmptyLinkedList::collectNonEmpty([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ]),
+            'NonEmptyLinkedList(Some(1), Some(2), None)',
+        ];
+        yield 'NonEmptyLinkedList<Either<string, int>>' => [
+            NonEmptyLinkedList::collectNonEmpty([
+                Either::right(1),
+                Either::right(2),
+                Either::left('err'),
+            ]),
+            'NonEmptyLinkedList(Right(1), Right(2), Left(\'err\'))',
+        ];
+    }
+
+    /**
+     * @dataProvider provideToStringData
+     */
+    public function testToString(NonEmptySeq $seq, string $expected): void
+    {
+        $this->assertEquals($expected, (string)$seq);
+    }
+
     public function provideTestCastsData(): Generator
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];

@@ -18,6 +18,22 @@ use PHPUnit\Framework\TestCase;
 
 final class SetTest extends TestCase
 {
+    public function testToString(): void
+    {
+        $this->assertEquals(
+            'HashSet(1, 2, 3)',
+            (string) HashSet::collect([1, 2, 3]),
+        );
+        $this->assertEquals(
+            'HashSet(Some(1), Some(2), None)',
+            (string) HashSet::collect([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ]),
+        );
+    }
+
     public function testCasts(): void
     {
         $this->assertEquals(

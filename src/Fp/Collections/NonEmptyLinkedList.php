@@ -13,6 +13,7 @@ use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
 use Fp\Operations\ReindexWithKeyOperation;
+use Fp\Operations\ToStringOperation;
 use Fp\Operations\TraverseOptionOperation;
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
@@ -31,8 +32,6 @@ use Fp\Operations\TapOperation;
 use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
 use Iterator;
-
-use function Fp\Cast\asGenerator;
 
 /**
  * @psalm-suppress InvalidTemplateParam
@@ -655,5 +654,13 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function toStream(): Stream
     {
         return Stream::emits($this);
+    }
+
+    public function __toString(): string
+    {
+        return $this
+            ->map(fn($value) => ToStringOperation::of($value))
+            ->toLinkedList()
+            ->mkString('NonEmptyLinkedList(', ', ', ')');
     }
 }
