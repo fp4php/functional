@@ -42,7 +42,6 @@ use Fp\Operations\SortedOperation;
 use Fp\Operations\TakeOperation;
 use Fp\Operations\TakeWhileOperation;
 use Fp\Operations\TapOperation;
-use Fp\Operations\UniqueOperation;
 use Fp\Operations\ZipOperation;
 use Fp\Streams\Stream;
 use Iterator;
@@ -746,17 +745,6 @@ abstract class LinkedList implements Seq
     {
         Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): (int|string) $callback
-     * @return LinkedList<TV>
-     */
-    public function unique(callable $callback): LinkedList
-    {
-        return LinkedList::collect(UniqueOperation::of($this->getIterator())($callback));
     }
 
     /**

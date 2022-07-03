@@ -216,19 +216,6 @@ interface SeqChainableOps
     public function tail(): Seq;
 
     /**
-     * Returns collection unique elements
-     *
-     * ```php
-     * >>> LinkedList::collect([1, 1, 2])->unique(fn($elem) => $elem)->toList();
-     * => [1, 2]
-     * ```
-     *
-     * @param callable(TV): (int|string) $callback
-     * @return Seq<TV>
-     */
-    public function unique(callable $callback): Seq;
-
-    /**
      * Take collection elements while predicate is true
      *
      * ```php

@@ -77,7 +77,6 @@
             "src/Fp/Functions/Collection/Second.php",
             "src/Fp/Functions/Collection/Shift.php",
             "src/Fp/Functions/Collection/Tail.php",
-            "src/Fp/Functions/Collection/Unique.php",
             "src/Fp/Functions/Collection/Zip.php",
             "src/Fp/Functions/Evidence/ProveArray.php",
             "src/Fp/Functions/Evidence/ProveBool.php",

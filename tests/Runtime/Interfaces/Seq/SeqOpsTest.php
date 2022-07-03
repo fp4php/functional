@@ -420,26 +420,6 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals(['2', '3'], $seq->tail()->toList());
     }
 
-    public function provideTestUniqueData(): Generator
-    {
-        $foo1 = new Foo(1);
-        $foo2 = new Foo(2);
-
-        yield ArrayList::class => [ArrayList::collect([$foo1, $foo1, $foo2]), $foo1, $foo2];
-        yield LinkedList::class => [LinkedList::collect([$foo1, $foo1, $foo2]), $foo1, $foo2];
-    }
-
-    /**
-     * @dataProvider provideTestUniqueData
-     */
-    public function testUnique(Seq $seq, Foo $foo1, Foo $foo2): void
-    {
-        $this->assertEquals(
-            [$foo1, $foo2],
-            $seq->unique(fn(Foo $e) => $e->a)->toList()
-        );
-    }
-
     public function provideTestGroupByData(): Generator
     {
         $foo1 = new Foo(1);

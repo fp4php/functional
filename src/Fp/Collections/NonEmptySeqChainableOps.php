@@ -215,19 +215,6 @@ interface NonEmptySeqChainableOps
     public function tail(): Seq;
 
     /**
-     * Returns collection unique elements
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 1, 2])->unique(fn($elem) => $elem)->toList();
-     * => [1, 2]
-     * ```
-     *
-     * @param callable(TV): (int|string) $callback
-     * @return NonEmptySeq<TV>
-     */
-    public function unique(callable $callback): NonEmptySeq;
-
-    /**
      * Take collection elements while predicate is true
      *
      * ```php

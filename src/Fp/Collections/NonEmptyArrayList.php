@@ -28,7 +28,6 @@ use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\SortedOperation;
 use Fp\Operations\TapOperation;
-use Fp\Operations\UniqueOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
@@ -326,17 +325,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     {
         Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): (int|string) $callback
-     * @return self<TV>
-     */
-    public function unique(callable $callback): NonEmptyArrayList
-    {
-        return NonEmptyArrayList::collectUnsafe(UniqueOperation::of($this->getIterator())($callback));
     }
 
     /**

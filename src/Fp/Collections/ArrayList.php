@@ -704,17 +704,6 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @param callable(TV): (int | string) $callback
-     * @return ArrayList<TV>
-     */
-    public function unique(callable $callback): ArrayList
-    {
-        return ArrayList::collect(Ops\UniqueOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV, TV): int $cmp
      * @return ArrayList<TV>
      */

@@ -459,26 +459,6 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals(['2', '3'], $seq->tail()->toList());
     }
 
-    public function provideTestUniqueData(): Generator
-    {
-        $foo1 = new Foo(1);
-        $foo2 = new Foo(2);
-
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([$foo1, $foo1, $foo2]), $foo1, $foo2];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([$foo1, $foo1, $foo2]), $foo1, $foo2];
-    }
-
-    /**
-     * @dataProvider provideTestUniqueData
-     */
-    public function testUnique(NonEmptySeq $seq, Foo $foo1, Foo $foo2): void
-    {
-        $this->assertEquals(
-            [$foo1, $foo2],
-            $seq->unique(fn(Foo $e) => $e->a)->toList()
-        );
-    }
-
     public function provideTestGroupByData(): Generator
     {
         $foo1 = new Foo(1);
