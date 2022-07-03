@@ -65,6 +65,14 @@ final class NonEmptySetOpsTest extends TestCase
             Option::none(),
             $hs->traverseOption(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
         );
+        $this->assertEquals(
+            Option::some($hs),
+            $hs->map(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $hs->map(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
     }
 
     public function testExists(): void

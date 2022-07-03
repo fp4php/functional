@@ -299,6 +299,22 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     * @psalm-if-this-is HashMap<TK, Option<TVO>>
+     *
+     * @return Option<HashMap<TK, TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        $iterator = $this->getKeyValueIterator();
+
+        return TraverseOptionOperation::id($iterator)
+            ->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TA
      *
      * @param TA $init

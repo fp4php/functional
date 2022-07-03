@@ -266,6 +266,20 @@ final class NonEmptyHashSet implements NonEmptySet
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashSet<Option<TVO>>
+     *
+     * @return Option<NonEmptyHashSet<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TKO
      *
      * @param callable(TV): TKO $callback

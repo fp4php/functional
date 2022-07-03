@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use function Fp\id;
 
 /**
  * @psalm-suppress InvalidTemplateParam
@@ -94,6 +95,24 @@ interface SeqTerminalOps
      * @return Option<Seq<TVO>>
      */
     public function traverseOption(callable $callback): Option;
+
+    /**
+     * Same as {@see SeqTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> ArrayList::collect([Option::some(1), Option::some(2), Option::some(3)])->sequenceOption();
+     * => Some(ArrayList(1, 2, 3))
+     *
+     * >>> ArrayList::collect([Option::none(), Option::some(1), Option::some(2)])->sequenceOption();
+     * => None
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is Seq<Option<TVO>>
+     *
+     * @return Option<Seq<TVO>>
+     */
+    public function sequenceOption(): Option;
 
     /**
      * Group elements

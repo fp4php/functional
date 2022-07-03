@@ -400,6 +400,20 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyLinkedList<Option<TVO>>
+     *
+     * @return Option<NonEmptyLinkedList<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TKO
      * @template TVO
      *

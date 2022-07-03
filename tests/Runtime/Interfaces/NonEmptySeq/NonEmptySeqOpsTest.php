@@ -144,9 +144,9 @@ final class NonEmptySeqOpsTest extends TestCase
     }
 
     /**
-     * @dataProvider provideTestEveryMapData
+     * @dataProvider provideTestTraverseOptionData
      */
-    public function testEveryMap(NonEmptySeq $seq1, NonEmptySeq $seq2): void
+    public function testTraverseOption(NonEmptySeq $seq1, NonEmptySeq $seq2): void
     {
         $this->assertEquals(
             Option::some($seq1),
@@ -156,9 +156,17 @@ final class NonEmptySeqOpsTest extends TestCase
             Option::none(),
             $seq2->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
+        $this->assertEquals(
+            Option::some($seq1),
+            $seq1->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $seq2->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
     }
 
-    public function provideTestEveryMapData(): Generator
+    public function provideTestTraverseOptionData(): Generator
     {
         yield NonEmptyArrayList::class => [
             NonEmptyArrayList::collectNonEmpty([1, 2, 3]),

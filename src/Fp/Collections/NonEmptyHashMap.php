@@ -286,6 +286,22 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, Option<TVO>>
+     *
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        $iterator = $this->getKeyValueIterator();
+
+        return TraverseOptionOperation::id($iterator)
+            ->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
+    }
+
+    /**
      * @inheritDoc
      * @param TK $key
      * @return Option<TV>

@@ -81,4 +81,22 @@ interface NonEmptyMapTerminalOps
      * @return Option<NonEmptyMap<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option;
+
+    /**
+     * Same as {@see NonEmptyMapTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty([Option::some(1), Option::some(2), Option::some(3)])->sequenceOption();
+     * => Some(HashMap(0 -> 1, 1 -> 2, 2 -> 3))
+     *
+     * >>> NonEmptyHashMap::collectNonEmpty([Option::none(), Option::some(1), Option::some(2)])->sequenceOption();
+     * => None
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TK, Option<TVO>>
+     *
+     * @return Option<NonEmptyMap<TK, TVO>>
+     */
+    public function sequenceOption(): Option;
 }

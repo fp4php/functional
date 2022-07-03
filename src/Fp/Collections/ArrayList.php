@@ -305,6 +305,20 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     * @psalm-if-this-is ArrayList<Option<TVO>>
+     *
+     * @return Option<ArrayList<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return Ops\TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => ArrayList::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool

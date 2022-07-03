@@ -51,6 +51,14 @@ final class MapOpsTest extends TestCase
             Option::none(),
             $hm->traverseOption(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none())
         );
+        $this->assertEquals(
+            Option::some($hm),
+            $hm->map(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none())->sequenceOption()
+        );
+        $this->assertEquals(
+            Option::none(),
+            $hm->map(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none())->sequenceOption()
+        );
     }
 
     public function testFilter(): void

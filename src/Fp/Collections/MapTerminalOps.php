@@ -83,6 +83,24 @@ interface MapTerminalOps
     public function traverseOption(callable $callback): Option;
 
     /**
+     * Same as {@see MapTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> HashMap::collect([Option::some(1), Option::some(2), Option::some(3)])->sequenceOption();
+     * => Some(HashMap(0 -> 1, 1 -> 2, 2 -> 3))
+     *
+     * >>> HashMap::collect([Option::none(), Option::some(1), Option::some(2)])->sequenceOption();
+     * => None
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is Map<TK, Option<TVO>>
+     *
+     * @return Option<Map<TK, TVO>>
+     */
+    public function sequenceOption(): Option;
+
+    /**
      * Fold many pairs of key-value into one
      *
      * ```php

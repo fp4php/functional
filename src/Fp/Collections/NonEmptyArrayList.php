@@ -398,6 +398,20 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyArrayList<Option<TVO>>
+     *
+     * @return Option<NonEmptyArrayList<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TKO
      * @template TVO
      *

@@ -310,6 +310,20 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     * @psalm-if-this-is LinkedList<Option<TVO>>
+     *
+     * @return Option<LinkedList<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => LinkedList::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool

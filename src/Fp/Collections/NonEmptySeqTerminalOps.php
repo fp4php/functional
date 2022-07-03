@@ -96,6 +96,24 @@ interface NonEmptySeqTerminalOps
     public function traverseOption(callable $callback): Option;
 
     /**
+     * Same as {@see NonEmptySeqTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([Option::some(1), Option::some(2), Option::some(3)])->sequenceOption();
+     * => Some(NonEmptyArrayList(1, 2, 3))
+     *
+     * >>> NonEmptyArrayList::collectNonEmpty([Option::none(), Option::some(1), Option::some(2)])->sequenceOption();
+     * => None
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptySeq<Option<TVO>>
+     *
+     * @return Option<NonEmptySeq<TVO>>
+     */
+    public function sequenceOption(): Option;
+
+    /**
      * Group elements
      *
      * ```php

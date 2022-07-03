@@ -250,6 +250,20 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     * @psalm-if-this-is HashSet<Option<TVO>>
+     *
+     * @return Option<HashSet<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => HashSet::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TKO
      *
      * @param callable(TV): TKO $callback

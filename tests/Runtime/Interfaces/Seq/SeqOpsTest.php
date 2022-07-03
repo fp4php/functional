@@ -100,9 +100,9 @@ final class SeqOpsTest extends TestCase
     }
 
     /**
-     * @dataProvider provideTestEveryMapData
+     * @dataProvider provideTestTraverseOptionData
      */
-    public function testEveryMap(Seq $seq1, Seq $seq2): void
+    public function testTraverseOption(Seq $seq1, Seq $seq2): void
     {
         $this->assertEquals(
             Option::some($seq1),
@@ -112,9 +112,17 @@ final class SeqOpsTest extends TestCase
             Option::none(),
             $seq2->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
+        $this->assertEquals(
+            Option::some($seq1),
+            $seq1->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $seq2->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
     }
 
-    public function provideTestEveryMapData(): Generator
+    public function provideTestTraverseOptionData(): Generator
     {
         yield ArrayList::class => [
             ArrayList::collect([1, 2, 3]),
