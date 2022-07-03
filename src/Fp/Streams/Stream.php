@@ -838,10 +838,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     {
         $arrayList = $this->leaf(ArrayList::collect($this->emitter));
 
-        return Option::when(
-            $arrayList->isNonEmpty(),
-            fn() => new NonEmptyArrayList($arrayList)
-        );
+        return Option::some($arrayList)
+            ->filter(fn($list) => !$list->isEmpty())
+            ->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**

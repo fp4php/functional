@@ -447,59 +447,6 @@ abstract class Either
     }
 
     /**
-     * Fabric method.
-     *
-     * ```php
-     * >>> Either::cond(true, 1, 'error');
-     * => Right(1)
-     *
-     * >>> Either::cond(false, 1, 'error');
-     * => Left('error')
-     * ```
-     *
-     * @template LI
-     * @template RI
-     *
-     * @param LI $left
-     * @param RI $right
-     * @return Either<LI, RI>
-     */
-    public static function cond(bool $condition, mixed $right, mixed $left): Either
-    {
-        return $condition
-            ? Either::right($right)
-            : Either::left($left);
-    }
-
-    /**
-     * Fabric method.
-     *
-     * ```php
-     * >>> Either::condLazy(true, fn() => 1, fn() => 'error');
-     * => Right(1)
-     *
-     * >>> Either::condLazy(false, fn() => 1, fn() => 'error');
-     * => Left('error')
-     * ```
-     *
-     * Create {@see Right} from callable return value if given condition is true
-     * Create {@see Left} from callable return value if given condition is false
-     *
-     * @template LI
-     * @template RI
-     *
-     * @param callable(): LI $left
-     * @param callable(): RI $right
-     * @return Either<LI, RI>
-     */
-    public static function condLazy(bool $condition, callable $right, callable $left): Either
-    {
-        return $condition
-            ? Either::right($right())
-            : Either::left($left());
-    }
-
-    /**
      * Unwrap the box value
      *
      * ```php

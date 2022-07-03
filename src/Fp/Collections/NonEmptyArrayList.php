@@ -57,12 +57,9 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public static function collect(iterable $source): Option
     {
-        $arrayList = ArrayList::collect($source);
-
-        return Option::when(
-            $arrayList->isNonEmpty(),
-            fn() => new self($arrayList)
-        );
+        return Option::some(ArrayList::collect($source))
+            ->filter(fn($list) => !$list->isEmpty())
+            ->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**

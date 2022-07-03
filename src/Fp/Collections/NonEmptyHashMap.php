@@ -102,10 +102,10 @@ final class NonEmptyHashMap implements NonEmptyMap
             $hashTable->update($key, $value);
         }
 
-        $isEmpty = empty($hashTable->table);
-
-        return Option::when(!$isEmpty, fn() => new HashMap($hashTable))
-            ->map(fn(HashMap $map) => new self($map));
+        return Option::some($hashTable)
+            ->filter(fn($hs) => !empty($hs->table))
+            ->map(fn($hs) => new HashMap($hs))
+            ->map(fn($hs) => new NonEmptyHashMap($hs));
     }
 
     /**

@@ -499,28 +499,6 @@ abstract class Option
     }
 
     /**
-     * Unwrap "the box" and get contained value
-     * or throw an exception if the box is empty
-     *
-     * ```php
-     * >>> Option::some(1)->getOrThrow(fn() => new RuntimeException('???'));
-     * => 1
-     *
-     * >>> Option::none()->getOrThrow(fn() => new RuntimeException('???'));
-     * RuntimeException with message '???'
-     * ```
-     *
-     * @param callable(): Throwable $fallback
-     * @return A
-     */
-    public function getOrThrow(callable $fallback): mixed
-    {
-        return $this->isSome()
-            ? $this->get()
-            : throw $fallback();
-    }
-
-    /**
      * Combine two Options into one
      *
      * ```php
@@ -626,109 +604,6 @@ abstract class Option
         return $this->isSome()
             ? Either::right($this->get())
             : Either::left($left());
-    }
-
-    /**
-     * @deprecated use {@see Option::when}
-     *
-     * Fabric method.
-     *
-     * ```php
-     * >>> Option::cond(true, 1);
-     * => Some(1)
-     *
-     * >>> Option::cond(false, 1);
-     * => None
-     * ```
-     *
-     * @template AI
-     *
-     * @param AI $some
-     * @return Option<AI>
-     */
-    public static function cond(bool $condition, mixed $some): Option
-    {
-        return $condition
-            ? self::some($some)
-            : self::none();
-    }
-
-    /**
-     * @deprecated use {@see Option::when}
-     *
-     * Fabric method.
-     *
-     * ```php
-     * >>> Option::condLazy(true, fn() => 1);
-     * => Some(1)
-     *
-     * >>> Option::condLazy(false, fn() => 1);
-     * => None
-     * ```
-     *
-     * Create {@see Some} from value if given condition is true
-     * Create {@see None} if given condition is false
-     *
-     * @template AI
-     *
-     * @param callable(): AI $some
-     * @return Option<AI>
-     */
-    public static function condLazy(bool $condition, callable $some): Option
-    {
-        return $condition
-            ? self::some($some())
-            : self::none();
-    }
-
-    /**
-     * Fabric method.
-     *
-     * ```php
-     * >>> Option::when(true, fn() => 1);
-     * => Some(1)
-     *
-     * >>> Option::when(false, fn() => 1);
-     * => None
-     * ```
-     *
-     * Create {@see Some} from value if given condition is true
-     * Create {@see None} if given condition is false
-     *
-     * @template AI
-     *
-     * @param callable(): AI $callback
-     * @return Option<AI>
-     */
-    public static function when(bool $condition, callable $callback): Option
-    {
-        return $condition
-            ? self::some($callback())
-            : self::none();
-    }
-
-    /**
-     * Fabric method.
-     *
-     * ```php
-     * >>> Option::unless(false, fn() => 1);
-     * => Some(1)
-     *
-     * >>> Option::unless(true, fn() => 1);
-     * => None
-     * ```
-     *
-     * Create {@see Some} from value if given condition is false
-     * Create {@see None} if given condition is true
-     *
-     * @template AI
-     *
-     * @param callable(): AI $callback
-     * @return Option<AI>
-     */
-    public static function unless(bool $condition, callable $callback): Option
-    {
-        return self::when(!$condition, $callback);
     }
 
     /**

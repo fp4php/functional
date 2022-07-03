@@ -171,29 +171,6 @@ final class EitherTest extends TestCase
         );
     }
 
-    public function testCond(): void
-    {
-        $this->assertEquals(
-            1,
-            Either::cond(true, 1, 'err')->get()
-        );
-
-        $this->assertEquals(
-            'err',
-            Either::cond(false, 1, 'err')->get()
-        );
-
-        $this->assertEquals(
-            1,
-            Either::condLazy(true, fn() => 1, fn() => 'err')->get()
-        );
-
-        $this->assertEquals(
-            'err',
-            Either::condLazy(false, fn() => 1, fn() => 'err')->get()
-        );
-    }
-
     public function testToValidated(): void
     {
         $this->assertEquals(

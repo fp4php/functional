@@ -124,13 +124,6 @@ final class OptionTest extends TestCase
         $this->assertEquals(0, Option::none()->getOrCall(fn() => 0));
     }
 
-    public function testGetOrThrow(): void
-    {
-        $this->assertEquals(1, Option::some(1)->getOrThrow(fn() => new RuntimeException('???')));
-        $this->expectExceptionMessage('???');
-        Option::none()->getOrThrow(fn() => new RuntimeException('???'));
-    }
-
     public function testOrElse(): void
     {
         $this->assertEquals(
@@ -186,23 +179,6 @@ final class OptionTest extends TestCase
         $this->assertNull(
             Option::some(new Bar(1))->filterOf(Foo::class)->get()
         );
-    }
-
-    public function testCond(): void
-    {
-        $this->assertEquals('some', Option::cond(true, 'some')->get());
-        $this->assertEquals('some', Option::condLazy(true, fn() => 'some')->get());
-        $this->assertNull(Option::condLazy(false, fn() => throw new Error())->get());
-        $this->assertNull(Option::cond(false, 'some')->get());
-    }
-
-    public function testWhenAndUnless(): void
-    {
-        $this->assertEquals('some', Option::when(true, fn() => 'some')->get());
-        $this->assertNull(Option::when(false, fn() => throw new Error())->get());
-
-        $this->assertEquals('some', Option::unless(false, fn() => 'some')->get());
-        $this->assertNull(Option::unless(true, fn() => throw new Error())->get());
     }
 
     public function testTap(): void
