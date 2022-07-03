@@ -18,6 +18,7 @@ interface MapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
      * @return self<TKI, TVI>
      */
@@ -31,6 +32,7 @@ interface MapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */

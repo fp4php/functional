@@ -18,7 +18,7 @@ interface SeqCollector
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $source
+     * @param iterable<TVI> $source
      * @return Seq<TVI>
      */
     public static function collect(iterable $source): Seq;

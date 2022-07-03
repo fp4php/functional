@@ -31,11 +31,11 @@ final class EitherTest extends TestCase
 
     public function testMap(): void
     {
-        $right = Right::of(1)
+        $right = Either::right(1)
             ->map(fn(int $s) => $s + 1)
             ->map(fn(int $s) => $s + 1);
 
-        $left = Left::of(1)
+        $left = Either::left(1)
             ->map(fn(int $s) => $s + 1)
             ->map(fn(int $s) => $s + 1);
 
@@ -60,11 +60,11 @@ final class EitherTest extends TestCase
         };
 
         $right = $getRight()
-            ->flatMap(fn(int $r) => Right::of($r + 1))
-            ->flatMap(fn(int $r) => Right::of($r + 1));
+            ->flatMap(fn(int $r) => Either::right($r + 1))
+            ->flatMap(fn(int $r) => Either::right($r + 1));
 
         $left = $getRight()
-            ->flatMap(fn(int $r) => Right::of($r + 1))
+            ->flatMap(fn(int $r) => Either::right($r + 1))
             ->flatMap(function(int $r) {
                 /** @psalm-var Either<string, int> $e */
                 $e = Either::left('error');

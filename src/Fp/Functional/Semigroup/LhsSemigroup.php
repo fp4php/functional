@@ -12,9 +12,9 @@ namespace Fp\Functional\Semigroup;
 class LhsSemigroup extends Semigroup
 {
     /**
-     * @psalm-param T $lhs
-     * @psalm-param T $rhs
-     * @psalm-return T
+     * @param T $lhs
+     * @param T $rhs
+     * @return T
      */
     public function combine(mixed $lhs, mixed $rhs): mixed
     {

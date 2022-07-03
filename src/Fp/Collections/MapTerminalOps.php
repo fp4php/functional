@@ -95,8 +95,8 @@ interface MapTerminalOps
      *
      * @template TA
      *
-     * @param TA $init initial accumulator value
-     * @param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
+     * @param TA $init
+     * @param callable(TA, TV): TA $callback
      * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed;

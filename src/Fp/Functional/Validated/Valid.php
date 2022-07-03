@@ -6,20 +6,21 @@ namespace Fp\Functional\Validated;
 
 /**
  * @template A
+ * @extends Validated<never, A>
+ *
  * @psalm-suppress InvalidTemplateParam
- * @extends Validated<empty, A>
  */
 final class Valid extends Validated
 {
     /**
-     * @psalm-param A $value
+     * @param A $value
      */
-    public function __construct(protected mixed $value)
+    public function __construct(private mixed $value)
     {
     }
 
     /**
-     * @psalm-return A
+     * @return A
      */
     public function get(): mixed
     {

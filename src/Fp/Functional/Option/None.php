@@ -5,17 +5,12 @@ declare(strict_types=1);
 namespace Fp\Functional\Option;
 
 /**
+ * @extends Option<never>
  * @psalm-suppress InvalidTemplateParam
- * @extends Option<empty>
  */
 final class None extends Option
 {
     private static ?self $instance = null;
-
-    /**
-     * @psalm-var null
-     */
-    protected mixed $value = null;
 
     public static function getInstance(): self
     {
@@ -23,10 +18,10 @@ final class None extends Option
     }
 
     /**
-     * @psalm-return null
+     * @return null
      */
     public function get(): mixed
     {
-        return $this->value;
+        return null;
     }
 }

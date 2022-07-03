@@ -34,9 +34,10 @@ use Fp\Streams\Stream;
 use Iterator;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyLinkedList implements NonEmptySeq
 {
@@ -49,10 +50,12 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return Option<self<TVI>>
+     * @return Option<NonEmptyLinkedList<TVI>>
      */
     public static function collect(iterable $source): Option
     {
@@ -62,25 +65,29 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return self<TVI>
+     * @return NonEmptyLinkedList<TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(iterable $source): NonEmptyLinkedList
     {
-        return self::collect($source)->getUnsafe();
+        return NonEmptyLinkedList::collect($source)->getUnsafe();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
-     * @return self<TVI>
+     *
+     * @param non-empty-array<array-key, TVI> | NonEmptyCollection<TVI> $source
+     * @return NonEmptyLinkedList<TVI>
      */
-    public static function collectNonEmpty(array|NonEmptyCollection $source): self
+    public static function collectNonEmpty(array|NonEmptyCollection $source): NonEmptyLinkedList
     {
-        return self::collectUnsafe($source);
+        return NonEmptyLinkedList::collectUnsafe($source);
     }
 
     /**
@@ -92,7 +99,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -100,9 +107,10 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return LinkedList<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
      */
     public function filter(callable $predicate): LinkedList
     {
@@ -110,7 +118,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(int, TV): bool $predicate
      * @return LinkedList<TV>
@@ -121,8 +129,10 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
+     *
      * @param callable(TV): Option<TVO> $callback
      * @return LinkedList<TVO>
      */
@@ -132,8 +142,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return LinkedList<TV>
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
      */
     public function filterNotNull(): LinkedList
     {
@@ -141,11 +152,13 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return LinkedList<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return LinkedList<TVO>
      */
     public function filterOf(string $fqcn, bool $invariant = false): LinkedList
     {
@@ -153,10 +166,12 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return LinkedList<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
+     * @return LinkedList<TVO>
      */
     public function flatMap(callable $callback): LinkedList
     {
@@ -164,17 +179,19 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return NonEmptyLinkedList<TV>
      */
-    public function reverse(): self
+    public function reverse(): NonEmptyLinkedList
     {
-        return self::collectUnsafe($this->toLinkedList()->reverse());
+        return NonEmptyLinkedList::collectUnsafe($this->toLinkedList()->reverse());
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return LinkedList<TV>
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
      */
     public function tail(): LinkedList
     {
@@ -182,9 +199,10 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return LinkedList<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
      */
     public function takeWhile(callable $predicate): LinkedList
     {
@@ -192,9 +210,10 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return LinkedList<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
      */
     public function dropWhile(callable $predicate): LinkedList
     {
@@ -202,8 +221,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return LinkedList<TV>
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
      */
     public function take(int $length): LinkedList
     {
@@ -211,8 +231,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return LinkedList<TV>
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
      */
     public function drop(int $length): LinkedList
     {
@@ -220,110 +241,121 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(TV): TVO $callback
-     * @return self<TVO>
+     * @return NonEmptyLinkedList<TVO>
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): NonEmptyLinkedList
     {
-        return self::collectUnsafe(MapOperation::of($this->getIterator())($callback));
+        return NonEmptyLinkedList::collectUnsafe(MapOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(int, TV): TVO $callback
-     * @return self<TVO>
+     * @return NonEmptyLinkedList<TVO>
      */
-    public function mapKV(callable $callback): self
+    public function mapKV(callable $callback): NonEmptyLinkedList
     {
-        return self::collectUnsafe(MapWithKeyOperation::of($this->getIterator())($callback));
+        return NonEmptyLinkedList::collectUnsafe(MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return NonEmptyLinkedList<TV|TVI>
      */
-    public function appended(mixed $elem): self
+    public function appended(mixed $elem): NonEmptyLinkedList
     {
-        return self::collectUnsafe(AppendedOperation::of($this->getIterator())($elem));
+        return NonEmptyLinkedList::collectUnsafe(AppendedOperation::of($this->getIterator())($elem));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return self<TV|TVI>
+     *
+     * @param iterable<TVI> $suffix
+     * @return NonEmptyLinkedList<TV|TVI>
      */
-    public function appendedAll(iterable $suffix): self
+    public function appendedAll(iterable $suffix): NonEmptyLinkedList
     {
-        return self::collectUnsafe(AppendedAllOperation::of($this->getIterator())($suffix));
+        return NonEmptyLinkedList::collectUnsafe(AppendedAllOperation::of($this->getIterator())($suffix));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return NonEmptyLinkedList<TV|TVI>
      */
-    public function prepended(mixed $elem): self
+    public function prepended(mixed $elem): NonEmptyLinkedList
     {
-        return self::collectUnsafe(PrependedOperation::of($this->getIterator())($elem));
+        return NonEmptyLinkedList::collectUnsafe(PrependedOperation::of($this->getIterator())($elem));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return self<TV|TVI>
+     *
+     * @param iterable<TVI> $prefix
+     * @return NonEmptyLinkedList<TV|TVI>
      */
-    public function prependedAll(iterable $prefix): self
+    public function prependedAll(iterable $prefix): NonEmptyLinkedList
     {
-        return self::collectUnsafe(PrependedAllOperation::of($this->getIterator())($prefix));
+        return NonEmptyLinkedList::collectUnsafe(PrependedAllOperation::of($this->getIterator())($prefix));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
-     * @psalm-return self<TV>
+     * @return NonEmptyLinkedList<TV>
      */
-    public function tap(callable $callback): self
+    public function tap(callable $callback): NonEmptyLinkedList
     {
         Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
     }
 
     /**
-     * @inheritDoc
-     * @experimental
-     * @psalm-param callable(TV): (int|string) $callback
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): (int|string) $callback
+     * @return NonEmptyLinkedList<TV>
      */
-    public function unique(callable $callback): self
+    public function unique(callable $callback): NonEmptyLinkedList
     {
-        return self::collectUnsafe(UniqueOperation::of($this->getIterator())($callback));
+        return NonEmptyLinkedList::collectUnsafe(UniqueOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV, TV): int $cmp
+     * @return NonEmptyLinkedList<TV>
      */
-    public function sorted(callable $cmp): self
+    public function sorted(callable $cmp): NonEmptyLinkedList
     {
-        return self::collectUnsafe(SortedOperation::of($this->getIterator())($cmp));
+        return NonEmptyLinkedList::collectUnsafe(SortedOperation::of($this->getIterator())($cmp));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function __invoke(int $index): Option
     {
@@ -331,8 +363,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function at(int $index): Option
     {
@@ -340,8 +373,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool
     {
@@ -349,10 +383,12 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-param bool $invariant
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
@@ -360,10 +396,12 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
+     *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TVO>>
+     * @return Option<NonEmptyLinkedList<TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
@@ -372,7 +410,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -389,7 +427,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -404,7 +442,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -419,8 +457,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
@@ -428,10 +467,11 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-param bool $invariant
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
@@ -439,9 +479,10 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option
     {
@@ -449,11 +490,13 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-param bool $invariant
-     * @psalm-return Option<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
@@ -461,11 +504,13 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function lastOf(string $fqcn, bool $invariant = false): Option
     {
@@ -473,8 +518,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return TV
+     * {@inheritDoc}
+     *
+     * @return TV
      */
     public function head(): mixed
     {
@@ -482,9 +528,10 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option
     {
@@ -492,10 +539,12 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return (TV|TA)
+     *
+     * @param callable(TV|TA, TV): (TV|TA) $callback
+     * @return (TV|TA)
      */
     public function reduce(callable $callback): mixed
     {
@@ -503,8 +552,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return TV
+     * {@inheritDoc}
+     *
+     * @return TV
      */
     public function firstElement(): mixed
     {
@@ -512,8 +562,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return TV
+     * {@inheritDoc}
+     *
+     * @return TV
      */
     public function lastElement(): mixed
     {
@@ -521,10 +572,12 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKO
-     * @psalm-param callable(TV): TKO $callback
-     * @psalm-return NonEmptyMap<TKO, NonEmptySeq<TV>>
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyMap<TKO, NonEmptySeq<TV>>
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
@@ -540,7 +593,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return list<TV>
      */
     public function toList(): array
@@ -555,7 +609,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return non-empty-list<TV>
      */
     public function toNonEmptyList(): array
@@ -565,7 +620,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -574,7 +630,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList
@@ -583,7 +640,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyLinkedList<TV>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
@@ -592,7 +650,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyArrayList<TV>
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
@@ -601,7 +660,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet
@@ -610,7 +670,8 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyHashSet<TV>
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
@@ -619,7 +680,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -633,7 +694,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI

@@ -21,6 +21,7 @@ interface SetChainableOps
      * ```
      *
      * @template TVI
+     *
      * @param TVI $element
      * @return Set<TV|TVI>
      */
@@ -69,8 +70,9 @@ interface SetChainableOps
      * ```
      *
      * @template TVO
-     * @param class-string<TVO> $fqcn fully qualified class name
-     * @param bool $invariant if turned on then subclasses are not allowed
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant if
      * @return Set<TVO>
      */
     public function filterOf(string $fqcn, bool $invariant = false): Set;
@@ -101,6 +103,7 @@ interface SetChainableOps
      * ```
      *
      * @template TVO
+     *
      * @param callable(TV): Option<TVO> $callback
      * @return Set<TVO>
      */
@@ -113,7 +116,8 @@ interface SetChainableOps
      * ```
      *
      * @template TVO
-     * @param callable(TV): iterable<TVO> $callback
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
      * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;
@@ -128,6 +132,7 @@ interface SetChainableOps
      * ```
      *
      * @template TVO
+     *
      * @param callable(TV): TVO $callback
      * @return Set<TVO>
      */
@@ -188,8 +193,7 @@ interface SetChainableOps
      * ```
      *
      * @param Set<TV>|NonEmptySet<TV> $that the set to intersect with.
-     * @return Set<TV> a new set consisting of all elements that are both in this
-     * set and in the given set `that`.
+     * @return Set<TV>
      */
     public function intersect(Set|NonEmptySet $that): Set;
 

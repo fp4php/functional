@@ -50,14 +50,16 @@ final class HashSet implements Set
     private function __construct(private HashMap $map) { }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return self<TVI>
+     * @return HashSet<TVI>
      */
-    public static function collect(iterable $source): self
+    public static function collect(iterable $source): HashSet
     {
-        return new self(ArrayList::collect($source)->map(fn(mixed $elem) => [$elem, $elem])->toHashMap());
+        return new HashSet(ArrayList::collect($source)->map(fn(mixed $elem) => [$elem, $elem])->toHashMap());
     }
 
     /**
@@ -73,7 +75,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -81,7 +83,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return list<TV>
      */
     public function toList(): array
@@ -90,7 +93,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<non-empty-list<TV>>
      */
     public function toNonEmptyList(): Option
@@ -99,7 +103,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -108,7 +113,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyLinkedList<TV>>
      */
     public function toNonEmptyLinkedList(): Option
@@ -117,7 +123,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList
@@ -126,7 +133,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyArrayList<TV>>
      */
     public function toNonEmptyArrayList(): Option
@@ -135,7 +143,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet
@@ -144,7 +153,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyHashSet<TV>>
      */
     public function toNonEmptyHashSet(): Option
@@ -153,7 +163,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -167,7 +177,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -181,7 +191,7 @@ final class HashSet implements Set
     }
 
     /**
-     * {@inheritDoc}
+     * {{@inheritDoc}}
      *
      * @return Stream<TV>
      */
@@ -191,8 +201,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param TV $element
+     * {@inheritDoc}
+     *
+     * @param TV $element
      */
     public function __invoke(mixed $element): bool
     {
@@ -200,8 +211,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool
     {
@@ -209,10 +221,12 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
@@ -220,8 +234,10 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
+     *
      * @param callable(TV): Option<TVO> $callback
      * @return Option<self<TVO>>
      */
@@ -232,7 +248,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -245,7 +261,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -258,8 +274,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
@@ -267,10 +284,12 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
@@ -278,9 +297,10 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option
     {
@@ -288,11 +308,13 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
@@ -300,11 +322,13 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
+     *
+     * @param TA $init
+     * @param callable(TA, TV): TA $callback
+     * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed
     {
@@ -312,10 +336,11 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return Option<TV|TA>
+     * @param callable(TV|TA, TV): (TV|TA) $callback
+     * @return Option<TV|TA>
      */
     public function reduce(callable $callback): Option
     {
@@ -323,8 +348,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function head(): Option
     {
@@ -332,9 +358,10 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option
     {
@@ -342,8 +369,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function firstElement(): Option
     {
@@ -351,8 +379,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function lastElement(): Option
     {
@@ -360,8 +389,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param TV $element
+     * {@inheritDoc}
+     *
+     * @param TV $element
      */
     public function contains(mixed $element): bool
     {
@@ -369,8 +399,10 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $element
      * @return self<TV|TVI>
      */
@@ -380,7 +412,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TV $element
      * @return self<TV>
      */
@@ -390,8 +423,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return self<TV>
      */
     public function tail(): self
     {
@@ -399,9 +433,10 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return self<TV>
      */
     public function filter(callable $predicate): self
     {
@@ -409,7 +444,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(int, TV): bool $predicate
      * @return self<TV>
@@ -420,11 +455,13 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return self<TVO>
      */
     public function filterOf(string $fqcn, bool $invariant = false): self
     {
@@ -432,8 +469,9 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return self<TV>
      */
     public function filterNotNull(): self
     {
@@ -441,10 +479,12 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return self<TVO>
      */
     public function filterMap(callable $callback): self
     {
@@ -452,10 +492,12 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
+     * @return self<TVO>
      */
     public function flatMap(callable $callback): self
     {
@@ -463,7 +505,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -476,7 +518,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -489,9 +531,10 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
-     * @psalm-return self<TV>
+     * @return self<TV>
      */
     public function tap(callable $callback): self
     {
@@ -505,7 +548,7 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function subsetOf(Set|NonEmptySet $superset): bool
     {
@@ -522,7 +565,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param Set<TV>|NonEmptySet<TV> $that
      * @return Set<TV>
      */
@@ -532,7 +576,8 @@ final class HashSet implements Set
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param Set<TV>|NonEmptySet<TV> $that
      * @return Set<TV>
      */

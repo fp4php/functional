@@ -41,6 +41,7 @@ interface MapCastableOps
      * => ['a' => 1, 'b' => 2]
      * ```
      *
+     * @return array<TK, TV>
      * @psalm-return (TK is array-key ? array<TK, TV> : never)
      */
     public function toArray(): array;
@@ -53,6 +54,7 @@ interface MapCastableOps
      * => None
      * ```
      *
+     * @return non-empty-array<TK, TV>
      * @psalm-return (TK is array-key ? Option<non-empty-array<TK, TV>> : never)
      */
     public function toNonEmptyArray(): Option;

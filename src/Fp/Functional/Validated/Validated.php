@@ -5,23 +5,21 @@ declare(strict_types=1);
 namespace Fp\Functional\Validated;
 
 use Fp\Functional\Either\Either;
-use Fp\Functional\Either\Left;
-use Fp\Functional\Either\Right;
-use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
-use Fp\Functional\Option\Some;
 
 /**
  * @template-covariant E
  * @template-covariant A
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 abstract class Validated
 {
     /**
-     * @psalm-template EE
-     * @psalm-param EE $value
-     * @psalm-return Validated<EE, empty>
+     * @template EE
+     *
+     * @param EE $value
+     * @return Validated<EE, never>
      */
     public static function invalid(mixed $value): Validated
     {
@@ -29,9 +27,10 @@ abstract class Validated
     }
 
     /**
-     * @psalm-template AA
-     * @psalm-param AA $value
-     * @psalm-return Validated<empty, AA>
+     * @template AA
+     *
+     * @param AA $value
+     * @return Validated<never, AA>
      */
     public static function valid(mixed $value): Validated
     {
@@ -39,7 +38,7 @@ abstract class Validated
     }
 
     /**
-     * @psalm-return E|A
+     * @return E|A
      */
     abstract public function get(): mixed;
 
@@ -60,11 +59,12 @@ abstract class Validated
     }
 
     /**
-     * @psalm-template EE
-     * @psalm-template AA
-     * @psalm-param EE $invalid
-     * @psalm-param AA $valid
-     * @psalm-return Validated<EE, AA>
+     * @template EE
+     * @template AA
+     *
+     * @param EE $invalid
+     * @param AA $valid
+     * @return Validated<EE, AA>
      */
     public static function cond(
         bool $condition,
@@ -78,11 +78,12 @@ abstract class Validated
     }
 
     /**
-     * @psalm-template EE
-     * @psalm-template AA
-     * @psalm-param callable(): EE $invalid
-     * @psalm-param callable(): AA $valid
-     * @psalm-return Validated<EE, AA>
+     * @template EE
+     * @template AA
+     *
+     * @param callable(): EE $invalid
+     * @param callable(): AA $valid
+     * @return Validated<EE, AA>
      */
     public static function condLazy(
         bool $condition,
@@ -97,46 +98,36 @@ abstract class Validated
 
 
     /**
-     * @psalm-template B
-     * @psalm-param callable(A): B $ifValid
-     * @psalm-param callable(E): B $ifInvalid
-     * @psalm-return B
+     * @template B
+     *
+     * @param callable(A): B $ifValid
+     * @param callable(E): B $ifInvalid
+     * @return B
      */
     public function fold(callable $ifValid, callable $ifInvalid): mixed
     {
-        if ($this->isValid()) {
-            return $ifValid($this->value);
-        }
-
-        /**
-         * @var Invalid<E> $this
-         */
-
-        return $ifInvalid($this->value);
+        return $this->isValid()
+            ? $ifValid($this->get())
+            : $ifInvalid($this->get());
     }
 
     /**
-     * @psalm-return Either<E, A>
+     * @return Either<E, A>
      */
     public function toEither(): Either
     {
-        if ($this->isValid()) {
-            $value = $this->value;
-            return new Right($value);
-        }
-
-        /** @var Invalid<E> $this */
-
-        return new Left($this->value);
+        return $this->isValid()
+            ? Either::right($this->get())
+            : Either::left($this->get());
     }
 
     /**
-     * @psalm-return Option<A>
+     * @return Option<A>
      */
     public function toOption(): Option
     {
         return $this->isValid()
-            ? new Some($this->value)
-            : None::getInstance();
+            ? Option::some($this->get())
+            : Option::none();
     }
 }

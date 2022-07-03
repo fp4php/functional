@@ -192,7 +192,7 @@ interface SeqTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
 

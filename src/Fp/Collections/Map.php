@@ -9,10 +9,11 @@ use Iterator;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-suppress InvalidTemplateParam
  * @extends Collection<array{TK, TV}>
  * @extends MapOps<TK, TV>
  * @extends MapCollector<TK, TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface Map extends Collection, MapOps, MapCollector
 {

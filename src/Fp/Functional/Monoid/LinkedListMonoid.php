@@ -10,12 +10,11 @@ use Fp\Collections\Nil;
 /**
  * @template TV
  * @extends Monoid<LinkedList<TV>>
- * @psalm-suppress InvalidTemplateParam
  */
 class LinkedListMonoid extends Monoid
 {
     /**
-     * @psalm-return LinkedList<TV>
+     * @return LinkedList<TV>
      */
     public function empty(): LinkedList
     {
@@ -23,9 +22,9 @@ class LinkedListMonoid extends Monoid
     }
 
     /**
-     * @psalm-param LinkedList<TV> $lhs
-     * @psalm-param LinkedList<TV> $rhs
-     * @psalm-return LinkedList<TV>
+     * @param LinkedList<TV> $lhs
+     * @param LinkedList<TV> $rhs
+     * @return LinkedList<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): LinkedList
     {

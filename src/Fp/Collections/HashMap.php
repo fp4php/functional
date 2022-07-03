@@ -32,9 +32,10 @@ use function Fp\Evidence\proveNonEmptyList;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-suppress InvalidTemplateParam
  * @implements Map<TK, TV>
  * @implements StaticStorage<empty>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class HashMap implements Map, StaticStorage
 {
@@ -42,7 +43,7 @@ final class HashMap implements Map, StaticStorage
 
     /**
      * @internal
-     * @psalm-param HashTable<TK, TV> $hashTable
+     * @param HashTable<TK, TV> $hashTable
      */
     public function __construct(private HashTable $hashTable)
     {
@@ -50,27 +51,33 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return HashMap<TKI, TVI>
      */
     public static function collect(iterable $source): self
     {
-        return self::collectPairs(asGenerator(function () use ($source) {
+        $gen = asGenerator(function() use ($source) {
             foreach ($source as $key => $value) {
                 yield [$key, $value];
             }
-        }));
+        });
+
+        return HashMap::collectPairs($gen);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     * @return HashMap<TKI, TVI>
      */
     public static function collectPairs(iterable $source): self
     {
@@ -103,7 +110,7 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -111,7 +118,8 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return list<array{TK, TV}>
      */
     public function toList(): array
@@ -120,7 +128,8 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<non-empty-list<array{TK, TV}>>
      */
     public function toNonEmptyList(): Option
@@ -129,8 +138,9 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return (TK is array-key ? array<TK, TV> : never)
+     * {@inheritDoc}
+     *
+     * @return (TK is array-key ? array<TK, TV> : never)
      */
     public function toArray(): array
     {
@@ -150,21 +160,22 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return (TK is array-key ? Option<non-empty-array<TK, TV>> : never)
-     * @psalm-suppress MixedInferredReturnType
+     * {@inheritDoc}
+     *
+     * @return (TK is array-key ? Option<non-empty-array<TK, TV>> : never)
      */
     public function toNonEmptyArray(): Option
     {
-        /** @psalm-suppress NoValue */
-        $assoc = $this->toArray();
+        /** @var HashMap<array-key, mixed> $that */
+        $that = $this;
 
-        /** @psalm-suppress UnevaluatedCode */
-        return proveNonEmptyArray($assoc);
+        /** @var Option<non-empty-array<TK, TV>> */
+        return proveNonEmptyArray($that->toArray());
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return LinkedList<array{TK, TV}>
      */
     public function toLinkedList(): LinkedList
@@ -173,21 +184,22 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyLinkedList<array{TK, TV}>>
      */
     public function toNonEmptyLinkedList(): Option
     {
-        $linkedList = $this->toLinkedList();
+        $list = $this->toLinkedList();
 
-        return Option::when(
-            !$linkedList->isEmpty(),
-            fn() => new NonEmptyLinkedList($linkedList->head()->getUnsafe(), $linkedList->tail()),
+        return $list->head()->map(
+            fn($head) => new NonEmptyLinkedList($head, $list->tail()),
         );
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<array{TK, TV}>
      */
     public function toArrayList(): ArrayList
@@ -196,21 +208,20 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyArrayList<array{TK, TV}>>
      */
     public function toNonEmptyArrayList(): Option
     {
-        $arrayList = $this->toArrayList();
-
-        return Option::when(
-            !$arrayList->isEmpty(),
-            fn() => new NonEmptyArrayList($arrayList),
-        );
+        return Option::some($this->toArrayList())
+            ->filter(fn($list) => !$list->isEmpty())
+            ->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<array{TK, TV}>
      */
     public function toHashSet(): HashSet
@@ -219,21 +230,20 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyHashSet<array{TK, TV}>>
      */
     public function toNonEmptyHashSet(): Option
     {
-        $hashSet = $this->toHashSet();
-
-        return Option::when(
-            !$hashSet->isEmpty(),
-            fn() => new NonEmptyHashSet($hashSet),
-        );
+        return Option::some($this->toHashSet())
+            ->filter(fn($set) => !$set->isEmpty())
+            ->map(fn($set) => new NonEmptyHashSet($set));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
@@ -242,15 +252,15 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyHashMap<TK, TV>>
      */
     public function toNonEmptyHashMap(): Option
     {
-        return Option::when(
-            !$this->isEmpty(),
-            fn() => new NonEmptyHashMap($this),
-        );
+        return Option::some($this)
+            ->filter(fn($map) => !$map->isEmpty())
+            ->map(fn($map) => new NonEmptyHashMap($map));
     }
 
     /**
@@ -264,7 +274,7 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
      */
@@ -274,12 +284,12 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TK, TVO>>
+     * @return Option<Map<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
@@ -288,11 +298,13 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param TA $init
-     * @psalm-param callable(TA, TV): TA $callback
-     * @psalm-return TA
+     *
+     * @param TA $init
+     * @param callable(TA, TV): TA $callback
+     * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed
     {
@@ -300,22 +312,25 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
+     *
      * @param TKI $key
      * @param TVI $value
-     * @return self<TK|TKI, TV|TVI>
+     * @return HashMap<TK|TKI, TV|TVI>
      */
     public function updated(mixed $key, mixed $value): self
     {
-        return self::collectPairs([...$this->toList(), [$key, $value]]);
+        return HashMap::collectPairs([...$this->toList(), [$key, $value]]);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TK $key
-     * @return self<TK, TV>
+     * @return HashMap<TK, TV>
      */
     public function removed(mixed $key): self
     {
@@ -323,109 +338,110 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
-     * @return self<TK, TV>
+     * @return HashMap<TK, TV>
      */
     public function filter(callable $predicate): self
     {
-        return self::collect(FilterOperation::of($this->getKeyValueIterator())($predicate));
+        return HashMap::collect(FilterOperation::of($this->getKeyValueIterator())($predicate));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TK, TV): bool $predicate
-     * @return self<TK, TV>
+     * @return HashMap<TK, TV>
      */
     public function filterKV(callable $predicate): Map
     {
-        return self::collect(FilterWithKeyOperation::of($this->getKeyValueIterator())($predicate));
+        return HashMap::collect(FilterWithKeyOperation::of($this->getKeyValueIterator())($predicate));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
-     * @return self<TK, TVO>
+     * @return HashMap<TK, TVO>
      */
     public function filterMap(callable $callback): self
     {
-        return self::collect(FilterMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(FilterMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): iterable<array{TKO, TVO}> $callback
-     * @return self<TKO, TVO>
+     * @param callable(TV): (iterable<array{TKO, TVO}>) $callback
+     * @return HashMap<TKO, TVO>
      */
     public function flatMap(callable $callback): self
     {
-        return self::collectPairs(FlatMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collectPairs(FlatMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(TV): TVO $callback
-     * @return self<TK, TVO>
+     * @return HashMap<TK, TVO>
      */
     public function map(callable $callback): self
     {
-        return self::collect(MapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(TK, TV): TVO $callback
-     * @return self<TK, TVO>
+     * @return HashMap<TK, TVO>
      */
     public function mapKV(callable $callback): self
     {
-        return self::collect(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return self<TKO, TV>
+     * @return HashMap<TKO, TV>
      */
     public function reindex(callable $callback): self
     {
-        return self::collect(ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(ReindexOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
      * @param callable(TK, TV): TKO $callback
-     * @return self<TKO, TV>
+     * @return HashMap<TKO, TV>
      */
     public function reindexKV(callable $callback): Map
     {
-        return self::collect(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Seq<TK>
+     * {@inheritDoc}
+     *
+     * @return Seq<TK>
      */
     public function keys(): Seq
     {
@@ -433,8 +449,9 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Seq<TV>
+     * {@inheritDoc}
+     *
+     * @return Seq<TV>
      */
     public function values(): Seq
     {
@@ -447,7 +464,8 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TK $key
      * @return Option<TV>
      */
@@ -457,7 +475,8 @@ final class HashMap implements Map, StaticStorage
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TK $key
      * @return Option<TV>
      */

@@ -23,6 +23,7 @@ interface NonEmptyMapChainableOps
      *
      * @template TKI
      * @template TVI
+     *
      * @param TKI $key
      * @param TVI $value
      * @return NonEmptyMap<TK|TKI, TV|TVI>
@@ -52,8 +53,8 @@ interface NonEmptyMapChainableOps
      * => [['b', 2]]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Map<TK, TV>
+     * @param callable(TV): bool $predicate
+     * @return Map<TK, TV>
      */
     public function filter(callable $predicate): Map;
 
@@ -170,7 +171,7 @@ interface NonEmptyMapChainableOps
      * => ['1', '2']
      * ```
      *
-     * @psalm-return NonEmptySeq<TK>
+     * @return NonEmptySeq<TK>
      */
     public function keys(): NonEmptySeq;
 
@@ -185,7 +186,7 @@ interface NonEmptyMapChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-return NonEmptySeq<TV>
+     * @return NonEmptySeq<TV>
      */
     public function values(): NonEmptySeq;
 }

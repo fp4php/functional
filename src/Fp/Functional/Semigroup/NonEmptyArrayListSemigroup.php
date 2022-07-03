@@ -14,9 +14,9 @@ use Fp\Collections\NonEmptyArrayList;
 class NonEmptyArrayListSemigroup extends Semigroup
 {
     /**
-     * @psalm-param NonEmptyArrayList<TV> $lhs
-     * @psalm-param NonEmptyArrayList<TV> $rhs
-     * @psalm-return NonEmptyArrayList<TV>
+     * @param NonEmptyArrayList<TV> $lhs
+     * @param NonEmptyArrayList<TV> $rhs
+     * @return NonEmptyArrayList<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): NonEmptyArrayList
     {

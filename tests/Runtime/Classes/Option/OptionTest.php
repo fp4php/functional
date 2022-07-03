@@ -220,6 +220,6 @@ final class OptionTest extends TestCase
     public function testToArrayList(): void
     {
         $this->assertEquals(ArrayList::collect([1]), Option::some(1)->toArrayList());
-        $this->assertEquals([], Option::none()->toArrayList());
+        $this->assertEquals(ArrayList::collect([]), Option::none()->toArrayList());
     }
 }

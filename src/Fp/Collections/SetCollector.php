@@ -17,8 +17,9 @@ interface SetCollector
      * ```
      *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return self<TVI>
+     * @return Set<TVI>
      */
-    public static function collect(iterable $source): self;
+    public static function collect(iterable $source): Set;
 }

@@ -8,7 +8,6 @@ namespace Fp\Functional\Monoid;
  * @template TK of array-key
  * @template TV
  * @extends Monoid<array<TK, TV>>
- * @psalm-suppress InvalidTemplateParam
  */
 class ArrayMonoid extends Monoid
 {
@@ -18,9 +17,9 @@ class ArrayMonoid extends Monoid
     }
 
     /**
-     * @psalm-param array<TK, TV> $lhs
-     * @psalm-param array<TK, TV> $rhs
-     * @psalm-return array<TK, TV>
+     * @param array<TK, TV> $lhs
+     * @param array<TK, TV> $rhs
+     * @return array<TK, TV>
      */
     public function combine(mixed $lhs, mixed $rhs): array
     {

@@ -24,7 +24,7 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param TV $element
+     * @param TV $element
      */
     public function __invoke(mixed $element): bool;
 
@@ -39,7 +39,7 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param TV $element
+     * @param TV $element
      */
     public function contains(mixed $element): bool;
 
@@ -55,7 +55,7 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool;
 
@@ -71,9 +71,10 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool;
 
@@ -144,7 +145,7 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
 
@@ -160,9 +161,10 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool;
 
@@ -175,9 +177,10 @@ interface SetTerminalOps
      * ```
      *
      * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
+     *
+     * @param TA $init
+     * @param callable(TA, TV): TA $callback
+     * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed;
 
@@ -191,8 +194,9 @@ interface SetTerminalOps
      * ```
      *
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<TV|TA>
+     *
+     * @param callable(TV|TA, TV): (TV|TA) $callback
+     * @return Option<TV|TA>
      */
     public function reduce(callable $callback): Option;
 
@@ -220,8 +224,8 @@ interface SetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option;
 
@@ -233,8 +237,8 @@ interface SetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option;
 
@@ -246,10 +250,11 @@ interface SetTerminalOps
      * => Foo(2)
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option;
 
@@ -261,7 +266,7 @@ interface SetTerminalOps
      * => 1
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function head(): Option;
 
@@ -274,7 +279,7 @@ interface SetTerminalOps
      * => 1
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function firstElement(): Option;
 
@@ -286,7 +291,7 @@ interface SetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function lastElement(): Option;
 }

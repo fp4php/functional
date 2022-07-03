@@ -38,14 +38,16 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
-     * @return Option<self<TKI, TVI>>
+     * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
     public static function collect(iterable $source): Option
     {
-        return self::collectPairs(asGenerator(function () use ($source) {
+        return NonEmptyHashMap::collectPairs(asGenerator(function () use ($source) {
             foreach ($source as $key => $value) {
                 yield [$key, $value];
             }
@@ -54,34 +56,40 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(iterable $source): NonEmptyHashMap
     {
-        return self::collect($source)->getUnsafe();
+        return NonEmptyHashMap::collect($source)->getUnsafe();
     }
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
+     *
      * @param non-empty-array<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectNonEmpty(array $source): self
+    public static function collectNonEmpty(array $source): NonEmptyHashMap
     {
-        return self::collectUnsafe($source);
+        return NonEmptyHashMap::collectUnsafe($source);
     }
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<array{TKI, TVI}> $source
-     * @return Option<self<TKI, TVI>>
+     * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
     public static function collectPairs(iterable $source): Option
     {
@@ -102,26 +110,30 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectPairsUnsafe(iterable $source): self
+    public static function collectPairsUnsafe(iterable $source): NonEmptyHashMap
     {
-        return self::collectPairs($source)->getUnsafe();
+        return NonEmptyHashMap::collectPairs($source)->getUnsafe();
     }
 
     /**
      * @inheritDoc
+     *
      * @template TKI
      * @template TVI
+     *
      * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectPairsNonEmpty(array|NonEmptyCollection $source): self
+    public static function collectPairsNonEmpty(array|NonEmptyCollection $source): NonEmptyHashMap
     {
-        return self::collectPairsUnsafe($source);
+        return NonEmptyHashMap::collectPairsUnsafe($source);
     }
 
     /**
@@ -265,7 +277,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TK, TVO>>
+     * @return Option<NonEmptyHashMap<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
@@ -299,11 +311,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TVI
      * @param TKI $key
      * @param TVI $value
-     * @return self<TK|TKI, TV|TVI>
+     * @return NonEmptyHashMap<TK|TKI, TV|TVI>
      */
-    public function updated(mixed $key, mixed $value): self
+    public function updated(mixed $key, mixed $value): NonEmptyHashMap
     {
-        return self::collectPairsUnsafe([...$this->toList(), [$key, $value]]);
+        return NonEmptyHashMap::collectPairsUnsafe([...$this->toList(), [$key, $value]]);
     }
 
     /**
@@ -357,11 +369,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TVO
      *
      * @param callable(TV): TVO $callback
-     * @return self<TK, TVO>
+     * @return NonEmptyHashMap<TK, TVO>
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): NonEmptyHashMap
     {
-        return self::collectUnsafe(MapOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -370,11 +382,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TVO
      *
      * @param callable(TK, TV): TVO $callback
-     * @return self<TK, TVO>
+     * @return NonEmptyHashMap<TK, TVO>
      */
-    public function mapKV(callable $callback): self
+    public function mapKV(callable $callback): NonEmptyHashMap
     {
-        return self::collectUnsafe(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -383,11 +395,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return self<TKO, TV>
+     * @return NonEmptyHashMap<TKO, TV>
      */
-    public function reindex(callable $callback): self
+    public function reindex(callable $callback): NonEmptyHashMap
     {
-        return self::collectUnsafe(ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(ReindexOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -396,16 +408,16 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      *
      * @param callable(TK, TV): TKO $callback
-     * @return self<TKO, TV>
+     * @return NonEmptyHashMap<TKO, TV>
      */
     public function reindexKV(callable $callback): NonEmptyMap
     {
-        return self::collectUnsafe(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
      * @inheritDoc
-     * @psalm-return NonEmptySeq<TK>
+     * @return NonEmptySeq<TK>
      */
     public function keys(): NonEmptySeq
     {
@@ -414,7 +426,7 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
-     * @psalm-return NonEmptySeq<TV>
+     * @return NonEmptySeq<TV>
      */
     public function values(): NonEmptySeq
     {

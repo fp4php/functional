@@ -15,8 +15,8 @@ use Generator;
  * @template TK
  * @template TV
  *
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-return list<array{TK, TV}>
+ * @param iterable<TK, TV> $collection
+ * @return list<array{TK, TV}>
  */
 function asPairs(iterable $collection): array
 {

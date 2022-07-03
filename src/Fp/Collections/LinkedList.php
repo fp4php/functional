@@ -65,7 +65,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $source
+     * @param iterable<TVI> $source
      * @return LinkedList<TVI>
      */
     public static function collect(iterable $source): LinkedList
@@ -589,7 +589,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $suffix
+     * @param iterable<TVI> $suffix
      * @return LinkedList<TV|TVI>
      */
     public function appendedAll(iterable $suffix): LinkedList
@@ -615,7 +615,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $prefix
+     * @param iterable<TVI> $prefix
      * @return LinkedList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): LinkedList
@@ -686,7 +686,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVO
      *
-     * @param callable(TV): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @param callable(TV): (iterable<TVO>) $callback
      * @return LinkedList<TVO>
      */
     public function flatMap(callable $callback): LinkedList
@@ -788,7 +788,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $that
+     * @param iterable<TVI> $that
      * @return LinkedList<array{TV, TVI}>
      */
     public function zip(iterable $that): LinkedList

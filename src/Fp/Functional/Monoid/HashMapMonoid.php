@@ -12,7 +12,6 @@ use function Fp\Cast\asGenerator;
  * @template TK
  * @template TV
  * @extends Monoid<HashMap<TK, TV>>
- * @psalm-suppress InvalidTemplateParam
  */
 class HashMapMonoid extends Monoid
 {
@@ -25,9 +24,9 @@ class HashMapMonoid extends Monoid
     }
 
     /**
-     * @psalm-param HashMap<TK, TV> $lhs
-     * @psalm-param HashMap<TK, TV> $rhs
-     * @psalm-return HashMap<TK, TV>
+     * @param HashMap<TK, TV> $lhs
+     * @param HashMap<TK, TV> $rhs
+     * @return HashMap<TK, TV>
      */
     public function combine(mixed $lhs, mixed $rhs): HashMap
     {

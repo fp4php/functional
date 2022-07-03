@@ -21,6 +21,7 @@ interface NonEmptySetChainableOps
      * ```
      *
      * @template TVI
+     *
      * @param TVI $element
      * @return NonEmptySet<TV|TVI>
      */
@@ -47,8 +48,8 @@ interface NonEmptySetChainableOps
      * => [2]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Set<TV>
+     * @param callable(TV): bool $predicate
+     * @return Set<TV>
      */
     public function filter(callable $predicate): Set;
 
@@ -68,10 +69,11 @@ interface NonEmptySetChainableOps
      * => [Foo(2)]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Set<TVO>
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Set<TVO>
      */
     public function filterOf(string $fqcn, bool $invariant = false): Set;
 
@@ -89,9 +91,10 @@ interface NonEmptySetChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return Set<TVO>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Set<TVO>
      */
     public function filterMap(callable $callback): Set;
 
@@ -103,7 +106,7 @@ interface NonEmptySetChainableOps
      * => [1]
      * ```
      *
-     * @psalm-return Set<TV>
+     * @return Set<TV>
      */
     public function filterNotNull(): Set;
 
@@ -148,9 +151,10 @@ interface NonEmptySetChainableOps
      * => [1, 2, 3, 4, 5, 6]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return Set<TVO>
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
+     * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;
 
@@ -166,7 +170,7 @@ interface NonEmptySetChainableOps
      * ```
      *
      * @param callable(TV): void $callback
-     * @psalm-return NonEmptySet<TV>
+     * @return NonEmptySet<TV>
      */
     public function tap(callable $callback): NonEmptySet;
 
@@ -178,7 +182,7 @@ interface NonEmptySetChainableOps
      * => [2, 3]
      * ```
      *
-     * @psalm-return Set<TV>
+     * @return Set<TV>
      */
     public function tail(): Set;
 
@@ -191,9 +195,8 @@ interface NonEmptySetChainableOps
      * => [2, 3]
      * ```
      *
-     * @param Set<TV>|NonEmptySet<TV> $that the set to intersect with.
-     * @return Set<TV> a new set consisting of all elements that are both in this
-     * set and in the given set `that`.
+     * @param Set<TV>|NonEmptySet<TV> $that
+     * @return Set<TV>
      */
     public function intersect(Set|NonEmptySet $that): Set;
 
@@ -206,9 +209,8 @@ interface NonEmptySetChainableOps
      * => [1]
      * ```
      *
-     * @param Set<TV>|NonEmptySet<TV> $that the set of elements to exclude.
-     * @return Set<TV> a set containing those elements of this
-     * set that are not also contained in the given set `that`.
+     * @param Set<TV>|NonEmptySet<TV> $that
+     * @return Set<TV>
      */
     public function diff(Set|NonEmptySet $that): Set;
 }

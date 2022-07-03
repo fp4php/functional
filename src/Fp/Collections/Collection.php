@@ -10,7 +10,7 @@ use IteratorAggregate;
 
 /**
  * @template-covariant TV
- * @implements IteratorAggregate<empty, TV>
+ * @implements IteratorAggregate<int, TV>
  */
 interface Collection extends IteratorAggregate, Countable
 {

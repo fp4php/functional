@@ -43,10 +43,12 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return Option<self<TVI>>
+     * @return Option<NonEmptyHashSet<TVI>>
      */
     public static function collect(iterable $source): Option
     {
@@ -55,25 +57,29 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return self<TVI>
+     * @return NonEmptyHashSet<TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(iterable $source): NonEmptyHashSet
     {
-        return self::collect($source)->getUnsafe();
+        return NonEmptyHashSet::collect($source)->getUnsafe();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
-     * @return self<TVI>
+     *
+     * @param non-empty-array<array-key, TVI>|NonEmptyCollection<TVI> $source
+     * @return NonEmptyHashSet<TVI>
      */
-    public static function collectNonEmpty(array|NonEmptyCollection $source): self
+    public static function collectNonEmpty(array|NonEmptyCollection $source): NonEmptyHashSet
     {
-        return self::collectUnsafe($source);
+        return NonEmptyHashSet::collectUnsafe($source);
     }
 
     /**
@@ -85,7 +91,7 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -93,7 +99,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return list<TV>
      */
     public function toList(): array
@@ -102,7 +109,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return non-empty-list<TV>
      */
     public function toNonEmptyList(): array
@@ -112,7 +120,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -121,7 +130,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList
@@ -130,7 +140,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyLinkedList<TV>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
@@ -139,7 +150,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyArrayList<TV>
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
@@ -148,7 +160,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet
@@ -157,7 +170,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyHashSet<TV>
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
@@ -166,7 +180,7 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -180,7 +194,7 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -204,8 +218,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param TV $element
+     * {@inheritDoc}
+     * @param TV $element
      */
     public function __invoke(mixed $element): bool
     {
@@ -213,8 +227,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool
     {
@@ -222,10 +236,12 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-param bool $invariant
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
@@ -233,10 +249,12 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
+     *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TVO>>
+     * @return Option<NonEmptyHashSet<TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
@@ -245,7 +263,7 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -260,7 +278,7 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -275,8 +293,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
@@ -284,10 +302,12 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-param bool $invariant
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
@@ -295,9 +315,10 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option
     {
@@ -305,9 +326,10 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option
     {
@@ -315,11 +337,13 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-param bool $invariant
-     * @psalm-return Option<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
@@ -327,10 +351,12 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return (TV|TA)
+     *
+     * @param callable(TV|TA, TV): (TV|TA) $callback
+     * @return (TV|TA)
      */
     public function reduce(callable $callback): mixed
     {
@@ -338,8 +364,9 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return TV
+     * {@inheritDoc}
+     *
+     * @return TV
      */
     public function head(): mixed
     {
@@ -347,8 +374,9 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return TV
+     * {@inheritDoc}
+     *
+     * @return TV
      */
     public function firstElement(): mixed
     {
@@ -356,8 +384,9 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return TV
+     * {@inheritDoc}
+     *
+     * @return TV
      */
     public function lastElement(): mixed
     {
@@ -365,8 +394,9 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param TV $element
+     * {@inheritDoc}
+     *
+     * @param TV $element
      */
     public function contains(mixed $element): bool
     {
@@ -374,8 +404,9 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return HashSet<TV>
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
      */
     public function tail(): HashSet
     {
@@ -383,18 +414,21 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $element
-     * @return self<TV|TVI>
+     * @return NonEmptyHashSet<TV|TVI>
      */
-    public function updated(mixed $element): self
+    public function updated(mixed $element): NonEmptyHashSet
     {
         return new self($this->set->updated($element));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TV $element
      * @return HashSet<TV>
      */
@@ -404,9 +438,10 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return HashSet<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return HashSet<TV>
      */
     public function filter(callable $predicate): HashSet
     {
@@ -414,7 +449,7 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(int, TV): bool $predicate
      * @return HashSet<TV>
@@ -425,11 +460,13 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn
-     * @psalm-param bool $invariant
-     * @psalm-return HashSet<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return HashSet<TVO>
      */
     public function filterOf(string $fqcn, bool $invariant = false): HashSet
     {
@@ -437,8 +474,10 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
+     *
      * @param callable(TV): Option<TVO> $callback
      * @return HashSet<TVO>
      */
@@ -448,8 +487,9 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return HashSet<TV>
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
      */
     public function filterNotNull(): HashSet
     {
@@ -457,36 +497,38 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(TV): TVO $callback
-     * @return self<TVO>
+     * @return NonEmptyHashSet<TVO>
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): NonEmptyHashSet
     {
-        return self::collectUnsafe(MapOperation::of($this->getIterator())($callback));
+        return NonEmptyHashSet::collectUnsafe(MapOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
      * @param callable(int, TV): TVO $callback
-     * @return self<TVO>
+     * @return NonEmptyHashSet<TVO>
      */
-    public function mapKV(callable $callback): self
+    public function mapKV(callable $callback): NonEmptyHashSet
     {
-        return self::collectUnsafe(MapWithKeyOperation::of($this->getIterator())($callback));
+        return NonEmptyHashSet::collectUnsafe(MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return HashSet<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
+     * @return HashSet<TVO>
      */
     public function flatMap(callable $callback): HashSet
     {
@@ -494,18 +536,19 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
-     * @psalm-return self<TV>
+     * @return NonEmptyHashSet<TV>
      */
-    public function tap(callable $callback): self
+    public function tap(callable $callback): NonEmptyHashSet
     {
         Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function subsetOf(Set|NonEmptySet $superset): bool
     {
@@ -522,7 +565,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param Set<TV>|NonEmptySet<TV> $that
      * @return Set<TV>
      */
@@ -532,7 +576,8 @@ final class NonEmptyHashSet implements NonEmptySet
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param Set<TV>|NonEmptySet<TV> $that
      * @return Set<TV>
      */

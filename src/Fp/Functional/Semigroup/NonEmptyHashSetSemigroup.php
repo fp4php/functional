@@ -11,15 +11,14 @@ use function Fp\Cast\asGenerator;
 
 /**
  * @template TV
- * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<NonEmptyHashSet<TV>>
  */
 class NonEmptyHashSetSemigroup extends Semigroup
 {
     /**
-     * @psalm-param NonEmptyHashSet<TV> $lhs
-     * @psalm-param NonEmptyHashSet<TV> $rhs
-     * @psalm-return NonEmptyHashSet<TV>
+     * @param NonEmptyHashSet<TV> $lhs
+     * @param NonEmptyHashSet<TV> $rhs
+     * @return NonEmptyHashSet<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): NonEmptyHashSet
     {

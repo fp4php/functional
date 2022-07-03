@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Streams;
 
 use Fp\Collections\ArrayList;
-use Fp\Collections\Collection;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
@@ -68,11 +67,12 @@ use function Fp\Cast\asNonEmptyList;
 /**
  * Note: stream iteration via foreach is terminal operation
  *
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements StreamOps<TV>
  * @implements StreamEmitter<TV>
  * @implements IteratorAggregate<TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 {
@@ -96,13 +96,11 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     private function __construct(iterable $emitter)
     {
-        $gen = function() use ($emitter): Generator {
+        $this->emitter = asGenerator(function() use ($emitter): Generator {
             foreach ($emitter as $elem) {
                 yield $elem;
             }
-        };
-
-        $this->emitter = $gen();
+        });
     }
 
     /**
@@ -117,6 +115,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
     /**
      * @template T
+     *
      * @param T $iter
      * @return T
      */
@@ -130,37 +129,42 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $elem
-     * @return self<TVI>
+     * @return Stream<TVI>
      */
-    public static function emit(mixed $elem): self
+    public static function emit(mixed $elem): Stream
     {
-        return self::emits(asGenerator(function () use ($elem) {
+        return Stream::emits(asGenerator(function () use ($elem) {
             yield $elem;
         }));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @param Collection<TVI> | iterable<mixed, TVI> $source
-     * @return self<TVI>
+     *
+     * @param iterable<TVI> $source
+     * @return Stream<TVI>
      */
-    public static function emits(iterable $source): self
+    public static function emits(iterable $source): Stream
     {
-        return new self($source);
+        return new Stream($source);
     }
 
     /**
-     * @inheritDoc
-     * @param 0|positive-int $seconds
-     * @return self<int>
+     * {@inheritDoc}
+     *
+     * @param int<0, max> $seconds
+     * @return Stream<int>
      */
-    public static function awakeEvery(int $seconds): self
+    public static function awakeEvery(int $seconds): Stream
     {
-        return self::emits(asGenerator(function () use ($seconds) {
+        return Stream::emits(asGenerator(function () use ($seconds) {
             $elapsed = 0;
             $prevTime = time();
 
@@ -177,14 +181,16 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $const
-     * @return self<TVI>
+     * @return Stream<TVI>
      */
-    public static function constant(mixed $const): self
+    public static function constant(mixed $const): Stream
     {
-        return self::emits(asGenerator(function () use ($const) {
+        return Stream::emits(asGenerator(function () use ($const) {
             while (true) {
                 yield $const;
             }
@@ -192,22 +198,24 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Stream<Unit>
      */
     public static function infinite(): Stream
     {
-        return self::constant(Unit::getInstance());
+        return Stream::constant(Unit::getInstance());
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param positive-int $by
-     * @return self<int>
+     * @return Stream<int>
      */
-    public static function range(int $start, int $stopExclusive, int $by = 1): self
+    public static function range(int $start, int $stopExclusive, int $by = 1): Stream
     {
-        return self::emits(asGenerator(function () use ($start, $stopExclusive, $by) {
+        return Stream::emits(asGenerator(function () use ($start, $stopExclusive, $by) {
             for ($i = $start; $i < $stopExclusive; $i += $by) {
                 yield $i;
             }
@@ -215,228 +223,258 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @psalm-template TKO
-     * @psalm-template TVO
-     * @psalm-param Generator<TVO> $gen
-     * @psalm-return self<TVO>
+     * @template TKO
+     * @template TVO
+     *
+     * @param Generator<TVO> $gen
+     * @return Stream<TVO>
      */
-    private function fork(Generator $gen): self
+    private function fork(Generator $gen): Stream
     {
         $this->forked = $this->forked
             ? throw new LogicException('multiple stream forks detected')
             : true;
 
-        return self::emits($gen);
+        return Stream::emits($gen);
     }
 
     /**
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return self<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return Stream<TVO>
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): Stream
     {
         return $this->fork(MapOperation::of($this->emitter)($callback));
     }
 
     /**
      * @template TVO
-     * @psalm-param callable(int, TV): TVO $callback
-     * @psalm-return self<TVO>
+     *
+     * @param callable(int, TV): TVO $callback
+     * @return Stream<TVO>
      */
-    public function mapKV(callable $callback): self
+    public function mapKV(callable $callback): Stream
     {
         return $this->fork(MapWithKeyOperation::of($this->emitter)($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return Stream<TV|TVI>
      */
-    public function appended(mixed $elem): self
+    public function appended(mixed $elem): Stream
     {
         return $this->fork(AppendedOperation::of($this->emitter)($elem));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return self<TV|TVI>
+     *
+     * @param iterable<TVI> $suffix
+     * @return Stream<TV|TVI>
      */
-    public function appendedAll(iterable $suffix): self
+    public function appendedAll(iterable $suffix): Stream
     {
         return $this->fork(AppendedAllOperation::of($this->emitter)($suffix));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return Stream<TV|TVI>
      */
-    public function prepended(mixed $elem): self
+    public function prepended(mixed $elem): Stream
     {
         return $this->fork(PrependedOperation::of($this->emitter)($elem));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return self<TV|TVI>
+     *
+     * @param iterable<TVI> $prefix
+     * @return Stream<TV|TVI>
      */
-    public function prependedAll(iterable $prefix): self
+    public function prependedAll(iterable $prefix): Stream
     {
         return $this->fork(PrependedAllOperation::of($this->emitter)($prefix));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Stream<TV>
      */
-    public function filter(callable $predicate): self
+    public function filter(callable $predicate): Stream
     {
         return $this->fork(FilterOperation::of($this->emitter)($predicate));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Stream<TVO>
      */
-    public function filterMap(callable $callback): self
+    public function filterMap(callable $callback): Stream
     {
         return $this->fork(FilterMapOperation::of($this->emitter)($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
      */
-    public function filterNotNull(): self
+    public function filterNotNull(): Stream
     {
         return $this->fork(FilterNotNullOperation::of($this->emitter)());
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Stream<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): self
+    public function filterOf(string $fqcn, bool $invariant = false): Stream
     {
         return $this->fork(FilterOfOperation::of($this->emitter)($fqcn, $invariant));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return self<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
+     * @return Stream<TVO>
      */
-    public function flatMap(callable $callback): self
+    public function flatMap(callable $callback): Stream
     {
         return $this->fork(FlatMapOperation::of($this->emitter)($callback));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
      */
-    public function tail(): self
+    public function tail(): Stream
     {
         return $this->fork(TailOperation::of($this->emitter)());
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Stream<TV>
      */
-    public function takeWhile(callable $predicate): self
+    public function takeWhile(callable $predicate): Stream
     {
         return $this->fork(TakeWhileOperation::of($this->emitter)($predicate));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Stream<TV>
      */
-    public function dropWhile(callable $predicate): self
+    public function dropWhile(callable $predicate): Stream
     {
         return $this->fork(DropWhileOperation::of($this->emitter)($predicate));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
      */
-    public function take(int $length): self
+    public function take(int $length): Stream
     {
         return $this->fork(TakeOperation::of($this->emitter)($length));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
      */
-    public function drop(int $length): self
+    public function drop(int $length): Stream
     {
         return $this->fork(DropOperation::of($this->emitter)($length));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
-     * @psalm-return self<TV>
+     * @return Stream<TV>
      */
-    public function tap(callable $callback): self
+    public function tap(callable $callback): Stream
     {
         return $this->fork(TapOperation::of($this->emitter)($callback));
     }
 
     /**
-     * @inheritDoc
-     * @return self<TV>
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
      */
-    public function repeat(): self
+    public function repeat(): Stream
     {
         return $this->fork(RepeatOperation::of($this->emitter)());
     }
 
     /**
-     * @inheritDoc
-     * @return self<TV>
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
      */
-    public function repeatN(int $times): self
+    public function repeatN(int $times): Stream
     {
         return $this->fork(RepeatNOperation::of($this->emitter)($times));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $separator
-     * @psalm-return self<TV|TVI>
+     * @return Stream<TV|TVI>
      */
-    public function intersperse(mixed $separator): self
+    public function intersperse(mixed $separator): Stream
     {
         return $this->fork(IntersperseOperation::of($this->emitter)($separator));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
      */
-    public function lines(): self
+    public function lines(): Stream
     {
         return $this->fork(TapOperation::of($this->emitter)(function ($elem) {
             print_r($elem) . PHP_EOL;
@@ -444,33 +482,38 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param iterable<TVI> $that
-     * @return self<TV|TVI>
+     * @return Stream<TV|TVI>
      */
-    public function interleave(iterable $that): self
+    public function interleave(iterable $that): Stream
     {
         return $this->fork(InterleaveOperation::of($this->emitter)($that));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param iterable<TVI> $that
-     * @return self<array{TV, TVI}>
+     * @return Stream<array{TV, TVI}>
      */
-    public function zip(iterable $that): self
+    public function zip(iterable $that): Stream
     {
         return $this->fork(ZipOperation::of($this->emitter)($that));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param positive-int $size
-     * @return self<Seq<TV>>
+     * @return Stream<Seq<TV>>
      */
-    public function chunks(int $size): self
+    public function chunks(int $size): Stream
     {
         $chunks = ChunksOperation::of($this->emitter)($size);
 
@@ -480,8 +523,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template D
+     *
      * @param callable(TV): D $discriminator
      * @return Stream<array{D, Seq<TV>}>
      */
@@ -496,18 +541,20 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return self<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV, TV): int $cmp
+     * @return Stream<TV>
      */
-    public function sorted(callable $cmp): self
+    public function sorted(callable $cmp): Stream
     {
         return $this->fork(SortedOperation::of($this->emitter)($cmp));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool
     {
@@ -515,10 +562,12 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
@@ -526,8 +575,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
@@ -535,10 +585,12 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
@@ -546,7 +598,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -559,7 +611,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -572,9 +624,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option
     {
@@ -582,11 +635,13 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
@@ -594,11 +649,13 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
+     *
+     * @param TA $init
+     * @param callable(TA, TV): TA $callback
+     * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed
     {
@@ -606,10 +663,12 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return Option<TV|TA>
+     *
+     * @param callable(TV|TA, TV): (TV|TA) $callback
+     * @return Option<TV|TA>
      */
     public function reduce(callable $callback): Option
     {
@@ -617,8 +676,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function head(): Option
     {
@@ -626,9 +686,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option
     {
@@ -636,8 +697,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function firstElement(): Option
     {
@@ -645,8 +707,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
      */
     public function lastElement(): Option
     {
@@ -654,7 +717,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
@@ -662,7 +725,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function drain(): void
     {
@@ -671,7 +734,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return list<TV>
      */
     public function toList(): array
@@ -680,7 +744,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<non-empty-list<TV>>
      */
     public function toNonEmptyList(): Option
@@ -689,7 +754,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO of array-key
      * @template TVO
@@ -712,7 +777,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO of array-key
      * @template TVO
@@ -735,7 +800,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return LinkedList<TV>
      */
     public function toLinkedList(): LinkedList
@@ -744,7 +810,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyLinkedList<TV>>
      */
     public function toNonEmptyLinkedList(): Option
@@ -753,7 +820,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<TV>
      */
     public function toArrayList(): ArrayList
@@ -762,7 +830,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyArrayList<TV>>
      */
     public function toNonEmptyArrayList(): Option
@@ -776,7 +845,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<TV>
      */
     public function toHashSet(): HashSet
@@ -785,7 +855,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Option<NonEmptyHashSet<TV>>
      */
     public function toNonEmptyHashSet(): Option
@@ -794,7 +865,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -808,7 +879,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -822,7 +893,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function toFile(string $path, bool $append = false): void
     {

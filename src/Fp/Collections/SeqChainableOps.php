@@ -37,7 +37,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $suffix
+     * @param iterable<TVI> $suffix
      * @return Seq<TV|TVI>
      */
     public function appendedAll(iterable $suffix): Seq;
@@ -67,7 +67,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $prefix
+     * @param iterable<TVI> $prefix
      * @return Seq<TV|TVI>
      */
     public function prependedAll(iterable $prefix): Seq;
@@ -153,7 +153,7 @@ interface SeqChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @param callable(TV): (iterable<TVO>) $callback
      * @return Seq<TVO>
      */
     public function flatMap(callable $callback): Seq;
@@ -181,7 +181,7 @@ interface SeqChainableOps
      * >>> LinkedList::collect(['one', 'two'])
      * >>>     ->mapKV(fn($index, $elem) => "{$index}-{$elem}")
      * >>>     ->toList();
-     * => ['1-one', '2-two']
+     * => ['0-one', '1-two']
      * ```
      *
      * @template TVO
@@ -321,7 +321,7 @@ interface SeqChainableOps
      * @template TVI
      *
      * @param TVI $separator
-     * @return Seq<TV|TVI>
+     * @return Seq<TV | TVI>
      */
     public function intersperse(mixed $separator): Seq;
 
@@ -335,7 +335,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $that
+     * @param (iterable<TVI>) $that
      * @return Seq<array{TV, TVI}>
      */
     public function zip(iterable $that): Seq;

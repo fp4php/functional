@@ -32,7 +32,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $source
+     * @param iterable<TVI> $source
      * @return ArrayList<TVI>
      */
     public static function collect(iterable $source): ArrayList
@@ -415,8 +415,8 @@ final class ArrayList implements Seq
      *
      * @template TA
      *
-     * @param callable(TV|TA, TV): (TV|TA) $callback
-     * @return Option<TV|TA>
+     * @param callable(TV | TA, TV): (TV | TA) $callback
+     * @return Option<TV | TA>
      */
     public function reduce(callable $callback): Option
     {
@@ -529,7 +529,7 @@ final class ArrayList implements Seq
      * @template TVI
      *
      * @param TVI $elem
-     * @return ArrayList<TV|TVI>
+     * @return ArrayList<TV | TVI>
      */
     public function appended(mixed $elem): ArrayList
     {
@@ -541,8 +541,8 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $suffix
-     * @return ArrayList<TV|TVI>
+     * @param iterable<TVI> $suffix
+     * @return ArrayList<TV | TVI>
      */
     public function appendedAll(iterable $suffix): ArrayList
     {
@@ -555,7 +555,7 @@ final class ArrayList implements Seq
      * @template TVI
      *
      * @param TVI $elem
-     * @return ArrayList<TV|TVI>
+     * @return ArrayList<TV | TVI>
      */
     public function prepended(mixed $elem): ArrayList
     {
@@ -567,7 +567,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $prefix
+     * @param iterable<TVI> $prefix
      * @return ArrayList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): ArrayList
@@ -639,7 +639,7 @@ final class ArrayList implements Seq
      *
      * @template TVO
      *
-     * @param callable(TV): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @param callable(TV): (iterable<TVO>) $callback
      * @return ArrayList<TVO>
      */
     public function flatMap(callable $callback): ArrayList
@@ -704,7 +704,7 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @param callable(TV): (int|string) $callback
+     * @param callable(TV): (int | string) $callback
      * @return ArrayList<TV>
      */
     public function unique(callable $callback): ArrayList
@@ -729,7 +729,7 @@ final class ArrayList implements Seq
      * @template TVI
      *
      * @param TVI $separator
-     * @return ArrayList<TV|TVI>
+     * @return ArrayList<TV | TVI>
      */
     public function intersperse(mixed $separator): ArrayList
     {
@@ -741,7 +741,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $that
+     * @param iterable<TVI> $that
      * @return ArrayList<array{TV, TVI}>
      */
     public function zip(iterable $that): ArrayList

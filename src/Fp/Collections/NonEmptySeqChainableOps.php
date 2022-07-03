@@ -21,8 +21,9 @@ interface NonEmptySeqChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return NonEmptySeq<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return NonEmptySeq<TV|TVI>
      */
     public function appended(mixed $elem): NonEmptySeq;
 
@@ -35,8 +36,9 @@ interface NonEmptySeqChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return NonEmptySeq<TV|TVI>
+     *
+     * @param iterable<TVI> $suffix
+     * @return NonEmptySeq<TV|TVI>
      */
     public function appendedAll(iterable $suffix): NonEmptySeq;
 
@@ -49,8 +51,9 @@ interface NonEmptySeqChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return NonEmptySeq<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return NonEmptySeq<TV|TVI>
      */
     public function prepended(mixed $elem): NonEmptySeq;
 
@@ -63,8 +66,9 @@ interface NonEmptySeqChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return NonEmptySeq<TV|TVI>
+     *
+     * @param iterable<TVI> $prefix
+     * @return NonEmptySeq<TV|TVI>
      */
     public function prependedAll(iterable $prefix): NonEmptySeq;
 
@@ -78,8 +82,8 @@ interface NonEmptySeqChainableOps
      * => [2]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Seq<TV>
+     * @param callable(TV): bool $predicate
+     * @return Seq<TV>
      */
     public function filter(callable $predicate): Seq;
 
@@ -105,9 +109,10 @@ interface NonEmptySeqChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return Seq<TVO>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Seq<TVO>
      */
     public function filterMap(callable $callback): Seq;
 
@@ -119,7 +124,7 @@ interface NonEmptySeqChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-return Seq<TV>
+     * @return Seq<TV>
      */
     public function filterNotNull(): Seq;
 
@@ -131,10 +136,11 @@ interface NonEmptySeqChainableOps
      * => [Foo(2)]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Seq<TVO>
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Seq<TVO>
      */
     public function filterOf(string $fqcn, bool $invariant = false): Seq;
 
@@ -144,9 +150,10 @@ interface NonEmptySeqChainableOps
      * => [1, 2, 3, 4, 5, 6]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return Seq<TVO>
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
+     * @return Seq<TVO>
      */
     public function flatMap(callable $callback): Seq;
 
@@ -160,8 +167,9 @@ interface NonEmptySeqChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return NonEmptySeq<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return NonEmptySeq<TVO>
      */
     public function map(callable $callback): NonEmptySeq;
 
@@ -190,7 +198,7 @@ interface NonEmptySeqChainableOps
      * => [2, 1]
      * ```
      *
-     * @psalm-return NonEmptySeq<TV>
+     * @return NonEmptySeq<TV>
      */
     public function reverse(): NonEmptySeq;
 
@@ -202,7 +210,7 @@ interface NonEmptySeqChainableOps
      * => [2, 3]
      * ```
      *
-     * @psalm-return Seq<TV>
+     * @return Seq<TV>
      */
     public function tail(): Seq;
 
@@ -214,8 +222,8 @@ interface NonEmptySeqChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-param callable(TV): (int|string) $callback returns element unique id
-     * @psalm-return NonEmptySeq<TV>
+     * @param callable(TV): (int|string) $callback
+     * @return NonEmptySeq<TV>
      */
     public function unique(callable $callback): NonEmptySeq;
 
@@ -227,8 +235,8 @@ interface NonEmptySeqChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Seq<TV>
+     * @param callable(TV): bool $predicate
+     * @return Seq<TV>
      */
     public function takeWhile(callable $predicate): Seq;
 
@@ -240,8 +248,8 @@ interface NonEmptySeqChainableOps
      * => [3]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Seq<TV>
+     * @param callable(TV): bool $predicate
+     * @return Seq<TV>
      */
     public function dropWhile(callable $predicate): Seq;
 
@@ -253,7 +261,7 @@ interface NonEmptySeqChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-return Seq<TV>
+     * @return Seq<TV>
      */
     public function take(int $length): Seq;
 
@@ -265,7 +273,7 @@ interface NonEmptySeqChainableOps
      * => [3]
      * ```
      *
-     * @psalm-return Seq<TV>
+     * @return Seq<TV>
      */
     public function drop(int $length): Seq;
 
@@ -280,8 +288,8 @@ interface NonEmptySeqChainableOps
      * => [3, 2, 1]
      * ```
      *
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return NonEmptySeq<TV>
+     * @param callable(TV, TV): int $cmp
+     * @return NonEmptySeq<TV>
      */
     public function sorted(callable $cmp): NonEmptySeq;
 
@@ -297,7 +305,7 @@ interface NonEmptySeqChainableOps
      * ```
      *
      * @param callable(TV): void $callback
-     * @psalm-return NonEmptySeq<TV>
+     * @return NonEmptySeq<TV>
      */
     public function tap(callable $callback): NonEmptySeq;
 }

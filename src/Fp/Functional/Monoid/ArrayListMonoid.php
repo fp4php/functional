@@ -9,7 +9,6 @@ use Fp\Collections\ArrayList;
 /**
  * @template TV
  * @extends Monoid<ArrayList<TV>>
- * @psalm-suppress InvalidTemplateParam
  */
 class ArrayListMonoid extends Monoid
 {
@@ -22,9 +21,9 @@ class ArrayListMonoid extends Monoid
     }
 
     /**
-     * @psalm-param ArrayList<TV> $lhs
-     * @psalm-param ArrayList<TV> $rhs
-     * @psalm-return ArrayList<TV>
+     * @param ArrayList<TV> $lhs
+     * @param ArrayList<TV> $rhs
+     * @return ArrayList<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): ArrayList
     {

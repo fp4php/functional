@@ -23,6 +23,7 @@ interface MapChainableOps
      *
      * @template TKI
      * @template TVI
+     *
      * @param TKI $key
      * @param TVI $value
      * @return Map<TK|TKI, TV|TVI>
@@ -103,7 +104,7 @@ interface MapChainableOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): iterable<array{TKO, TVO}> $callback
+     * @param callable(TV): (iterable<array{TKO, TVO}>) $callback
      * @return Map<TKO, TVO>
      */
     public function flatMap(callable $callback): Map;
@@ -192,7 +193,7 @@ interface MapChainableOps
      * => ['1', '2']
      * ```
      *
-     * @psalm-return Seq<TK>
+     * @return Seq<TK>
      */
     public function keys(): Seq;
 
@@ -207,7 +208,7 @@ interface MapChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-return Seq<TV>
+     * @return Seq<TV>
      */
     public function values(): Seq;
 }

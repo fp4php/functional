@@ -22,8 +22,9 @@ interface NonEmptySeqCollector
      * ```
      *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return Option<self<TVI>>
+     * @return Option<NonEmptySeq<TVI>>
      */
     public static function collect(iterable $source): Option;
 
@@ -37,10 +38,11 @@ interface NonEmptySeqCollector
      * ```
      *
      * @template TVI
+     *
      * @param iterable<TVI> $source
-     * @return self<TVI>
+     * @return NonEmptySeq<TVI>
      */
-    public static function collectUnsafe(iterable $source): self;
+    public static function collectUnsafe(iterable $source): NonEmptySeq;
 
     /**
      * ```php
@@ -49,8 +51,9 @@ interface NonEmptySeqCollector
      * ```
      *
      * @template TVI
-     * @param non-empty-array<TVI>|NonEmptyCollection<TVI> $source
-     * @return self<TVI>
+     *
+     * @param non-empty-array<array-key, TVI> | NonEmptyCollection<TVI> $source
+     * @return NonEmptySeq<TVI>
      */
-    public static function collectNonEmpty(array|NonEmptyCollection $source): self;
+    public static function collectNonEmpty(array|NonEmptyCollection $source): NonEmptySeq;
 }

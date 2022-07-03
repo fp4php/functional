@@ -21,6 +21,7 @@ interface StreamEmitter
      * ```
      *
      * @template TVI
+     *
      * @param TVI $elem
      * @return Stream<TVI>
      */
@@ -35,6 +36,7 @@ interface StreamEmitter
      * ```
      *
      * @template TVI
+     *
      * @param iterable<TVI> $source
      * @return Stream<TVI>
      */
@@ -82,6 +84,7 @@ interface StreamEmitter
      * ```
      *
      * @template TVI
+     *
      * @param TVI $const
      * @return Stream<TVI>
      */
@@ -95,8 +98,8 @@ interface StreamEmitter
      * => [0, 2, 4, 6, 8]
      * ```
      *
-     * @psalm-param positive-int $by
-     * @psalm-return Stream<int>
+     * @param positive-int $by
+     * @return Stream<int>
      */
     public static function range(int $start, int $stopExclusive, int $by = 1): Stream;
 

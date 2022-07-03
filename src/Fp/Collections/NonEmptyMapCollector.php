@@ -20,6 +20,7 @@ interface NonEmptyMapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
      * @return Option<self<TKI, TVI>>
      */
@@ -33,6 +34,7 @@ interface NonEmptyMapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
      * @return self<TKI, TVI>
      */
@@ -46,6 +48,7 @@ interface NonEmptyMapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param non-empty-array<TKI, TVI> $source
      * @return self<TKI, TVI>
      */
@@ -59,6 +62,7 @@ interface NonEmptyMapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<array{TKI, TVI}> $source
      * @return Option<self<TKI, TVI>>
      */
@@ -72,6 +76,7 @@ interface NonEmptyMapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
@@ -85,7 +90,8 @@ interface NonEmptyMapCollector
      *
      * @template TKI
      * @template TVI
-     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     *
+     * @param non-empty-array<array-key, array{TKI, TVI}> | NonEmptyCollection<array{TKI, TVI}> $source
      * @return self<TKI, TVI>
      */
     public static function collectPairsNonEmpty(array|NonEmptyCollection $source): self;

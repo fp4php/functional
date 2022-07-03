@@ -6,26 +6,21 @@ namespace Fp\Functional\Option;
 
 /**
  * @template-covariant A
- * @psalm-suppress InvalidTemplateParam
  * @extends Option<A>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class Some extends Option
 {
     /**
-     * @psalm-var A
+     * @param A $value
      */
-    protected mixed $value;
-
-    /**
-     * @psalm-param A $value
-     */
-    public function __construct(mixed $value)
+    public function __construct(private mixed $value)
     {
-        $this->value = $value;
     }
 
     /**
-     * @psalm-return A
+     * @return A
      */
     public function get(): mixed
     {

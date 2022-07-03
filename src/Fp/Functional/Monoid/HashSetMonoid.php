@@ -11,12 +11,11 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TV
  * @extends Monoid<HashSet<TV>>
- * @psalm-suppress InvalidTemplateParam
  */
 class HashSetMonoid extends Monoid
 {
     /**
-     * @psalm-return HashSet<TV>
+     * @return HashSet<TV>
      */
     public function empty(): HashSet
     {
@@ -24,9 +23,9 @@ class HashSetMonoid extends Monoid
     }
 
     /**
-     * @psalm-param HashSet<TV> $lhs
-     * @psalm-param HashSet<TV> $rhs
-     * @psalm-return HashSet<TV>
+     * @param HashSet<TV> $lhs
+     * @param HashSet<TV> $rhs
+     * @return HashSet<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): HashSet
     {

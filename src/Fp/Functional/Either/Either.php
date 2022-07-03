@@ -14,6 +14,7 @@ use Throwable;
  * @template-covariant L
  * @template-covariant R
  * @psalm-yield R
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 abstract class Either
@@ -31,14 +32,15 @@ abstract class Either
      * => 0
      * ```
      *
-     * @psalm-template F
-     * @psalm-param F $fallback
-     * @psalm-return R|F
+     * @template F
+     *
+     * @param F $fallback
+     * @return R|F
      */
     public function getOrElse(mixed $fallback): mixed
     {
         return $this->isRight()
-            ? $this->value
+            ? $this->get()
             : $fallback;
     }
 
@@ -55,14 +57,15 @@ abstract class Either
      * => 0
      * ```
      *
-     * @psalm-template F
-     * @psalm-param callable(): F $fallback
-     * @psalm-return R|F
+     * @template F
+     *
+     * @param callable(): F $fallback
+     * @return R|F
      */
     public function getOrCall(callable $fallback): mixed
     {
         return $this->isRight()
-            ? $this->value
+            ? $this->get()
             : $fallback();
     }
 
@@ -75,8 +78,8 @@ abstract class Either
      * RuntimeException with message 'error'
      * ```
      *
-     * @psalm-param callable(L): Throwable $fallback
-     * @psalm-return R
+     * @param callable(L): Throwable $fallback
+     * @return R
      */
     public function getOrThrow(callable $fallback): mixed
     {
@@ -96,10 +99,11 @@ abstract class Either
      * => Right(2)
      * ```
      *
-     * @psalm-template LL
-     * @psalm-template RR
-     * @psalm-param callable(): Either<LL, RR> $fallback
-     * @psalm-return Either<L|LL, R|RR>
+     * @template LL
+     * @template RR
+     *
+     * @param callable(): Either<LL, RR> $fallback
+     * @return Either<L|LL, R|RR>
      */
     public function orElse(callable $fallback): Either
     {
@@ -125,11 +129,12 @@ abstract class Either
      * => 'error!'
      * ```
      *
-     * @psalm-template TOutLeft
-     * @psalm-template TOutRight
-     * @psalm-param callable(R): TOutRight $ifRight
-     * @psalm-param callable(L): TOutLeft $ifLeft
-     * @psalm-return TOutRight|TOutLeft
+     * @template TOutLeft
+     * @template TOutRight
+     *
+     * @param callable(R): TOutRight $ifRight
+     * @param callable(L): TOutLeft $ifLeft
+     * @return TOutRight|TOutLeft
      */
     public function fold(callable $ifRight, callable $ifLeft): mixed
     {
@@ -155,9 +160,10 @@ abstract class Either
      * => Right('2')
      * ```
      *
-     * @psalm-template RO
-     * @psalm-param callable(R): RO $callback
-     * @psalm-return Either<L, RO>
+     * @template RO
+     *
+     * @param callable(R): RO $callback
+     * @return Either<L, RO>
      */
     public function map(callable $callback): Either
     {
@@ -183,9 +189,10 @@ abstract class Either
      * => Left('error')
      * ```
      *
-     * @psalm-template LO
-     * @psalm-param callable(L): LO $callback
-     * @psalm-return Either<LO, R>
+     * @template LO
+     *
+     * @param callable(L): LO $callback
+     * @return Either<LO, R>
      */
     public function mapLeft(callable $callback): Either
     {
@@ -213,10 +220,11 @@ abstract class Either
      * => Left('error')
      * ```
      *
-     * @psalm-template LO
-     * @psalm-template RO
-     * @psalm-param callable(R): Either<LO, RO> $callback
-     * @psalm-return Either<LO|L, RO>
+     * @template LO
+     * @template RO
+     *
+     * @param callable(R): Either<LO, RO> $callback
+     * @return Either<LO|L, RO>
      */
     public function flatMap(callable $callback): Either
     {
@@ -252,8 +260,9 @@ abstract class Either
      * @template TL
      * @template TR
      * @template TO
-     * @psalm-param callable(): Generator<int, Either<TL, mixed>, TR, TO> $computation
-     * @psalm-return Either<TL, TO>
+     *
+     * @param callable(): Generator<int, Either<TL, mixed>, TR, TO> $computation
+     * @return Either<TL, TO>
      */
     public static function do(callable $computation): Either {
         $generator = $computation();
@@ -287,16 +296,17 @@ abstract class Either
      * => Left(Exception('handled and converted to Left'))
      * ```
      *
-     * @psalm-template TRI
-     * @psalm-param callable(): TRI $callback
-     * @psalm-return Either<Throwable, TRI>
+     * @template TRI
+     *
+     * @param callable(): TRI $callback
+     * @return Either<Throwable, TRI>
      */
     public static function try(callable $callback): Either
     {
         try {
-            return Right::of($callback());
+            return Either::right($callback());
         } catch (Throwable $exception) {
-            return Left::of($exception);
+            return Either::left($exception);
         }
     }
 
@@ -311,12 +321,12 @@ abstract class Either
      * => None
      * ```
      *
-     * @psalm-return Option<R>
+     * @return Option<R>
      */
     public function toOption(): Option
     {
         return $this->isRight()
-            ? Option::some($this->value)
+            ? Option::some($this->get())
             : Option::none();
     }
 
@@ -331,7 +341,7 @@ abstract class Either
      * => Invalid('error')
      * ```
      *
-     * @psalm-return Validated<L, R>
+     * @return Validated<L, R>
      */
     public function toValidated(): Validated
     {
@@ -387,14 +397,13 @@ abstract class Either
      * => Right(1)
      * ```
      *
-     * @psalm-return Either<R, L>
+     * @return Either<R, L>
      */
     public function swap(): Either
     {
-        return match (true) {
-            ($this instanceof Right) => new Left($this->value),
-            ($this instanceof Left) => new Right($this->value),
-        };
+        return $this->isLeft()
+            ? Either::right($this->get())
+            : Either::left($this->get());
     }
 
     /**
@@ -407,13 +416,14 @@ abstract class Either
      * => Left('error')
      * ```
      *
-     * @psalm-template LI
-     * @psalm-param LI $value
-     * @psalm-return Either<LI, empty>
+     * @template LI
+     *
+     * @param LI $value
+     * @return Either<LI, empty>
      */
     public static function left(mixed $value): Either
     {
-        return Left::of($value);
+        return new Left($value);
     }
 
     /**
@@ -426,13 +436,14 @@ abstract class Either
      * => Right(1)
      * ```
      *
-     * @psalm-template RI
-     * @psalm-param RI $value
-     * @psalm-return Either<empty, RI>
+     * @template RI
+     *
+     * @param RI $value
+     * @return Either<empty, RI>
      */
     public static function right(mixed $value): Either
     {
-        return Right::of($value);
+        return new Right($value);
     }
 
     /**
@@ -446,17 +457,18 @@ abstract class Either
      * => Left('error')
      * ```
      *
-     * @psalm-template LI
-     * @psalm-template RI
-     * @psalm-param LI $left
-     * @psalm-param RI $right
-     * @psalm-return Either<LI, RI>
+     * @template LI
+     * @template RI
+     *
+     * @param LI $left
+     * @param RI $right
+     * @return Either<LI, RI>
      */
     public static function cond(bool $condition, mixed $right, mixed $left): Either
     {
         return $condition
-            ? Right::of($right)
-            : Left::of($left);
+            ? Either::right($right)
+            : Either::left($left);
     }
 
     /**
@@ -473,17 +485,18 @@ abstract class Either
      * Create {@see Right} from callable return value if given condition is true
      * Create {@see Left} from callable return value if given condition is false
      *
-     * @psalm-template LI
-     * @psalm-template RI
-     * @psalm-param callable(): LI $left
-     * @psalm-param callable(): RI $right
-     * @psalm-return Either<LI, RI>
+     * @template LI
+     * @template RI
+     *
+     * @param callable(): LI $left
+     * @param callable(): RI $right
+     * @return Either<LI, RI>
      */
     public static function condLazy(bool $condition, callable $right, callable $left): Either
     {
         return $condition
-            ? Right::of($right())
-            : Left::of($left());
+            ? Either::right($right())
+            : Either::left($left());
     }
 
     /**
@@ -494,7 +507,7 @@ abstract class Either
      * => 1
      * ```
      *
-     * @psalm-return L|R
+     * @return L|R
      */
     abstract public function get(): mixed;
 

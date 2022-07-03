@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Streams;
 
+use Fp\Collections\Collection;
+use Fp\Collections\NonEmptyCollection;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 
@@ -22,8 +24,9 @@ interface StreamChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return Stream<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return Stream<TV|TVI>
      */
     public function appended(mixed $elem): Stream;
 
@@ -36,8 +39,9 @@ interface StreamChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return Stream<TV|TVI>
+     *
+     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $suffix
+     * @return Stream<TV|TVI>
      */
     public function appendedAll(iterable $suffix): Stream;
 
@@ -50,8 +54,9 @@ interface StreamChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return Stream<TV|TVI>
+     *
+     * @param TVI $elem
+     * @return Stream<TV|TVI>
      */
     public function prepended(mixed $elem): Stream;
 
@@ -64,8 +69,9 @@ interface StreamChainableOps
      * ```
      *
      * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return Stream<TV|TVI>
+     *
+     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $prefix
+     * @return Stream<TV|TVI>
      */
     public function prependedAll(iterable $prefix): Stream;
 
@@ -79,8 +85,8 @@ interface StreamChainableOps
      * => [2]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Stream<TV>
+     * @param callable(TV): bool $predicate
+     * @return Stream<TV>
      */
     public function filter(callable $predicate): Stream;
 
@@ -92,7 +98,7 @@ interface StreamChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-return Stream<TV>
+     * @return Stream<TV>
      */
     public function filterNotNull(): Stream;
 
@@ -104,10 +110,11 @@ interface StreamChainableOps
      * => [Foo(2)]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Stream<TVO>
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Stream<TVO>
      */
     public function filterOf(string $fqcn, bool $invariant = false): Stream;
 
@@ -124,9 +131,10 @@ interface StreamChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return Stream<TVO>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Stream<TVO>
      */
     public function filterMap(callable $callback): Stream;
 
@@ -138,9 +146,10 @@ interface StreamChainableOps
      * => [1, 2, 3, 4, 5, 6]
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return Stream<TVO>
+     * @template TVO
+     *
+     * @param callable(TV): (NonEmptyCollection<TVO> | Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @return Stream<TVO>
      */
     public function flatMap(callable $callback): Stream;
 
@@ -154,8 +163,9 @@ interface StreamChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return Stream<TVO>
+     *
+     * @param callable(TV): TVO $callback
+     * @return Stream<TVO>
      */
     public function map(callable $callback): Stream;
 
@@ -184,7 +194,7 @@ interface StreamChainableOps
      * => [2, 3]
      * ```
      *
-     * @psalm-return Stream<TV>
+     * @return Stream<TV>
      */
     public function tail(): Stream;
 
@@ -196,8 +206,8 @@ interface StreamChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Stream<TV>
+     * @param callable(TV): bool $predicate
+     * @return Stream<TV>
      */
     public function takeWhile(callable $predicate): Stream;
 
@@ -209,8 +219,8 @@ interface StreamChainableOps
      * => [3]
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Stream<TV>
+     * @param callable(TV): bool $predicate
+     * @return Stream<TV>
      */
     public function dropWhile(callable $predicate): Stream;
 
@@ -222,7 +232,7 @@ interface StreamChainableOps
      * => [1, 2]
      * ```
      *
-     * @psalm-return Stream<TV>
+     * @return Stream<TV>
      */
     public function take(int $length): Stream;
 
@@ -234,7 +244,7 @@ interface StreamChainableOps
      * => [3]
      * ```
      *
-     * @psalm-return Stream<TV>
+     * @return Stream<TV>
      */
     public function drop(int $length): Stream;
 
@@ -250,7 +260,7 @@ interface StreamChainableOps
      * ```
      *
      * @param callable(TV): void $callback
-     * @psalm-return Stream<TV>
+     * @return Stream<TV>
      */
     public function tap(callable $callback): Stream;
 
@@ -263,8 +273,9 @@ interface StreamChainableOps
      * ```
      *
      * @template TVI
+     *
      * @param TVI $separator
-     * @psalm-return Stream<TV|TVI>
+     * @return Stream<TV|TVI>
      */
     public function intersperse(mixed $separator): Stream;
 
@@ -277,7 +288,7 @@ interface StreamChainableOps
      * 2
      * ```
      *
-     * @psalm-return Stream<TV>
+     * @return Stream<TV>
      */
     public function lines(): Stream;
 
@@ -290,7 +301,8 @@ interface StreamChainableOps
      * ```
      *
      * @template TVI
-     * @param iterable<TVI> $that
+     *
+     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $that
      * @return Stream<array{TV, TVI}>
      */
     public function zip(iterable $that): Stream;
@@ -304,7 +316,8 @@ interface StreamChainableOps
      * ```
      *
      * @template TVI
-     * @param iterable<TVI> $that
+     *
+     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $that
      * @return Stream<TV|TVI>
      */
     public function interleave(iterable $that): Stream;
@@ -336,6 +349,7 @@ interface StreamChainableOps
      * ```
      *
      * @template D
+     *
      * @param callable(TV): D $discriminator
      * @return Stream<array{D, Seq<TV>}>
      */
@@ -352,8 +366,8 @@ interface StreamChainableOps
      * => [3, 2, 1]
      * ```
      *
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return Stream<TV>
+     * @param callable(TV, TV): int $cmp
+     * @return Stream<TV>
      */
     public function sorted(callable $cmp): Stream;
 }

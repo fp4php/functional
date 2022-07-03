@@ -33,6 +33,7 @@ use function Fp\objectOf;
  *
  * @template-covariant A
  * @psalm-yield A
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 abstract class Option
@@ -116,14 +117,15 @@ abstract class Option
      * => Some('2')
      * ```
      *
-     * @psalm-template B
+     * @template B
+     *
      * @param callable(A): (B) $callback
-     * @psalm-return Option<B>
+     * @return Option<B>
      */
     public function map(callable $callback): Option
     {
         return $this->isSome()
-            ? self::some($callback($this->value))
+            ? self::some($callback($this->get()))
             : self::none();
     }
 
@@ -146,12 +148,12 @@ abstract class Option
      * ```
      *
      * @param callable(A): void $callback
-     * @psalm-return Option<A>
+     * @return Option<A>
      */
     public function tap(callable $callback): Option
     {
         if ($this->isSome()) {
-            $callback($this->value);
+            $callback($this->get());
             return $this;
         } else {
             return self::none();
@@ -177,13 +179,13 @@ abstract class Option
      * ```
      *
      * @template B
+     *
      * @param callable(A): Option<B> $callback
-     * @psalm-return Option<A>
+     * @return Option<A>
      */
     public function flatTap(callable $callback): Option
     {
-        if ($this->isSome() && $callback($this->value)->isSome()) {
-            $callback($this->value);
+        if ($this->isSome() && $callback($this->get())->isSome()) {
             return $this;
         } else {
             return self::none();
@@ -212,7 +214,7 @@ abstract class Option
      */
     public function filter(callable $callback): Option
     {
-        return $this->isSome() && $callback($this->value)
+        return $this->isSome() && $callback($this->get())
             ? $this
             : self::none();
     }
@@ -235,13 +237,14 @@ abstract class Option
      * ```
      *
      * @template AA
+     *
      * @param class-string<AA> $fqcn
      * @return Option<AA>
      */
     public function filterOf(string $fqcn, bool $invariant = false): Option
     {
         /** @var Option<AA> */
-        return $this->isSome() && objectOf($this->value, $fqcn, $invariant)
+        return $this->isSome() && objectOf($this->get(), $fqcn, $invariant)
             ? $this
             : self::none();
     }
@@ -263,14 +266,15 @@ abstract class Option
      * => None
      * ```
      *
-     * @psalm-template B
+     * @template B
+     *
      * @param callable(A): Option<B> $callback
-     * @psalm-return Option<B>
+     * @return Option<B>
      */
     public function flatMap(callable $callback): Option
     {
         return $this->isSome()
-            ? $callback($this->value)
+            ? $callback($this->get())
             : self::none();
     }
 
@@ -300,8 +304,9 @@ abstract class Option
      *
      * @template TS
      * @template TO
-     * @psalm-param callable(): Generator<int, Option<mixed>, TS, TO> $computation
-     * @psalm-return Option<TO>
+     *
+     * @param callable(): Generator<int, Option<mixed>, TS, TO> $computation
+     * @return Option<TO>
      */
     public static function do(callable $computation): Option {
         $generator = $computation();
@@ -338,9 +343,10 @@ abstract class Option
      * => None
      * ```
      *
-     * @psalm-template B
-     * @psalm-param B|null $value
-     * @psalm-return Option<B>
+     * @template B
+     *
+     * @param B|null $value
+     * @return Option<B>
      */
     public static function fromNullable(mixed $value): Option
     {
@@ -362,9 +368,10 @@ abstract class Option
      * => None
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): B $callback
-     * @psalm-return Option<B>
+     * @template B
+     *
+     * @param callable(): B $callback
+     * @return Option<B>
      */
     public static function try(callable $callback): Option
     {
@@ -392,16 +399,17 @@ abstract class Option
      * => 0
      * ```
      *
-     * @psalm-template TOutSome
-     * @psalm-template TOutNone
-     * @psalm-param callable(A): TOutSome $ifSome
-     * @psalm-param callable(): TOutNone $ifNone
-     * @psalm-return TOutSome|TOutNone
+     * @template TOutSome
+     * @template TOutNone
+     *
+     * @param callable(A): TOutSome $ifSome
+     * @param callable(): TOutNone $ifNone
+     * @return TOutSome|TOutNone
      */
     public function fold(callable $ifSome, callable $ifNone): mixed
     {
         return $this->isSome()
-            ? $ifSome($this->value)
+            ? $ifSome($this->get())
             : $ifNone();
     }
 
@@ -417,7 +425,7 @@ abstract class Option
      * => null
      * ```
      *
-     * @psalm-return A|null
+     * @return A|null
      */
     public abstract function get(): mixed;
 
@@ -433,7 +441,7 @@ abstract class Option
      * PHP Error: Trying to get value of None
      * ```
      *
-     * @psalm-return A
+     * @return A
      */
     public function getUnsafe(): mixed
     {
@@ -454,14 +462,15 @@ abstract class Option
      * => 0
      * ```
      *
-     * @psalm-template B
-     * @psalm-param B $fallback
-     * @psalm-return A|B
+     * @template B
+     *
+     * @param B $fallback
+     * @return A|B
      */
     public function getOrElse(mixed $fallback): mixed
     {
         return $this->isSome()
-            ? $this->value
+            ? $this->get()
             : $fallback;
     }
 
@@ -477,14 +486,15 @@ abstract class Option
      * => 0
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): B $fallback
-     * @psalm-return A|B
+     * @template B
+     *
+     * @param callable(): B $fallback
+     * @return A|B
      */
     public function getOrCall(callable $fallback): mixed
     {
         return $this->isSome()
-            ? $this->value
+            ? $this->get()
             : $fallback();
     }
 
@@ -500,13 +510,13 @@ abstract class Option
      * RuntimeException with message '???'
      * ```
      *
-     * @psalm-param callable(): Throwable $fallback
-     * @psalm-return A
+     * @param callable(): Throwable $fallback
+     * @return A
      */
     public function getOrThrow(callable $fallback): mixed
     {
         return $this->isSome()
-            ? $this->value
+            ? $this->get()
             : throw $fallback();
     }
 
@@ -521,9 +531,10 @@ abstract class Option
      * => Some(2)
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): Option<B> $fallback
-     * @psalm-return Option<A|B>
+     * @template B
+     *
+     * @param callable(): Option<B> $fallback
+     * @return Option<A|B>
      */
     public function orElse(callable $fallback): Option
     {
@@ -540,9 +551,10 @@ abstract class Option
      * => Some(1)
      * ```
      *
-     * @psalm-template B
-     * @psalm-param B $value
-     * @psalm-return Option<B>
+     * @template B
+     *
+     * @param B $value
+     * @return Option<B>
      */
     public static function some(mixed $value): Option
     {
@@ -557,7 +569,7 @@ abstract class Option
      * => None
      * ```
      *
-     * @psalm-return Option<empty>
+     * @return Option<empty>
      */
     public static function none(): Option
     {
@@ -578,14 +590,15 @@ abstract class Option
      * => Right(1)
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): B $right
-     * @psalm-return Either<A, B>
+     * @template B
+     *
+     * @param callable(): B $right
+     * @return Either<A, B>
      */
     public function toLeft(callable $right): Either
     {
         return $this->isSome()
-            ? Either::left($this->value)
+            ? Either::left($this->get())
             : Either::right($right());
     }
 
@@ -603,14 +616,15 @@ abstract class Option
      * => Left('error')
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): B $left
-     * @psalm-return Either<B, A>
+     * @template B
+     *
+     * @param callable(): B $left
+     * @return Either<B, A>
      */
     public function toRight(callable $left): Either
     {
         return $this->isSome()
-            ? Either::right($this->value)
+            ? Either::right($this->get())
             : Either::left($left());
     }
 
@@ -627,9 +641,10 @@ abstract class Option
      * => None
      * ```
      *
-     * @psalm-template AI
-     * @psalm-param AI $some
-     * @psalm-return Option<AI>
+     * @template AI
+     *
+     * @param AI $some
+     * @return Option<AI>
      */
     public static function cond(bool $condition, mixed $some): Option
     {
@@ -654,9 +669,10 @@ abstract class Option
      * Create {@see Some} from value if given condition is true
      * Create {@see None} if given condition is false
      *
-     * @psalm-template AI
-     * @psalm-param callable(): AI $some
-     * @psalm-return Option<AI>
+     * @template AI
+     *
+     * @param callable(): AI $some
+     * @return Option<AI>
      */
     public static function condLazy(bool $condition, callable $some): Option
     {
@@ -679,9 +695,10 @@ abstract class Option
      * Create {@see Some} from value if given condition is true
      * Create {@see None} if given condition is false
      *
-     * @psalm-template AI
-     * @psalm-param callable(): AI $callback
-     * @psalm-return Option<AI>
+     * @template AI
+     *
+     * @param callable(): AI $callback
+     * @return Option<AI>
      */
     public static function when(bool $condition, callable $callback): Option
     {
@@ -704,9 +721,10 @@ abstract class Option
      * Create {@see Some} from value if given condition is false
      * Create {@see None} if given condition is true
      *
-     * @psalm-template AI
-     * @psalm-param callable(): AI $callback
-     * @psalm-return Option<AI>
+     * @template AI
+     *
+     * @param callable(): AI $callback
+     * @return Option<AI>
      */
     public static function unless(bool $condition, callable $callback): Option
     {
@@ -728,7 +746,7 @@ abstract class Option
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect($this->isSome() ? [$this->value] : []);
+        return ArrayList::collect($this->isSome() ? [$this->get()] : []);
     }
 
     public function __toString(): string

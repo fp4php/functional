@@ -6,15 +6,14 @@ namespace Fp\Functional\Semigroup;
 
 /**
  * @template TV
- * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<non-empty-list<TV>>
  */
 class NonEmptyListSemigroup extends Semigroup
 {
     /**
-     * @psalm-param non-empty-list<TV> $lhs
-     * @psalm-param non-empty-list<TV> $rhs
-     * @psalm-return non-empty-list<TV>
+     * @param non-empty-list<TV> $lhs
+     * @param non-empty-list<TV> $rhs
+     * @return non-empty-list<TV>
      */
     public function combine(mixed $lhs, mixed $rhs): array
     {

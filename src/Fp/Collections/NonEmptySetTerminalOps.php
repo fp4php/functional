@@ -24,7 +24,7 @@ interface NonEmptySetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param TV $element
+     * @param TV $element
      */
     public function __invoke(mixed $element): bool;
 
@@ -39,7 +39,7 @@ interface NonEmptySetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param TV $element
+     * @param TV $element
      */
     public function contains(mixed $element): bool;
 
@@ -55,7 +55,7 @@ interface NonEmptySetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool;
 
@@ -71,9 +71,10 @@ interface NonEmptySetTerminalOps
      * => false
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool;
 
@@ -144,7 +145,7 @@ interface NonEmptySetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
 
@@ -160,9 +161,10 @@ interface NonEmptySetTerminalOps
      * => false
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool;
 
@@ -175,8 +177,9 @@ interface NonEmptySetTerminalOps
      * ```
      *
      * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
-     * @psalm-return (TV|TA)
+     *
+     * @param callable(TV|TA, TV): (TV|TA) $callback
+     * @return (TV|TA)
      */
     public function reduce(callable $callback): mixed;
 
@@ -204,8 +207,8 @@ interface NonEmptySetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option;
 
@@ -217,8 +220,8 @@ interface NonEmptySetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option;
 
@@ -232,10 +235,11 @@ interface NonEmptySetTerminalOps
      * => Foo(2)
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Option<TVO>
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option;
 
@@ -247,7 +251,7 @@ interface NonEmptySetTerminalOps
      * => 1
      * ```
      *
-     * @psalm-return TV
+     * @return TV
      */
     public function head(): mixed;
 
@@ -260,7 +264,7 @@ interface NonEmptySetTerminalOps
      * => 1
      * ```
      *
-     * @psalm-return TV
+     * @return TV
      */
     public function firstElement(): mixed;
 
@@ -272,7 +276,7 @@ interface NonEmptySetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-return TV
+     * @return TV
      */
     public function lastElement(): mixed;
 }

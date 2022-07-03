@@ -8,13 +8,12 @@ use Fp\Functional\Semigroup\Semigroup;
 
 /**
  * @template A
- * @psalm-suppress InvalidTemplateParam
  * @extends Semigroup<A>
  */
 abstract class Monoid extends Semigroup
 {
     /**
-     * @psalm-return A
+     * @return A
      */
     abstract public function empty(): mixed;
 }
