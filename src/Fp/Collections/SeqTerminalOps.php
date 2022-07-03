@@ -353,16 +353,6 @@ interface SeqTerminalOps
     public function isEmpty(): bool;
 
     /**
-     * Check if collection has no elements
-     *
-     * ```php
-     * >>> LinkedList::collect([])->isNonEmpty();
-     * => false
-     * ```
-     */
-    public function isNonEmpty(): bool;
-
-    /**
      * Displays all elements of this collection in a string
      * using start, end, and separator strings.
      *

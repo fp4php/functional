@@ -294,4 +294,6 @@ interface SetTerminalOps
      * @return Option<TV>
      */
     public function lastElement(): Option;
+
+    public function isEmpty(): bool;
 }

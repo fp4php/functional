@@ -490,16 +490,6 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @psalm-assert-if-true non-empty-list<TV> $this->elements
-     */
-    public function isNonEmpty(): bool
-    {
-        return !$this->isEmpty();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @template TVO
      *
      * @param callable(TV): TVO $callback

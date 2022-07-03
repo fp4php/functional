@@ -272,14 +272,6 @@ abstract class LinkedList implements Seq
 
     /**
      * {@inheritDoc}
-     */
-    public function isNonEmpty(): bool
-    {
-        return $this->isCons();
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
      */

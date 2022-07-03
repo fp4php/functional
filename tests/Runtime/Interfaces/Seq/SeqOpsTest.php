@@ -564,9 +564,7 @@ final class SeqOpsTest extends TestCase
     public function testIsEmpty(Seq $seq1, Seq $seq2): void
     {
         $this->assertFalse($seq1->isEmpty());
-        $this->assertTrue($seq1->isNonEmpty());
         $this->assertTrue($seq2->isEmpty());
-        $this->assertFalse($seq2->isNonEmpty());
     }
 
     public function provideTestTakeAndDropData(): Generator

@@ -100,4 +100,6 @@ interface MapTerminalOps
      * @return TA
      */
     public function fold(mixed $init, callable $callback): mixed;
+
+    public function isEmpty(): bool;
 }

@@ -542,7 +542,7 @@ final class HashSet implements Set
         return $this;
     }
 
-    public function isEmpty():bool
+    public function isEmpty(): bool
     {
         return $this->map->isEmpty();
     }

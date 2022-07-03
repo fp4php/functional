@@ -457,7 +457,7 @@ final class HashMap implements Map
         return ArrayList::collect(ValuesOperation::of($this->getKeyValueIterator())());
     }
 
-    public function isEmpty():bool
+    public function isEmpty(): bool
     {
         return $this->empty;
     }
