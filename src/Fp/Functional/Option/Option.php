@@ -39,38 +39,7 @@ use function Fp\objectOf;
 abstract class Option
 {
     /**
-     * Check if "the box" is empty
-     *
-     * ```php
-     * >>> Option::fromNullable(null)->isEmpty();
-     * => true
-     * ```
-     *
-     * @psalm-assert-if-false Some<A> $this
-     */
-    public function isEmpty(): bool
-    {
-        return $this instanceof None;
-    }
-
-    /**
      * Check if there is something inside the box
-     *
-     * ```php
-     * >>> Option::fromNullable(null)->isNonEmpty();
-     * => false
-     * ```
-     *
-     * @psalm-assert-if-true Some<A> $this
-     */
-    public function isNonEmpty(): bool
-    {
-        return $this instanceof Some;
-    }
-
-    /**
-     * Check if there is something inside the box
-     * Alias for {@see Option::isNonEmpty()}
      *
      * ```php
      * >>> Option::fromNullable(null)->isSome();
@@ -86,7 +55,6 @@ abstract class Option
 
     /**
      * Check if "the box" is empty
-     * Alias for {@see Option::isEmpty()}
      *
      * ```php
      * >>> Option::fromNullable(null)->isNone();

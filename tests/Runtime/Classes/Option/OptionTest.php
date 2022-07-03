@@ -40,9 +40,6 @@ final class OptionTest extends TestCase
 
     public function testIsMethods(): void
     {
-        $this->assertFalse(Option::some(1)->isEmpty());
-        $this->assertTrue(Option::some(1)->isNonEmpty());
-
         $this->assertFalse(Option::some(1)->isNone());
         $this->assertTrue(Option::some(1)->isSome());
     }

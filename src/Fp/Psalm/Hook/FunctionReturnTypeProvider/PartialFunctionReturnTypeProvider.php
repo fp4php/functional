@@ -114,7 +114,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
             $param_type = $param->type ?? Type::getMixed();
             $arg_type = Psalm::getArgUnion($arg, $event->getStatementsSource());
 
-            if ($arg_type->isEmpty()) {
+            if ($arg_type->isNone()) {
                 continue;
             }
 

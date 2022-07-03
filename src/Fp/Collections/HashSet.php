@@ -395,7 +395,7 @@ final class HashSet implements Set
      */
     public function contains(mixed $element): bool
     {
-        return $this->map->get($element)->isNonEmpty();
+        return $this->map->get($element)->isSome();
     }
 
     /**
