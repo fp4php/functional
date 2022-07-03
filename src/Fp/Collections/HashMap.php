@@ -33,11 +33,10 @@ use function Fp\Evidence\proveNonEmptyList;
  * @template TK
  * @template-covariant TV
  * @implements Map<TK, TV>
- * @implements StaticStorage<empty>
  *
  * @psalm-suppress InvalidTemplateParam
  */
-final class HashMap implements Map, StaticStorage
+final class HashMap implements Map
 {
     private bool $empty;
 
