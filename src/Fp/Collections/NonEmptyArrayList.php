@@ -53,7 +53,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVI
      *
      * @param iterable<TVI> $source
-     * @return Option<self<TVI>>
+     * @return Option<NonEmptyArrayList<TVI>>
      */
     public static function collect(iterable $source): Option
     {
@@ -68,7 +68,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVI
      *
      * @param iterable<TVI> $source
-     * @return self<TVI>
+     * @return NonEmptyArrayList<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptyArrayList
     {
@@ -81,7 +81,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVI
      *
      * @param non-empty-array<array-key, TVI> | NonEmptyCollection<TVI> $source
-     * @return self<TVI>
+     * @return NonEmptyArrayList<TVI>
      */
     public static function collectNonEmpty(array|NonEmptyCollection $source): NonEmptyArrayList
     {
@@ -189,11 +189,11 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
-     * @return self<TV>
+     * @return NonEmptyArrayList<TV>
      */
     public function reverse(): NonEmptyArrayList
     {
-        return new self($this->arrayList->reverse());
+        return new NonEmptyArrayList($this->arrayList->reverse());
     }
 
     /**
@@ -244,7 +244,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVO
      *
      * @param callable(TV): TVO $callback
-     * @return self<TVO>
+     * @return NonEmptyArrayList<TVO>
      */
     public function map(callable $callback): NonEmptyArrayList
     {
@@ -257,7 +257,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVO
      *
      * @param callable(int, TV): TVO $callback
-     * @return self<TVO>
+     * @return NonEmptyArrayList<TVO>
      */
     public function mapKV(callable $callback): NonEmptyArrayList
     {
@@ -270,7 +270,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVI
      *
      * @param TVI $elem
-     * @return self<TV|TVI>
+     * @return NonEmptyArrayList<TV|TVI>
      */
     public function appended(mixed $elem): NonEmptyArrayList
     {
@@ -283,7 +283,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVI
      *
      * @param iterable<TVI> $suffix
-     * @return self<TV|TVI>
+     * @return NonEmptyArrayList<TV|TVI>
      */
     public function appendedAll(iterable $suffix): NonEmptyArrayList
     {
@@ -296,7 +296,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVI
      *
      * @param TVI $elem
-     * @return self<TV|TVI>
+     * @return NonEmptyArrayList<TV|TVI>
      */
     public function prepended(mixed $elem): NonEmptyArrayList
     {
@@ -309,7 +309,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVI
      *
      * @param iterable<TVI> $prefix
-     * @return self<TV|TVI>
+     * @return NonEmptyArrayList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): NonEmptyArrayList
     {
@@ -320,7 +320,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @param callable(TV): void $callback
-     * @return self<TV>
+     * @return NonEmptyArrayList<TV>
      */
     public function tap(callable $callback): NonEmptyArrayList
     {
@@ -345,7 +345,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @param callable(TV, TV): int $cmp
-     * @return self<TV>
+     * @return NonEmptyArrayList<TV>
      */
     public function sorted(callable $cmp): NonEmptyArrayList
     {
@@ -401,7 +401,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TVO>>
+     * @return Option<NonEmptyArrayList<TVO>>
      */
     public function traverseOption(callable $callback): Option
     {

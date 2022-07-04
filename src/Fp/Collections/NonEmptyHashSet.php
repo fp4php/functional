@@ -438,7 +438,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function updated(mixed $element): NonEmptyHashSet
     {
-        return new self($this->set->updated($element));
+        return new NonEmptyHashSet($this->set->updated($element));
     }
 
     /**

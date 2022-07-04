@@ -10,10 +10,10 @@ namespace Fp\Collections;
  */
 final class Nil extends LinkedList
 {
-    private static ?self $instance = null;
+    private static ?Nil $instance = null;
 
-    public static function getInstance(): self
+    public static function getInstance(): Nil
     {
-        return is_null(self::$instance) ? self::$instance = new self() : self::$instance;
+        return is_null(self::$instance) ? self::$instance = new Nil() : self::$instance;
     }
 }

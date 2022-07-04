@@ -20,9 +20,9 @@ interface MapCollector
      * @template TVI
      *
      * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return Map<TKI, TVI>
      */
-    public static function collect(iterable $source): self;
+    public static function collect(iterable $source): Map;
 
     /**
      * ```php
@@ -34,7 +34,7 @@ interface MapCollector
      * @template TVI
      *
      * @param iterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     * @return Map<TKI, TVI>
      */
-    public static function collectPairs(iterable $source): self;
+    public static function collectPairs(iterable $source): Map;
 }

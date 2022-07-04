@@ -22,7 +22,7 @@ interface NonEmptyMapCollector
      * @template TVI
      *
      * @param iterable<TKI, TVI> $source
-     * @return Option<self<TKI, TVI>>
+     * @return Option<NonEmptyMap<TKI, TVI>>
      */
     public static function collect(iterable $source): Option;
 
@@ -36,9 +36,9 @@ interface NonEmptyMapCollector
      * @template TVI
      *
      * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyMap<TKI, TVI>
      */
-    public static function collectUnsafe(iterable $source): self;
+    public static function collectUnsafe(iterable $source): NonEmptyMap;
 
     /**
      * ```php
@@ -50,9 +50,9 @@ interface NonEmptyMapCollector
      * @template TVI
      *
      * @param non-empty-array<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyMap<TKI, TVI>
      */
-    public static function collectNonEmpty(array $source): self;
+    public static function collectNonEmpty(array $source): NonEmptyMap;
 
     /**
      * ```php
@@ -64,7 +64,7 @@ interface NonEmptyMapCollector
      * @template TVI
      *
      * @param iterable<array{TKI, TVI}> $source
-     * @return Option<self<TKI, TVI>>
+     * @return Option<NonEmptyMap<TKI, TVI>>
      */
     public static function collectPairs(iterable $source): Option;
 
@@ -78,9 +78,9 @@ interface NonEmptyMapCollector
      * @template TVI
      *
      * @param iterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyMap<TKI, TVI>
      */
-    public static function collectPairsUnsafe(iterable $source): self;
+    public static function collectPairsUnsafe(iterable $source): NonEmptyMap;
 
     /**
      * ```php
@@ -92,7 +92,7 @@ interface NonEmptyMapCollector
      * @template TVI
      *
      * @param non-empty-array<array-key, array{TKI, TVI}> | NonEmptyCollection<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyMap<TKI, TVI>
      */
-    public static function collectPairsNonEmpty(array|NonEmptyCollection $source): self;
+    public static function collectPairsNonEmpty(array|NonEmptyCollection $source): NonEmptyMap;
 }

@@ -31,9 +31,9 @@ final class LinkedListBuffer
 
     /**
      * @param TV $elem
-     * @return self<TV>
+     * @return LinkedListBuffer<TV>
      */
-    public function append(mixed $elem): self
+    public function append(mixed $elem): LinkedListBuffer
     {
         $appended = new Cons($elem, Nil::getInstance());
 

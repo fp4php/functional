@@ -239,7 +239,7 @@ final class HashSet implements Set
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TVO>>
+     * @return Option<HashSet<TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
@@ -418,54 +418,54 @@ final class HashSet implements Set
      * @template TVI
      *
      * @param TVI $element
-     * @return self<TV|TVI>
+     * @return HashSet<TV|TVI>
      */
-    public function updated(mixed $element): self
+    public function updated(mixed $element): HashSet
     {
-        return new self($this->map->updated($element, $element));
+        return new HashSet($this->map->updated($element, $element));
     }
 
     /**
      * {@inheritDoc}
      *
      * @param TV $element
-     * @return self<TV>
+     * @return HashSet<TV>
      */
-    public function removed(mixed $element): self
+    public function removed(mixed $element): HashSet
     {
-        return new self($this->map->removed($element));
+        return new HashSet($this->map->removed($element));
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return self<TV>
+     * @return HashSet<TV>
      */
-    public function tail(): self
+    public function tail(): HashSet
     {
-        return self::collect(TailOperation::of($this->getIterator())());
+        return HashSet::collect(TailOperation::of($this->getIterator())());
     }
 
     /**
      * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
-     * @return self<TV>
+     * @return HashSet<TV>
      */
-    public function filter(callable $predicate): self
+    public function filter(callable $predicate): HashSet
     {
-        return self::collect(FilterOperation::of($this->getIterator())($predicate));
+        return HashSet::collect(FilterOperation::of($this->getIterator())($predicate));
     }
 
     /**
      * {@inheritDoc}
      *
      * @param callable(int, TV): bool $predicate
-     * @return self<TV>
+     * @return HashSet<TV>
      */
-    public function filterKV(callable $predicate): self
+    public function filterKV(callable $predicate): HashSet
     {
-        return self::collect(FilterWithKeyOperation::of($this->getIterator())($predicate));
+        return HashSet::collect(FilterWithKeyOperation::of($this->getIterator())($predicate));
     }
 
     /**
@@ -475,21 +475,21 @@ final class HashSet implements Set
      *
      * @param class-string<TVO> $fqcn
      * @param bool $invariant
-     * @return self<TVO>
+     * @return HashSet<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): self
+    public function filterOf(string $fqcn, bool $invariant = false): HashSet
     {
-        return self::collect(FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
+        return HashSet::collect(FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return self<TV>
+     * @return HashSet<TV>
      */
-    public function filterNotNull(): self
+    public function filterNotNull(): HashSet
     {
-        return self::collect(FilterNotNullOperation::of($this->getIterator())());
+        return HashSet::collect(FilterNotNullOperation::of($this->getIterator())());
     }
 
     /**
@@ -498,11 +498,11 @@ final class HashSet implements Set
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
-     * @return self<TVO>
+     * @return HashSet<TVO>
      */
-    public function filterMap(callable $callback): self
+    public function filterMap(callable $callback): HashSet
     {
-        return self::collect(FilterMapOperation::of($this->getIterator())($callback));
+        return HashSet::collect(FilterMapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -511,11 +511,11 @@ final class HashSet implements Set
      * @template TVO
      *
      * @param callable(TV): (iterable<TVO>) $callback
-     * @return self<TVO>
+     * @return HashSet<TVO>
      */
-    public function flatMap(callable $callback): self
+    public function flatMap(callable $callback): HashSet
     {
-        return self::collect(FlatMapOperation::of($this->getIterator())($callback));
+        return HashSet::collect(FlatMapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -524,11 +524,11 @@ final class HashSet implements Set
      * @template TVO
      *
      * @param callable(TV): TVO $callback
-     * @return self<TVO>
+     * @return HashSet<TVO>
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): HashSet
     {
-        return self::collect(MapOperation::of($this->getIterator())($callback));
+        return HashSet::collect(MapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -537,20 +537,20 @@ final class HashSet implements Set
      * @template TVO
      *
      * @param callable(int, TV): TVO $callback
-     * @return self<TVO>
+     * @return HashSet<TVO>
      */
-    public function mapKV(callable $callback): self
+    public function mapKV(callable $callback): HashSet
     {
-        return self::collect(MapWithKeyOperation::of($this->getIterator())($callback));
+        return HashSet::collect(MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
      * {@inheritDoc}
      *
      * @param callable(TV): void $callback
-     * @return self<TV>
+     * @return HashSet<TV>
      */
-    public function tap(callable $callback): self
+    public function tap(callable $callback): HashSet
     {
         Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
