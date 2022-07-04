@@ -143,6 +143,20 @@ final class NonEmptySeqOpsTest extends TestCase
         yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([new Foo(1), 1, new Foo(1)])];
     }
 
+    public function provideTestZipData(): Generator
+    {
+        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([0, 1, 2])];
+        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([0, 1, 2])];
+    }
+
+    /**
+     * @dataProvider provideTestZipData
+     */
+    public function testZip(NonEmptySeq $seq): void
+    {
+        $this->assertEquals([[0, 'a'], [1, 'b']], $seq->zip(['a', 'b'])->toList());
+    }
+
     /**
      * @dataProvider provideTestTraverseOptionData
      */

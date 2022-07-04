@@ -28,6 +28,7 @@ use Fp\Operations\PrependedOperation;
 use Fp\Operations\ReduceOperation;
 use Fp\Operations\SortedOperation;
 use Fp\Operations\TapOperation;
+use Fp\Operations\ZipOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
@@ -325,6 +326,19 @@ final class NonEmptyArrayList implements NonEmptySeq
     {
         Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param non-empty-array<TVI> | NonEmptyCollection<TVI> $that
+     * @return NonEmptyArrayList<array{TV, TVI}>
+     */
+    public function zip(iterable $that): NonEmptyArrayList
+    {
+        return NonEmptyArrayList::collectUnsafe(ZipOperation::of($this->getIterator())($that));
     }
 
     /**

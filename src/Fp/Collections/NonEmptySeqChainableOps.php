@@ -295,4 +295,19 @@ interface NonEmptySeqChainableOps
      * @return NonEmptySeq<TV>
      */
     public function tap(callable $callback): NonEmptySeq;
+
+    /**
+     * Deterministically zips elements, terminating when the end of either branch is reached naturally.
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([1, 2, 3])->zip([4, 5, 6, 7]);
+     * => NonEmptyArrayList([1, 4], [2, 5], [3, 6])
+     * ```
+     *
+     * @template TVI
+     *
+     * @param non-empty-array<TVI> | NonEmptyCollection<TVI> $that
+     * @return NonEmptySeq<array{TV, TVI}>
+     */
+    public function zip(iterable $that): NonEmptySeq;
 }
