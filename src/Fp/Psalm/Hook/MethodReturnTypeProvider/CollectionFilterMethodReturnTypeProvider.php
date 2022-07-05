@@ -19,7 +19,6 @@ use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Streams\Stream;
-use Fp\Psalm\Util\Psalm;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
@@ -27,6 +26,7 @@ use Fp\Psalm\Util\TypeRefinement\RefinementResult;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Param;
 use Psalm\Node\Expr\VirtualArrowFunction;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
@@ -48,6 +48,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     {
         return [
             'filter',
+            strtolower('filterKV'),
             strtolower('filterNotNull'),
         ];
     }
@@ -80,7 +81,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
 
             $source          = yield proveOf($event->getSource(), StatementsAnalyzer::class);
             $predicate_arg   = yield self::extractPredicateArg($event);
-            $predicate       = yield Psalm::getArgFunctionLike($predicate_arg);
+            $predicate       = yield proveOf($predicate_arg->value, FunctionLike::class);
             $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
 
             $collection_type_params = 2 === count($template_params)
@@ -88,10 +89,9 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
                 : new CollectionTypeParams(Type::getArrayKey(), $template_params[0]);
 
             $refinement_context = new RefinementContext(
-                refine_for: $event->getFqClasslikeName(),
+                refine_for: $event->getMethodNameLowercase() === 'filterkv' ? 'filterKV' : 'filter',
                 predicate: $predicate,
                 execution_context: $event->getContext(),
-                codebase: $source->getCodebase(),
                 source: $source,
             );
 

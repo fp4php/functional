@@ -26,7 +26,8 @@
         "phpunit/phpunit": "^9",
         "symfony/process": "^5.2",
         "rregeer/phpunit-coverage-check": "^0.3.1",
-        "php-coveralls/php-coveralls": "~2.4.0"
+        "php-coveralls/php-coveralls": "~2.4.0",
+        "fp4php/psalm-toolkit": "^3.0"
     },
     "autoload": {
         "psr-4": {

@@ -6,9 +6,9 @@ namespace Fp\Psalm\Hook\AfterExpressionAnalysis;
 
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\Psalm;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Yield_;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use Psalm\Node\Expr\VirtualFuncCall;
@@ -72,9 +72,10 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
                 }
 
                 $this->proveTrueArgs = Option::some($node)
-                    ->filter(fn($n) => $n instanceof Node\Expr\FuncCall)
-                    ->filter(fn($n) => 'Fp\Evidence\proveTrue' === $n->name->getAttribute('resolvedName'))
-                    ->map(fn($n) => Psalm::getCallArgs($n)->get())
+                    ->filterOf(FuncCall::class)
+                    ->filter(fn(FuncCall $n) => 'Fp\Evidence\proveTrue' === $n->name->getAttribute('resolvedName'))
+                    ->filter(fn(FuncCall $n) => !$n->isFirstClassCallable())
+                    ->map(fn(FuncCall $n) => ArrayList::collect($n->getArgs()))
                     ->get();
             }
         };

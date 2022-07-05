@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Util\TypeRefinement;
 
-use Fp\Collections\Map;
-use Fp\Collections\NonEmptyMap;
+use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
@@ -18,7 +17,6 @@ use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Type\Reconciler;
 use Psalm\Type\Union;
 
-use function Fp\classOf;
 use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
 use function Fp\Collection\second;
@@ -107,19 +105,12 @@ final class RefineByPredicate
      */
     private static function getPredicateKeyArgumentName(RefinementContext $context): Option
     {
-        $refine_for_map = classOf($context->refine_for, Map::class)
-            || classOf($context->refine_for, NonEmptyMap::class);
-
-        $key_arg = $refine_for_map
-            ? first($context->predicate->getParams())
-            : second($context->predicate->getParams());
-
-        return $key_arg
+        return Option::some($context->refine_for)
+            ->filter(fn($refine_for) => 'filterKV' === $context->refine_for)
+            ->flatMap(fn() => first($context->predicate->getParams()))
             ->flatMap(fn($key_param) => proveOf($key_param->var, Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
-            ->map(fn($name) => $refine_for_map
-                ? ('$' . $name . '->key')
-                : ('$' . $name));
+            ->map(fn($name) => '$' . $name);
     }
 
     /**
@@ -129,12 +120,14 @@ final class RefineByPredicate
      */
     private static function getPredicateValueArgumentName(RefinementContext $context): Option
     {
-        return first($context->predicate->getParams())
+        $arg = $context->refine_for === 'filter'
+            ? first($context->predicate->getParams())
+            : second($context->predicate->getParams());
+
+        return $arg
             ->flatMap(fn($value_param) => proveOf($value_param->var, Node\Expr\Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
-            ->map(fn($name) => classOf($context->refine_for, Map::class) || classOf($context->refine_for, NonEmptyMap::class)
-                ? ('$' . $name . '->value')
-                : ('$' . $name));
+            ->map(fn($name) => '$' . $name);
     }
 
     /**
@@ -145,13 +138,10 @@ final class RefineByPredicate
      */
     private static function getPredicateSingleReturn(RefinementContext $context): Option
     {
-        return Option::do(function() use ($context) {
-            $statements = yield Option::fromNullable($context->predicate->getStmts());
-            yield proveTrue(1 === count($statements));
-
-            return yield firstOf($statements, Return_::class)
-                ->flatMap(fn($return_statement) => Option::fromNullable($return_statement->expr));
-        });
+        return Option::fromNullable($context->predicate->getStmts())
+            ->filter(fn($stmts) => 1 === count($stmts))
+            ->flatMap(fn($stmts) => firstOf($stmts, Return_::class))
+            ->flatMap(fn($return) => Option::fromNullable($return->expr));
     }
 
     /**
@@ -176,7 +166,7 @@ final class RefineByPredicate
             conditional: $return_expr,
             this_class_name: $context->execution_context->self,
             source: $context->source,
-            codebase: $context->codebase
+            codebase: PsalmApi::$codebase,
         );
 
         $assertions = [];
@@ -226,7 +216,6 @@ final class RefineByPredicate
                 referenced_var_ids: [self::CONSTANT_ARG_NAME => true],
                 statements_analyzer: $source,
                 template_type_map: $source->getTemplateTypeMap() ?: [],
-                inside_loop: false,
                 code_location: new CodeLocation($source, $return_expr)
             );
 

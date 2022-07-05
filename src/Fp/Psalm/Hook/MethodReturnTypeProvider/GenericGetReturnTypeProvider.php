@@ -6,7 +6,7 @@ namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Closure;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\Psalm;
+use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
@@ -40,8 +40,7 @@ final class GenericGetReturnTypeProvider
             ->flatMap(fn() => self::getMethodVar($stmt))
             ->tap(fn() => self::negateAssertion($ctx, $for_class, $to_negated))
             ->flatMap(fn($called_variable) => at($ctx->vars_in_scope, $called_variable)
-                ->flatMap(fn(Union $union) => Psalm::getUnionSingeAtomic($union))
-                ->filterOf(TGenericObject::class)
+                ->flatMap(fn(Union $union) => PsalmApi::$types->asSingleAtomicOf(TGenericObject::class, $union))
                 ->flatMap($to_return_type))
             ->get();
     }
@@ -59,10 +58,9 @@ final class GenericGetReturnTypeProvider
 
             foreach ($clause->possibilities as $variable => [$possibility]) {
                 $reconciled = at($context->vars_in_scope, $variable)
-                    ->flatMap(fn(Union $from_scope) => Psalm::getUnionSingeAtomic($from_scope))
-                    ->filterOf(TGenericObject::class)
+                    ->flatMap(fn(Union $from_scope) => PsalmApi::$types->asSingleAtomicOf(TGenericObject::class, $from_scope))
                     ->filter(fn(TGenericObject $generic) => $generic->value === $for_class)
-                    ->map(fn(TGenericObject $either) => $to_negated($either, $possibility));
+                    ->map(fn(TGenericObject $generic) => $to_negated($generic, $possibility));
 
                 if ($reconciled->isSome()) {
                     $context->vars_in_scope[$variable] = $reconciled->get();

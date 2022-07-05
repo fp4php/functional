@@ -6,11 +6,12 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\Psalm;
+use Fp\Psalm\Util\GetCollectionTemplate;
+use Fp\PsalmToolkit\Toolkit\CallArg;
+use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
-use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TList;
 use Psalm\Type\Atomic\TLiteralClassString;
@@ -37,14 +38,15 @@ class PartitionOfFunctionReturnTypeProvider implements FunctionReturnTypeProvide
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return Option::do(function () use ($event) {
-            $source = $event->getStatementsSource();
-            $collection_union = yield Psalm::getFirstArgUnion($event);
-            $collection_value_type_param = yield Psalm::getUnionValueTypeParam($collection_union);
+            $collection_union = yield PsalmApi::$args->getCallArgs($event)
+                ->flatMap(fn(ArrayList $args) => $args->head()->map(fn(CallArg $first) => $first->type));
+
+            $collection_value_type_param = yield GetCollectionTemplate::value($collection_union);
 
             $partitions = ArrayList::collect($event->getCallArgs())
                 ->drop(2)
-                ->filterMap(fn(Arg $arg) => Psalm::getArgSingleAtomic($arg, $source))
-                ->filter(fn(Atomic $a) => $a instanceof TLiteralClassString)
+                ->filterMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
+                ->filterMap(fn(Union $arg_type) => PsalmApi::$types->asSingleAtomicOf(TLiteralClassString::class, $arg_type))
                 ->map(fn(TLiteralClassString $cs) => new TNamedObject($cs->value))
                 ->map(fn(TNamedObject $no) => new TList(new Union([$no])))
                 ->appended(new TList($collection_value_type_param))

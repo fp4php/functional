@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Static\Plugin;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\Map;
+use Fp\Collections\HashMap;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptyHashSet;
@@ -30,6 +32,8 @@ final class CollectionFilterPluginStaticTest
      *     Set: Set<1|null|2>,
      *     NonEmptySeq: NonEmptySeq<1|null|2>,
      *     NonEmptySet: NonEmptySet<1|null|2>,
+     *     Map: Map<string, null|int>,
+     *     HashMap: HashMap<string, null|int>,
      *     Stream: Stream<1|null|2>,
      * } $in
      *
@@ -44,6 +48,8 @@ final class CollectionFilterPluginStaticTest
      *     Set: Set<1|2>,
      *     NonEmptySeq: Seq<1|2>,
      *     NonEmptySet: Set<1|2>,
+     *     Map: Map<string, int>,
+     *     HashMap: HashMap<string, int>,
      *     Stream: Stream<1|2>,
      * }
      */
@@ -60,7 +66,52 @@ final class CollectionFilterPluginStaticTest
             'Set' => $in['Set']->filter(fn($e) => null !== $e),
             'NonEmptySeq' => $in['NonEmptySeq']->filter(fn($e) => null !== $e),
             'NonEmptySet' => $in['NonEmptySet']->filter(fn($e) => null !== $e),
+            'Map' => $in['Map']->filter(fn($e) => null !== $e),
+            'HashMap' => $in['HashMap']->filter(fn($e) => null !== $e),
             'Stream' => $in['Stream']->filter(fn($e) => null !== $e),
+        ];
+    }
+
+    /**
+     * @psalm-param array{
+     *     ArrayList: ArrayList<int|null>,
+     *     LinkedList: LinkedList<int|null>,
+     *     NonEmptyArrayList: NonEmptyArrayList<int|null>,
+     *     NonEmptyLinkedList: NonEmptyLinkedList<int|null>,
+     *     Seq: Seq<int|null>,
+     *     NonEmptySeq: NonEmptySeq<int|null>,
+     *     Set: Set<int|null>,
+     *     NonEmptySet: NonEmptySet<int|null>,
+     *     Map: Map<int|string, null|int>,
+     *     HashMap: HashMap<int|string, null|int>
+     * } $in
+     *
+     * @psalm-return array{
+     *     ArrayList: ArrayList<int>,
+     *     LinkedList: LinkedList<int>,
+     *     NonEmptyArrayList: ArrayList<int>,
+     *     NonEmptyLinkedList: LinkedList<int>,
+     *     Seq: Seq<int>,
+     *     NonEmptySeq: Seq<int>,
+     *     Set: Set<int>,
+     *     NonEmptySet: Set<int>,
+     *     Map: Map<string, int>,
+     *     HashMap: HashMap<string, int>,
+     * }
+     */
+    public function testFilterKV(array $in): array
+    {
+        return [
+            'ArrayList' => $in['ArrayList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'LinkedList' => $in['LinkedList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'NonEmptyArrayList' => $in['NonEmptyArrayList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'NonEmptyLinkedList' => $in['NonEmptyLinkedList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'Seq' => $in['Seq']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'NonEmptySeq' => $in['NonEmptySeq']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'Set' => $in['Set']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'NonEmptySet' => $in['NonEmptySet']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
+            'Map' => $in['Map']->filterKV(fn($k, $v) => is_string($k) && null !== $v),
+            'HashMap' => $in['HashMap']->filterKV(fn($k, $v) => is_string($k) && null !== $v),
         ];
     }
 

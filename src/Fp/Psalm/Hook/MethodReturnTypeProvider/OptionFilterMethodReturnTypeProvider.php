@@ -6,10 +6,11 @@ namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
-use Fp\Psalm\Util\Psalm;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
+use PhpParser\Node\Arg;
+use PhpParser\Node\FunctionLike;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
@@ -33,8 +34,8 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
         $return_type = Option::do(function() use ($event) {
             yield proveTrue('filter' === $event->getMethodNameLowercase());
 
-            $call_args = $event->getCallArgs();
-            yield proveTrue(count($call_args) === 1);
+            $predicate = yield first($event->getCallArgs())
+                ->flatMap(fn(Arg $arg) => proveOf($arg->value, FunctionLike::class));
 
             $source = yield proveOf($event->getSource(), StatementsAnalyzer::class);
             $option_type_param = yield first($event->getTemplateTypeParameters() ?? []);
@@ -44,13 +45,10 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
                 val_type: $option_type_param,
             );
 
-            $predicate = yield Psalm::getArgFunctionLike($call_args[0]);
-
             $refinement_context = new RefinementContext(
-                refine_for: $event->getFqClasslikeName(),
+                refine_for: 'filter',
                 predicate: $predicate,
                 execution_context: $event->getContext(),
-                codebase: $source->getCodebase(),
                 source: $source,
             );
 

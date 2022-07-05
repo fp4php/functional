@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\Psalm\Util\Psalm;
+use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use Psalm\CodeLocation;
 use Psalm\Internal\Type\Comparator\CallableTypeComparator;
@@ -43,7 +43,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return head($event->getCallArgs())
-            ->flatMap(fn(Arg $head_arg) => Psalm::getArgUnion($head_arg, $event->getStatementsSource()))
+            ->flatMap(fn(Arg $head_arg) => PsalmApi::$args->getArgType($event, $head_arg))
             ->flatMap(fn(Union $head_arg_type) => head(array_merge(
                 $head_arg_type->getClosureTypes(),
                 $head_arg_type->getCallableTypes(),
@@ -112,7 +112,7 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
             }
 
             $param_type = $param->type ?? Type::getMixed();
-            $arg_type = Psalm::getArgUnion($arg, $event->getStatementsSource());
+            $arg_type = PsalmApi::$args->getArgType($event, $arg);
 
             if ($arg_type->isNone()) {
                 continue;

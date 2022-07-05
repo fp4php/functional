@@ -15,6 +15,7 @@
     </projectFiles>
     <plugins>
         <pluginClass class="Fp\Psalm\FunctionalPlugin"/>
+        <pluginClass class="Fp\PsalmToolkit\Toolkit\Plugin"/>
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
