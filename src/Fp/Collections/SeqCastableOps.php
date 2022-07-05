@@ -37,6 +37,36 @@ interface SeqCastableOps
 
     /**
      * ```php
+     * >>> ArrayList::collect([['fst', 1], ['snd', 2]])->toArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Seq<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> ArrayList::collect([['fst', 1], ['snd', 2]])->toNonEmptyArray();
+     * => Some(['fst' => 1, 'snd' => 2])
+     * >>> ArrayList::collect([])->toNonEmptyArray();
+     * => None
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Seq<array{TKO, TVO}>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyArray(): Option;
+
+    /**
+     * ```php
      * >>> ArrayList::collect([1, 2])->toLinkedList();
      * => LinkedList(1, 2)
      * ```

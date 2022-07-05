@@ -19,6 +19,8 @@ use Fp\Streams\Stream;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
+use function Fp\Cast\asPairs;
+
 final class NonEmptySeqTest extends TestCase
 {
     public function provideToStringData(): Generator
@@ -99,6 +101,28 @@ final class NonEmptySeqTest extends TestCase
     {
         $this->assertEquals(HashMap::collectPairs($expected), $seq->toHashMap());
         $this->assertEquals(NonEmptyHashMap::collectPairsNonEmpty($expected), $seq->toNonEmptyHashMap());
+    }
+
+    public function provideTestCastsToArrayData(): Generator
+    {
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+        yield NonEmptyArrayList::class => [$expected, NonEmptyArrayList::collectNonEmpty(asPairs($expected))];
+        yield NonEmptyLinkedList::class => [$expected, NonEmptyLinkedList::collectNonEmpty(asPairs($expected))];
+    }
+
+    /**
+     * @param array<string, int> $expected
+     * @param NonEmptySeq<array{string, int}> $seq
+     * @dataProvider provideTestCastsToArrayData
+     */
+    public function testCastToArray(array $expected, NonEmptySeq $seq): void
+    {
+        $this->assertEquals($expected, $seq->toArray());
+        $this->assertEquals($expected, $seq->toNonEmptyArray());
     }
 
     /**

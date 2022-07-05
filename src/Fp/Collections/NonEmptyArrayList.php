@@ -32,6 +32,8 @@ use Fp\Operations\ZipOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
+use function Fp\Cast\fromPairs;
+
 /**
  * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
@@ -627,6 +629,38 @@ final class NonEmptyArrayList implements NonEmptySeq
     {
         /** @var non-empty-list<TV> */
         return $this->arrayList->elements;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyArrayList<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array
+    {
+        return fromPairs($this);
+    }
+
+    /**
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([['fst', 1], ['snd', 2]])->toNonEmptyArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyArrayList<array{TKO, TVO}>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array
+    {
+        /** @var non-empty-array<TKO, TVO> */
+        return $this->toArray();
     }
 
     /**

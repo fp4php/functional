@@ -47,6 +47,8 @@ use Fp\Streams\Stream;
 use Iterator;
 
 use function Fp\Cast\asList;
+use function Fp\Cast\fromPairs;
+use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveNonEmptyList;
 
 /**
@@ -138,6 +140,34 @@ abstract class LinkedList implements Seq
     public function toNonEmptyList(): Option
     {
         return proveNonEmptyList($this->toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is LinkedList<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array
+    {
+        return fromPairs($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is LinkedList<array{TKO, TVO}>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyArray(): Option
+    {
+        return proveNonEmptyArray($this->toArray());
     }
 
     /**

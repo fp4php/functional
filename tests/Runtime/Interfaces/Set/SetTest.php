@@ -52,6 +52,11 @@ final class SetTest extends TestCase
         );
 
         $this->assertEquals(
+            Option::none(),
+            HashSet::collect([])->toNonEmptyArray(),
+        );
+
+        $this->assertEquals(
             LinkedList::collect([1, 2, 3]),
             HashSet::collect([1, 2, 3, 3])->toLinkedList(),
         );
@@ -104,6 +109,16 @@ final class SetTest extends TestCase
         $this->assertEquals(
             Option::some(NonEmptyHashMap::collectPairsNonEmpty([['fst', 1], ['snd', 2], ['thd', 3]])),
             HashSet::collect([['fst', 1], ['snd', 2], ['thd', 3]])->toNonEmptyHashMap(),
+        );
+
+        $this->assertEquals(
+            ['fst' => 1, 'snd' => 2, 'thr' => 3],
+            HashSet::collect([['fst', 1], ['snd', 2], ['thr', 3]])->toArray(),
+        );
+
+        $this->assertEquals(
+            Option::some(['fst' => 1, 'snd' => 2, 'thr' => 3]),
+            HashSet::collect([['fst', 1], ['snd', 2], ['thr', 3]])->toNonEmptyArray(),
         );
 
         $this->assertEquals(

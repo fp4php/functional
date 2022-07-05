@@ -35,6 +35,8 @@ use Iterator;
 
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
+use function Fp\Cast\fromPairs;
+use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveNonEmptyList;
 
 /**
@@ -100,6 +102,34 @@ final class HashSet implements Set
     public function toNonEmptyList(): Option
     {
         return proveNonEmptyList($this->toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is HashSet<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array
+    {
+        return fromPairs($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is HashSet<array{TKO, TVO}>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyArray(): Option
+    {
+        return proveNonEmptyArray($this->toArray());
     }
 
     /**

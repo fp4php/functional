@@ -181,6 +181,36 @@ final class NonEmptyHashMap implements NonEmptyMap
 
     /**
      * @inheritDoc
+     *
+     * @return array<TK, TV>
+     * @psalm-return (TK is array-key ? array<TK, TV> : never)
+     */
+    public function toArray(): array
+    {
+        /** @var NonEmptyHashMap<array-key, mixed> $that */
+        $that = $this;
+
+        /** @var array<TK, TV> */
+        return $that->hashMap->toArray();
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @return non-empty-array<TK, TV>
+     * @psalm-return (TK is array-key ? non-empty-array<TK, TV> : never)
+     */
+    public function toNonEmptyArray(): array
+    {
+        /** @var NonEmptyHashMap<array-key, mixed> $that */
+        $that = $this;
+
+        /** @var non-empty-array<TK, TV> */
+        return $that->hashMap->toNonEmptyArray()->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
      * @return LinkedList<array{TK, TV}>
      */
     public function toLinkedList(): LinkedList

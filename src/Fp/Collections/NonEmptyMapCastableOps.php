@@ -34,6 +34,30 @@ interface NonEmptyMapCastableOps
 
     /**
      * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a',  1], ['b', 2]])->toArray();
+     * => ['a' => 1, 'b' => 2]
+     * ```
+     *
+     * @return array<TK, TV>
+     * @psalm-return (TK is array-key ? array<TK, TV> : never)
+     */
+    public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a',  1], ['b', 2]])->toNonEmptyArray();
+     * => Some(['a' => 1, 'b' => 2])
+     * >>> HashMap::collectPairs([])->toNonEmptyArray();
+     * => None
+     * ```
+     *
+     * @return non-empty-array<TK, TV>
+     * @psalm-return (TK is array-key ? non-empty-array<TK, TV> : never)
+     */
+    public function toNonEmptyArray(): array;
+
+    /**
+     * ```php
      * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toLinkedList();
      * => LinkedList(['a', 1], ['b', 2])
      * ```

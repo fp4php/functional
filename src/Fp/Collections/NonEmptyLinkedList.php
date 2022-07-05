@@ -33,6 +33,8 @@ use Fp\Operations\ZipOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
+use function Fp\Cast\fromPairs;
+
 /**
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
@@ -633,6 +635,38 @@ final class NonEmptyLinkedList implements NonEmptySeq
     {
         /** @var non-empty-list<TV> */
         return $this->toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyLinkedList<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array
+    {
+        return fromPairs($this);
+    }
+
+    /**
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([['fst', 1], ['snd', 2]])->toNonEmptyArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyLinkedList<array{TKO, TVO}>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array
+    {
+        /** @var non-empty-array<TKO, TVO> */
+        return $this->toArray();
     }
 
     /**

@@ -26,6 +26,7 @@ use Fp\Streams\Stream;
 use Iterator;
 
 use function Fp\Cast\asNonEmptyList;
+use function Fp\Cast\fromPairs;
 
 /**
  * @template-covariant TV
@@ -118,6 +119,35 @@ final class NonEmptyHashSet implements NonEmptySet
     {
         /** @var non-empty-list */
         return $this->toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array
+    {
+        return fromPairs($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array
+    {
+        /** @var non-empty-array<TKO, TVO> */
+        return $this->toArray();
     }
 
     /**

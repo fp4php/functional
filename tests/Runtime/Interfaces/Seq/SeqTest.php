@@ -19,6 +19,8 @@ use Fp\Streams\Stream;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
+use function Fp\Cast\asPairs;
+
 final class SeqTest extends TestCase
 {
     public function provideToStringData(): Generator
@@ -90,6 +92,30 @@ final class SeqTest extends TestCase
         yield LinkedList::class => [$pairs, LinkedList::collect($pairs), LinkedList::empty()];
     }
 
+    public function provideTestCastsToArrayData(): Generator
+    {
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+        yield ArrayList::class => [$expected, ArrayList::collect(asPairs($expected)), ArrayList::empty()];
+        yield LinkedList::class => [$expected, LinkedList::collect(asPairs($expected)), LinkedList::empty()];
+    }
+
+    /**
+     * @param array<string, int> $expected
+     * @param Seq<array{string, int}> $seq
+     * @param Seq<array{string, int}> $emptySeq
+     * @dataProvider provideTestCastsToArrayData
+     */
+    public function testCastToArray(array $expected, Seq $seq, Seq $emptySeq): void
+    {
+        $this->assertEquals($expected, $seq->toArray());
+        $this->assertEquals(Option::some($expected), $seq->toNonEmptyArray());
+        $this->assertEquals(Option::none(), $emptySeq->toNonEmptyArray());
+    }
+
     /**
      * @param list<array{string, int}> $expected
      * @param Seq<array{string, int}> $seq
@@ -122,6 +148,16 @@ final class SeqTest extends TestCase
         $this->assertEquals(
             [1, 2, 3],
             $seq->toList(),
+        );
+
+        $this->assertEquals(
+            Option::some([1, 2, 3]),
+            $seq->toNonEmptyList(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySeq->toNonEmptyList(),
         );
 
         $this->assertEquals(

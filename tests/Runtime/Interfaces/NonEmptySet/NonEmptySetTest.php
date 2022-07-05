@@ -120,6 +120,16 @@ final class NonEmptySetTest extends TestCase
             ]),
             $set->toNonEmptyHashMap(),
         );
+
+        $this->assertEquals(
+            ['fst' => 1, 'snd' => 2, 'thr' => 3],
+            NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2], ['thr', 3]])->toArray(),
+        );
+
+        $this->assertEquals(
+            ['fst' => 1, 'snd' => 2, 'thr' => 3],
+            NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2], ['thr', 3]])->toNonEmptyArray(),
+        );
     }
 
     /**

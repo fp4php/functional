@@ -43,6 +43,16 @@ final class NonEmptyMapTest extends TestCase
         $expected = [['a', 1], ['b', 2]];
 
         $this->assertEquals(
+            ['a' => 1, 'b' => 2],
+            NonEmptyHashMap::collectPairsNonEmpty($expected)->toArray(),
+        );
+
+        $this->assertEquals(
+            ['a' => 1, 'b' => 2],
+            NonEmptyHashMap::collectPairsNonEmpty($expected)->toNonEmptyArray(),
+        );
+
+        $this->assertEquals(
             $expected,
             NonEmptyHashMap::collectPairsNonEmpty($expected)->toList(),
         );

@@ -34,6 +34,34 @@ interface NonEmptySeqCastableOps
 
     /**
      * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([['fst', 1], ['snd', 2]])->toArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySeq<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([['fst', 1], ['snd', 2]])->toNonEmptyArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySeq<array{TKO, TVO}>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array;
+
+    /**
+     * ```php
      * >>> NonEmptyArrayList::collectNonEmpty([1, 2])->toLinkedList();
      * => LinkedList(1, 2)
      * ```

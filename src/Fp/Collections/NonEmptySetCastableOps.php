@@ -34,6 +34,34 @@ interface NonEmptySetCastableOps
 
     /**
      * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2]])->toArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2]])->toNonEmptyArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array;
+
+    /**
+     * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toLinkedList();
      * => LinkedList(1, 2)
      * ```
