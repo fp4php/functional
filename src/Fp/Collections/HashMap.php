@@ -24,6 +24,7 @@ use Fp\Streams\Stream;
 use Generator;
 use RuntimeException;
 
+use function Fp\Cast\asArray;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
 use function Fp\Evidence\proveNonEmptyArray;
@@ -139,37 +140,32 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
-     * @return (TK is array-key ? array<TK, TV> : never)
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Map<TKO, TVO>
+     *
+     * @return array<TKO, TVO>
      */
     public function toArray(): array
     {
-        $acc = [];
+        /** @var Generator<TKO, TVO> $gen */
+        $gen = $this->getKeyValueIterator();
 
-        foreach ($this->getIterator() as [$key, $val]) {
-            if (is_object($key) || is_array($key)) {
-                // @codeCoverageIgnoreStart
-                throw new RuntimeException('HashMap cannot be represented as array<TK, TV>');
-                // @codeCoverageIgnoreEnd
-            } else {
-                $acc[$key] = $val;
-            }
-        }
-
-        return $acc;
+        return asArray($gen);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return (TK is array-key ? Option<non-empty-array<TK, TV>> : never)
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Map<TKO, TVO>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
      */
     public function toNonEmptyArray(): Option
     {
-        /** @var HashMap<array-key, mixed> $that */
-        $that = $this;
-
-        /** @var Option<non-empty-array<TK, TV>> */
-        return proveNonEmptyArray($that->toArray());
+        return proveNonEmptyArray($this->toArray());
     }
 
     /**

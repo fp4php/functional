@@ -38,8 +38,11 @@ interface NonEmptyMapCastableOps
      * => ['a' => 1, 'b' => 2]
      * ```
      *
-     * @return array<TK, TV>
-     * @psalm-return (TK is array-key ? array<TK, TV> : never)
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TKO, TVO>
+     *
+     * @return array<TKO, TVO>
      */
     public function toArray(): array;
 
@@ -51,8 +54,11 @@ interface NonEmptyMapCastableOps
      * => None
      * ```
      *
-     * @return non-empty-array<TK, TV>
-     * @psalm-return (TK is array-key ? non-empty-array<TK, TV> : never)
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TKO, TVO>
+     *
+     * @return non-empty-array<TKO, TVO>
      */
     public function toNonEmptyArray(): array;
 

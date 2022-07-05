@@ -11,15 +11,6 @@ use Tests\Mock\Foo;
 final class MapStaticTest
 {
     /**
-     * @param Map<Foo, int> $coll
-     * @return never-return
-     */
-    public function testToAssocArrayWithInvalidInput(Map $coll): void
-    {
-        $coll->toArray();
-    }
-
-    /**
      * @param Map<string, int> $coll
      * @return array<string, int>
      */
