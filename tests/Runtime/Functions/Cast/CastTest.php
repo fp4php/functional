@@ -17,6 +17,7 @@ use function Fp\Cast\asNonEmptyArray;
 use function Fp\Cast\asNonEmptyList;
 use function Fp\Cast\asPairs;
 use function Fp\Cast\asPairsGenerator;
+use function Fp\Cast\fromPairs;
 
 final class CastTest extends TestCase
 {
@@ -90,5 +91,6 @@ final class CastTest extends TestCase
     {
         $this->assertEquals([['a', 1], ['b', 2]], asList(asPairsGenerator(['a' => 1, 'b' => 2])));
         $this->assertEquals([['a', 1], ['b', 2]], asPairs(['a' => 1, 'b' => 2]));
+        $this->assertEquals(['a' => 1, 'b' => 2], fromPairs([['a', 1], ['b', 2]]));
     }
 }
