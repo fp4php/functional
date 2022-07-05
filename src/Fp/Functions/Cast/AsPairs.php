@@ -17,14 +17,13 @@ use Generator;
  *
  * @param iterable<TK, TV> $collection
  * @return list<array{TK, TV}>
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-list<array{TK, TV}>
+ *     : list<array{TK, TV}>)
  */
 function asPairs(iterable $collection): array
 {
-    return asList(asGenerator(function () use ($collection) {
-        foreach ($collection as $key => $value) {
-            yield [$key, $value];
-        }
-    }));
+    return asList(asPairsGenerator($collection));
 }
 
 /**
