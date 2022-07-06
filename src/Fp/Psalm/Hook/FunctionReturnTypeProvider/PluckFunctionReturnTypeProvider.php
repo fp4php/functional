@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\PsalmToolkit\Toolkit\CallArg;
@@ -12,27 +11,21 @@ use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
+use Psalm\Storage\ClassLikeStorage;
+use Psalm\Storage\PropertyStorage;
 use Psalm\Type;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
-use ReflectionNamedType;
-use ReflectionProperty;
-use ReflectionUnionType;
 
 use function Fp\Collection\at;
 use function Fp\Collection\firstOf;
 use function Fp\Collection\second;
-use function Fp\Evidence\proveClassString;
-use function Fp\Reflection\getReflectionProperty;
 
 class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionIds(): array
     {
         return [
@@ -40,9 +33,6 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return Option::do(function () use ($event) {
@@ -61,7 +51,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function getTypes(FunctionReturnTypeProviderEvent $event): Option
     {
@@ -70,25 +60,21 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function getTypesForObject(FunctionReturnTypeProviderEvent $event): Option
     {
         return Option::do(function () use ($event) {
-            $fqcn = yield self::getClassName($event);
+            $class = yield self::getClassStorage($event);
             $key = yield self::getKey($event);
 
-            return yield getReflectionProperty($fqcn, $key)->toOption()
-                ->map(fn($reflection) => self::getNamedTypes($reflection))
-                ->flatMap(fn($named_types) => ArrayList::collect($named_types)
-                    ->map(fn(ReflectionNamedType $nt) => $nt->getName())
-                    ->reduce(fn(string $acc, $cur) => $acc . '|' . $cur))
-                ->map(fn($type_string) => Type::parseString($type_string));
+            return yield at($class->properties, $key)
+                ->map(fn(PropertyStorage $property) => $property->type ?? Type::getMixed());
         });
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function getTypesForObjectLikeArray(FunctionReturnTypeProviderEvent $event): Option
     {
@@ -105,9 +91,9 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     }
 
     /**
-     * @psalm-return Option<class-string>
+     * @return Option<ClassLikeStorage>
      */
-    private static function getClassName(FunctionReturnTypeProviderEvent $event): Option
+    private static function getClassStorage(FunctionReturnTypeProviderEvent $event): Option
     {
         return Option::do(function () use ($event) {
             $args = yield PsalmApi::$args->getCallArgs($event);
@@ -116,12 +102,12 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
                 ->map(fn(CallArg $arg) => $arg->type)
                 ->flatMap(fn(Union $type) => GetCollectionTypeParams::value($type))
                 ->flatMap(fn(Union $type) => PsalmApi::$types->asSingleAtomicOf(TNamedObject::class, $type))
-                ->flatMap(fn(TNamedObject $object) => proveClassString($object->value));
+                ->flatMap(fn(TNamedObject $object) => PsalmApi::$classlikes->getStorage($object));
         });
     }
 
     /**
-     * @psalm-return Option<string>
+     * @return Option<string>
      */
     private static function getKey(FunctionReturnTypeProviderEvent $event): Option
     {
@@ -129,22 +115,5 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
             ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
             ->flatMap(fn(Union $key) => firstOf($key->getAtomicTypes(), TLiteralString::class))
             ->map(fn(TLiteralString $literal) => $literal->value);
-    }
-
-    /**
-     * Returns property types by property reflection
-     *
-     * @param ReflectionProperty $property
-     * @return list<ReflectionNamedType>
-     */
-    private static function getNamedTypes(ReflectionProperty $property): array
-    {
-        $type = $property->getType();
-
-        return match (true) {
-            ($type instanceof ReflectionNamedType) => [$type],
-            ($type instanceof ReflectionUnionType) => $type->getTypes(),
-            default => [],
-        };
     }
 }
