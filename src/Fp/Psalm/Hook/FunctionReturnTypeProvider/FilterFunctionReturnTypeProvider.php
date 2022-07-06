@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\Psalm\Util\TypeRefinement\CollectionTypeExtractor;
+use Fp\Psalm\Util\GetCollectionTypeParams;
+use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
-use Fp\Psalm\Util\TypeRefinement\RefinementResult;
 use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
@@ -42,15 +42,16 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
             $call_args = yield PsalmApi::$args->getCallArgs($event);
 
             $collection_type_params = yield $call_args->at(0)
-                ->map(fn(CallArg $arg) => $arg->type)
-                ->flatMap([CollectionTypeExtractor::class, 'extract']);
+                ->flatMap(fn(CallArg $arg) => GetCollectionTypeParams::keyValue($arg->type));
 
             $predicate = yield $call_args->at(1)
                 ->map(fn(CallArg $arg) => $arg->node->value)
                 ->filterOf(FunctionLike::class);
 
             $refinement_context = new RefinementContext(
-                refine_for: $event->getFunctionId() === 'fp\collection\filter' ? 'filter' : 'filterKV',
+                refine_for: $event->getFunctionId() === 'fp\collection\filterkv'
+                    ? RefinementContext::FILTER_KEY_VALUE
+                    : RefinementContext::FILTER_VALUE,
                 predicate: $predicate,
                 execution_context: $event->getContext(),
                 source: $source,
@@ -67,24 +68,24 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         return $reconciled->get();
     }
 
-    private static function arrayType(RefinementResult $result): Union
+    private static function arrayType(CollectionTypeParams $result): Union
     {
         return new Union([
             new TArray([
-                $result->collection_key_type,
-                $result->collection_value_type,
+                $result->key_type,
+                $result->val_type,
             ]),
         ]);
     }
 
-    private static function listType(RefinementResult $result): Union
+    private static function listType(CollectionTypeParams $result): Union
     {
         return new Union([
-            new TList($result->collection_value_type),
+            new TList($result->val_type),
         ]);
     }
 
-    private static function getReturnType(FunctionReturnTypeProviderEvent $event, RefinementResult $result): Union
+    private static function getReturnType(FunctionReturnTypeProviderEvent $event, CollectionTypeParams $result): Union
     {
         return at($event->getCallArgs(), 2)
             ->flatMap(fn(Arg $preserve_keys) => PsalmApi::$args->getArgType($event, $preserve_keys))

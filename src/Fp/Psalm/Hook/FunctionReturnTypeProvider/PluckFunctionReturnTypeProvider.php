@@ -6,7 +6,7 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\GetCollectionTemplate;
+use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
@@ -26,7 +26,6 @@ use function Fp\Collection\at;
 use function Fp\Collection\firstOf;
 use function Fp\Collection\second;
 use function Fp\Evidence\proveClassString;
-use function Fp\Evidence\proveTrue;
 use function Fp\Reflection\getReflectionProperty;
 
 class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
@@ -54,7 +53,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
 
             return new Union([
                 new TArray([
-                    GetCollectionTemplate::key($arg_union)->getOrElse(Type::getArrayKey()),
+                    GetCollectionTypeParams::key($arg_union)->getOrElse(Type::getArrayKey()),
                     $target_union,
                 ])
             ]);
@@ -99,7 +98,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
 
             return yield $args->head()
                 ->map(fn(CallArg $arg) => $arg->type)
-                ->flatMap(fn(Union $type) => GetCollectionTemplate::value($type))
+                ->flatMap(fn(Union $type) => GetCollectionTypeParams::value($type))
                 ->flatMap(fn(Union $type) => PsalmApi::$types->asSingleAtomicOf(TKeyedArray::class, $type))
                 ->flatMap(fn(TKeyedArray $array) => at($array->properties, $key));
         });
@@ -115,7 +114,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
 
             return yield $args->head()
                 ->map(fn(CallArg $arg) => $arg->type)
-                ->flatMap(fn(Union $type) => GetCollectionTemplate::value($type))
+                ->flatMap(fn(Union $type) => GetCollectionTypeParams::value($type))
                 ->flatMap(fn(Union $type) => PsalmApi::$types->asSingleAtomicOf(TNamedObject::class, $type))
                 ->flatMap(fn(TNamedObject $object) => proveClassString($object->value));
         });

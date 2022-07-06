@@ -6,7 +6,7 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\GetCollectionTemplate;
+use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
@@ -41,7 +41,7 @@ class PartitionOfFunctionReturnTypeProvider implements FunctionReturnTypeProvide
             $collection_union = yield PsalmApi::$args->getCallArgs($event)
                 ->flatMap(fn(ArrayList $args) => $args->head()->map(fn(CallArg $first) => $first->type));
 
-            $collection_value_type_param = yield GetCollectionTemplate::value($collection_union);
+            $collection_value_type_param = yield GetCollectionTypeParams::value($collection_union);
 
             $partitions = ArrayList::collect($event->getCallArgs())
                 ->drop(2)

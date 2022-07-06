@@ -46,7 +46,7 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
             );
 
             $refinement_context = new RefinementContext(
-                refine_for: 'filter',
+                refine_for: RefinementContext::FILTER_VALUE,
                 predicate: $predicate,
                 execution_context: $event->getContext(),
                 source: $source,
@@ -55,7 +55,7 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
             $result = RefineByPredicate::for($refinement_context, $collection_type_params);
 
             return new Union([
-                new TGenericObject(Option::class, [$result->collection_value_type]),
+                new TGenericObject(Option::class, [$result->val_type]),
             ]);
         });
 

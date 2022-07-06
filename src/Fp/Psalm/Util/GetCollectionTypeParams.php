@@ -12,7 +12,9 @@ use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TGenericObject;
@@ -22,8 +24,20 @@ use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 use function Fp\classOf;
 
-final class GetCollectionTemplate
+final class GetCollectionTypeParams
 {
+    /**
+     * @return Option<CollectionTypeParams>
+     */
+    public static function keyValue(Union $union): Option
+    {
+        return GetCollectionTypeParams::value($union)
+            ->map(fn($val_type) => new CollectionTypeParams(
+                key_type: GetCollectionTypeParams::key($union)->getOrCall(fn() => Type::getArrayKey()),
+                val_type: $val_type
+            ));
+    }
+
     /**
      * @psalm-return Option<Union>
      */

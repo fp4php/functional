@@ -22,10 +22,8 @@ use function Fp\Collection\firstOf;
 use function Fp\Collection\second;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
-use function Fp\Evidence\proveTrue;
 
 /**
- * @psalm-type CollectionTypeParameters = array{Union, Union}
  * @psalm-type PsalmAssertions = array<string, array<array<int, string>>>
  */
 final class RefineByPredicate
@@ -35,12 +33,10 @@ final class RefineByPredicate
     /**
      * Refine collection type-parameters
      * By predicate expression
-     *
-     * @psalm-return RefinementResult
      */
-    public static function for(RefinementContext $context, CollectionTypeParams $collection_params): RefinementResult
+    public static function for(RefinementContext $context, CollectionTypeParams $collection_params): CollectionTypeParams
     {
-        return new RefinementResult(
+        return new CollectionTypeParams(
             self::forKey($context, $collection_params)->getOrElse($collection_params->key_type),
             self::forValue($context, $collection_params)->getOrElse($collection_params->val_type),
         );
@@ -51,7 +47,7 @@ final class RefineByPredicate
      *
      * @psalm-return Option<Union>
      */
-    public static function forKey(RefinementContext $context, CollectionTypeParams $collection_params): Option
+    private static function forKey(RefinementContext $context, CollectionTypeParams $collection_params): Option
     {
         return Option::do(function() use ($context, $collection_params) {
             $predicate_key_arg_name = yield self::getPredicateKeyArgumentName($context);
@@ -77,7 +73,7 @@ final class RefineByPredicate
      *
      * @psalm-return Option<Union>
      */
-    public static function forValue(RefinementContext $context, CollectionTypeParams $collection_params): Option
+    private static function forValue(RefinementContext $context, CollectionTypeParams $collection_params): Option
     {
         return Option::do(function() use ($context, $collection_params) {
             $predicate_value_arg_name = yield self::getPredicateValueArgumentName($context);
@@ -106,7 +102,7 @@ final class RefineByPredicate
     private static function getPredicateKeyArgumentName(RefinementContext $context): Option
     {
         return Option::some($context->refine_for)
-            ->filter(fn($refine_for) => 'filterKV' === $context->refine_for)
+            ->filter(fn($refine_for) => RefinementContext::FILTER_KEY_VALUE === $context->refine_for)
             ->flatMap(fn() => first($context->predicate->getParams()))
             ->flatMap(fn($key_param) => proveOf($key_param->var, Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
@@ -120,7 +116,7 @@ final class RefineByPredicate
      */
     private static function getPredicateValueArgumentName(RefinementContext $context): Option
     {
-        $arg = $context->refine_for === 'filter'
+        $arg = RefinementContext::FILTER_VALUE === $context->refine_for
             ? first($context->predicate->getParams())
             : second($context->predicate->getParams());
 
@@ -202,24 +198,24 @@ final class RefineByPredicate
         Expr $return_expr
     ): Option
     {
-        return Option::do(function() use ($source, $assertions, $collection_type_param, $return_expr) {
-            yield proveTrue(!empty($assertions));
+        if (empty($assertions)) {
+            return Option::none();
+        }
 
-            // reconcileKeyedTypes takes it by ref
-            $changed_var_ids = [];
+        // reconcileKeyedTypes takes it by ref
+        $changed_var_ids = [];
 
-            $reconciled_types = Reconciler::reconcileKeyedTypes(
-                new_types: $assertions,
-                active_new_types: $assertions,
-                existing_types: [self::CONSTANT_ARG_NAME => $collection_type_param],
-                changed_var_ids: $changed_var_ids,
-                referenced_var_ids: [self::CONSTANT_ARG_NAME => true],
-                statements_analyzer: $source,
-                template_type_map: $source->getTemplateTypeMap() ?: [],
-                code_location: new CodeLocation($source, $return_expr)
-            );
+        $reconciled_types = Reconciler::reconcileKeyedTypes(
+            new_types: $assertions,
+            active_new_types: $assertions,
+            existing_types: [self::CONSTANT_ARG_NAME => $collection_type_param],
+            changed_var_ids: $changed_var_ids,
+            referenced_var_ids: [self::CONSTANT_ARG_NAME => true],
+            statements_analyzer: $source,
+            template_type_map: $source->getTemplateTypeMap() ?: [],
+            code_location: new CodeLocation($source, $return_expr)
+        );
 
-            return yield Option::fromNullable($reconciled_types[self::CONSTANT_ARG_NAME] ?? null);
-        });
+        return Option::fromNullable($reconciled_types[self::CONSTANT_ARG_NAME] ?? null);
     }
 }

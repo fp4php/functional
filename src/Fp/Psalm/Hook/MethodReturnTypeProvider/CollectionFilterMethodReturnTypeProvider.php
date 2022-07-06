@@ -22,7 +22,6 @@ use Fp\Streams\Stream;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
-use Fp\Psalm\Util\TypeRefinement\RefinementResult;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Isset_;
 use PhpParser\Node\Expr\Variable;
@@ -89,7 +88,9 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
                 : new CollectionTypeParams(Type::getArrayKey(), $template_params[0]);
 
             $refinement_context = new RefinementContext(
-                refine_for: $event->getMethodNameLowercase() === 'filterkv' ? 'filterKV' : 'filter',
+                refine_for: $event->getMethodNameLowercase() === 'filterkv'
+                    ? RefinementContext::FILTER_KEY_VALUE
+                    : RefinementContext::FILTER_VALUE,
                 predicate: $predicate,
                 execution_context: $event->getContext(),
                 source: $source,
@@ -139,13 +140,13 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     /**
      * @psalm-return Option<Union>
      */
-    private static function getReturnType(MethodReturnTypeProviderEvent $event, RefinementResult $result): Option
+    private static function getReturnType(MethodReturnTypeProviderEvent $event, CollectionTypeParams $result): Option
     {
         $class_name = str_replace('NonEmpty', '', $event->getFqClasslikeName());
 
         $template_params = classOf($class_name, Map::class) || classOf($class_name, NonEmptyMap::class)
-            ? [$result->collection_key_type, $result->collection_value_type]
-            : [$result->collection_value_type];
+            ? [$result->key_type, $result->val_type]
+            : [$result->val_type];
 
         return Option::some(new Union([
             new TGenericObject($class_name, $template_params),
