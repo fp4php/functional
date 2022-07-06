@@ -41,6 +41,13 @@ function sequenceOption(iterable $collection): Option
  *
  * @param iterable<TK, Either<E, TVI>> $collection
  * @return Either<E, array<TK, TVI>>
+ *
+ * @psalm-return (
+ *    $collection is non-empty-list  ? Either<E, non-empty-list<TVI>>      :
+ *    $collection is list            ? Either<E, list<TVI>>                :
+ *    $collection is non-empty-array ? Either<E, non-empty-array<TK, TVI>> :
+ *    Either<E, array<TK, TVI>>
+ * )
  */
 function sequenceEither(iterable $collection): Either
 {
