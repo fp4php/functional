@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use function Fp\Collection\sequenceOption;
 use function Fp\Collection\traverseOption;
 
-final class TraverseTest extends TestCase
+final class OptionTraverseTest extends TestCase
 {
     public function testTraverse(): void
     {
