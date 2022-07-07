@@ -530,11 +530,12 @@ abstract class LinkedList implements Seq
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return Map<TKO, NonEmptySeq<TV>>
+     * @return Map<TKO, NonEmptyLinkedList<TV>>
      */
     public function groupBy(callable $callback): Map
     {
-        return GroupByOperation::of($this->getIterator())($callback);
+        return GroupByOperation::of($this->getIterator())($callback)
+            ->map(fn(NonEmptySeq $neSeq) => $neSeq->toNonEmptyLinkedList());
     }
 
     /**

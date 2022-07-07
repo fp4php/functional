@@ -473,11 +473,12 @@ final class ArrayList implements Seq
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return Map<TKO, NonEmptySeq<TV>>
+     * @return Map<TKO, NonEmptyArrayList<TV>>
      */
     public function groupBy(callable $callback): Map
     {
-        return Ops\GroupByOperation::of($this->getIterator())($callback);
+        return Ops\GroupByOperation::of($this->getIterator())($callback)
+            ->map(fn(NonEmptySeq $neSeq) => $neSeq->toNonEmptyArrayList());
     }
 
     /**

@@ -595,19 +595,14 @@ final class NonEmptyLinkedList implements NonEmptySeq
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return NonEmptyMap<TKO, NonEmptySeq<TV>>
+     * @return NonEmptyMap<TKO, NonEmptyLinkedList<TV>>
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        $grouped = GroupByOperation::of($this)($callback);
+        $groups = GroupByOperation::of($this)($callback);
 
-        /**
-         * @var NonEmptyMap<TKO, Cons<TV>> $nonEmptyGrouped
-         */
-        $nonEmptyGrouped = new NonEmptyHashMap($grouped);
-
-        return $nonEmptyGrouped
-            ->map(fn($elem) => new NonEmptyLinkedList($elem->head, $elem->tail));
+        return (new NonEmptyHashMap($groups))
+            ->map(fn(NonEmptySeq $elem) => $elem->toNonEmptyLinkedList());
     }
 
     /**
