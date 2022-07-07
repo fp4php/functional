@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Operations\GroupMapOperation;
 
@@ -71,6 +72,6 @@ use Fp\Operations\GroupMapOperation;
 function groupMap(iterable $collection, callable $group, callable $map): array
 {
     return GroupMapOperation::of($collection)($group, $map)
-        ->map(fn(NonEmptyLinkedList $group) => $group->toNonEmptyList())
+        ->map(fn(NonEmptyHashMap $group) => $group->values()->toNonEmptyList())
         ->toArray();
 }

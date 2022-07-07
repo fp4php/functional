@@ -7,6 +7,7 @@ namespace Fp\Operations;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashTable;
 use Fp\Collections\Map;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyLinkedList;
 
 /**
@@ -24,25 +25,28 @@ final class GroupMapOperation extends AbstractOperation
      * @param callable(TV): TKO $group
      * @param callable(TV): TVO $map
      *
-     * @return HashMap<TKO, NonEmptyLinkedList<TVO>>
+     * @return HashMap<TKO, NonEmptyHashMap<TK, TVO>>
      */
     public function __invoke(callable $group, callable $map): Map
     {
-        /** @psalm-var HashTable<TKO, NonEmptyLinkedList<TVO>> $hashTable */
-        $hashTable = new HashTable();
+        /** @psalm-var HashTable<TKO, HashTable<TK, TVO>> $groups */
+        $groups = new HashTable();
 
-        foreach ($this->gen as $value) {
-            $key = $group($value);
-            $new = $map($value);
+        foreach ($this->gen as $key => $value) {
+            $groupKey = $group($value);
+            $mapped = $map($value);
 
-            $hashTable->update(
-                $key,
-                $hashTable->get($key)
-                    ->map(fn(NonEmptyLinkedList $group) => $group->prepended($new))
-                    ->getOrCall(fn() => NonEmptyLinkedList::collectNonEmpty([$new]))
+            $groups->update(
+                $groupKey,
+                $groups->get($groupKey)
+                    ->map(fn(HashTable $group) => $group->update($key, $mapped))
+                    ->getOrCall(fn() => (new HashTable())->update($key, $mapped))
             );
         }
 
-        return new HashMap($hashTable);
+        return (new HashMap($groups))
+            ->map(function(HashTable $ht) {
+                return new NonEmptyHashMap(new HashMap($ht));
+            });
     }
 }
