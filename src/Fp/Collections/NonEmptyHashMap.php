@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\CountOperation;
+use Fp\Operations\GroupByOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
@@ -457,6 +458,19 @@ final class NonEmptyHashMap implements NonEmptyMap
     public function reindexKV(callable $callback): NonEmptyMap
     {
         return NonEmptyHashMap::collectUnsafe(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap(GroupByOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

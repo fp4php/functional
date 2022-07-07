@@ -107,6 +107,18 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
+    public function testGroupBy(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'odd' => NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'trd' => 3]),
+                'even' => NonEmptyHashMap::collectNonEmpty(['snd' => 2]),
+            ]),
+            NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'trd' => 3])
+                ->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd'),
+        );
+    }
+
     public function testKeys(): void
     {
         $hm = NonEmptyHashMap::collectPairsNonEmpty([['a', 22], ['b', 33]]);

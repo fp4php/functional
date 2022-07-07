@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
 use Fp\Operations\FilterWithKeyOperation;
+use Fp\Operations\GroupByOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
@@ -447,6 +448,19 @@ final class HashMap implements Map
     public function reindexKV(callable $callback): Map
     {
         return HashMap::collect(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return HashMap<TKO, NonEmptyHashMap<TK, TV>>
+     */
+    public function groupBy(callable $callback): Map
+    {
+        return GroupByOperation::of($this->getKeyValueIterator())($callback);
     }
 
     /**

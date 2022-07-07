@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Interfaces\Map;
 
 use Fp\Collections\HashMap;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Foo;
@@ -134,6 +135,17 @@ final class MapOpsTest extends TestCase
         $this->assertEquals(
             [['2-22', 22], ['3-33', 33]],
             $hm->reindexKV(fn($k, $v) => "{$k}-{$v}")->toList()
+        );
+    }
+
+    public function testGroupBy(): void
+    {
+        $this->assertEquals(
+            HashMap::collect([
+                'odd' => NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'trd' => 3]),
+                'even' => NonEmptyHashMap::collectNonEmpty(['snd' => 2]),
+            ]),
+            HashMap::collect(['fst' => 1, 'snd' => 2, 'trd' => 3])->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd'),
         );
     }
 

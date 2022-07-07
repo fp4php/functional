@@ -183,6 +183,22 @@ interface MapChainableOps
     public function reindexKV(callable $callback): Map;
 
     /**
+     * Group elements
+     *
+     * ```php
+     * >>> HashMap::collect(['fst' => 1, 'snd' => 2, 'thr' => 3])
+     * >>>     ->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd')
+     * => HashMap('odd' => NonEmptyHashMap('fst' => 1, 'trd' => 3), 'even' => NonEmptyHashMap('snd' => 2))
+     * ```
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return Map<TKO, NonEmptyMap<TK, TV>>
+     */
+    public function groupBy(callable $callback): Map;
+
+    /**
      * Returns sequence of collection keys
      *
      * ```php

@@ -161,6 +161,22 @@ interface NonEmptyMapChainableOps
     public function reindexKV(callable $callback): NonEmptyMap;
 
     /**
+     * Group elements
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'thr' => 3])
+     * >>>     ->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd')
+     * => NonEmptyHashMap('odd' => NonEmptyHashMap('fst' => 1, 'trd' => 3), 'even' => NonEmptyHashMap('snd' => 2))
+     * ```
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyMap<TKO, NonEmptyMap<TK, TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyMap;
+
+    /**
      * Returns sequence of collection keys
      *
      * ```php
