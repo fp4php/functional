@@ -187,6 +187,22 @@ interface NonEmptySetTerminalOps
     public function existsOf(string $fqcn, bool $invariant = false): bool;
 
     /**
+     * Group elements
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 1, 2, 2, 3, 3])
+     * >>>     ->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd')
+     * => NonEmptyHashMap('odd' => NonEmptyHashSet(3, 1), 'even' => NonEmptyHashSet(2))
+     * ```
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyMap<TKO, NonEmptySet<TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyMap;
+
+    /**
      * Reduce multiple elements into one
      *
      * ```php

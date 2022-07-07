@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Operations\CountOperation;
 use Fp\Operations\FilterWithKeyOperation;
+use Fp\Operations\GroupByOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
@@ -338,6 +339,20 @@ final class HashSet implements Set
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
         return ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return Map<TKO, NonEmptyHashSet<TV>>
+     */
+    public function groupBy(callable $callback): Map
+    {
+        return GroupByOperation::of($this->getIterator())($callback)
+            ->map(fn(NonEmptySeq $seq) => $seq->toNonEmptyHashSet());
     }
 
     /**

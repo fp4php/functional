@@ -92,6 +92,18 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertFalse($hs->existsOf(Bar::class));
     }
 
+    public function testGroupBy(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'odd' => NonEmptyHashSet::collectNonEmpty([3, 1]),
+                'even' => NonEmptyHashSet::collectNonEmpty([2]),
+            ]),
+            NonEmptyHashSet::collectNonEmpty([1, 1, 2, 2, 3, 3])
+                ->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd'),
+        );
+    }
+
     public function testFilter(): void
     {
         $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);

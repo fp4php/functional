@@ -6,6 +6,7 @@ namespace Tests\Runtime\Interfaces\Set;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
+use Fp\Collections\NonEmptyHashSet;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
@@ -89,6 +90,17 @@ final class SetOpsTest extends TestCase
 
         $this->assertTrue($hs->existsOf(Foo::class));
         $this->assertFalse($hs->existsOf(Bar::class));
+    }
+
+    public function testGroupBy(): void
+    {
+        $this->assertEquals(
+            HashMap::collect([
+                'odd' => NonEmptyHashSet::collectNonEmpty([3, 1]),
+                'even' => NonEmptyHashSet::collectNonEmpty([2]),
+            ]),
+            HashSet::collect([1, 1, 2, 2, 3, 3])->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd'),
+        );
     }
 
     public function testFilter(): void

@@ -187,6 +187,22 @@ interface SetTerminalOps
     public function existsOf(string $fqcn, bool $invariant = false): bool;
 
     /**
+     * Group elements
+     *
+     * ```php
+     * >>> HashSet::collect([1, 1, 2, 2, 3, 3])
+     * >>>     ->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd')
+     * => HashMap('odd' => NonEmptyHashSet(3, 1), 'even' => NonEmptyHashSet(2))
+     * ```
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return Map<TKO, NonEmptySet<TV>>
+     */
+    public function groupBy(callable $callback): Map;
+
+    /**
      * Fold many elements into one
      *
      * ```php

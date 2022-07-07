@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\CountOperation;
+use Fp\Operations\GroupByOperation;
 use Fp\Operations\MapWithKeyOperation;
 use Fp\Operations\MapOperation;
 use Fp\Operations\ReindexOperation;
@@ -357,6 +358,22 @@ final class NonEmptyHashSet implements NonEmptySet
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
         return ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyMap<TKO, NonEmptyHashSet<TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyMap
+    {
+        $groups = GroupByOperation::of($this->getIterator())($callback);
+
+        return (new NonEmptyHashMap($groups))
+            ->map(fn(NonEmptySeq $seq) => $seq->toNonEmptyHashSet());
     }
 
     /**
