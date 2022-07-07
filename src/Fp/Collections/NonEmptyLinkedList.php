@@ -602,7 +602,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
         $groups = GroupByOperation::of($this)($callback);
 
         return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptySeq $elem) => $elem->toNonEmptyLinkedList());
+            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyLinkedList());
     }
 
     /**

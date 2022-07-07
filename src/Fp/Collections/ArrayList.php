@@ -478,7 +478,7 @@ final class ArrayList implements Seq
     public function groupBy(callable $callback): Map
     {
         return Ops\GroupByOperation::of($this->getIterator())($callback)
-            ->map(fn(NonEmptySeq $neSeq) => $neSeq->toNonEmptyArrayList());
+            ->map(fn(NonEmptyHashMap $neSeq) => $neSeq->values()->toNonEmptyArrayList());
     }
 
     /**

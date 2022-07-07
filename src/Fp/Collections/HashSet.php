@@ -352,7 +352,7 @@ final class HashSet implements Set
     public function groupBy(callable $callback): Map
     {
         return GroupByOperation::of($this->getIterator())($callback)
-            ->map(fn(NonEmptySeq $seq) => $seq->toNonEmptyHashSet());
+            ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());
     }
 
     /**

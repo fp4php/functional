@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Collections\Collection;
-use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Operations\GroupByOperation;
 
 /**
@@ -33,6 +33,6 @@ use Fp\Operations\GroupByOperation;
 function groupBy(iterable $collection, callable $callback): array
 {
     return GroupByOperation::of($collection)($callback)
-        ->map(fn(NonEmptyLinkedList $group) => $group->toNonEmptyList())
+        ->map(fn(NonEmptyHashMap $group) => $group->values()->toNonEmptyList())
         ->toArray();
 }

@@ -535,7 +535,7 @@ abstract class LinkedList implements Seq
     public function groupBy(callable $callback): Map
     {
         return GroupByOperation::of($this->getIterator())($callback)
-            ->map(fn(NonEmptySeq $neSeq) => $neSeq->toNonEmptyLinkedList());
+            ->map(fn(NonEmptyHashMap $neSeq) => $neSeq->values()->toNonEmptyLinkedList());
     }
 
     /**

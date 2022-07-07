@@ -373,7 +373,7 @@ final class NonEmptyHashSet implements NonEmptySet
         $groups = GroupByOperation::of($this->getIterator())($callback);
 
         return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptySeq $seq) => $seq->toNonEmptyHashSet());
+            ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());
     }
 
     /**
