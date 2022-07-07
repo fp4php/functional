@@ -25,20 +25,23 @@ final class GroupByOperation extends AbstractOperation
      */
     public function __invoke(callable $f): Map
     {
-        /** @psalm-var HashTable<TKO, NonEmptyHashMap<TK, TV>> $hashTable */
-        $hashTable = new HashTable();
+        /** @psalm-var HashTable<TKO, HashTable<TK, TV>> $groups */
+        $groups = new HashTable();
 
         foreach ($this->gen as $key => $value) {
             $groupKey = $f($value);
 
-            $hashTable->update(
+            $groups->update(
                 $groupKey,
-                $hashTable->get($groupKey)
-                    ->map(fn(NonEmptyHashMap $group) => $group->updated($key, $value))
-                    ->getOrCall(fn() => NonEmptyHashMap::collectPairsNonEmpty([[$key, $value]]))
+                $groups->get($groupKey)
+                    ->map(fn(HashTable $group) => $group->update($key, $value))
+                    ->getOrCall(fn() => (new HashTable())->update($key, $value))
             );
         }
 
-        return new HashMap($hashTable);
+        return (new HashMap($groups))
+            ->map(function(HashTable $ht) {
+                return new NonEmptyHashMap(new HashMap($ht));
+            });
     }
 }

@@ -43,10 +43,11 @@ final class HashTable
     /**
      * @param TK $key
      * @param TV $value
+     * @return HashTable<TK, TV>
      *
      * @psalm-suppress PropertyTypeCoercion
      */
-    public function update(mixed $key, mixed $value): void
+    public function update(mixed $key, mixed $value): HashTable
     {
         $hash = (string) HashComparator::computeHash($key);
 
@@ -66,6 +67,8 @@ final class HashTable
         if ($replacedPos < 0) {
             $this->table[$hash][] = [$key, $value];
         }
+
+        return $this;
     }
 
     /**
