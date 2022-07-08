@@ -13,8 +13,8 @@ final class GroupMapTest extends TestCase
     {
         $this->assertEquals(
             [
-                10 => [21, 16, 11],
-                20 => [16, 11],
+                10 => [11, 16, 21],
+                20 => [11, 16],
                 30 => [21],
             ],
             groupMap(
