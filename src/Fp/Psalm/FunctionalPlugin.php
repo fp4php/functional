@@ -14,7 +14,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceEitherFunctionReturnTypePro
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceOptionFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherGetReturnTypeProvider;
-use Fp\Psalm\Hook\MethodReturnTypeProvider\MapGetMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\ValidatedGetReturnTypeProvider;
@@ -51,5 +51,7 @@ class FunctionalPlugin implements PluginEntryPointInterface
 
         $register(SequenceOptionFunctionReturnTypeProvider::class);
         $register(SequenceEitherFunctionReturnTypeProvider::class);
+
+        $register(FoldMethodReturnTypeProvider::class);
     }
 }

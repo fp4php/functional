@@ -455,6 +455,17 @@ final class ArrayList implements Seq
     }
 
     /**
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return Folding<TV, TVO>
+     */
+    public function folding(mixed $init): Folding
+    {
+        return new Folding($this->getIterator(), $init);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @template TA
