@@ -4,26 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Operations\CountOperation;
-use Fp\Operations\FilterWithKeyOperation;
-use Fp\Operations\GroupByOperation;
-use Fp\Operations\MapWithKeyOperation;
-use Fp\Operations\MapOperation;
-use Fp\Operations\ReindexOperation;
-use Fp\Operations\ToStringOperation;
-use Fp\Operations\TraverseOptionOperation;
-use Fp\Operations\EveryOperation;
-use Fp\Operations\FilterMapOperation;
-use Fp\Operations\FilterOperation;
-use Fp\Operations\FlatMapOperation;
-use Fp\Operations\FoldOperation;
-use Fp\Operations\KeysOperation;
-use Fp\Operations\ReindexWithKeyOperation;
-use Fp\Functional\Option\Option;
-use Fp\Operations\ValuesOperation;
-use Fp\Streams\Stream;
 use Generator;
-use RuntimeException;
+use Fp\Operations as Ops;
+use Fp\Functional\Option\Option;
+use Fp\Streams\Stream;
 
 use function Fp\Cast\asArray;
 use function Fp\Cast\asGenerator;
@@ -115,7 +99,7 @@ final class HashMap implements Map
      */
     public function count(): int
     {
-        return CountOperation::of($this->getIterator())();
+        return Ops\CountOperation::of($this->getIterator())();
     }
 
     /**
@@ -276,7 +260,7 @@ final class HashMap implements Map
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->getKeyValueIterator())($predicate);
+        return Ops\EveryOperation::of($this->getKeyValueIterator())($predicate);
     }
 
     /**
@@ -289,7 +273,7 @@ final class HashMap implements Map
      */
     public function traverseOption(callable $callback): Option
     {
-        return TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
             ->map(fn($gen) => HashMap::collect($gen));
     }
 
@@ -305,7 +289,7 @@ final class HashMap implements Map
     {
         $iterator = $this->getKeyValueIterator();
 
-        return TraverseOptionOperation::id($iterator)
+        return Ops\TraverseOptionOperation::id($iterator)
             ->map(fn($gen) => HashMap::collect($gen));
     }
 
@@ -320,7 +304,7 @@ final class HashMap implements Map
      */
     public function fold(mixed $init, callable $callback): mixed
     {
-        return FoldOperation::of($this->getKeyValueIterator())($init, $callback);
+        return Ops\FoldOperation::of($this->getKeyValueIterator())($init, $callback);
     }
 
     /**
@@ -357,7 +341,7 @@ final class HashMap implements Map
      */
     public function filter(callable $predicate): self
     {
-        return HashMap::collect(FilterOperation::of($this->getKeyValueIterator())($predicate));
+        return HashMap::collect(Ops\FilterOperation::of($this->getKeyValueIterator())($predicate));
     }
 
     /**
@@ -368,7 +352,7 @@ final class HashMap implements Map
      */
     public function filterKV(callable $predicate): Map
     {
-        return HashMap::collect(FilterWithKeyOperation::of($this->getKeyValueIterator())($predicate));
+        return HashMap::collect(Ops\FilterWithKeyOperation::of($this->getKeyValueIterator())($predicate));
     }
 
     /**
@@ -381,7 +365,7 @@ final class HashMap implements Map
      */
     public function filterMap(callable $callback): self
     {
-        return HashMap::collect(FilterMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\FilterMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -395,7 +379,7 @@ final class HashMap implements Map
      */
     public function flatMap(callable $callback): self
     {
-        return HashMap::collectPairs(FlatMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collectPairs(Ops\FlatMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -408,7 +392,7 @@ final class HashMap implements Map
      */
     public function map(callable $callback): self
     {
-        return HashMap::collect(MapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -421,7 +405,7 @@ final class HashMap implements Map
      */
     public function mapKV(callable $callback): self
     {
-        return HashMap::collect(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -434,7 +418,7 @@ final class HashMap implements Map
      */
     public function reindex(callable $callback): self
     {
-        return HashMap::collect(ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -447,7 +431,7 @@ final class HashMap implements Map
      */
     public function reindexKV(callable $callback): Map
     {
-        return HashMap::collect(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -460,7 +444,7 @@ final class HashMap implements Map
      */
     public function groupBy(callable $callback): Map
     {
-        return GroupByOperation::of($this->getKeyValueIterator())($callback);
+        return Ops\GroupByOperation::of($this->getKeyValueIterator())($callback);
     }
 
     /**
@@ -470,7 +454,7 @@ final class HashMap implements Map
      */
     public function keys(): Seq
     {
-        return ArrayList::collect(KeysOperation::of($this->getKeyValueIterator())());
+        return ArrayList::collect(Ops\KeysOperation::of($this->getKeyValueIterator())());
     }
 
     /**
@@ -480,7 +464,7 @@ final class HashMap implements Map
      */
     public function values(): Seq
     {
-        return ArrayList::collect(ValuesOperation::of($this->getKeyValueIterator())());
+        return ArrayList::collect(Ops\ValuesOperation::of($this->getKeyValueIterator())());
     }
 
     public function isEmpty(): bool
@@ -525,7 +509,7 @@ final class HashMap implements Map
     public function __toString(): string
     {
         return $this
-            ->mapKV(fn($key, $value) => ToStringOperation::of($key) . ' => ' . ToStringOperation::of($value))
+            ->mapKV(fn($key, $value) => Ops\ToStringOperation::of($key) . ' => ' . Ops\ToStringOperation::of($value))
             ->values()
             ->mkString('HashMap(', ', ', ')');
     }

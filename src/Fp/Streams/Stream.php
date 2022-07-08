@@ -15,44 +15,7 @@ use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Unit;
-use Fp\Operations\AppendedAllOperation;
-use Fp\Operations\AppendedOperation;
-use Fp\Operations\ChunksOperation;
-use Fp\Operations\DropOperation;
-use Fp\Operations\DropWhileOperation;
-use Fp\Operations\EveryOfOperation;
-use Fp\Operations\EveryOperation;
-use Fp\Operations\ExistsOfOperation;
-use Fp\Operations\ExistsOperation;
-use Fp\Operations\FilterMapOperation;
-use Fp\Operations\FilterNotNullOperation;
-use Fp\Operations\FilterOfOperation;
-use Fp\Operations\FilterOperation;
-use Fp\Operations\FirstOfOperation;
-use Fp\Operations\FirstOperation;
-use Fp\Operations\FlatMapOperation;
-use Fp\Operations\FoldOperation;
-use Fp\Operations\GroupAdjacentByOperation;
-use Fp\Operations\HeadOperation;
-use Fp\Operations\InterleaveOperation;
-use Fp\Operations\IntersperseOperation;
-use Fp\Operations\LastOperation;
-use Fp\Operations\MapOperation;
-use Fp\Operations\MapWithKeyOperation;
-use Fp\Operations\MkStringOperation;
-use Fp\Operations\PrependedAllOperation;
-use Fp\Operations\PrependedOperation;
-use Fp\Operations\ReduceOperation;
-use Fp\Operations\ReindexOperation;
-use Fp\Operations\ReindexWithKeyOperation;
-use Fp\Operations\RepeatNOperation;
-use Fp\Operations\RepeatOperation;
-use Fp\Operations\SortedOperation;
-use Fp\Operations\TailOperation;
-use Fp\Operations\TakeOperation;
-use Fp\Operations\TakeWhileOperation;
-use Fp\Operations\TapOperation;
-use Fp\Operations\ZipOperation;
+use Fp\Operations as Ops;
 use Generator;
 use IteratorAggregate;
 use LogicException;
@@ -246,7 +209,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function map(callable $callback): Stream
     {
-        return $this->fork(MapOperation::of($this->emitter)($callback));
+        return $this->fork(Ops\MapOperation::of($this->emitter)($callback));
     }
 
     /**
@@ -257,7 +220,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function mapKV(callable $callback): Stream
     {
-        return $this->fork(MapWithKeyOperation::of($this->emitter)($callback));
+        return $this->fork(Ops\MapWithKeyOperation::of($this->emitter)($callback));
     }
 
     /**
@@ -270,7 +233,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function appended(mixed $elem): Stream
     {
-        return $this->fork(AppendedOperation::of($this->emitter)($elem));
+        return $this->fork(Ops\AppendedOperation::of($this->emitter)($elem));
     }
 
     /**
@@ -283,7 +246,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function appendedAll(iterable $suffix): Stream
     {
-        return $this->fork(AppendedAllOperation::of($this->emitter)($suffix));
+        return $this->fork(Ops\AppendedAllOperation::of($this->emitter)($suffix));
     }
 
     /**
@@ -296,7 +259,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function prepended(mixed $elem): Stream
     {
-        return $this->fork(PrependedOperation::of($this->emitter)($elem));
+        return $this->fork(Ops\PrependedOperation::of($this->emitter)($elem));
     }
 
     /**
@@ -309,7 +272,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function prependedAll(iterable $prefix): Stream
     {
-        return $this->fork(PrependedAllOperation::of($this->emitter)($prefix));
+        return $this->fork(Ops\PrependedAllOperation::of($this->emitter)($prefix));
     }
 
     /**
@@ -320,7 +283,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function filter(callable $predicate): Stream
     {
-        return $this->fork(FilterOperation::of($this->emitter)($predicate));
+        return $this->fork(Ops\FilterOperation::of($this->emitter)($predicate));
     }
 
     /**
@@ -333,7 +296,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function filterMap(callable $callback): Stream
     {
-        return $this->fork(FilterMapOperation::of($this->emitter)($callback));
+        return $this->fork(Ops\FilterMapOperation::of($this->emitter)($callback));
     }
 
     /**
@@ -343,7 +306,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function filterNotNull(): Stream
     {
-        return $this->fork(FilterNotNullOperation::of($this->emitter)());
+        return $this->fork(Ops\FilterNotNullOperation::of($this->emitter)());
     }
 
     /**
@@ -357,7 +320,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function filterOf(string $fqcn, bool $invariant = false): Stream
     {
-        return $this->fork(FilterOfOperation::of($this->emitter)($fqcn, $invariant));
+        return $this->fork(Ops\FilterOfOperation::of($this->emitter)($fqcn, $invariant));
     }
 
     /**
@@ -370,7 +333,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function flatMap(callable $callback): Stream
     {
-        return $this->fork(FlatMapOperation::of($this->emitter)($callback));
+        return $this->fork(Ops\FlatMapOperation::of($this->emitter)($callback));
     }
 
     /**
@@ -380,7 +343,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function tail(): Stream
     {
-        return $this->fork(TailOperation::of($this->emitter)());
+        return $this->fork(Ops\TailOperation::of($this->emitter)());
     }
 
     /**
@@ -391,7 +354,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function takeWhile(callable $predicate): Stream
     {
-        return $this->fork(TakeWhileOperation::of($this->emitter)($predicate));
+        return $this->fork(Ops\TakeWhileOperation::of($this->emitter)($predicate));
     }
 
     /**
@@ -402,7 +365,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function dropWhile(callable $predicate): Stream
     {
-        return $this->fork(DropWhileOperation::of($this->emitter)($predicate));
+        return $this->fork(Ops\DropWhileOperation::of($this->emitter)($predicate));
     }
 
     /**
@@ -412,7 +375,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function take(int $length): Stream
     {
-        return $this->fork(TakeOperation::of($this->emitter)($length));
+        return $this->fork(Ops\TakeOperation::of($this->emitter)($length));
     }
 
     /**
@@ -422,7 +385,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function drop(int $length): Stream
     {
-        return $this->fork(DropOperation::of($this->emitter)($length));
+        return $this->fork(Ops\DropOperation::of($this->emitter)($length));
     }
 
     /**
@@ -433,7 +396,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function tap(callable $callback): Stream
     {
-        return $this->fork(TapOperation::of($this->emitter)($callback));
+        return $this->fork(Ops\TapOperation::of($this->emitter)($callback));
     }
 
     /**
@@ -443,7 +406,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function repeat(): Stream
     {
-        return $this->fork(RepeatOperation::of($this->emitter)());
+        return $this->fork(Ops\RepeatOperation::of($this->emitter)());
     }
 
     /**
@@ -453,7 +416,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function repeatN(int $times): Stream
     {
-        return $this->fork(RepeatNOperation::of($this->emitter)($times));
+        return $this->fork(Ops\RepeatNOperation::of($this->emitter)($times));
     }
 
     /**
@@ -466,7 +429,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function intersperse(mixed $separator): Stream
     {
-        return $this->fork(IntersperseOperation::of($this->emitter)($separator));
+        return $this->fork(Ops\IntersperseOperation::of($this->emitter)($separator));
     }
 
     /**
@@ -476,7 +439,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function lines(): Stream
     {
-        return $this->fork(TapOperation::of($this->emitter)(function ($elem) {
+        return $this->fork(Ops\TapOperation::of($this->emitter)(function ($elem) {
             print_r($elem) . PHP_EOL;
         }));
     }
@@ -491,7 +454,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function interleave(iterable $that): Stream
     {
-        return $this->fork(InterleaveOperation::of($this->emitter)($that));
+        return $this->fork(Ops\InterleaveOperation::of($this->emitter)($that));
     }
 
     /**
@@ -504,7 +467,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function zip(iterable $that): Stream
     {
-        return $this->fork(ZipOperation::of($this->emitter)($that));
+        return $this->fork(Ops\ZipOperation::of($this->emitter)($that));
     }
 
     /**
@@ -515,10 +478,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function chunks(int $size): Stream
     {
-        $chunks = ChunksOperation::of($this->emitter)($size);
+        $chunks = Ops\ChunksOperation::of($this->emitter)($size);
 
         return $this->fork(
-            MapOperation::of($chunks)(fn(array $chunk) => new ArrayList($chunk))
+            Ops\MapOperation::of($chunks)(fn(array $chunk) => new ArrayList($chunk))
         );
     }
 
@@ -532,9 +495,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function groupAdjacentBy(callable $discriminator): Stream
     {
-        $adjacent = GroupAdjacentByOperation::of($this->emitter)($discriminator);
+        $adjacent = Ops\GroupAdjacentByOperation::of($this->emitter)($discriminator);
 
-        return $this->fork(MapOperation::of($adjacent)(function (array $pair) {
+        return $this->fork(Ops\MapOperation::of($adjacent)(function (array $pair) {
             $pair[1] = new ArrayList($pair[1]);
             return $pair;
         }));
@@ -548,7 +511,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function sorted(callable $cmp): Stream
     {
-        return $this->fork(SortedOperation::of($this->emitter)($cmp));
+        return $this->fork(Ops\SortedOperation::of($this->emitter)($cmp));
     }
 
     /**
@@ -558,7 +521,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function every(callable $predicate): bool
     {
-        return $this->leaf(EveryOperation::of($this->emitter)($predicate));
+        return $this->leaf(Ops\EveryOperation::of($this->emitter)($predicate));
     }
 
     /**
@@ -571,7 +534,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->leaf(EveryOfOperation::of($this->emitter)($fqcn, $invariant));
+        return $this->leaf(Ops\EveryOfOperation::of($this->emitter)($fqcn, $invariant));
     }
 
     /**
@@ -581,7 +544,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function exists(callable $predicate): bool
     {
-        return $this->leaf(ExistsOperation::of($this->emitter)($predicate));
+        return $this->leaf(Ops\ExistsOperation::of($this->emitter)($predicate));
     }
 
     /**
@@ -594,7 +557,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return $this->leaf(ExistsOfOperation::of($this->emitter)($fqcn, $invariant));
+        return $this->leaf(Ops\ExistsOfOperation::of($this->emitter)($fqcn, $invariant));
     }
 
     /**
@@ -607,7 +570,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function reindex(callable $callback): HashMap
     {
-        return $this->leaf(HashMap::collect(ReindexOperation::of($this->emitter)($callback)));
+        return $this->leaf(HashMap::collect(Ops\ReindexOperation::of($this->emitter)($callback)));
     }
 
     /**
@@ -620,7 +583,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function reindexKV(callable $callback): HashMap
     {
-        return $this->leaf(HashMap::collect(ReindexWithKeyOperation::of($this->emitter)($callback)));
+        return $this->leaf(HashMap::collect(Ops\ReindexWithKeyOperation::of($this->emitter)($callback)));
     }
 
     /**
@@ -631,7 +594,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function first(callable $predicate): Option
     {
-        return $this->leaf(FirstOperation::of($this->emitter)($predicate));
+        return $this->leaf(Ops\FirstOperation::of($this->emitter)($predicate));
     }
 
     /**
@@ -645,7 +608,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        return $this->leaf(FirstOfOperation::of($this->emitter)($fqcn, $invariant));
+        return $this->leaf(Ops\FirstOfOperation::of($this->emitter)($fqcn, $invariant));
     }
 
     /**
@@ -659,7 +622,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function fold(mixed $init, callable $callback): mixed
     {
-        return $this->leaf(FoldOperation::of($this->emitter)($init, $callback));
+        return $this->leaf(Ops\FoldOperation::of($this->emitter)($init, $callback));
     }
 
     /**
@@ -672,7 +635,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function reduce(callable $callback): Option
     {
-        return $this->leaf(ReduceOperation::of($this->emitter)($callback));
+        return $this->leaf(Ops\ReduceOperation::of($this->emitter)($callback));
     }
 
     /**
@@ -682,7 +645,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function head(): Option
     {
-        return $this->leaf(HeadOperation::of($this->emitter)());
+        return $this->leaf(Ops\HeadOperation::of($this->emitter)());
     }
 
     /**
@@ -693,7 +656,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function last(callable $predicate): Option
     {
-        return $this->leaf(LastOperation::of($this->emitter)($predicate));
+        return $this->leaf(Ops\LastOperation::of($this->emitter)($predicate));
     }
 
     /**
@@ -703,7 +666,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function firstElement(): Option
     {
-        return $this->leaf(FirstOperation::of($this->emitter)());
+        return $this->leaf(Ops\FirstOperation::of($this->emitter)());
     }
 
     /**
@@ -713,7 +676,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function lastElement(): Option
     {
-        return $this->leaf(LastOperation::of($this->emitter)());
+        return $this->leaf(Ops\LastOperation::of($this->emitter)());
     }
 
     /**
@@ -721,7 +684,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
-        return $this->leaf(MkStringOperation::of($this->emitter)($start, $sep, $end));
+        return $this->leaf(Ops\MkStringOperation::of($this->emitter)($start, $sep, $end));
     }
 
     /**

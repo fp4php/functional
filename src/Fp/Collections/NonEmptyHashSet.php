@@ -5,24 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Fp\Operations\CountOperation;
-use Fp\Operations\GroupByOperation;
-use Fp\Operations\MapWithKeyOperation;
-use Fp\Operations\MapOperation;
-use Fp\Operations\ReindexOperation;
-use Fp\Operations\ReindexWithKeyOperation;
-use Fp\Operations\ToStringOperation;
-use Fp\Operations\TraverseOptionOperation;
-use Fp\Operations\EveryOfOperation;
-use Fp\Operations\EveryOperation;
-use Fp\Operations\ExistsOfOperation;
-use Fp\Operations\ExistsOperation;
-use Fp\Operations\FirstOfOperation;
-use Fp\Operations\FirstOperation;
-use Fp\Operations\HeadOperation;
-use Fp\Operations\LastOperation;
-use Fp\Operations\ReduceOperation;
-use Fp\Operations\TapOperation;
+use Fp\Operations as Ops;
 use Fp\Streams\Stream;
 use Iterator;
 
@@ -98,7 +81,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function count(): int
     {
-        return CountOperation::of($this->getIterator())();
+        return Ops\CountOperation::of($this->getIterator())();
     }
 
     /**
@@ -118,7 +101,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toNonEmptyList(): array
     {
-        /** @var non-empty-list */
+        /** @var non-empty-list<TV> */
         return $this->toList();
     }
 
@@ -264,7 +247,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->getIterator())($predicate);
+        return Ops\EveryOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -277,7 +260,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function everyOf(string $fqcn, bool $invariant = false): bool
     {
-        return EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -290,7 +273,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function traverseOption(callable $callback): Option
     {
-        return TraverseOptionOperation::of($this->getIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getIterator())($callback)
             ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
     }
 
@@ -304,7 +287,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function sequenceOption(): Option
     {
-        return TraverseOptionOperation::id($this->getIterator())
+        return Ops\TraverseOptionOperation::id($this->getIterator())
             ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
     }
 
@@ -319,7 +302,7 @@ final class NonEmptyHashSet implements NonEmptySet
     public function reindex(callable $callback): NonEmptyHashMap
     {
         return new NonEmptyHashMap(
-            HashMap::collect(ReindexOperation::of($this->getIterator())($callback)),
+            HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback)),
         );
     }
 
@@ -334,7 +317,7 @@ final class NonEmptyHashSet implements NonEmptySet
     public function reindexKV(callable $callback): NonEmptyHashMap
     {
         return new NonEmptyHashMap(
-            HashMap::collect(ReindexWithKeyOperation::of($this->getIterator())($callback)),
+            HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getIterator())($callback)),
         );
     }
 
@@ -344,7 +327,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function exists(callable $predicate): bool
     {
-        return ExistsOperation::of($this->getIterator())($predicate);
+        return Ops\ExistsOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -357,7 +340,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function existsOf(string $fqcn, bool $invariant = false): bool
     {
-        return ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -370,7 +353,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        $groups = GroupByOperation::of($this->getIterator())($callback);
+        $groups = Ops\GroupByOperation::of($this->getIterator())($callback);
 
         return (new NonEmptyHashMap($groups))
             ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());
@@ -384,7 +367,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function first(callable $predicate): Option
     {
-        return FirstOperation::of($this->getIterator())($predicate);
+        return Ops\FirstOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -395,7 +378,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function last(callable $predicate): Option
     {
-        return LastOperation::of($this->getIterator())($predicate);
+        return Ops\LastOperation::of($this->getIterator())($predicate);
     }
 
     /**
@@ -409,7 +392,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function firstOf(string $fqcn, bool $invariant = false): Option
     {
-        return FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
 
     /**
@@ -422,7 +405,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function reduce(callable $callback): mixed
     {
-        return ReduceOperation::of($this->getIterator())($callback)->getUnsafe();
+        return Ops\ReduceOperation::of($this->getIterator())($callback)->getUnsafe();
     }
 
     /**
@@ -432,7 +415,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function head(): mixed
     {
-        return HeadOperation::of($this->getIterator())()->getUnsafe();
+        return Ops\HeadOperation::of($this->getIterator())()->getUnsafe();
     }
 
     /**
@@ -442,7 +425,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function firstElement(): mixed
     {
-        return FirstOperation::of($this->getIterator())()->getUnsafe();
+        return Ops\FirstOperation::of($this->getIterator())()->getUnsafe();
     }
 
     /**
@@ -452,7 +435,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function lastElement(): mixed
     {
-        return LastOperation::of($this->getIterator())()->getUnsafe();
+        return Ops\LastOperation::of($this->getIterator())()->getUnsafe();
     }
 
     /**
@@ -568,7 +551,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function map(callable $callback): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(MapOperation::of($this->getIterator())($callback));
+        return NonEmptyHashSet::collectUnsafe(Ops\MapOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -581,7 +564,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function mapKV(callable $callback): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(MapWithKeyOperation::of($this->getIterator())($callback));
+        return NonEmptyHashSet::collectUnsafe(Ops\MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -605,7 +588,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function tap(callable $callback): NonEmptyHashSet
     {
-        Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
+        Stream::emits(Ops\TapOperation::of($this->getIterator())($callback))->drain();
         return $this;
     }
 
@@ -651,7 +634,7 @@ final class NonEmptyHashSet implements NonEmptySet
     public function __toString(): string
     {
         return $this
-            ->map(fn($value) => ToStringOperation::of($value))
+            ->map(fn($value) => Ops\ToStringOperation::of($value))
             ->toArrayList()
             ->mkString('NonEmptyHashSet(', ', ', ')');
     }

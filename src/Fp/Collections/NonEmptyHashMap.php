@@ -5,17 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Fp\Operations\CountOperation;
-use Fp\Operations\GroupByOperation;
-use Fp\Operations\MapWithKeyOperation;
-use Fp\Operations\MapOperation;
-use Fp\Operations\ReindexOperation;
-use Fp\Operations\ToStringOperation;
-use Fp\Operations\TraverseOptionOperation;
-use Fp\Operations\EveryOperation;
-use Fp\Operations\KeysOperation;
-use Fp\Operations\ReindexWithKeyOperation;
-use Fp\Operations\ValuesOperation;
+use Fp\Operations as Ops;
 use Fp\Streams\Stream;
 use Generator;
 
@@ -158,7 +148,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function count(): int
     {
-        return CountOperation::of($this->getIterator())();
+        return Ops\CountOperation::of($this->getIterator())();
     }
 
     /**
@@ -297,7 +287,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->getKeyValueIterator())($predicate);
+        return Ops\EveryOperation::of($this->getKeyValueIterator())($predicate);
     }
 
     /**
@@ -310,7 +300,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function traverseOption(callable $callback): Option
     {
-        return TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
             ->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
     }
 
@@ -326,7 +316,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     {
         $iterator = $this->getKeyValueIterator();
 
-        return TraverseOptionOperation::id($iterator)
+        return Ops\TraverseOptionOperation::id($iterator)
             ->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
     }
 
@@ -418,7 +408,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function map(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(MapOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -431,7 +421,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function mapKV(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -444,7 +434,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function reindex(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -457,7 +447,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function reindexKV(callable $callback): NonEmptyMap
     {
-        return NonEmptyHashMap::collectUnsafe(ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -470,7 +460,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function groupBy(callable $callback): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(GroupByOperation::of($this->getKeyValueIterator())($callback));
+        return new NonEmptyHashMap(Ops\GroupByOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -479,7 +469,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function keys(): NonEmptySeq
     {
-        return NonEmptyArrayList::collectUnsafe(KeysOperation::of($this->getKeyValueIterator())());
+        return NonEmptyArrayList::collectUnsafe(Ops\KeysOperation::of($this->getKeyValueIterator())());
     }
 
     /**
@@ -488,13 +478,13 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function values(): NonEmptySeq
     {
-        return NonEmptyArrayList::collectUnsafe(ValuesOperation::of($this->getKeyValueIterator())());
+        return NonEmptyArrayList::collectUnsafe(Ops\ValuesOperation::of($this->getKeyValueIterator())());
     }
 
     public function __toString(): string
     {
         return $this
-            ->mapKV(fn($key, $value) => ToStringOperation::of($key) . ' => ' . ToStringOperation::of($value))
+            ->mapKV(fn($key, $value) => Ops\ToStringOperation::of($key) . ' => ' . Ops\ToStringOperation::of($value))
             ->values()
             ->toArrayList()
             ->mkString('NonEmptyHashMap(', ', ', ')');
