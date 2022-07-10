@@ -393,7 +393,7 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals(
             '123',
-            $seq->fold('', fn(string $acc, $e) => $acc . $e)
+            $seq->fold('')(fn($acc, $e) => $acc . $e)
         );
     }
 

@@ -7,9 +7,9 @@ namespace Fp\Collections;
 use ArrayIterator;
 use Fp\Functional\Option\Option;
 use Fp\Operations as Ops;
+use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
 use Iterator;
-
 use function Fp\Cast\fromPairs;
 use function Fp\Collection\at;
 use function Fp\Evidence\proveNonEmptyArray;
@@ -443,26 +443,14 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TA
-     *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
-     */
-    public function fold(mixed $init, callable $callback): mixed
-    {
-        return Ops\FoldOperation::of($this->getIterator())($init, $callback);
-    }
-
-    /**
      * @template TVO
      *
      * @param TVO $init
-     * @return Folding<TV, TVO>
+     * @return FoldingOperation<TV, TVO>
      */
-    public function folding(mixed $init): Folding
+    public function fold(mixed $init): FoldingOperation
     {
-        return new Folding($this->getIterator(), $init);
+        return new FoldingOperation($this->getIterator(), $init);
     }
 
     /**

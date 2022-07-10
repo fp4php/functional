@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Collections;
+namespace Fp\Operations;
 
 use Iterator;
 
@@ -10,7 +10,7 @@ use Iterator;
  * @template A
  * @template TInit
  */
-final class Folding
+final class FoldingOperation
 {
     /**
      * @param Iterator<A> $iterator

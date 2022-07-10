@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
@@ -379,15 +380,14 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TA
+     * @template TVO
      *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
      */
-    public function fold(mixed $init, callable $callback): mixed
+    public function fold(mixed $init): FoldingOperation
     {
-        return Ops\FoldOperation::of($this->getIterator())($init, $callback);
+        return new FoldingOperation($this->getIterator(), $init);
     }
 
     /**

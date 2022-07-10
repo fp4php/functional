@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldingOperation;
 use function Fp\id;
 
 /**
@@ -283,17 +284,16 @@ interface SeqTerminalOps
      * Fold many elements into one
      *
      * ```php
-     * >>> LinkedList::collect(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur);
+     * >>> LinkedList::collect(['1', '2'])->fold('0')(fn($acc, $cur) => $acc . $cur);
      * => '012'
      * ```
      *
-     * @template TA
+     * @template TVO
      *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
      */
-    public function fold(mixed $init, callable $callback): mixed;
+    public function fold(mixed $init): FoldingOperation;
 
     /**
      * Reduce multiple elements into one
