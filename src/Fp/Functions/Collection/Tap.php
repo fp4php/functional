@@ -11,7 +11,7 @@ use Fp\Streams\Stream;
  * Do something for all collection elements
  *
  * ```php
- * >>> forAll([1, 2, 3], function($v) { echo($v); });
+ * >>> tap([1, 2, 3], function($v) { echo($v); });
  * => 123
  * ```
  *
