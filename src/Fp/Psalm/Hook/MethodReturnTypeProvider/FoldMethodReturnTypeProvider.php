@@ -29,6 +29,7 @@ use Psalm\Type\Atomic\TNever;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
+
 use function Fp\Cast\asList;
 use function Fp\Collection\first;
 use function Fp\Collection\map;
@@ -88,7 +89,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             ->tap(function($types) use ($event) {
                 [$TInit, $TFold] = $types;
 
-                // $fold = $integers->fold(ArrayList::empty()) === Folding<int, ArrayList<never>> (second param is IInit)
+                // $fold = $integers->fold(ArrayList::empty()) === FoldingOperation<int, ArrayList<never>> (second param is IInit)
                 // $fold(fn($list, $num) => $list->appended($num + 1));
                 //                                  ^
                 //                                  |
@@ -125,7 +126,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
      */
     private static function removeLiteralsFromTInit(MethodReturnTypeProviderEvent $event): Option
     {
-        // $fold = $integers->fold(0) === Folding<int, 0>
+        // $fold = $integers->fold(0) === FoldingOperation<int, 0>
         // $fold(fn($sum, $num) => $sum + $num);
         //                              ^
         //                              |
@@ -136,7 +137,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
         // The int is not assignable to 0.
         // It also extends to other literal types.
         // Next code maps any literal types to non-literal analog.
-        // Then $integers->fold(0) will be Folding<int, int>
+        // Then $integers->fold(0) will be FoldingOperation<int, int>
         return proveTrue('fold' === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOption([
                 first($event->getTemplateTypeParameters() ?? []),
