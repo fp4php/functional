@@ -21,7 +21,7 @@ use Fp\Streams\Stream;
  * @param iterable<TK, TV> $collection
  * @param callable(TV): void $callback
  */
-function forAll(iterable $collection, callable $callback): void
+function tap(iterable $collection, callable $callback): void
 {
     Stream::emits(TapOperation::of($collection)($callback))->drain();
 }

@@ -61,7 +61,7 @@
             "src/Fp/Functions/Collection/Traverse.php",
             "src/Fp/Functions/Collection/Sequence.php",
             "src/Fp/Functions/Collection/Fold.php",
-            "src/Fp/Functions/Collection/ForAll.php",
+            "src/Fp/Functions/Collection/Tap.php",
             "src/Fp/Functions/Collection/GroupBy.php",
             "src/Fp/Functions/Collection/GroupMap.php",
             "src/Fp/Functions/Collection/GroupMapReduce.php",

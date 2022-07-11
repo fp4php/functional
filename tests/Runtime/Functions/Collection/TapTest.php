@@ -6,16 +6,16 @@ namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
 
-use function Fp\Collection\forAll;
+use function Fp\Collection\tap;
 
-final class FoldAllTest extends TestCase
+final class TapTest extends TestCase
 {
     public function testWithArray(): void
     {
         $c = ['a' => 1, 'b' => 2, 'c' => 3];
         $buffer = [];
 
-        forAll($c, function(int $v) use (&$buffer) {
+        tap($c, function(int $v) use (&$buffer) {
             /** @var list<int> $buffer */
             $buffer[] = $v;
         });
@@ -30,7 +30,7 @@ final class FoldAllTest extends TestCase
 
         $buffer = [];
 
-        forAll($items, function(int $v) use (&$buffer) {
+        tap($items, function(int $v) use (&$buffer) {
             /** @var list<int> $buffer */
             $buffer[] = $v;
         });
