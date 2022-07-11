@@ -23,6 +23,10 @@ use function Fp\Cast\asArray;
  * @param iterable<mixed, TV> $collection
  * @param callable(TV): TKO $callback
  * @return array<TKO, TV>
+ *
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-array<TKO, TV>
+ *     : array<TKO, TV>)
  */
 function reindex(iterable $collection, callable $callback): array
 {
@@ -33,7 +37,7 @@ function reindex(iterable $collection, callable $callback): array
  * Same as {@see reindex()}, but passing also the key to the $callback function.
  *
  * ```php
- * >>> reindex(['a' => 1, 'b' => 2], fn (string $key, int $value) => "{$key}-{$value}");
+ * >>> reindexKV(['a' => 1, 'b' => 2], fn (string $key, int $value) => "{$key}-{$value}");
  * => ['a-1' => 1, 'b-2' => 2]
  * ```
  *
@@ -44,6 +48,10 @@ function reindex(iterable $collection, callable $callback): array
  * @param iterable<TK, TV> $collection
  * @param callable(TK, TV): TKO $callback
  * @return array<TKO, TV>
+ *
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-array<TKO, TV>
+ *     : array<TKO, TV>)
  */
 function reindexKV(iterable $collection, callable $callback): array
 {
