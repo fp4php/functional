@@ -19,6 +19,13 @@ use function Fp\Cast\asArray;
  *
  * @param iterable<TK, TV> $collection
  * @return array<TK, TV>
+ *
+ * @psalm-return (
+ *    $collection is non-empty-list  ? non-empty-list<TV>      :
+ *    $collection is list            ? list<TV>                :
+ *    $collection is non-empty-array ? non-empty-array<TK, TV> :
+ *    array<TK, TV>
+ * )
  */
 function reverse(iterable $collection): array
 {
