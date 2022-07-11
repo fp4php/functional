@@ -16,10 +16,9 @@ use function Fp\Cast\asList;
  * => ['a', 'b']
  * ```
  *
- * @template TK of array-key
- * @template TV
+ * @template TK
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TK, mixed> $collection
  * @return ($collection is non-empty-array ? non-empty-list<TK> : list<TK>)
  */
 function keys(iterable $collection): array
