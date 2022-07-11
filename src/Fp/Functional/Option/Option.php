@@ -592,6 +592,11 @@ abstract class Option
         return ArrayList::collect($this->isSome() ? [$this->get()] : []);
     }
 
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
     public function __toString(): string
     {
         $value = ToStringOperation::of($this->get());

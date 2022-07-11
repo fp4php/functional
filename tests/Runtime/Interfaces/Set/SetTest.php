@@ -32,6 +32,18 @@ final class SetTest extends TestCase
                 Option::none(),
             ]),
         );
+        $this->assertEquals(
+            'HashSet(1, 2, 3)',
+            HashSet::collect([1, 2, 3])->toString(),
+        );
+        $this->assertEquals(
+            'HashSet(Some(1), Some(2), None)',
+            HashSet::collect([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ])->toString(),
+        );
     }
 
     public function testCasts(): void

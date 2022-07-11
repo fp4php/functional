@@ -458,6 +458,11 @@ abstract class Either
      */
     abstract public function get(): mixed;
 
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
     public function __toString(): string
     {
         $value = ToStringOperation::of($this->get());

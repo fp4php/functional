@@ -481,6 +481,11 @@ final class NonEmptyHashMap implements NonEmptyMap
         return NonEmptyArrayList::collectUnsafe(Ops\ValuesOperation::of($this->getKeyValueIterator())());
     }
 
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
     public function __toString(): string
     {
         return $this

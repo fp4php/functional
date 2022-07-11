@@ -630,6 +630,11 @@ final class NonEmptyHashSet implements NonEmptySet
     {
         return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
     }
+    
+    public function toString(): string
+    {
+        return (string) $this;
+    }
 
     public function __toString(): string
     {

@@ -38,6 +38,22 @@ final class MapTest extends TestCase
                 ['k3', Option::none()],
             ]),
         );
+        $this->assertEquals(
+            "HashMap('k1' => 1, 'k2' => 2, 'k3' => 3)",
+            HashMap::collectPairs([
+                ['k1', 1],
+                ['k2', 2],
+                ['k3', 3],
+            ])->toString(),
+        );
+        $this->assertEquals(
+            "HashMap('k1' => Some(1), 'k2' => Some(2), 'k3' => None)",
+            HashMap::collectPairs([
+                ['k1', Option::some(1)],
+                ['k2', Option::some(2)],
+                ['k3', Option::none()],
+            ])->toString(),
+        );
     }
 
     public function testCasts(): void

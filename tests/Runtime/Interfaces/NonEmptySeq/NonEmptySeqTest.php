@@ -73,6 +73,7 @@ final class NonEmptySeqTest extends TestCase
     public function testToString(NonEmptySeq $seq, string $expected): void
     {
         $this->assertEquals($expected, (string)$seq);
+        $this->assertEquals($expected, $seq->toString());
     }
 
     public function provideTestCastsData(): Generator

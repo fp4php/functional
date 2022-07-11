@@ -19,6 +19,8 @@ final class EitherTest extends TestCase
     {
         $this->assertEquals('Left(42)', (string) Either::left(42));
         $this->assertEquals('Right(42)', (string) Either::right(42));
+        $this->assertEquals('Left(42)', Either::left(42)->toString());
+        $this->assertEquals('Right(42)', Either::right(42)->toString());
     }
 
     public function testCreation(): void

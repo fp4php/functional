@@ -792,6 +792,11 @@ abstract class LinkedList implements Seq
         return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
     }
 
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
     public function __toString(): string
     {
         return $this

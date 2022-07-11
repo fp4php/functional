@@ -733,6 +733,11 @@ final class NonEmptyArrayList implements NonEmptySeq
         return Stream::emits($this);
     }
 
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
     public function __toString(): string
     {
         return $this

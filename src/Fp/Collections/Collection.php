@@ -21,5 +21,7 @@ interface Collection extends IteratorAggregate, Countable
      */
     public function getIterator(): Iterator;
 
+    public function toString(): string;
+
     public function __toString(): string;
 }

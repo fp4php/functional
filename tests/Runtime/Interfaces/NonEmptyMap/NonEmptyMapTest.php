@@ -36,6 +36,22 @@ final class NonEmptyMapTest extends TestCase
                 ['k3', Option::none()],
             ]),
         );
+        $this->assertEquals(
+            "NonEmptyHashMap('k1' => 1, 'k2' => 2, 'k3' => 3)",
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['k1', 1],
+                ['k2', 2],
+                ['k3', 3],
+            ])->toString(),
+        );
+        $this->assertEquals(
+            "NonEmptyHashMap('k1' => Some(1), 'k2' => Some(2), 'k3' => None)",
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['k1', Option::some(1)],
+                ['k2', Option::some(2)],
+                ['k3', Option::none()],
+            ])->toString(),
+        );
     }
 
     public function testCasts(): void

@@ -506,6 +506,11 @@ final class HashMap implements Map
         return Option::fromNullable($elem);
     }
 
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
     public function __toString(): string
     {
         return $this

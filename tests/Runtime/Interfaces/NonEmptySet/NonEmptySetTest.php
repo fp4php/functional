@@ -34,6 +34,18 @@ final class NonEmptySetTest extends TestCase
                 Option::none(),
             ]),
         );
+        $this->assertEquals(
+            'NonEmptyHashSet(1, 2, 3)',
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->toString(),
+        );
+        $this->assertEquals(
+            'NonEmptyHashSet(Some(1), Some(2), None)',
+            NonEmptyHashSet::collectNonEmpty([
+                Option::some(1),
+                Option::some(2),
+                Option::none(),
+            ])->toString(),
+        );
     }
 
     public function provideTestCastsData(): Generator
