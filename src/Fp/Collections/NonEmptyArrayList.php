@@ -584,6 +584,24 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return NonEmptyMap<TKO, NonEmptyArrayList<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): NonEmptyMap
+    {
+        $groups = Ops\GroupMapOperation::of($this)($group, $map);
+
+        return (new NonEmptyHashMap($groups))
+            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyArrayList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return list<TV>
      */
     public function toList(): array

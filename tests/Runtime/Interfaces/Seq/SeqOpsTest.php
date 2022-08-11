@@ -7,6 +7,7 @@ namespace Tests\Runtime\Interfaces\Seq;
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashMap;
 use Fp\Collections\LinkedList;
+use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Generator;
@@ -426,6 +427,44 @@ final class SeqOpsTest extends TestCase
     public function testTail(Seq $seq): void
     {
         $this->assertEquals(['2', '3'], $seq->tail()->toList());
+    }
+
+    public function provideTestGroupMapData(): Generator
+    {
+        $foo1 = new Foo(1);
+        $foo2 = new Foo(2);
+        $foo3 = new Foo(1);
+        $foo4 = new Foo(3);
+
+        yield ArrayList::class => [
+            ArrayList::collect([$foo1, $foo2, $foo3, $foo4]),
+            HashMap::collectPairs([
+                [$foo1, NonEmptyArrayList::collectNonEmpty(['2', '2'])],
+                [$foo2, NonEmptyArrayList::collectNonEmpty(['3'])],
+                [$foo4, NonEmptyArrayList::collectNonEmpty(['4'])],
+            ]),
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([$foo1, $foo2, $foo3, $foo4]),
+            HashMap::collectPairs([
+                [$foo1, NonEmptyArrayList::collectNonEmpty(['2', '2'])],
+                [$foo2, NonEmptyArrayList::collectNonEmpty(['3'])],
+                [$foo4, NonEmptyArrayList::collectNonEmpty(['4'])],
+            ]),
+        ];
+    }
+
+    /**
+     * @param Seq<Foo> $seq
+     * @param HashMap<Foo, NonEmptyArrayList<string>> $expected
+     * @dataProvider provideTestGroupMapData
+     */
+    public function testGroupMap(Seq $seq, HashMap $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            $seq->groupMap(fn(Foo $v) => $v, fn(Foo $v) => (string)($v->a + 1)),
+        );
     }
 
     public function provideTestGroupByData(): Generator

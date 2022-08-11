@@ -509,6 +509,22 @@ abstract class LinkedList implements Seq
      *
      * @param callable(TV): TKO $group
      * @param callable(TV): TVO $map
+     * @return HashMap<TKO, NonEmptyArrayList<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): HashMap
+    {
+        return Ops\GroupMapOperation::of($this->getIterator())($group, $map)
+            ->map(fn(NonEmptyHashMap $hs) => $hs->values()->toNonEmptyArrayList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
      * @param callable(TVO, TVO): TVO $reduce
      *
      * @return Map<TKO, TVO>

@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\NonEmptySeq;
 
+use Fp\Collections\ArrayList;
+use Fp\Collections\HashMap;
+use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
+use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Generator;
 use PHPUnit\Framework\TestCase;
@@ -64,6 +68,44 @@ final class NonEmptySeqOpsTest extends TestCase
                 fn(array $a) => [$a['sum']],
                 fn(array $old, array $new) => array_merge($old, $new),
             )
+        );
+    }
+
+    public function provideTestGroupMapData(): Generator
+    {
+        $foo1 = new Foo(1);
+        $foo2 = new Foo(2);
+        $foo3 = new Foo(1);
+        $foo4 = new Foo(3);
+
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([$foo1, $foo2, $foo3, $foo4]),
+            NonEmptyHashMap::collectPairsNonEmpty([
+                [$foo1, NonEmptyArrayList::collectNonEmpty(['2', '2'])],
+                [$foo2, NonEmptyArrayList::collectNonEmpty(['3'])],
+                [$foo4, NonEmptyArrayList::collectNonEmpty(['4'])],
+            ]),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([$foo1, $foo2, $foo3, $foo4]),
+            NonEmptyHashMap::collectPairsNonEmpty([
+                [$foo1, NonEmptyArrayList::collectNonEmpty(['2', '2'])],
+                [$foo2, NonEmptyArrayList::collectNonEmpty(['3'])],
+                [$foo4, NonEmptyArrayList::collectNonEmpty(['4'])],
+            ]),
+        ];
+    }
+
+    /**
+     * @param NonEmptySeq<Foo> $seq
+     * @param NonEmptyHashMap<Foo, NonEmptyArrayList<string>> $expected
+     * @dataProvider provideTestGroupMapData
+     */
+    public function testGroupMap(NonEmptySeq $seq, NonEmptyHashMap $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            $seq->groupMap(fn(Foo $v) => $v, fn(Foo $v) => (string)($v->a + 1)),
         );
     }
 

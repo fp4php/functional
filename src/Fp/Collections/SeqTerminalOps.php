@@ -134,6 +134,35 @@ interface SeqTerminalOps
     public function groupBy(callable $callback): Map;
 
     /**
+     * ```php
+     * >>> LinkedList::collect([
+     * >>>     ['id' => 10, 'sum' => 10],
+     * >>>     ['id' => 10, 'sum' => 15],
+     * >>>     ['id' => 10, 'sum' => 20],
+     * >>>     ['id' => 20, 'sum' => 10],
+     * >>>     ['id' => 20, 'sum' => 15],
+     * >>>     ['id' => 30, 'sum' => 20],
+     * >>> ])->groupMap(
+     * >>>     fn(array $a) => $a['id'],
+     * >>>     fn(array $a) => $a['sum'] + 1,
+     * >>> );
+     * => HashMap(
+     * =>   10 -> NonEmptyArrayList(21, 16, 11),
+     * =>   20 -> NonEmptyArrayList(16, 11),
+     * =>   30 -> NonEmptyArrayList(21),
+     * => )
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return Map<TKO, NonEmptySeq<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): Map;
+
+    /**
      * Partitions this Seq<TV> into a Map<TKO, TVO> according to a discriminator function $group.
      * All the values that have the same discriminator are then transformed by the $map and
      * then reduced into a single value with the $reduce.
