@@ -6,6 +6,7 @@ namespace Fp\Evidence;
 
 use Fp\Functional\Option\Option;
 
+use Fp\Streams\Stream;
 use function Fp\of;
 
 /**
@@ -23,13 +24,13 @@ use function Fp\of;
  * @template TVO
  *
  * @param TV $subject
- * @param class-string<TVO> $fqcn fully qualified class name
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn fully qualified class name
  * @return Option<TVO>
  */
-function proveOf(mixed $subject, string $fqcn, bool $invariant = false): Option
+function proveOf(mixed $subject, string|array $fqcn, bool $invariant = false): Option
 {
     /** @var Option<TVO> */
-    return of($subject, $fqcn, $invariant)
-        ? Option::some($subject)
-        : Option::none();
+    return Stream::emits(is_array($fqcn) ? $fqcn : [$fqcn])
+        ->filterMap(fn($f) => of($subject, $f, $invariant) ? Option::some($subject) : Option::none())
+        ->firstElement();
 }

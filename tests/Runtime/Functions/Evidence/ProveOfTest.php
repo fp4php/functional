@@ -27,5 +27,9 @@ final class ProveOfTest extends TestCase
 
         $this->assertInstanceOf(Some::class, proveOf(new Foo(1), Foo::class));
         $this->assertInstanceOf(None::class, proveOf(new Bar(true), Foo::class));
+
+        $this->assertInstanceOf(Some::class, proveOf(new Foo(1), [Foo::class, Bar::class]));
+        $this->assertInstanceOf(Some::class, proveOf(new Bar(true), [Foo::class, Bar::class]));
+        $this->assertInstanceOf(None::class, proveOf('string', [Foo::class, Bar::class]));
     }
 }
