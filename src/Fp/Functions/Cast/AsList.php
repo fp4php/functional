@@ -12,10 +12,9 @@ namespace Fp\Cast;
  * => [1, 2, 3, 4]
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> ...$collections
+ * @param iterable<mixed, TV> ...$collections
  * @return (
  *     $collections is non-empty-array
  *         ? non-empty-list<TV>
