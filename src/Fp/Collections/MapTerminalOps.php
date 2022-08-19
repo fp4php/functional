@@ -63,6 +63,36 @@ interface MapTerminalOps
     public function every(callable $predicate): bool;
 
     /**
+     * Same as {@see MapTerminalOps::every()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function everyKV(callable $predicate): bool;
+
+    /**
+     * Returns true if some collection element satisfy the condition
+     * false otherwise
+     *
+     * ```php
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->exists(fn($value) => $value > 0);
+     * => true
+     *
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->exists(fn($value) => $value > 1);
+     * => false
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool;
+
+    /**
+     * Same as {@see MapTerminalOps::exists()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function existsKV(callable $predicate): bool;
+
+    /**
      * Suppose you have an HashMap<TV> and you want to format each element with a function that returns an Option<TVO>.
      * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<HashMap<TVO>>
      * i.e. an Some<HashMap<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
@@ -81,6 +111,16 @@ interface MapTerminalOps
      * @return Option<Map<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option;
+
+    /**
+     * Same as {@see MapTerminalOps::traverseOption()}, but passing also the key to the $predicate function.
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return Option<Map<TK, TVO>>
+     */
+    public function traverseOptionKV(callable $callback): Option;
 
     /**
      * Same as {@see MapTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.

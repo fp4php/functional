@@ -31,7 +31,7 @@ final class HashMap implements Map
      * @internal
      * @param HashTable<TK, TV> $hashTable
      */
-    public function __construct(private HashTable $hashTable)
+    public function __construct(private readonly HashTable $hashTable)
     {
         $this->empty = empty($hashTable->table);
     }
@@ -261,7 +261,37 @@ final class HashMap implements Map
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getKeyValueIterator())(dropFirstArg($predicate));
+        return $this->everyKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function everyKV(callable $predicate): bool
+    {
+        return Ops\EveryOperation::of($this->getKeyValueIterator())($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return $this->existsKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function existsKV(callable $predicate): bool
+    {
+        return Ops\ExistsOperation::of($this->getKeyValueIterator())($predicate);
     }
 
     /**
@@ -270,11 +300,24 @@ final class HashMap implements Map
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
-     * @return Option<Map<TK, TVO>>
+     * @return Option<HashMap<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())(dropFirstArg($callback))
+        return $this->traverseOptionKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return Option<HashMap<TK, TVO>>
+     */
+    public function traverseOptionKV(callable $callback): Option
+    {
+        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
             ->map(fn($gen) => HashMap::collect($gen));
     }
 
@@ -366,7 +409,20 @@ final class HashMap implements Map
      */
     public function filterMap(callable $callback): self
     {
-        return HashMap::collect(Ops\FilterMapOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
+        return $this->filterMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function filterMapKV(callable $callback): HashMap
+    {
+        return HashMap::collect(Ops\FilterMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -380,7 +436,21 @@ final class HashMap implements Map
      */
     public function flatMap(callable $callback): self
     {
-        return HashMap::collectPairs(Ops\FlatMapOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
+        return $this->flatMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): (iterable<array{TKO, TVO}>) $callback
+     * @return HashMap<TKO, TVO>
+     */
+    public function flatMapKV(callable $callback): HashMap
+    {
+        return HashMap::collectPairs(Ops\FlatMapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -407,6 +477,29 @@ final class HashMap implements Map
     public function mapKV(callable $callback): self
     {
         return HashMap::collect(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): void $callback
+     * @return HashMap<TK, TV>
+     */
+    public function tap(callable $callback): HashMap
+    {
+        return $this->tapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): void $callback
+     * @return HashMap<TK, TV>
+     */
+    public function tapKV(callable $callback): HashMap
+    {
+        Stream::emits(Ops\TapOperation::of($this->getKeyValueIterator())($callback))->drain();
+        return $this;
     }
 
     /**
@@ -445,7 +538,84 @@ final class HashMap implements Map
      */
     public function groupBy(callable $callback): Map
     {
-        return Ops\GroupByOperation::of($this->getKeyValueIterator())(dropFirstArg($callback));
+        return $this->groupByKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TK, TV): TKO $callback
+     * @return HashMap<TKO, NonEmptyHashMap<TK, TV>>
+     */
+    public function groupByKV(callable $callback): HashMap
+    {
+        return Ops\GroupByOperation::of($this->getKeyValueIterator())($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return HashMap<TKO, NonEmptyHashMap<TK, TVO>>
+     */
+    public function groupMap(callable $group, callable $map): HashMap
+    {
+        return $this->groupMapKV(dropFirstArg($group), dropFirstArg($map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
+     * @return HashMap<TKO, NonEmptyHashMap<TK, TVO>>
+     */
+    public function groupMapKV(callable $group, callable $map): HashMap
+    {
+        return Ops\GroupMapOperation::of($this->getKeyValueIterator())($group, $map);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return HashMap<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): HashMap
+    {
+        return $this->groupMapReduceKV(dropFirstArg($group), dropFirstArg($map), $reduce);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return HashMap<TKO, TVO>
+     */
+    public function groupMapReduceKV(callable $group, callable $map, callable $reduce): HashMap
+    {
+        return Ops\GroupMapReduceOperation::of($this->getKeyValueIterator())($group, $map, $reduce);
     }
 
     /**

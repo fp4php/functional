@@ -37,6 +37,14 @@ final class MapOpsTest extends TestCase
         $this->assertFalse($hm->every(fn($entry) => $entry > 0));
     }
 
+    public function testExists(): void
+    {
+        $hm = HashMap::collect(['a' => 0, 'b' => 1]);
+
+        $this->assertTrue($hm->exists(fn($entry) => $entry > 0));
+        $this->assertFalse($hm->exists(fn($entry) => $entry > 1));
+    }
+
     public function testEveryMap(): void
     {
         $hm = HashMap::collect([
@@ -122,6 +130,13 @@ final class MapOpsTest extends TestCase
             $hm->mapKV(fn($key, $elem) => "key-{$key}-val-{$elem}")->toList()
         );
     }
+    public function testTap(): void
+    {
+        $hm = HashMap::collectPairs([['2', 22], ['3', 33]])
+            ->tap(fn(int $v) => $v + 10);
+
+        $this->assertEquals([['2', 22], ['3', 33]], $hm->toList());
+    }
 
     public function testReindex(): void
     {
@@ -147,6 +162,78 @@ final class MapOpsTest extends TestCase
             ]),
             HashMap::collect(['fst' => 1, 'snd' => 2, 'trd' => 3])->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd'),
         );
+    }
+
+    /**
+     * ```php
+     * >>> HashMap::collect([
+     * >>>     '10-1' => ['id' => 10, 'sum' => 10],
+     * >>>     '10-2' => ['id' => 10, 'sum' => 15],
+     * >>>     '10-3' => ['id' => 10, 'sum' => 20],
+     * >>>     '20-1' => ['id' => 20, 'sum' => 10],
+     * >>>     '20-2' => ['id' => 20, 'sum' => 15],
+     * >>>     '30-1' => ['id' => 30, 'sum' => 20],
+     * >>> ])->groupMap(
+     * >>>     fn(array $a) => $a['id'],
+     * >>>     fn(array $a) => $a['sum'] + 1,
+     * >>> );
+     * => HashMap(
+     * =>   10 -> NonEmptyHashMap('10-3' => 21, '10-2' => 16, '10-1' => 11),
+     * =>   20 -> NonEmptyHashMap('20-2' => 16, '20-1' => 11),
+     * =>   30 -> NonEmptyHashMap('30-1' => 21),
+     * => )
+     * ```
+     */
+    public function testGroupMap(): void
+    {
+        $actual = HashMap::collect([
+            '10-1' => ['id' => 10, 'sum' => 10],
+            '10-2' => ['id' => 10, 'sum' => 15],
+            '10-3' => ['id' => 10, 'sum' => 20],
+            '20-1' => ['id' => 20, 'sum' => 10],
+            '20-2' => ['id' => 20, 'sum' => 15],
+            '30-1' => ['id' => 30, 'sum' => 20],
+        ])->groupMap(
+            fn(array $a) => $a['id'],
+            fn(array $a) => $a['sum'] + 1,
+        );
+
+        $expected = HashMap::collect([
+            10 => NonEmptyHashMap::collectNonEmpty([
+                '10-3' => 21,
+                '10-2' => 16,
+                '10-1' => 11,
+            ]),
+            20 => NonEmptyHashMap::collectNonEmpty([
+                '20-2' => 16,
+                '20-1' => 11,
+            ]),
+            30 => NonEmptyHashMap::collectNonEmpty([
+                '30-1' => 21,
+            ]),
+        ]);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGroupMapReduce(): void
+    {
+        $actual = HashMap::collect([
+            '10-1' => ['id' => 10, 'sum' => 10],
+            '10-2' => ['id' => 10, 'sum' => 15],
+            '10-3' => ['id' => 10, 'sum' => 20],
+            '20-1' => ['id' => 20, 'sum' => 10],
+            '20-2' => ['id' => 20, 'sum' => 15],
+            '30-1' => ['id' => 30, 'sum' => 20],
+        ])->groupMapReduce(
+            fn(array $a) => $a['id'],
+            fn(array $a) => $a['sum'],
+            fn(int $old, int $new) => $old + $new,
+        );
+
+        $expected = HashMap::collect([10 => 45, 20 => 25, 30 => 20]);
+
+        $this->assertEquals($expected, $actual);
     }
 
     public function testKeys(): void
