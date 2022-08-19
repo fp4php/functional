@@ -37,6 +37,7 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 
 use function Fp\Collection\first;
+use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 use function Fp\classOf;
@@ -75,36 +76,25 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
-        $reconciled = Option::do(function() use ($event) {
-            yield proveTrue(in_array($event->getMethodNameLowercase(), self::getMethodNames()));
-
-            $source          = yield proveOf($event->getSource(), StatementsAnalyzer::class);
-            $predicate_arg   = yield self::extractPredicateArg($event);
-            $predicate       = yield proveOf($predicate_arg->value, FunctionLike::class);
-            $template_params = yield Option::fromNullable($event->getTemplateTypeParameters());
-
-            $collection_type_params = 2 === count($template_params)
-                ? new CollectionTypeParams($template_params[0], $template_params[1])
-                : new CollectionTypeParams(Type::getArrayKey(), $template_params[0]);
-
-            $refinement_context = new RefinementContext(
-                refine_for: $event->getMethodNameLowercase() === 'filterkv'
+        return proveTrue(in_array($event->getMethodNameLowercase(), self::getMethodNames()))
+            ->flatMap(fn() => sequenceOption([
+                Option::some($event->getMethodNameLowercase() === 'filterkv'
                     ? RefinementContext::FILTER_KEY_VALUE
-                    : RefinementContext::FILTER_VALUE,
-                predicate: $predicate,
-                execution_context: $event->getContext(),
-                source: $source,
-            );
-
-            $result = RefineByPredicate::for(
-                $refinement_context,
-                $collection_type_params,
-            );
-
-            return yield self::getReturnType($event, $result);
-        });
-
-        return $reconciled->get();
+                    : RefinementContext::FILTER_VALUE),
+                self::extractPredicateArg($event)
+                    ->map(fn(Arg $arg) => $arg->value)
+                    ->filterOf(FunctionLike::class),
+                Option::some($event->getContext()),
+                proveOf($event->getSource(), StatementsAnalyzer::class),
+                Option::fromNullable($event->getTemplateTypeParameters())
+                    ->map(fn($template_params) => 2 === count($template_params)
+                        ? new CollectionTypeParams($template_params[0], $template_params[1])
+                        : new CollectionTypeParams(Type::getArrayKey(), $template_params[0])),
+            ]))
+            ->map(fn($args) => new RefinementContext(...$args))
+            ->map(RefineByPredicate::for(...))
+            ->map(fn(CollectionTypeParams $result) => self::getReturnType($event, $result))
+            ->get();
     }
 
     /**
@@ -121,35 +111,25 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
      */
     public static function mockNotNullPredicateArg(MethodReturnTypeProviderEvent $event): Option
     {
-        return Option::do(function () use ($event) {
-            yield proveTrue(strtolower('filterNotNull') === $event->getMethodNameLowercase());
-
-            $var = new Variable('$elem');
-            $expr = new Isset_([$var]);
-            $param = new Param($var);
-
-            $expr = new VirtualArrowFunction([
-                'expr' => $expr,
-                'params' => [$param],
-            ]);
-
-            return new Arg($expr);
-        });
+        return proveTrue(strtolower('filterNotNull') === $event->getMethodNameLowercase())
+            ->map(fn() => new Variable('$elem'))
+            ->map(fn(Variable $var) => new VirtualArrowFunction([
+                'expr' => new Isset_([$var]),
+                'params' => [new Param($var)],
+            ]))
+            ->map(fn(VirtualArrowFunction $expr) => new Arg($expr));
     }
 
-    /**
-     * @psalm-return Option<Union>
-     */
-    private static function getReturnType(MethodReturnTypeProviderEvent $event, CollectionTypeParams $result): Option
+    private static function getReturnType(MethodReturnTypeProviderEvent $event, CollectionTypeParams $result): Union
     {
         $class_name = str_replace('NonEmpty', '', $event->getFqClasslikeName());
 
-        $template_params = classOf($class_name, Map::class) || classOf($class_name, NonEmptyMap::class)
+        $template_params = classOf($class_name, Map::class)
             ? [$result->key_type, $result->val_type]
             : [$result->val_type];
 
-        return Option::some(new Union([
+        return new Union([
             new TGenericObject($class_name, $template_params),
-        ]));
+        ]);
     }
 }

@@ -52,7 +52,7 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
                     ->flatMap(fn(TGenericObject $option) => second($option->type_params))
             );
 
-            $is_list = range(0, count($mapped) - 1) === keys($mapped);
+            $is_list = array_is_list($mapped);
 
             $keyed = new TKeyedArray($mapped);
             $keyed->is_list = $is_list;

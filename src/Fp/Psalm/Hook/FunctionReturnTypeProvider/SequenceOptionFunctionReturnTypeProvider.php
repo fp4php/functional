@@ -13,7 +13,6 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 use function Fp\Collection\first;
-use function Fp\Collection\keys;
 use function Fp\Collection\traverseOption;
 
 final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
@@ -38,7 +37,7 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
                     ->flatMap(fn(TGenericObject $option) => first($option->type_params))
             ))
             ->map(function(array $mapped) {
-                $is_list = range(0, count($mapped) - 1) === keys($mapped);
+                $is_list = array_is_list($mapped);
 
                 $keyed = new TKeyedArray($mapped);
                 $keyed->is_list = $is_list;

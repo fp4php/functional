@@ -17,9 +17,10 @@ final class RefinementContext
      * @psalm-param RefinementContext::FILTER_* $refine_for
      */
     public function __construct(
-        public string $refine_for,
-        public FunctionLike $predicate,
-        public Context $execution_context,
-        public StatementsAnalyzer $source,
+        public readonly string $refine_for,
+        public readonly FunctionLike $predicate,
+        public readonly Context $execution_context,
+        public readonly StatementsAnalyzer $source,
+        public readonly CollectionTypeParams $type_params,
     ) { }
 }

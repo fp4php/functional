@@ -19,6 +19,7 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 
 use function Fp\Collection\first;
+use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
@@ -31,34 +32,20 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
-        $return_type = Option::do(function() use ($event) {
-            yield proveTrue('filter' === $event->getMethodNameLowercase());
-
-            $predicate = yield first($event->getCallArgs())
-                ->flatMap(fn(Arg $arg) => proveOf($arg->value, FunctionLike::class));
-
-            $source = yield proveOf($event->getSource(), StatementsAnalyzer::class);
-            $option_type_param = yield first($event->getTemplateTypeParameters() ?? []);
-
-            $collection_type_params = new CollectionTypeParams(
-                key_type: Type::getArrayKey(),
-                val_type: $option_type_param,
-            );
-
-            $refinement_context = new RefinementContext(
-                refine_for: RefinementContext::FILTER_VALUE,
-                predicate: $predicate,
-                execution_context: $event->getContext(),
-                source: $source,
-            );
-
-            $result = RefineByPredicate::for($refinement_context, $collection_type_params);
-
-            return new Union([
-                new TGenericObject(Option::class, [$result->val_type]),
-            ]);
-        });
-
-        return $return_type->get();
+        return proveTrue('filter' === $event->getMethodNameLowercase())
+            ->flatMap(fn() => sequenceOption([
+                Option::some(RefinementContext::FILTER_VALUE),
+                first($event->getCallArgs())
+                    ->flatMap(fn(Arg $arg) => proveOf($arg->value, FunctionLike::class)),
+                Option::some($event->getContext()),
+                proveOf($event->getSource(), StatementsAnalyzer::class),
+                first($event->getTemplateTypeParameters() ?? [])
+                    ->map(fn($type_param) => new CollectionTypeParams(Type::getArrayKey(), $type_param)),
+            ]))
+            ->map(fn($args) => new RefinementContext(...$args))
+            ->map(RefineByPredicate::for(...))
+            ->map(fn(CollectionTypeParams $result) => new TGenericObject(Option::class, [$result->val_type]))
+            ->map(fn(TGenericObject $result) => new Union([$result]))
+            ->get();
     }
 }
