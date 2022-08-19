@@ -436,6 +436,32 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @template TVI
+     *
+     * @param iterable<TVI> $that
+     * @return HashSet<TV|TVI>
+     */
+    public function appendedAll(iterable $that): HashSet
+    {
+        return HashSet::collect(Ops\AppendedAllOperation::of($this->getIterator())($that));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param iterable<TV> $that
+     * @return HashSet<TV>
+     */
+    public function removedAll(iterable $that): HashSet
+    {
+        return $this->diff(HashSet::collect($that));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param TV $element
      * @return HashSet<TV>
      */
@@ -566,9 +592,9 @@ final class HashSet implements Set
      * {@inheritDoc}
      *
      * @param Set<TV>|NonEmptySet<TV> $that
-     * @return Set<TV>
+     * @return HashSet<TV>
      */
-    public function intersect(Set|NonEmptySet $that): Set
+    public function intersect(Set|NonEmptySet $that): HashSet
     {
         return $this->filter(fn($elem) => /** @var TV $elem */ $that($elem));
     }
@@ -577,9 +603,9 @@ final class HashSet implements Set
      * {@inheritDoc}
      *
      * @param Set<TV>|NonEmptySet<TV> $that
-     * @return Set<TV>
+     * @return HashSet<TV>
      */
-    public function diff(Set|NonEmptySet $that): Set
+    public function diff(Set|NonEmptySet $that): HashSet
     {
         return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
     }

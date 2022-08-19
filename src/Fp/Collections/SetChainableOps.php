@@ -28,6 +28,34 @@ interface SetChainableOps
     public function appended(mixed $element): Set;
 
     /**
+     * Add elements to the set
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2])->appendedAll([1, 2, 3])->toList();
+     * => [1, 2, 3]
+     * ```
+     *
+     * @template TVI
+     *
+     * @param iterable<TVI> $that
+     * @return Set<TV|TVI>
+     */
+    public function appendedAll(iterable $that): Set;
+
+    /**
+     * Remove elements from the set
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2, 3, 4])->appendedAll([3, 4])->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @param iterable<TV> $that
+     * @return Set<TV>
+     */
+    public function removedAll(iterable $that): Set;
+
+    /**
      * Produces new set with given element excluded
      *
      * ```php

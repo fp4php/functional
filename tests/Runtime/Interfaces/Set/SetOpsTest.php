@@ -36,6 +36,18 @@ final class SetOpsTest extends TestCase
         $this->assertEquals([2, 3], $hs->toList());
     }
 
+    public function testAppendedAll(): void
+    {
+        $hs = HashSet::collect([1, 2, 2])->appendedAll([3, 3, 4]);
+        $this->assertEquals(HashSet::collect([1, 2, 3, 4]), $hs);
+    }
+
+    public function testRemovedAll(): void
+    {
+        $hs = HashSet::collect([1, 2, 2, 3, 3, 4])->removedAll([3, 4]);
+        $this->assertEquals(HashSet::collect([1, 2]), $hs);
+    }
+
     public function testEvery(): void
     {
         $hs = HashSet::collect([0, 1, 2, 3, 4, 5]);
