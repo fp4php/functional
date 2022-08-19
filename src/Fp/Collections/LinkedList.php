@@ -29,6 +29,8 @@ use Fp\Operations\IntersperseOperation;
 use Fp\Operations\LastOfOperation;
 use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
+use Fp\Operations\MaxByElementOperation;
+use Fp\Operations\MaxElementOperation;
 use Fp\Operations\MkStringOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\ReduceOperation;
@@ -617,5 +619,24 @@ abstract class LinkedList implements Seq
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
         return MkStringOperation::of($this->getIterator())($start, $sep, $end);
+    }
+
+    /**
+     * @inheritDoc
+     * @return Option<TV>
+     */
+    public function max(): Option
+    {
+        return MaxElementOperation::of($this->getIterator())();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function maxBy(callable $callback): Option
+    {
+        return MaxByElementOperation::of($this->getIterator())($callback);
     }
 }

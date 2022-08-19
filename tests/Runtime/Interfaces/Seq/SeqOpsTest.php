@@ -176,7 +176,7 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2],
-            $seq->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
+            $seq->filterMap(fn($e) => is_numeric($e) ? Option::some((int)$e) : Option::none())
                 ->toArray()
         );
     }
@@ -330,7 +330,7 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals(
             ['2', '3', '4'],
-            $seq->map(fn($e) => (string) ($e + 1))->toArray()
+            $seq->map(fn($e) => (string)($e + 1))->toArray()
         );
     }
 
@@ -554,7 +554,7 @@ final class SeqOpsTest extends TestCase
      */
     public function testIntersperse(Seq $seq): void
     {
-        $this->assertEquals([0 , ',', 1, ',', 2], $seq->intersperse(',')->toArray());
+        $this->assertEquals([0, ',', 1, ',', 2], $seq->intersperse(',')->toArray());
     }
 
     public function provideTestZipData(): Generator
@@ -584,5 +584,77 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals('(0,1,2)', $seq->mkString('(', ',', ')'));
         $this->assertEquals('()', $emptySeq->mkString('(', ',', ')'));
+    }
+
+    public function provideTestMaxNotEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([3, 7, 2]), Option::some(7)];
+        yield LinkedList::class => [LinkedList::collect([9, 1, 2]), Option::some(9)];
+    }
+
+    /**
+     * @dataProvider provideTestMaxNotEmptyCollections
+     */
+    public function testMaxInNotEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->max());
+    }
+
+    public function provideTestMaxEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([]), Option::none()];
+        yield LinkedList::class => [LinkedList::collect([]), Option::none()];
+    }
+
+    /**
+     * @dataProvider provideTestMaxEmptyCollections
+     */
+    public function testMaxInEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->max());
+    }
+
+    public function provideTestMaxByNotEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([new Foo(1), new Foo(5), new Foo(2)]),
+            Option::some(new Foo(5))
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([new Foo(9), new Foo(1), new Foo(2)]),
+            Option::some(new Foo(9))
+        ];
+    }
+
+    /**
+     * @param Seq<Foo> $seq
+     * @param Option<Foo> $option
+     * @dataProvider provideTestMaxByNotEmptyCollections
+     */
+    public function testMaxByInNotEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->maxBy(fn(Foo $foo) => $foo->a));
+    }
+
+    public function provideTestMaxByEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([]),
+            Option::none()
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([]),
+            Option::none()
+        ];
+    }
+
+    /**
+     * @param Seq<Foo> $seq
+     * @param Option<Foo> $option
+     * @dataProvider provideTestMaxByEmptyCollections
+     */
+    public function testMaxByInEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->maxBy(fn(Foo $foo) => $foo->a));
     }
 }
