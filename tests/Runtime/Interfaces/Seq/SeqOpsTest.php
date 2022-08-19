@@ -641,6 +641,12 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals([[0, 'a'], [1, 'b']], $seq->zip(['a', 'b'])->toList());
     }
 
+    public function testZipWithKeys(): void
+    {
+        $this->assertEquals(ArrayList::collect([[0, 1], [1, 2], [2, 3]]), ArrayList::collect([1, 2, 3])->zipWithKeys());
+        $this->assertEquals(LinkedList::collect([[0, 1], [1, 2], [2, 3]]), LinkedList::collect([1, 2, 3])->zipWithKeys());
+    }
+
     public function provideTestMkString(): Generator
     {
         yield ArrayList::class => [ArrayList::collect([0, 1, 2]), ArrayList::empty()];

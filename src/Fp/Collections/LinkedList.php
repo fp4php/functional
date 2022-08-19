@@ -13,6 +13,7 @@ use Iterator;
 use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asList;
 use function Fp\Cast\fromPairs;
+use function Fp\Collection\keys;
 use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveNonEmptyList;
 
@@ -762,6 +763,14 @@ abstract class LinkedList implements Seq
     public function zip(iterable $that): LinkedList
     {
         return LinkedList::collect(Ops\ZipOperation::of($this->getIterator())($that));
+    }
+
+    /**
+     * @return LinkedList<array{int, TV}>
+     */
+    public function zipWithKeys(): LinkedList
+    {
+        return LinkedList::collect(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
     }
 
     /**

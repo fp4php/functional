@@ -758,7 +758,7 @@ final class ArrayList implements Seq
      */
     public function zipWithKeys(): ArrayList
     {
-        return ArrayList::collect(Ops\ZipOperation::of(keys($this->elements))($this->getIterator()));
+        return ArrayList::collect(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
     }
 
     /**
