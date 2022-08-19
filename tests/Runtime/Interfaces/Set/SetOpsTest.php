@@ -31,7 +31,7 @@ final class SetOpsTest extends TestCase
     public function testUpdatedAndRemoved(): void
     {
         /** @psalm-var HashSet<int> $hs */
-        $hs = HashSet::collect([1, 2, 2])->updated(3)->removed(1);
+        $hs = HashSet::collect([1, 2, 2])->appended(3)->removed(1);
 
         $this->assertEquals([2, 3], $hs->toList());
     }

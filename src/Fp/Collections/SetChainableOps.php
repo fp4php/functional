@@ -25,7 +25,7 @@ interface SetChainableOps
      * @param TVI $element
      * @return Set<TV|TVI>
      */
-    public function updated(mixed $element): Set;
+    public function appended(mixed $element): Set;
 
     /**
      * Produces new set with given element excluded

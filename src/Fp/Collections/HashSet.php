@@ -26,7 +26,7 @@ final class HashSet implements Set
     /**
      * @param HashMap<TV, TV> $map
      */
-    private function __construct(private HashMap $map) { }
+    private function __construct(private readonly HashMap $map) { }
 
     /**
      * {@inheritDoc}
@@ -428,7 +428,7 @@ final class HashSet implements Set
      * @param TVI $element
      * @return HashSet<TV|TVI>
      */
-    public function updated(mixed $element): HashSet
+    public function appended(mixed $element): HashSet
     {
         return new HashSet($this->map->updated($element, $element));
     }
