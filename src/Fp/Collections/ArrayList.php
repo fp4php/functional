@@ -12,6 +12,7 @@ use Fp\Streams\Stream;
 use Iterator;
 use function Fp\Cast\fromPairs;
 use function Fp\Collection\at;
+use function Fp\Collection\keys;
 use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveNonEmptyList;
 
@@ -528,19 +529,6 @@ final class ArrayList implements Seq
 
     /**
      * {@inheritDoc}
-     *
-     * @template TKO
-     *
-     * @param callable(int, TV): TKO $callback
-     * @return HashMap<TKO, TV>
-     */
-    public function reindexKV(callable $callback): HashMap
-    {
-        return HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
      */
     public function isEmpty(): bool
     {
@@ -558,19 +546,6 @@ final class ArrayList implements Seq
     public function map(callable $callback): ArrayList
     {
         return ArrayList::collect(Ops\MapOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return ArrayList<TVO>
-     */
-    public function mapKV(callable $callback): ArrayList
-    {
-        return ArrayList::collect(Ops\MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -634,17 +609,6 @@ final class ArrayList implements Seq
     public function filter(callable $predicate): ArrayList
     {
         return ArrayList::collect(Ops\FilterOperation::of($this->getIterator())($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(int, TV): bool $predicate
-     * @return ArrayList<TV>
-     */
-    public function filterKV(callable $predicate): ArrayList
-    {
-        return ArrayList::collect(Ops\FilterWithKeyOperation::of($this->getIterator())($predicate));
     }
 
     /**
@@ -786,6 +750,14 @@ final class ArrayList implements Seq
     public function zip(iterable $that): ArrayList
     {
         return ArrayList::collect(Ops\ZipOperation::of($this->getIterator())($that));
+    }
+
+    /**
+     * @return ArrayList<array{int, TV}>
+     */
+    public function zipWithKeys(): ArrayList
+    {
+        return ArrayList::collect(Ops\ZipOperation::of(keys($this->elements))($this->getIterator()));
     }
 
     /**

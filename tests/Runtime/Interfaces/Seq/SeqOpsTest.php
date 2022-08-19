@@ -344,24 +344,6 @@ final class SeqOpsTest extends TestCase
         );
     }
 
-    public function provideTestMapWithKeyData(): Generator
-    {
-        yield ArrayList::class => [ArrayList::collect(['one', 'two', 'three'])];
-        yield LinkedList::class => [LinkedList::collect(['one', 'two', 'three'])];
-    }
-
-    /**
-     * @dataProvider provideTestMapWithKeyData
-     * @param Seq<string> $seq
-     */
-    public function testMapKV(Seq $seq): void
-    {
-        $this->assertEquals(
-            ['0-one', '1-two', '2-three'],
-            $seq->mapKV(fn($index, $elem) => "{$index}-{$elem}")->toList()
-        );
-    }
-
     public function provideTestReduceData(): Generator
     {
         yield ArrayList::class => [ArrayList::collect(['1', '2', '3'])];
@@ -685,16 +667,6 @@ final class SeqOpsTest extends TestCase
             ArrayList::collect([1, 2, 3])
                 ->reindex(fn($value) => "key-{$value}"),
         );
-
-        $this->assertEquals(
-            HashMap::collectPairs([
-                ['key-01', 1],
-                ['key-12', 2],
-                ['key-23', 3],
-            ]),
-            ArrayList::collect([1, 2, 3])
-                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
-        );
     }
 
     public function testLinkedListReindex(): void
@@ -707,16 +679,6 @@ final class SeqOpsTest extends TestCase
             ]),
             LinkedList::collect([1, 2, 3])
                 ->reindex(fn($value) => "key-{$value}"),
-        );
-
-        $this->assertEquals(
-            HashMap::collectPairs([
-                ['key-01', 1],
-                ['key-12', 2],
-                ['key-23', 3],
-            ]),
-            LinkedList::collect([1, 2, 3])
-                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

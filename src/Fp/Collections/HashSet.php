@@ -283,19 +283,6 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
-     * @template TKO
-     *
-     * @param callable(int, TV): TKO $callback
-     * @return HashMap<TKO, TV>
-     */
-    public function reindexKV(callable $callback): HashMap
-    {
-        return HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
@@ -480,17 +467,6 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
-     * @param callable(int, TV): bool $predicate
-     * @return HashSet<TV>
-     */
-    public function filterKV(callable $predicate): HashSet
-    {
-        return HashSet::collect(Ops\FilterWithKeyOperation::of($this->getIterator())($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @template TVO
      *
      * @param class-string<TVO> $fqcn
@@ -549,19 +525,6 @@ final class HashSet implements Set
     public function map(callable $callback): HashSet
     {
         return HashSet::collect(Ops\MapOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return HashSet<TVO>
-     */
-    public function mapKV(callable $callback): HashSet
-    {
-        return HashSet::collect(Ops\MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**

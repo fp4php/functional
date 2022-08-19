@@ -109,7 +109,6 @@ final class NonEmptySetOpsTest extends TestCase
         $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);
         $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toList());
         $this->assertEquals([1], NonEmptyHashSet::collectNonEmpty([1, null])->filterNotNull()->toList());
-        $this->assertEquals([1, 3, 5], NonEmptyHashSet::collectNonEmpty([1, 2, 3, 4, 5])->filterKV(fn($key) => $key % 2 === 0)->toList());
     }
 
     public function testFilterOf(): void
@@ -158,11 +157,6 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertEquals(
             ['2', '3', '4'],
             NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toList()
-        );
-
-        $this->assertEquals(
-            ['0-1', '1-2', '2-3'],
-            NonEmptyHashSet::collectNonEmpty([1, 2, 2, 3])->mapKV(fn($k, $e) => "{$k}-{$e}")->toList()
         );
     }
 
@@ -239,15 +233,6 @@ final class NonEmptySetOpsTest extends TestCase
             ]),
             NonEmptyHashSet::collectNonEmpty([1, 2, 2])
                 ->reindex(fn($value) => "key-{$value}"),
-        );
-
-        $this->assertEquals(
-            NonEmptyHashMap::collectPairsNonEmpty([
-                ['key-01', 1],
-                ['key-12', 2],
-            ]),
-            NonEmptyHashSet::collectNonEmpty([1, 2, 2])
-                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

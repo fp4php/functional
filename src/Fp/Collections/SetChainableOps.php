@@ -54,14 +54,6 @@ interface SetChainableOps
     public function filter(callable $predicate): Set;
 
     /**
-     * Same as {@see SetChainableOps::filter()}, but passing also the key to the $predicate function.
-     *
-     * @param callable(int, TV): bool $predicate
-     * @return Set<TV>
-     */
-    public function filterKV(callable $predicate): Set;
-
-    /**
      * Filter elements of given class
      *
      * ```php
@@ -137,23 +129,6 @@ interface SetChainableOps
      * @return Set<TVO>
      */
     public function map(callable $callback): Set;
-
-    /**
-     * Same as {@see SetChainableOps::map()}, but passing also the key to the $callback function.
-     *
-     * ```php
-     * >>> HashSet::collect([1, 2, 2])
-     * >>>     ->mapKV(fn($index, $elem) => "{$index}-{$key}")
-     * >>>     ->toList();
-     * => ['0-1', '1-2']
-     * ```
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return Set<TVO>
-     */
-    public function mapKV(callable $callback): Set;
 
     /**
      * Call a function for every collection element

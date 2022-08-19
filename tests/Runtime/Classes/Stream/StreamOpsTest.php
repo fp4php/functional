@@ -122,11 +122,6 @@ final class StreamOpsTest extends TestCase
             ['2', '3', '4'],
             Stream::emits([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toList()
         );
-
-        $this->assertEquals(
-            ['0-1', '1-2', '2-3'],
-            Stream::emits([1, 2, 3])->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
-        );
     }
 
     public function testTap(): void
@@ -273,16 +268,6 @@ final class StreamOpsTest extends TestCase
             ]),
             Stream::emits([1, 2, 3])
                 ->reindex(fn($value) => "key-{$value}"),
-        );
-
-        $this->assertEquals(
-            HashMap::collectPairs([
-                ['key-01', 1],
-                ['key-12', 2],
-                ['key-23', 3],
-            ]),
-            Stream::emits([1, 2, 3])
-                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

@@ -88,14 +88,6 @@ interface SeqChainableOps
     public function filter(callable $predicate): Seq;
 
     /**
-     * Same as {@see SeqChainableOps::filter()}, but passing also the key to the $predicate function.
-     *
-     * @param callable(int, TV): bool $predicate
-     * @return Seq<TV>
-     */
-    public function filterKV(callable $predicate): Seq;
-
-    /**
      * Exclude null elements
      *
      * ```php
@@ -173,23 +165,6 @@ interface SeqChainableOps
      * @return Seq<TVO>
      */
     public function map(callable $callback): Seq;
-
-    /**
-     * Same as {@see SeqChainableOps::map()}, but passing also the key to the $callback function.
-     *
-     * ```php
-     * >>> LinkedList::collect(['one', 'two'])
-     * >>>     ->mapKV(fn($index, $elem) => "{$index}-{$elem}")
-     * >>>     ->toList();
-     * => ['0-one', '1-two']
-     * ```
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return Seq<TVO>
-     */
-    public function mapKV(callable $callback): Seq;
 
     /**
      * Copy collection in reversed order

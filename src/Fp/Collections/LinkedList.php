@@ -550,19 +550,6 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TKO
-     *
-     * @param callable(int, TV): TKO $callback
-     * @return HashMap<TKO, TV>
-     */
-    public function reindexKV(callable $callback): HashMap
-    {
-        return HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @template TVO
      *
      * @param callable(TV): TVO $callback
@@ -571,19 +558,6 @@ abstract class LinkedList implements Seq
     public function map(callable $callback): LinkedList
     {
         return LinkedList::collect(Ops\MapOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return LinkedList<TVO>
-     */
-    public function mapKV(callable $callback): LinkedList
-    {
-        return LinkedList::collect(Ops\MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -647,17 +621,6 @@ abstract class LinkedList implements Seq
     public function filter(callable $predicate): LinkedList
     {
         return LinkedList::collect(Ops\FilterOperation::of($this->getIterator())($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(int, TV): bool $predicate
-     * @return LinkedList<TV>
-     */
-    public function filterKV(callable $predicate): LinkedList
-    {
-        return LinkedList::collect(Ops\FilterWithKeyOperation::of($this->getIterator())($predicate));
     }
 
     /**

@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\NonEmptySeq;
 
-use Fp\Collections\ArrayList;
-use Fp\Collections\HashMap;
-use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
-use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
-use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Generator;
 use PHPUnit\Framework\TestCase;
@@ -272,19 +267,6 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals([1], $seq->filter(fn($i) => $i === 1)->toList());
     }
 
-    public function testFilterKV(): void
-    {
-        $this->assertEquals(
-            [1, 3, 5],
-            NonEmptyArrayList::collectNonEmpty([1, 2, 3, 4, 5])->filterKV(fn($key) => $key % 2 === 0)->toList(),
-        );
-
-        $this->assertEquals(
-            [1, 3, 5],
-            NonEmptyLinkedList::collectNonEmpty([1, 2, 3, 4, 5])->filterKV(fn($key) => $key % 2 === 0)->toList(),
-        );
-    }
-
     public function provideTestFilterMapData(): Generator
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['zero', '1', '2'])];
@@ -456,24 +438,6 @@ final class NonEmptySeqOpsTest extends TestCase
         );
     }
 
-    public function provideTestMapWithKeyData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
-    }
-
-    /**
-     * @dataProvider provideTestMapWithKeyData
-     * @param NonEmptySeq<int> $seq
-     */
-    public function testMapKV(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(
-            ['0-1', '1-2', '2-3'],
-            $seq->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
-        );
-    }
-
     public function provideTestReduceData(): Generator
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
@@ -640,16 +604,6 @@ final class NonEmptySeqOpsTest extends TestCase
             NonEmptyArrayList::collectNonEmpty([1, 2, 3])
                 ->reindex(fn($value) => "key-{$value}"),
         );
-
-        $this->assertEquals(
-            NonEmptyHashMap::collectPairsNonEmpty([
-                ['key-01', 1],
-                ['key-12', 2],
-                ['key-23', 3],
-            ]),
-            NonEmptyArrayList::collectNonEmpty([1, 2, 3])
-                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
-        );
     }
 
     public function testLinkedListReindex(): void
@@ -662,16 +616,6 @@ final class NonEmptySeqOpsTest extends TestCase
             ]),
             NonEmptyLinkedList::collectNonEmpty([1, 2, 3])
                 ->reindex(fn($value) => "key-{$value}"),
-        );
-
-        $this->assertEquals(
-            NonEmptyHashMap::collectPairsNonEmpty([
-                ['key-01', 1],
-                ['key-12', 2],
-                ['key-23', 3],
-            ]),
-            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])
-                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

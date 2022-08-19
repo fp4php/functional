@@ -107,7 +107,6 @@ final class SetOpsTest extends TestCase
     {
         $this->assertEquals([1], HashSet::collect([new Foo(1), 1, 1, new Foo(1)])->filter(fn($i) => $i === 1)->toList());
         $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toList());
-        $this->assertEquals([1, 3, 5], HashSet::collect([1, 2, 3, 4, 5])->filterKV(fn($key) => $key % 2 === 0)->toList());
     }
 
     public function testFilterOf(): void
@@ -176,11 +175,6 @@ final class SetOpsTest extends TestCase
             ['2', '3', '4'],
             HashSet::collect([1, 2, 2, 3])->map(fn($e) => (string) ($e + 1))->toList()
         );
-
-        $this->assertEquals(
-            ['0-1', '1-2', '2-3'],
-            HashSet::collect([1, 2, 2, 3])->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
-        );
     }
 
     public function testTap(): void
@@ -245,15 +239,6 @@ final class SetOpsTest extends TestCase
             ]),
             HashSet::collect([1, 2, 2])
                 ->reindex(fn($value) => "key-{$value}"),
-        );
-
-        $this->assertEquals(
-            HashMap::collectPairs([
-                ['key-01', 1],
-                ['key-12', 2],
-            ]),
-            HashSet::collect([1, 2, 2])
-                ->reindexKV(fn($key, $value) => "key-{$key}{$value}"),
         );
     }
 }

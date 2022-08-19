@@ -54,14 +54,6 @@ interface NonEmptySetChainableOps
     public function filter(callable $predicate): Set;
 
     /**
-     * Same as {@see NonEmptySetChainableOps::filter()}, but passing also the key to the $predicate function.
-     *
-     * @param callable(int, TV): bool $predicate
-     * @return Set<TV>
-     */
-    public function filterKV(callable $predicate): Set;
-
-    /**
      * Filter elements of given class
      *
      * ```php
@@ -125,23 +117,6 @@ interface NonEmptySetChainableOps
      * @return NonEmptySet<TVO>
      */
     public function map(callable $callback): NonEmptySet;
-
-    /**
-     * Same as {@see NonEmptySetChainableOps::map()}, but passing also the key to the $callback function.
-     *
-     * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])
-     * >>>     ->mapKV(fn($key, $elem) => "{$key}-{$elem}")
-     * >>>     ->toList();
-     * => ['0-1', '1-2']
-     * ```
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return NonEmptySet<TVO>
-     */
-    public function mapKV(callable $callback): NonEmptySet;
 
     /**
      * ```php

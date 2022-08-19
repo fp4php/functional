@@ -97,17 +97,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
-     * @param callable(int, TV): bool $predicate
-     * @return ArrayList<TV>
-     */
-    public function filterKV(callable $predicate): ArrayList
-    {
-        return $this->arrayList->filterKV($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
@@ -228,19 +217,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function map(callable $callback): NonEmptyArrayList
     {
         return NonEmptyArrayList::collectUnsafe(Ops\MapOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return NonEmptyArrayList<TVO>
-     */
-    public function mapKV(callable $callback): NonEmptyArrayList
-    {
-        return NonEmptyArrayList::collectUnsafe(Ops\MapWithKeyOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -431,21 +407,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     {
         return new NonEmptyHashMap(
             HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback)),
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TKO
-     *
-     * @param callable(int, TV): TKO $callback
-     * @return NonEmptyHashMap<TKO, TV>
-     */
-    public function reindexKV(callable $callback): NonEmptyHashMap
-    {
-        return new NonEmptyHashMap(
-            HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getIterator())($callback)),
         );
     }
 

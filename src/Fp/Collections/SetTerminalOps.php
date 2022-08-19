@@ -135,24 +135,6 @@ interface SetTerminalOps
     public function reindex(callable $callback): Map;
 
     /**
-     * Same as {@see SetTerminalOps::reindex()}, but passing also the key to the $callback function.
-     *
-     * ```php
-     * >>> $collection = HashSet::collect([1, 2, 2]);
-     * => HashSet(1, 2)
-     *
-     * >>> $collection->reindex(fn($k, $v) => "k-{$k}{$v}");
-     * => HashMap('k-01' -> 1, 'k-12' -> 2)
-     * ```
-     *
-     * @template TKO
-     *
-     * @param callable(int, TV): TKO $callback
-     * @return Map<TKO, TV>
-     */
-    public function reindexKV(callable $callback): Map;
-
-    /**
      * Find if there is element which satisfies the condition
      *
      * ```php

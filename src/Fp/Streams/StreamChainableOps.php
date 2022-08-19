@@ -170,23 +170,6 @@ interface StreamChainableOps
     public function map(callable $callback): Stream;
 
     /**
-     * Same as {@see StreamChainableOps::map()}, but passing also the key to the $callback function.
-     *
-     * ```php
-     * >>> Stream::emits([1, 2])
-     * >>>     ->mapKV(fn($index, $elem) => "{$index}-{$elem}")
-     * >>>     ->toList();
-     * => ['0-1', '1-2']
-     * ```
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return Stream<TVO>
-     */
-    public function mapKV(callable $callback): Stream;
-
-    /**
      * Returns every stream element except first
      *
      * ```php

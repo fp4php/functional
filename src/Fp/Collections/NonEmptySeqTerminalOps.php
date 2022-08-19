@@ -211,24 +211,6 @@ interface NonEmptySeqTerminalOps
     public function reindex(callable $callback): NonEmptyMap;
 
     /**
-     * Same as {@see NonEmptySeqTerminalOps::reindex()}, but passing also the key to the $callback function.
-     *
-     * ```php
-     * >>> $collection = NonEmptyArrayList::collectNonEmpty([1, 2, 3]);
-     * => NonEmptyArrayList(1, 2, 3)
-     *
-     * >>> $collection->reindex(fn($k, $v) => "k-{$k}{$v}");
-     * => NonEmptyHashMap('k-01' -> 1, 'k-12' -> 2, 'k-23' -> 3)
-     * ```
-     *
-     * @template TKO
-     *
-     * @param callable(int, TV): TKO $callback
-     * @return NonEmptyMap<TKO, TV>
-     */
-    public function reindexKV(callable $callback): NonEmptyMap;
-
-    /**
      * Find if there is element which satisfies the condition
      *
      * ```php

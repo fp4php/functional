@@ -88,14 +88,6 @@ interface NonEmptySeqChainableOps
     public function filter(callable $predicate): Seq;
 
     /**
-     * Same as {@see NonEmptySeqChainableOps::filter()}, but passing also the key to the $predicate function.
-     *
-     * @param callable(int, TV): bool $predicate
-     * @return Seq<TV>
-     */
-    public function filterKV(callable $predicate): Seq;
-
-    /**
      * A combined {@see NonEmptySeq::map} and {@see NonEmptySeq::filter}.
      *
      * Filtering is handled via Option instead of Boolean.
@@ -172,23 +164,6 @@ interface NonEmptySeqChainableOps
      * @return NonEmptySeq<TVO>
      */
     public function map(callable $callback): NonEmptySeq;
-
-    /**
-     * Same as {@see NonEmptySetChainableOps::map()}, but passing also the key to the $callback function.
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])
-     * >>>     ->mapKV(fn($key, $elem) => "{$key}-{$elem}")
-     * >>>     ->toList();
-     * => ['0-1', '1-2']
-     * ```
-     *
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return NonEmptySeq<TVO>
-     */
-    public function mapKV(callable $callback): NonEmptySeq;
 
     /**
      * Copy collection in reversed order

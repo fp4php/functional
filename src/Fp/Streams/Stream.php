@@ -213,17 +213,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * @template TVO
-     *
-     * @param callable(int, TV): TVO $callback
-     * @return Stream<TVO>
-     */
-    public function mapKV(callable $callback): Stream
-    {
-        return $this->fork(Ops\MapWithKeyOperation::of($this->emitter)($callback));
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @template TVI
@@ -571,19 +560,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function reindex(callable $callback): HashMap
     {
         return $this->leaf(HashMap::collect(Ops\ReindexOperation::of($this->emitter)($callback)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TKO
-     *
-     * @param callable(int, TV): TKO $callback
-     * @return HashMap<TKO, TV>
-     */
-    public function reindexKV(callable $callback): HashMap
-    {
-        return $this->leaf(HashMap::collect(Ops\ReindexWithKeyOperation::of($this->emitter)($callback)));
     }
 
     /**
