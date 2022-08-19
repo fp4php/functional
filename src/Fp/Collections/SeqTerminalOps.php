@@ -290,6 +290,7 @@ interface SeqTerminalOps
      * ```php
      * >>> LinkedList::collect([1, 4, 2])->max()->get();
      * => 4
+     * ```
      *
      * @psalm-return Option<TV>
      */
@@ -301,6 +302,7 @@ interface SeqTerminalOps
      * ```php
      * >>> LinkedList::collect([new Foo(1), new Bar(6), new Foo(2)])->maxBy(fn(Foo $foo) => $foo->a)->get();
      * => 6
+     * ```
      *
      * @psalm-param callable(TV): mixed $callback
      * @psalm-return Option<TV>
