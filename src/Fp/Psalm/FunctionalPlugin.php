@@ -18,7 +18,6 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionGetReturnTypeProvider;
-use Fp\Psalm\Hook\MethodReturnTypeProvider\ValidatedGetReturnTypeProvider;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
@@ -48,7 +47,6 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(ProveTrueExpressionAnalyzer::class);
         $register(EitherGetReturnTypeProvider::class);
         $register(OptionGetReturnTypeProvider::class);
-        $register(ValidatedGetReturnTypeProvider::class);
 
         $register(SequenceOptionFunctionReturnTypeProvider::class);
         $register(SequenceEitherFunctionReturnTypeProvider::class);

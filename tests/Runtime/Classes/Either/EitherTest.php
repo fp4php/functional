@@ -8,8 +8,6 @@ use Exception;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
-use Fp\Functional\Validated\Invalid;
-use Fp\Functional\Validated\Valid;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tests\Mock\Foo;
@@ -234,29 +232,6 @@ final class EitherTest extends TestCase
         $this->assertEquals(
             2,
             Either::left('err')->orElse(fn() => Either::right(2))->get()
-        );
-    }
-
-    public function testToValidated(): void
-    {
-        $this->assertEquals(
-            [1],
-            Either::right([1])->toValidated()->get(),
-        );
-
-        $this->assertEquals(
-            ['err'],
-            Either::left(['err'])->toValidated()->get(),
-        );
-
-        $this->assertInstanceOf(
-            Valid::class,
-            Either::right([1])->toValidated(),
-        );
-
-        $this->assertInstanceOf(
-            Invalid::class,
-            Either::left(['err'])->toValidated(),
         );
     }
 
