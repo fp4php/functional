@@ -9,6 +9,7 @@ use Fp\Operations as Ops;
 use Fp\Streams\Stream;
 use Iterator;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\fromPairs;
 
 /**
@@ -217,7 +218,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function map(callable $callback): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\MapOperation::of($this->getIterator())($callback));
+        return NonEmptyLinkedList::collectUnsafe(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -407,7 +408,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function reindex(callable $callback): NonEmptyHashMap
     {
         return new NonEmptyHashMap(
-            HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback)),
+            HashMap::collect(Ops\ReindexOperation::of($this->getIterator())(dropFirstArg($callback))),
         );
     }
 

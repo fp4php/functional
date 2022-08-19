@@ -19,18 +19,15 @@ final class MapOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param callable(TV): TVO $f
+     * @param callable(TK, TV): TVO $f
      * @return Generator<TK, TVO>
      */
     public function __invoke(callable $f): Generator
     {
-        $withKey =
-            /**
-             * @param TV $value
-             * @return TVO
-             */
-            fn(mixed $_, mixed $value) => $f($value);
-
-        return MapWithKeyOperation::of($this->gen)($withKey);
+        return asGenerator(function () use ($f) {
+            foreach ($this->gen as $key => $value) {
+                yield $key => $f($key, $value);
+            }
+        });
     }
 }

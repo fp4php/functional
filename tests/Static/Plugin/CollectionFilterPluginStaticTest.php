@@ -87,14 +87,6 @@ final class CollectionFilterPluginStaticTest
      * } $in
      *
      * @psalm-return array{
-     *     ArrayList: ArrayList<int>,
-     *     LinkedList: LinkedList<int>,
-     *     NonEmptyArrayList: ArrayList<int>,
-     *     NonEmptyLinkedList: LinkedList<int>,
-     *     Seq: Seq<int>,
-     *     NonEmptySeq: Seq<int>,
-     *     Set: Set<int>,
-     *     NonEmptySet: Set<int>,
      *     Map: Map<string, int>,
      *     HashMap: HashMap<string, int>,
      * }
@@ -102,14 +94,6 @@ final class CollectionFilterPluginStaticTest
     public function testFilterKV(array $in): array
     {
         return [
-            'ArrayList' => $in['ArrayList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
-            'LinkedList' => $in['LinkedList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
-            'NonEmptyArrayList' => $in['NonEmptyArrayList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
-            'NonEmptyLinkedList' => $in['NonEmptyLinkedList']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
-            'Seq' => $in['Seq']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
-            'NonEmptySeq' => $in['NonEmptySeq']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
-            'Set' => $in['Set']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
-            'NonEmptySet' => $in['NonEmptySet']->filterKV(fn($k, $v) => $k <= 42 && null !== $v),
             'Map' => $in['Map']->filterKV(fn($k, $v) => is_string($k) && null !== $v),
             'HashMap' => $in['HashMap']->filterKV(fn($k, $v) => is_string($k) && null !== $v),
         ];

@@ -10,6 +10,7 @@ use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asList;
 use function Fp\Cast\fromPairs;
 use function Fp\Evidence\proveNonEmptyArray;
@@ -544,7 +545,7 @@ abstract class LinkedList implements Seq
      */
     public function reindex(callable $callback): HashMap
     {
-        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback));
+        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -557,7 +558,7 @@ abstract class LinkedList implements Seq
      */
     public function map(callable $callback): LinkedList
     {
-        return LinkedList::collect(Ops\MapOperation::of($this->getIterator())($callback));
+        return LinkedList::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -620,7 +621,7 @@ abstract class LinkedList implements Seq
      */
     public function filter(callable $predicate): LinkedList
     {
-        return LinkedList::collect(Ops\FilterOperation::of($this->getIterator())($predicate));
+        return LinkedList::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
     }
 
     /**

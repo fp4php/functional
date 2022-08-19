@@ -15,15 +15,15 @@ use Generator;
 final class FilterOperation extends AbstractOperation
 {
     /**
-     * @param callable(TV): bool $f
+     * @param callable(TK, TV): bool $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
     {
-        $withKey =
-            /** @param TV $value */
-            fn(mixed $_, mixed $value): bool => $f($value);
-
-        return FilterWithKeyOperation::of($this->gen)($withKey);
+        foreach ($this->gen as $key => $value) {
+            if ($f($key, $value)) {
+                yield $key => $value;
+            }
+        }
     }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Operations\ReindexOperation;
-use Fp\Operations\ReindexWithKeyOperation;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 
 /**
@@ -30,7 +30,7 @@ use function Fp\Cast\asArray;
  */
 function reindex(iterable $collection, callable $callback): array
 {
-    return asArray(ReindexOperation::of($collection)($callback));
+    return reindexKV($collection, dropFirstArg($callback));
 }
 
 /**
@@ -55,5 +55,5 @@ function reindex(iterable $collection, callable $callback): array
  */
 function reindexKV(iterable $collection, callable $callback): array
 {
-    return asArray(ReindexWithKeyOperation::of($collection)($callback));
+    return asArray(ReindexOperation::of($collection)($callback));
 }

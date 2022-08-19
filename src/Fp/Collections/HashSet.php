@@ -9,6 +9,7 @@ use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 use Iterator;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
 use function Fp\Cast\fromPairs;
@@ -277,7 +278,7 @@ final class HashSet implements Set
      */
     public function reindex(callable $callback): HashMap
     {
-        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback));
+        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -461,7 +462,7 @@ final class HashSet implements Set
      */
     public function filter(callable $predicate): HashSet
     {
-        return HashSet::collect(Ops\FilterOperation::of($this->getIterator())($predicate));
+        return HashSet::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
     }
 
     /**
@@ -524,7 +525,7 @@ final class HashSet implements Set
      */
     public function map(callable $callback): HashSet
     {
-        return HashSet::collect(Ops\MapOperation::of($this->getIterator())($callback));
+        return HashSet::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**

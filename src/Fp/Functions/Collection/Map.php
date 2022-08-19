@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Operations\MapWithKeyOperation;
-
 use Fp\Operations\MapOperation;
+
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 
 /**
@@ -37,7 +37,7 @@ use function Fp\Cast\asArray;
  */
 function map(iterable $collection, callable $callback): array
 {
-    return asArray(MapOperation::of($collection)($callback));
+    return mapKV($collection, dropFirstArg($callback));
 }
 
 /**
@@ -65,5 +65,5 @@ function map(iterable $collection, callable $callback): array
  */
 function mapKV(iterable $collection, callable $callback): array
 {
-    return asArray(MapWithKeyOperation::of($collection)($callback));
+    return asArray(MapOperation::of($collection)($callback));
 }

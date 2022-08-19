@@ -9,6 +9,7 @@ use Fp\Operations as Ops;
 use Fp\Streams\Stream;
 use Generator;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asGenerator;
 
 /**
@@ -408,7 +409,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function map(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\MapOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -421,7 +422,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function mapKV(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -434,7 +435,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function reindex(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\ReindexOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -447,7 +448,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function reindexKV(callable $callback): NonEmptyMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return NonEmptyHashMap::collectUnsafe(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

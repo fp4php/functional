@@ -21,6 +21,7 @@ use IteratorAggregate;
 use LogicException;
 use SplFileObject;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
@@ -209,7 +210,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function map(callable $callback): Stream
     {
-        return $this->fork(Ops\MapOperation::of($this->emitter)($callback));
+        return $this->fork(Ops\MapOperation::of($this->emitter)(dropFirstArg($callback)));
     }
 
     /**
@@ -272,7 +273,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function filter(callable $predicate): Stream
     {
-        return $this->fork(Ops\FilterOperation::of($this->emitter)($predicate));
+        return $this->fork(Ops\FilterOperation::of($this->emitter)(dropFirstArg($predicate)));
     }
 
     /**
@@ -470,7 +471,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
         $chunks = Ops\ChunksOperation::of($this->emitter)($size);
 
         return $this->fork(
-            Ops\MapOperation::of($chunks)(fn(array $chunk) => new ArrayList($chunk))
+            Ops\MapOperation::of($chunks)(fn(mixed $_, array $chunk) => new ArrayList($chunk))
         );
     }
 
@@ -486,7 +487,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     {
         $adjacent = Ops\GroupAdjacentByOperation::of($this->emitter)($discriminator);
 
-        return $this->fork(Ops\MapOperation::of($adjacent)(function (array $pair) {
+        return $this->fork(Ops\MapOperation::of($adjacent)(function (mixed $_, array $pair) {
             $pair[1] = new ArrayList($pair[1]);
             return $pair;
         }));
@@ -559,7 +560,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function reindex(callable $callback): HashMap
     {
-        return $this->leaf(HashMap::collect(Ops\ReindexOperation::of($this->emitter)($callback)));
+        return $this->leaf(HashMap::collect(Ops\ReindexOperation::of($this->emitter)(dropFirstArg($callback))));
     }
 
     /**

@@ -9,6 +9,7 @@ use Fp\Operations as Ops;
 use Fp\Streams\Stream;
 use Iterator;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asNonEmptyList;
 use function Fp\Cast\fromPairs;
 
@@ -302,7 +303,7 @@ final class NonEmptyHashSet implements NonEmptySet
     public function reindex(callable $callback): NonEmptyHashMap
     {
         return new NonEmptyHashMap(
-            HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback)),
+            HashMap::collect(Ops\ReindexOperation::of($this->getIterator())(dropFirstArg($callback))),
         );
     }
 
@@ -525,7 +526,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function map(callable $callback): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(Ops\MapOperation::of($this->getIterator())($callback));
+        return NonEmptyHashSet::collectUnsafe(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**

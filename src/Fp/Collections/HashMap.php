@@ -9,6 +9,7 @@ use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
@@ -341,7 +342,7 @@ final class HashMap implements Map
      */
     public function filter(callable $predicate): self
     {
-        return HashMap::collect(Ops\FilterOperation::of($this->getKeyValueIterator())($predicate));
+        return $this->filterKV(dropFirstArg($predicate));
     }
 
     /**
@@ -352,7 +353,7 @@ final class HashMap implements Map
      */
     public function filterKV(callable $predicate): Map
     {
-        return HashMap::collect(Ops\FilterWithKeyOperation::of($this->getKeyValueIterator())($predicate));
+        return HashMap::collect(Ops\FilterOperation::of($this->getKeyValueIterator())($predicate));
     }
 
     /**
@@ -392,7 +393,7 @@ final class HashMap implements Map
      */
     public function map(callable $callback): self
     {
-        return HashMap::collect(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
+        return $this->mapKV(dropFirstArg($callback));
     }
 
     /**
@@ -405,7 +406,7 @@ final class HashMap implements Map
      */
     public function mapKV(callable $callback): self
     {
-        return HashMap::collect(Ops\MapWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**
@@ -418,7 +419,7 @@ final class HashMap implements Map
      */
     public function reindex(callable $callback): self
     {
-        return HashMap::collect(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return $this->reindexKV(dropFirstArg($callback));
     }
 
     /**
@@ -431,7 +432,7 @@ final class HashMap implements Map
      */
     public function reindexKV(callable $callback): Map
     {
-        return HashMap::collect(Ops\ReindexWithKeyOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
     }
 
     /**

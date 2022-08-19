@@ -9,8 +9,8 @@ use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterNotNullOperation;
 use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
-use Fp\Operations\FilterWithKeyOperation;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 
@@ -34,7 +34,7 @@ use function Fp\Cast\asList;
  */
 function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
-    $gen = FilterOperation::of($collection)($predicate);
+    $gen = FilterOperation::of($collection)(dropFirstArg($predicate));
     return $preserveKeys
         ? asArray($gen)
         : asList($gen);
@@ -60,7 +60,7 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  */
 function filterKV(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
-    $gen = FilterWithKeyOperation::of($collection)($predicate);
+    $gen = FilterOperation::of($collection)($predicate);
     return $preserveKeys
         ? asArray($gen)
         : asList($gen);

@@ -10,6 +10,7 @@ use Fp\Operations as Ops;
 use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
 use Iterator;
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\fromPairs;
 use function Fp\Collection\at;
 use function Fp\Collection\keys;
@@ -524,7 +525,7 @@ final class ArrayList implements Seq
      */
     public function reindex(callable $callback): HashMap
     {
-        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())($callback));
+        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -545,7 +546,7 @@ final class ArrayList implements Seq
      */
     public function map(callable $callback): ArrayList
     {
-        return ArrayList::collect(Ops\MapOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -608,7 +609,7 @@ final class ArrayList implements Seq
      */
     public function filter(callable $predicate): ArrayList
     {
-        return ArrayList::collect(Ops\FilterOperation::of($this->getIterator())($predicate));
+        return ArrayList::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
     }
 
     /**
