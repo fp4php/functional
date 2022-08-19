@@ -66,6 +66,15 @@ final class OptionTest extends TestCase
         $this->assertInstanceOf(Some::class, $someAlso);
     }
 
+    public function testMapN(): void
+    {
+        $some = Option::some([1, true, false])->mapN(Foo::create(...));
+        $someAlso = Option::some([1, true])->mapN(Foo::create(...));
+
+        $this->assertEquals(Option::some(new Foo(1, true, false)), $some);
+        $this->assertEquals(Option::some(new Foo(1, true, true)), $someAlso);
+    }
+
     public function testFlatMap(): void
     {
         $some = Option::some(1)
@@ -84,6 +93,15 @@ final class OptionTest extends TestCase
 
         $this->assertEquals(3, $some->get());
         $this->assertNull($none->get());
+    }
+
+    public function testFlatMapN(): void
+    {
+        $some = Option::some([1, true, false])->flatMapN(Foo::createOption(...));
+        $none = Option::some([0, true, false])->flatMapN(Foo::createOption(...));
+
+        $this->assertEquals(Option::some(new Foo(1, true, false)), $some);
+        $this->assertEquals(Option::none(), $none);
     }
 
     public function testTry(): void
@@ -186,10 +204,31 @@ final class OptionTest extends TestCase
         $this->assertNull(Option::none()->tap(fn($e) => $e)->get());
     }
 
+    public function testTapN(): void
+    {
+        $some = Option::some([1, true, false])
+            ->tapN(function(int $a, bool $b, bool $c) {
+                $this->assertEquals(1, $a);
+                $this->assertEquals(true, $b);
+                $this->assertEquals(false, $c);
+            });
+
+        $this->assertEquals(Option::some([1, true, false]), $some);
+    }
+
     public function testFlatTap(): void
     {
         $this->assertEquals(1, Option::some(1)->flatTap(fn($e) => Option::some(2))->get());
         $this->assertNull(Option::some(1)->flatTap(fn($e) => Option::none())->get());
+    }
+
+    public function testFlatTapN(): void
+    {
+        $some = Option::some([1, true, false])->flatTapN(Foo::createOption(...));
+        $none = Option::some([0, true, false])->flatTapN(Foo::createOption(...));
+
+        $this->assertEquals(Option::some([1, true, false]), $some);
+        $this->assertEquals(Option::none(), $none);
     }
 
     public function testToArrayList(): void

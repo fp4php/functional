@@ -86,9 +86,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             )
 
             // TFold must be assignable to TInit
-            ->tap(function($types) use ($event) {
-                [$TInit, $TFold] = $types;
-
+            ->tapN(function(Union $TInit, Union $TFold) use ($event) {
                 // $fold = $integers->fold(ArrayList::empty()) === FoldingOperation<int, ArrayList<never>> (second param is IInit)
                 // $fold(fn($list, $num) => $list->appended($num + 1));
                 //                                  ^
@@ -148,8 +146,8 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
                             ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))
                     )
             ]))
-            ->map(fn(array $type_params) => new Union([
-                new TGenericObject(FoldingOperation::class, $type_params),
+            ->mapN(fn(Union $A, Union $TInit) => new Union([
+                new TGenericObject(FoldingOperation::class, [$A, $TInit]),
             ]));
     }
 

@@ -12,6 +12,7 @@ use Fp\Functional\Validated\Invalid;
 use Fp\Functional\Validated\Valid;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Tests\Mock\Foo;
 
 final class EitherTest extends TestCase
 {
@@ -43,6 +44,12 @@ final class EitherTest extends TestCase
 
         $this->assertEquals(3, $right->get());
         $this->assertEquals(1, $left->get());
+    }
+
+    public function testMapN(): void
+    {
+        $right = Either::right([1, true, false])->mapN(Foo::create(...));
+        $this->assertEquals(Either::right(new Foo(1, true, false)), $right);
     }
 
     public function testFlatMap(): void
@@ -77,6 +84,63 @@ final class EitherTest extends TestCase
 
         $this->assertEquals(3, $right->get());
         $this->assertEquals('error', $left->get());
+    }
+
+    public function testFlatMapN(): void
+    {
+        $right = Either::right([1, true, false])->flatMapN(Foo::createEither(...));
+        $left = Either::right([0, true, false])->flatMapN(Foo::createEither(...));
+
+        $this->assertEquals(Either::right(new Foo(1, true, false)), $right);
+        $this->assertEquals(Either::left('$a is invalid'), $left);
+    }
+
+    public function testTap(): void
+    {
+        $right = Either::right([1, true, false])
+            ->tap(function(array $tuple) {
+                $this->assertEquals(1, $tuple[0]);
+                $this->assertEquals(true, $tuple[1]);
+                $this->assertEquals(false, $tuple[2]);
+            });
+
+        $left = Either::right([1, true, false])
+            ->flatMap(function() {
+                /** @var Either<string, array{int, bool, bool}> */
+                return Either::left('error');
+            })
+            ->tap(function(array $tuple) {
+                $this->assertEquals(1, $tuple[0]);
+                $this->assertEquals(true, $tuple[1]);
+                $this->assertEquals(false, $tuple[2]);
+            });
+
+        $this->assertEquals(Either::right([1, true, false]), $right);
+        $this->assertEquals(Either::left('error'), $left);
+    }
+
+    public function testTapN(): void
+    {
+        $right = Either::right([1, true, false])
+            ->tapN(function(int $a, bool $b, bool $c) {
+                $this->assertEquals(1, $a);
+                $this->assertEquals(true, $b);
+                $this->assertEquals(false, $c);
+            });
+
+        $left = Either::right([1, true, false])
+            ->flatMap(function() {
+                /** @var Either<string, array{int, bool, bool}> */
+                return Either::left('error');
+            })
+            ->tapN(function(int $a, bool $b, bool $c) {
+                $this->assertEquals(1, $a);
+                $this->assertEquals(true, $b);
+                $this->assertEquals(false, $c);
+            });
+
+        $this->assertEquals(Either::right([1, true, false]), $right);
+        $this->assertEquals(Either::left('error'), $left);
     }
 
     public function testMapLeft(): void

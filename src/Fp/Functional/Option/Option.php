@@ -98,6 +98,30 @@ abstract class Option
     }
 
     /**
+     * Same as {@see Option::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Option::some([1, 2, 3]);
+     * => Some([1, 2, 3])
+     *
+     * >>> $res2 = $res1->map(fn(int $a, int $b, int $c) => $a + $b + $c);
+     * => Some(6)
+     * ```
+     *
+     * @template B
+     *
+     * @param callable(mixed...): B $to
+     * @return Option<B>
+     */
+    public function mapN(callable $callback): Option
+    {
+        return $this->map(function($tuple) use ($callback): mixed {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
      * 1) Unwrap the box
      * 2) If the box is empty then do nothing
      * 3) Pass unwrapped value to callback
@@ -126,6 +150,29 @@ abstract class Option
         } else {
             return self::none();
         }
+    }
+
+    /**
+     * Same as {@see Option::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Option::some([1, 2, 3]);
+     * => Some([1, 2, 3])
+     *
+     * >>> $res2 = $res1->tapN(function (int $a, int $b, int $c) { print_r([$a, $b, $c]); });
+     * [1, 2, 3]
+     * => Some([1, 2, 3])
+     * ```
+     *
+     * @param callable(mixed...): void $callback
+     * @return Option<A>
+     */
+    public function tapN(callable $callback): Option
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            $callback(...$tuple);
+        });
     }
 
     /**
@@ -158,6 +205,20 @@ abstract class Option
         } else {
             return self::none();
         }
+    }
+
+    /**
+     * @template B
+     *
+     * @param callable(mixed...): Option<B> $callback
+     * @return Option<A>
+     */
+    public function flatTapN(callable $callback): Option
+    {
+        return $this->flatTap(function($tuple) use ($callback): Option {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
     }
 
     /**
@@ -244,6 +305,30 @@ abstract class Option
         return $this->isSome()
             ? $callback($this->get())
             : self::none();
+    }
+
+    /**
+     * Same as {@see Option::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Option::some([1, 2, 3]);
+     * => Some([1, 2, 3])
+     *
+     * >>> $res2 = $res1->flatMapN(fn(int $a, int $b, int $c) => Option::some($a + $b + $c));
+     * => Some(6)
+     * ```
+     *
+     * @template B
+     *
+     * @param callable(mixed...): Option<B> $callback
+     * @return Option<B>
+     */
+    public function flatMapN(callable $callback): Option
+    {
+        return $this->flatMap(function($tuple) use ($callback): Option {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
     }
 
     /**

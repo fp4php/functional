@@ -147,6 +147,62 @@ abstract class Either
      * 1) Unwrap the box
      * 2) If the box contains error value then do nothing
      * 3) Pass unwrapped success value to callback
+     * 4) Return the same box
+     *
+     * ```php
+     * >>> $res1 = Either::right(1);
+     * => Right(1)
+     *
+     * >>> $res2 = $res1->tap(function (int $i) { echo $i; });
+     * 1
+     * => Right(1)
+     *
+     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
+     * => Right('1')
+     * ```
+     *
+     * @param callable(R): void $callback
+     * @return Either<L, R>
+     */
+    public function tap(callable $callback): Either
+    {
+        if ($this->isLeft()) {
+            return Either::left($this->get());
+        }
+
+        $value = $this->get();
+        $callback($value);
+
+        return Either::right($value);
+    }
+
+    /**
+     * Same as {@see Either::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Either::right([1, 2, 3]);
+     * => Right(1)
+     *
+     * >>> $res2 = $res1->tapN(function (int $a, int $b, int $c) { print_r([$a, $b, $c]); });
+     * [1, 2, 3]
+     * => Right([1, 2, 3])
+     * ```
+     *
+     * @param callable(mixed...): void $callback
+     * @return Either<L, R>
+     */
+    public function tapN(callable $callback): Either
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            $callback(...$tuple);
+        });
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box contains error value then do nothing
+     * 3) Pass unwrapped success value to callback
      * 4) Place callback result value into the new success-box
      *
      * ```php
@@ -170,6 +226,30 @@ abstract class Either
         return $this->isLeft()
             ? new Left($this->get())
             : new Right($callback($this->get()));
+    }
+
+    /**
+     * Same as {@see Either::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Either::right([1, 2, 3]);
+     * => Right([1, 2, 3])
+     *
+     * >>> $res2 = $res1->mapN(fn(int $a, int $b, int $c) => $a + $b + $c);
+     * => Right(6)
+     * ```
+     *
+     * @template B
+     *
+     * @param callable(mixed...): B $to
+     * @return Either<L, B>
+     */
+    public function mapN(callable $callback): Either
+    {
+        return $this->map(function($tuple) use ($callback): mixed {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
     }
 
     /**
@@ -231,6 +311,31 @@ abstract class Either
         return $this->isLeft()
             ? new Left($this->get())
             : $callback($this->get());
+    }
+
+    /**
+     * Same as {@see Either::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Either::right([1, 2, 3]);
+     * => Right([1, 2, 3])
+     *
+     * >>> $res2 = $res1->flatMapN(fn(int $a, int $b, int $c) => Either::right($a + $b + $c));
+     * => Right(6)
+     * ```
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Either<LO|L, RO>
+     */
+    public function flatMapN(callable $callback): Either
+    {
+        return $this->flatMap(function($tuple) use ($callback): Either {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
     }
 
     /**
