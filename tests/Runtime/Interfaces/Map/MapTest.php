@@ -58,98 +58,106 @@ final class MapTest extends TestCase
 
     public function testCasts(): void
     {
+        $values = [['a', 1], ['b', 2]];
+
+        /** @var HashMap<string, int> $nonEmptyHashMap */
+        $nonEmptyHashMap = HashMap::collectPairs($values);
+
+        /** @var HashMap<string, int> $emptyHashMap */
+        $emptyHashMap = HashMap::collectPairs([]);
+
         $this->assertEquals(
-            [['a', 1], ['b', 2]],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toList(),
+            $values,
+            $nonEmptyHashMap->toList(),
         );
 
         $this->assertEquals(
-            Option::some([['a', 1], ['b', 2]]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyList(),
+            Option::some($values),
+            $nonEmptyHashMap->toNonEmptyList(),
         );
 
         $this->assertEquals(
             Option::none(),
-            HashMap::collectPairs([])->toNonEmptyList(),
+            $emptyHashMap->toNonEmptyList(),
         );
 
         $this->assertEquals(
             [],
-            HashMap::collectPairs([])->toArray(),
+            $emptyHashMap->toArray(),
         );
         $this->assertEquals(
             Option::none(),
-            HashMap::collectPairs([])->toNonEmptyArray(),
+            $emptyHashMap->toNonEmptyArray(),
         );
 
         $this->assertEquals(
             ['a' => 1, 'b' => 2],
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toArray(),
+            $nonEmptyHashMap->toArray(),
         );
 
         $this->assertEquals(
             Option::some(['a' => 1, 'b' => 2]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyArray(),
+            $nonEmptyHashMap->toNonEmptyArray(),
         );
 
         $this->assertEquals(
-            LinkedList::collect([['a', 1], ['b', 2]]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toLinkedList(),
+            LinkedList::collect($values),
+            $nonEmptyHashMap->toLinkedList(),
         );
 
         $this->assertEquals(
-            Option::some(NonEmptyLinkedList::collectNonEmpty([['a', 1], ['b', 2]])),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyLinkedList(),
-        );
-
-        $this->assertEquals(
-            Option::none(),
-            HashMap::collectPairs([])->toNonEmptyLinkedList(),
-        );
-
-        $this->assertEquals(
-            ArrayList::collect([['a', 1], ['b', 2]]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toArrayList(),
-        );
-
-        $this->assertEquals(
-            Option::some(NonEmptyArrayList::collectNonEmpty([['a', 1], ['b', 2]])),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyArrayList(),
+            Option::some(NonEmptyLinkedList::collectNonEmpty($values)),
+            $nonEmptyHashMap->toNonEmptyLinkedList(),
         );
 
         $this->assertEquals(
             Option::none(),
-            HashMap::collectPairs([])->toNonEmptyArrayList(),
+            $emptyHashMap->toNonEmptyLinkedList(),
         );
 
         $this->assertEquals(
-            HashSet::collect([['a', 1], ['b', 2]]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashSet(),
+            ArrayList::collect($values),
+            $nonEmptyHashMap->toArrayList(),
         );
 
         $this->assertEquals(
-            Option::some(NonEmptyHashSet::collectNonEmpty([['a', 1], ['b', 2]])),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyHashSet(),
-        );
-
-        $this->assertEquals(
-            Option::none(),
-            HashMap::collectPairs([])->toNonEmptyHashSet(),
-        );
-
-        $this->assertEquals(
-            HashMap::collectPairs([['a', 1], ['b', 2]]),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toHashMap(),
-        );
-
-        $this->assertEquals(
-            Option::some(NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])),
-            HashMap::collectPairs([['a', 1], ['b', 2]])->toNonEmptyHashMap(),
+            Option::some(NonEmptyArrayList::collectNonEmpty($values)),
+            $nonEmptyHashMap->toNonEmptyArrayList(),
         );
 
         $this->assertEquals(
             Option::none(),
-            HashMap::collectPairs([])->toNonEmptyHashMap(),
+            $emptyHashMap->toNonEmptyArrayList(),
+        );
+
+        $this->assertEquals(
+            HashSet::collect($values),
+            $nonEmptyHashMap->toHashSet(),
+        );
+
+        $this->assertEquals(
+            Option::some(NonEmptyHashSet::collectNonEmpty($values)),
+            $nonEmptyHashMap->toNonEmptyHashSet(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptyHashMap->toNonEmptyHashSet(),
+        );
+
+        $this->assertEquals(
+            $nonEmptyHashMap,
+            $nonEmptyHashMap->toHashMap(),
+        );
+
+        $this->assertEquals(
+            Option::some(NonEmptyHashMap::collectPairsNonEmpty($values)),
+            $nonEmptyHashMap->toNonEmptyHashMap(),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptyHashMap->toNonEmptyHashMap(),
         );
 
         $this->assertEquals(

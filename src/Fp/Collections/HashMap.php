@@ -128,16 +128,13 @@ final class HashMap implements Map
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is Map<TKO, TVO>
+     * @psalm-if-this-is HashMap<TKO, TVO>
      *
      * @return array<TKO, TVO>
      */
     public function toArray(): array
     {
-        /** @var Generator<TKO, TVO> $gen */
-        $gen = $this->getKeyValueIterator();
-
-        return asArray($gen);
+        return asArray($this->getKeyValueIterator());
     }
 
     /**
@@ -145,7 +142,7 @@ final class HashMap implements Map
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is Map<TKO, TVO>
+     * @psalm-if-this-is HashMap<TKO, TVO>
      *
      * @return Option<non-empty-array<TKO, TVO>>
      */
@@ -394,7 +391,7 @@ final class HashMap implements Map
      * @param callable(TK, TV): bool $predicate
      * @return HashMap<TK, TV>
      */
-    public function filterKV(callable $predicate): Map
+    public function filterKV(callable $predicate): HashMap
     {
         return HashMap::collect(Ops\FilterOperation::of($this->getKeyValueIterator())($predicate));
     }
@@ -523,7 +520,7 @@ final class HashMap implements Map
      * @param callable(TK, TV): TKO $callback
      * @return HashMap<TKO, TV>
      */
-    public function reindexKV(callable $callback): Map
+    public function reindexKV(callable $callback): HashMap
     {
         return HashMap::collect(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
     }
@@ -536,7 +533,7 @@ final class HashMap implements Map
      * @param callable(TV): TKO $callback
      * @return HashMap<TKO, NonEmptyHashMap<TK, TV>>
      */
-    public function groupBy(callable $callback): Map
+    public function groupBy(callable $callback): HashMap
     {
         return $this->groupByKV(dropFirstArg($callback));
     }
