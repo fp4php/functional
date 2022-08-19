@@ -7,6 +7,7 @@ namespace Fp\Collection;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Find first element which satisfies the condition
@@ -25,7 +26,7 @@ use Fp\Operations\FirstOperation;
  */
 function first(iterable $collection, ?callable $predicate = null): Option
 {
-    return FirstOperation::of($collection)($predicate);
+    return FirstOperation::of($collection)(null !== $predicate ? dropFirstArg($predicate) : null);
 }
 
 /**

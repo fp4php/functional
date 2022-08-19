@@ -8,6 +8,7 @@ use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Operations\TraverseEitherOperation;
 use Fp\Operations\TraverseOptionOperation;
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 
 /**
@@ -32,7 +33,7 @@ use function Fp\Cast\asArray;
  */
 function traverseOption(iterable $collection, callable $callback): Option
 {
-    return TraverseOptionOperation::of($collection)($callback)->map(fn($gen) => asArray($gen));
+    return TraverseOptionOperation::of($collection)(dropFirstArg($callback))->map(asArray(...));
 }
 
 /**
@@ -58,5 +59,5 @@ function traverseOption(iterable $collection, callable $callback): Option
  */
 function traverseEither(iterable $collection, callable $callback): Either
 {
-    return TraverseEitherOperation::of($collection)($callback)->map(fn($gen) => asArray($gen));
+    return TraverseEitherOperation::of($collection)(dropFirstArg($callback))->map(asArray(...));
 }

@@ -22,8 +22,8 @@ final class GroupMapOperation extends AbstractOperation
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): TKO $group
-     * @param callable(TV): TVO $map
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
      *
      * @return HashMap<TKO, NonEmptyHashMap<TK, TVO>>
      */
@@ -33,8 +33,8 @@ final class GroupMapOperation extends AbstractOperation
         $groups = new HashTable();
 
         foreach ($this->gen as $key => $value) {
-            $groupKey = $group($value);
-            $mapped = $map($value);
+            $groupKey = $group($key, $value);
+            $mapped = $map($key, $value);
 
             $groups->update(
                 $groupKey,

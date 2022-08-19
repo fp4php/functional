@@ -19,14 +19,14 @@ final class TakeWhileOperation extends AbstractOperation
     /**
      * @template TKO
      *
-     * @param callable(TV): bool $f
+     * @param callable(TK, TV): bool $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                if (!$f($value)) {
+                if (!$f($key, $value)) {
                     break;
                 }
 

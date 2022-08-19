@@ -6,6 +6,7 @@ namespace Fp\Collection;
 
 use Fp\Operations\EveryOfOperation;
 use Fp\Operations\EveryOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Returns true if every collection element satisfies the condition
@@ -24,7 +25,7 @@ use Fp\Operations\EveryOperation;
  */
 function every(iterable $collection, callable $predicate): bool
 {
-    return EveryOperation::of($collection)($predicate);
+    return EveryOperation::of($collection)(dropFirstArg($predicate));
 }
 
 /**

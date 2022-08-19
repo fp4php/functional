@@ -25,7 +25,7 @@ final class LastOfOperation extends AbstractOperation
      */
     public function __invoke(string $fqcn, bool $invariant = false): Option
     {
-        return LastOperation::of($this->gen)(fn($elem) => of($elem, $fqcn, $invariant))
+        return LastOperation::of($this->gen)(fn($_key, $elem) => of($elem, $fqcn, $invariant))
             ->filterOf($fqcn, $invariant);
     }
 }

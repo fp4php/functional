@@ -19,7 +19,7 @@ final class TraverseOptionOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param callable(TV): Option<TVO> $f
+     * @param callable(TK, TV): Option<TVO> $f
      * @return Option<Generator<TK, TVO>>
      */
     public function __invoke(callable $f): Option
@@ -28,7 +28,7 @@ final class TraverseOptionOperation extends AbstractOperation
         $hashTable = new HashTable();
 
         foreach ($this->gen as $key => $value) {
-            $mapped = $f($value);
+            $mapped = $f($key, $value);
 
             if ($mapped->isNone()) {
                 return Option::none();
@@ -49,13 +49,6 @@ final class TraverseOptionOperation extends AbstractOperation
      */
     public static function id(iterable $collection): Option
     {
-        $id =
-            /**
-             * @param Option<TVI> $I
-             * @return Option<TVI>
-             */
-            fn(Option $i): Option => $i;
-
-        return self::of($collection)($id);
+        return self::of($collection)(fn(mixed $_key, Option $i): Option => $i);
     }
 }

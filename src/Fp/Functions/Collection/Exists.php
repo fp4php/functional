@@ -6,6 +6,7 @@ namespace Fp\Collection;
 
 use Fp\Operations\ExistsOfOperation;
 use Fp\Operations\ExistsOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Find if there is element which satisfies the condition
@@ -24,7 +25,7 @@ use Fp\Operations\ExistsOperation;
  */
 function exists(iterable $collection, callable $predicate): bool
 {
-    return ExistsOperation::of($collection)($predicate);
+    return ExistsOperation::of($collection)(dropFirstArg($predicate));
 }
 
 /**

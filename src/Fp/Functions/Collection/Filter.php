@@ -143,7 +143,7 @@ function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false
  */
 function filterMap(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
-    $gen = FilterMapOperation::of($collection)($predicate);
+    $gen = FilterMapOperation::of($collection)(dropFirstArg($predicate));
     return $preserveKeys
         ? asArray($gen)
         : asList($gen);

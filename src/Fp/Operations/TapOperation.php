@@ -17,14 +17,14 @@ use function Fp\Cast\asGenerator;
 final class TapOperation extends AbstractOperation
 {
     /**
-     * @param callable(TV): void $f
+     * @param callable(TK, TV): void $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                $f($value);
+                $f($key, $value);
                 yield $key => $value;
             }
         });

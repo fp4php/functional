@@ -6,6 +6,7 @@ namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\LastOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Returns last collection element
@@ -25,5 +26,5 @@ use Fp\Operations\LastOperation;
  */
 function last(iterable $collection, ?callable $predicate = null): Option
 {
-    return LastOperation::of($collection)($predicate);
+    return LastOperation::of($collection)(null !== $predicate ? dropFirstArg($predicate) : null);
 }

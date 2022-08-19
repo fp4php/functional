@@ -13,7 +13,6 @@ namespace Fp\Operations;
 final class ButLastOperation extends AbstractOperation
 {
     /**
-     * @param null|callable(TV): bool $f
      * @return array<TK, TV>
      */
     public function __invoke(): array

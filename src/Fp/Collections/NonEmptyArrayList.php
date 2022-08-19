@@ -280,7 +280,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function tap(callable $callback): NonEmptyArrayList
     {
-        Stream::emits(Ops\TapOperation::of($this->getIterator())($callback))->drain();
+        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
         return $this;
     }
 
@@ -335,7 +335,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getIterator())($predicate);
+        return Ops\EveryOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -361,7 +361,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getIterator())(dropFirstArg($callback))
             ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
     }
 
@@ -393,7 +393,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(Ops\GroupMapReduceOperation::of($this->getIterator())($group, $map, $reduce));
+        return new NonEmptyHashMap(Ops\GroupMapReduceOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map), $reduce));
     }
 
     /**
@@ -418,7 +418,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function exists(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this->getIterator())($predicate);
+        return Ops\ExistsOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -442,7 +442,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function first(callable $predicate): Option
     {
-        return Ops\FirstOperation::of($this->getIterator())($predicate);
+        return Ops\FirstOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -491,7 +491,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function last(callable $predicate): Option
     {
-        return Ops\LastOperation::of($this->getIterator())($predicate);
+        return Ops\LastOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -537,7 +537,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        $groups = Ops\GroupByOperation::of($this)($callback);
+        $groups = Ops\GroupByOperation::of($this)(dropFirstArg($callback));
 
         return (new NonEmptyHashMap($groups))
             ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyArrayList());
@@ -555,7 +555,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function groupMap(callable $group, callable $map): NonEmptyMap
     {
-        $groups = Ops\GroupMapOperation::of($this)($group, $map);
+        $groups = Ops\GroupMapOperation::of($this)(dropFirstArg($group), dropFirstArg($map));
 
         return (new NonEmptyHashMap($groups))
             ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyArrayList());

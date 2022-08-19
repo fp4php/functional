@@ -24,7 +24,7 @@ final class InterleaveOperation extends AbstractOperation
     {
         $pairs = ZipOperation::of($this->gen)($that);
 
-        return FlatMapOperation::of($pairs)(function (array $pair) {
+        return FlatMapOperation::of($pairs)(function (mixed $_key, array $pair) {
             yield from $pair;
         });
     }

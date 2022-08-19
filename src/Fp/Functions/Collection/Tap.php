@@ -6,6 +6,7 @@ namespace Fp\Collection;
 
 use Fp\Operations\TapOperation;
 use Fp\Streams\Stream;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Do something for all collection elements
@@ -23,5 +24,5 @@ use Fp\Streams\Stream;
  */
 function tap(iterable $collection, callable $callback): void
 {
-    Stream::emits(TapOperation::of($collection)($callback))->drain();
+    Stream::emits(TapOperation::of($collection)(dropFirstArg($callback)))->drain();
 }

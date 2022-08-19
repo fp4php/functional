@@ -261,7 +261,7 @@ final class HashMap implements Map
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getKeyValueIterator())($predicate);
+        return Ops\EveryOperation::of($this->getKeyValueIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -274,7 +274,7 @@ final class HashMap implements Map
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())(dropFirstArg($callback))
             ->map(fn($gen) => HashMap::collect($gen));
     }
 
@@ -366,7 +366,7 @@ final class HashMap implements Map
      */
     public function filterMap(callable $callback): self
     {
-        return HashMap::collect(Ops\FilterMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\FilterMapOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -380,7 +380,7 @@ final class HashMap implements Map
      */
     public function flatMap(callable $callback): self
     {
-        return HashMap::collectPairs(Ops\FlatMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collectPairs(Ops\FlatMapOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -445,7 +445,7 @@ final class HashMap implements Map
      */
     public function groupBy(callable $callback): Map
     {
-        return Ops\GroupByOperation::of($this->getKeyValueIterator())($callback);
+        return Ops\GroupByOperation::of($this->getKeyValueIterator())(dropFirstArg($callback));
     }
 
     /**

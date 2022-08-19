@@ -304,7 +304,7 @@ final class ArrayList implements Seq
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getIterator())($predicate);
+        return Ops\EveryOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -330,7 +330,7 @@ final class ArrayList implements Seq
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getIterator())(dropFirstArg($callback))
             ->map(fn($gen) => ArrayList::collect($gen));
     }
 
@@ -355,7 +355,7 @@ final class ArrayList implements Seq
      */
     public function exists(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this->getIterator())($predicate);
+        return Ops\ExistsOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -379,7 +379,7 @@ final class ArrayList implements Seq
      */
     public function first(callable $predicate): Option
     {
-        return Ops\FirstOperation::of($this->getIterator())($predicate);
+        return Ops\FirstOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -418,7 +418,7 @@ final class ArrayList implements Seq
      */
     public function last(callable $predicate): Option
     {
-        return Ops\LastOperation::of($this->getIterator())($predicate);
+        return Ops\LastOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -478,7 +478,7 @@ final class ArrayList implements Seq
      */
     public function groupBy(callable $callback): Map
     {
-        return Ops\GroupByOperation::of($this->getIterator())($callback)
+        return Ops\GroupByOperation::of($this->getIterator())(dropFirstArg($callback))
             ->map(fn(NonEmptyHashMap $neSeq) => $neSeq->values()->toNonEmptyArrayList());
     }
 
@@ -494,7 +494,7 @@ final class ArrayList implements Seq
      */
     public function groupMap(callable $group, callable $map): HashMap
     {
-        return Ops\GroupMapOperation::of($this->getIterator())($group, $map)
+        return Ops\GroupMapOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map))
             ->map(fn(NonEmptyHashMap $hs) => $hs->values()->toNonEmptyArrayList());
     }
 
@@ -512,7 +512,7 @@ final class ArrayList implements Seq
      */
     public function groupMapReduce(callable $group, callable $map, callable $reduce): Map
     {
-        return Ops\GroupMapReduceOperation::of($this->getIterator())($group, $map, $reduce);
+        return Ops\GroupMapReduceOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map), $reduce);
     }
 
     /**
@@ -622,7 +622,7 @@ final class ArrayList implements Seq
      */
     public function filterMap(callable $callback): ArrayList
     {
-        return ArrayList::collect(Ops\FilterMapOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\FilterMapOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -659,7 +659,7 @@ final class ArrayList implements Seq
      */
     public function flatMap(callable $callback): ArrayList
     {
-        return ArrayList::collect(Ops\FlatMapOperation::of($this->getIterator())($callback));
+        return ArrayList::collect(Ops\FlatMapOperation::of($this->getIterator())(dropFirstArg($callback)));
     }
 
     /**
@@ -670,7 +670,7 @@ final class ArrayList implements Seq
      */
     public function takeWhile(callable $predicate): ArrayList
     {
-        return ArrayList::collect(Ops\TakeWhileOperation::of($this->getIterator())($predicate));
+        return ArrayList::collect(Ops\TakeWhileOperation::of($this->getIterator())(dropFirstArg($predicate)));
     }
 
     /**
@@ -681,7 +681,7 @@ final class ArrayList implements Seq
      */
     public function dropWhile(callable $predicate): ArrayList
     {
-        return ArrayList::collect(Ops\DropWhileOperation::of($this->getIterator())($predicate));
+        return ArrayList::collect(Ops\DropWhileOperation::of($this->getIterator())(dropFirstArg($predicate)));
     }
 
     /**
@@ -712,7 +712,7 @@ final class ArrayList implements Seq
      */
     public function tap(callable $callback): ArrayList
     {
-        Stream::emits(Ops\TapOperation::of($this->getIterator())($callback))->drain();
+        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
         return $this;
     }
 

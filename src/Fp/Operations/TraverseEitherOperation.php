@@ -6,7 +6,6 @@ namespace Fp\Operations;
 
 use Fp\Collections\HashTable;
 use Fp\Functional\Either\Either;
-use Fp\Functional\Option\Option;
 use Generator;
 
 /**
@@ -21,7 +20,7 @@ final class TraverseEitherOperation extends AbstractOperation
      * @template E
      * @template TVO
      *
-     * @param callable(TV): Either<E, TVO> $f
+     * @param callable(TK, TV): Either<E, TVO> $f
      * @return Either<E, Generator<TK, TVO>>
      */
     public function __invoke(callable $f): Either
@@ -30,7 +29,7 @@ final class TraverseEitherOperation extends AbstractOperation
         $hashTable = new HashTable();
 
         foreach ($this->gen as $key => $value) {
-            $mapped = $f($value);
+            $mapped = $f($key, $value);
 
             if ($mapped->isLeft()) {
                 return $mapped;
@@ -52,13 +51,6 @@ final class TraverseEitherOperation extends AbstractOperation
      */
     public static function id(iterable $collection): Either
     {
-        $id =
-            /**
-             * @param Either<E, TVI> $I
-             * @return Either<E, TVI>
-             */
-            fn(Either $i): Either => $i;
-
-        return self::of($collection)($id);
+        return self::of($collection)(fn(mixed $_key, Either $i): Either => $i);
     }
 }

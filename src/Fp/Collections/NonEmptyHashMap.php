@@ -288,7 +288,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getKeyValueIterator())($predicate);
+        return Ops\EveryOperation::of($this->getKeyValueIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -301,7 +301,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())(dropFirstArg($callback))
             ->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
     }
 
@@ -461,7 +461,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function groupBy(callable $callback): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(Ops\GroupByOperation::of($this->getKeyValueIterator())($callback));
+        return new NonEmptyHashMap(Ops\GroupByOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
     }
 
     /**

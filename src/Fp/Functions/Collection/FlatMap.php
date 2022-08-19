@@ -6,6 +6,7 @@ namespace Fp\Collection;
 
 use Fp\Operations\FlatMapOperation;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asList;
 
 /**
@@ -30,5 +31,5 @@ use function Fp\Cast\asList;
  */
 function flatMap(iterable $collection, callable $callback): array
 {
-    return asList(FlatMapOperation::of($collection)($callback));
+    return asList(FlatMapOperation::of($collection)(dropFirstArg($callback)));
 }

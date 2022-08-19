@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Operations\GroupMapReduceOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Partitions this iterable collection into a map according to a discriminator function key.
@@ -44,5 +45,5 @@ use Fp\Operations\GroupMapReduceOperation;
  */
 function groupMapReduce(iterable $collection, callable $group, callable $map, callable $reduce): array
 {
-    return GroupMapReduceOperation::of($collection)($group, $map, $reduce)->toArray();
+    return GroupMapReduceOperation::of($collection)(dropFirstArg($group), dropFirstArg($map), $reduce)->toArray();
 }

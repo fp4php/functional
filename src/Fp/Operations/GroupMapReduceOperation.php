@@ -19,8 +19,8 @@ final class GroupMapReduceOperation extends AbstractOperation
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): TKO $group
-     * @param callable(TV): TVO $map
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
      * @param callable(TVO, TVO): TVO $reduce
      *
      * @return HashMap<TKO, TVO>
@@ -30,9 +30,9 @@ final class GroupMapReduceOperation extends AbstractOperation
         /** @psalm-var HashTable<TKO, TVO> $hashTable */
         $hashTable = new HashTable();
 
-        foreach ($this->gen as $item) {
-            $key = $group($item);
-            $new = $map($item);
+        foreach ($this->gen as $k => $item) {
+            $key = $group($k, $item);
+            $new = $map($k, $item);
 
             $toReduced =
                 /**

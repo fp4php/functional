@@ -29,7 +29,7 @@ use function Fp\Cast\asArray;
  */
 function sequenceOption(iterable $collection): Option
 {
-    return TraverseOptionOperation::id($collection)->map(fn($gen) => asArray($gen));
+    return TraverseOptionOperation::id($collection)->map(asArray(...));
 }
 
 /**
@@ -51,5 +51,5 @@ function sequenceOption(iterable $collection): Option
  */
 function sequenceEither(iterable $collection): Either
 {
-    return TraverseEitherOperation::id($collection)->map(fn($gen) => asArray($gen));
+    return TraverseEitherOperation::id($collection)->map(asArray(...));
 }

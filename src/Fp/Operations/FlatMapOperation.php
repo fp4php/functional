@@ -21,14 +21,14 @@ final class FlatMapOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param callable(TV): (NonEmptyCollection<TVO> | Collection<TVO> | iterable<mixed, TVO>) $f
+     * @param callable(TK, TV): (NonEmptyCollection<TVO> | Collection<TVO> | iterable<mixed, TVO>) $f
      * @return Generator<int, TVO>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
-            foreach ($this->gen as $value) {
-                $xs = $f($value);
+            foreach ($this->gen as $key => $value) {
+                $xs = $f($key, $value);
 
                 foreach ($xs as $x) {
                     yield $x;

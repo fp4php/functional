@@ -7,6 +7,7 @@ namespace Fp\Collection;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Operations\GroupMapOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Partitions given $collection into an array of groups according to a discriminator function $group.
@@ -71,7 +72,7 @@ use Fp\Operations\GroupMapOperation;
  */
 function groupMap(iterable $collection, callable $group, callable $map): array
 {
-    return GroupMapOperation::of($collection)($group, $map)
+    return GroupMapOperation::of($collection)(dropFirstArg($group), dropFirstArg($map))
         ->map(fn(NonEmptyHashMap $group) => $group->values()->toNonEmptyList())
         ->toArray();
 }

@@ -7,6 +7,7 @@ namespace Fp\Collection;
 use Fp\Collections\Collection;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Operations\GroupByOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Group collection elements by key returned by function
@@ -32,7 +33,7 @@ use Fp\Operations\GroupByOperation;
  */
 function groupBy(iterable $collection, callable $callback): array
 {
-    return GroupByOperation::of($collection)($callback)
+    return GroupByOperation::of($collection)(dropFirstArg($callback))
         ->map(fn(NonEmptyHashMap $group) => $group->values()->toNonEmptyList())
         ->toArray();
 }

@@ -23,6 +23,6 @@ final class EveryOfOperation extends AbstractOperation
      */
     public function __invoke(string $fqcn, bool $invariant = false): bool
     {
-        return EveryOperation::of($this->gen)(fn($elem) => of($elem, $fqcn, $invariant));
+        return EveryOperation::of($this->gen)(fn($_key, $elem) => of($elem, $fqcn, $invariant));
     }
 }

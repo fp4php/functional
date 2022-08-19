@@ -20,7 +20,7 @@ final class GroupByOperation extends AbstractOperation
     /**
      * @template TKO
      *
-     * @param callable(TV): TKO $f
+     * @param callable(TK, TV): TKO $f
      * @return HashMap<TKO, NonEmptyHashMap<TK, TV>>
      */
     public function __invoke(callable $f): Map
@@ -29,7 +29,7 @@ final class GroupByOperation extends AbstractOperation
         $groups = new HashTable();
 
         foreach ($this->gen as $key => $value) {
-            $groupKey = $f($value);
+            $groupKey = $f($key, $value);
 
             $groups->update(
                 $groupKey,

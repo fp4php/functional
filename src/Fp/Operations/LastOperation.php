@@ -15,15 +15,15 @@ use Fp\Functional\Option\Option;
 final class LastOperation extends AbstractOperation
 {
     /**
-     * @param null|callable(TV): bool $f
+     * @param null|callable(TK, TV): bool $f
      * @return Option<TV>
      */
     public function __invoke(?callable $f = null): Option
     {
         $last = null;
 
-        foreach ($this->gen as $value) {
-            if (is_null($f) || $f($value)) {
+        foreach ($this->gen as $key => $value) {
+            if (is_null($f) || $f($key, $value)) {
                 $last = $value;
             }
         }

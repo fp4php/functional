@@ -248,7 +248,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getIterator())($predicate);
+        return Ops\EveryOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -274,7 +274,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this->getIterator())(dropFirstArg($callback))
             ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
     }
 
@@ -313,7 +313,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function exists(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this->getIterator())($predicate);
+        return Ops\ExistsOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -339,7 +339,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        $groups = Ops\GroupByOperation::of($this->getIterator())($callback);
+        $groups = Ops\GroupByOperation::of($this->getIterator())(dropFirstArg($callback));
 
         return (new NonEmptyHashMap($groups))
             ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());
@@ -353,7 +353,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function first(callable $predicate): Option
     {
-        return Ops\FirstOperation::of($this->getIterator())($predicate);
+        return Ops\FirstOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -364,7 +364,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function last(callable $predicate): Option
     {
-        return Ops\LastOperation::of($this->getIterator())($predicate);
+        return Ops\LastOperation::of($this->getIterator())(dropFirstArg($predicate));
     }
 
     /**
@@ -550,7 +550,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function tap(callable $callback): NonEmptyHashSet
     {
-        Stream::emits(Ops\TapOperation::of($this->getIterator())($callback))->drain();
+        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
         return $this;
     }
 
