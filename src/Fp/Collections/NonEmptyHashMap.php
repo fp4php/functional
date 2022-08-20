@@ -24,7 +24,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @internal
      * @param HashMap<TK, TV> $hashMap
      */
-    public function __construct(private HashMap $hashMap)
+    public function __construct(private readonly HashMap $hashMap)
     {
     }
 
@@ -158,7 +158,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toList(): array
     {
-        return $this->toNonEmptyArrayList()->toNonEmptyList();
+        return $this->hashMap->toList();
     }
 
     /**
@@ -205,7 +205,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toLinkedList(): LinkedList
     {
-        return LinkedList::collect($this->getIterator());
+        return $this->hashMap->toLinkedList();
     }
 
     /**
@@ -214,7 +214,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe($this->getIterator());
+        return $this->hashMap->toNonEmptyLinkedList()->getUnsafe();
     }
 
     /**
@@ -223,7 +223,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect($this->getIterator());
+        return $this->hashMap->toArrayList();
     }
 
     /**
@@ -232,7 +232,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe($this->getIterator());
+        return $this->hashMap->toNonEmptyArrayList()->getUnsafe();
     }
 
     /**
@@ -241,7 +241,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toHashSet(): HashSet
     {
-        return HashSet::collect($this->getIterator());
+        return $this->hashMap->toHashSet();
     }
 
     /**
@@ -250,7 +250,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe($this->getIterator());
+        return $this->hashMap->toNonEmptyHashSet()->getUnsafe();
     }
 
     /**
@@ -278,7 +278,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function toStream(): Stream
     {
-        return Stream::emits($this->getIterator());
+        return $this->hashMap->toStream();
     }
 
     /**
@@ -288,7 +288,37 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getKeyValueIterator())(dropFirstArg($predicate));
+        return $this->everyKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function everyKV(callable $predicate): bool
+    {
+        return $this->hashMap->everyKV($predicate);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return $this->existsKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function existsKV(callable $predicate): bool
+    {
+        return $this->hashMap->existsKV($predicate);
     }
 
     /**
@@ -301,8 +331,22 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())(dropFirstArg($callback))
-            ->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
+        return $this->traverseOptionKV(dropFirstArg($callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseOptionKV(callable $callback): Option
+    {
+        return $this->hashMap
+            ->traverseOptionKV($callback)
+            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
     }
 
     /**
@@ -315,10 +359,9 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function sequenceOption(): Option
     {
-        $iterator = $this->getKeyValueIterator();
-
-        return Ops\TraverseOptionOperation::id($iterator)
-            ->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
+        return $this->hashMap
+            ->sequenceOption()
+            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
     }
 
     /**
@@ -351,7 +394,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function updated(mixed $key, mixed $value): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsUnsafe([...$this->toList(), [$key, $value]]);
+        return new NonEmptyHashMap($this->hashMap->updated($key, $value));
     }
 
     /**
@@ -396,7 +439,48 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function filterMap(callable $callback): HashMap
     {
-        return $this->hashMap->filterMap($callback);
+        return $this->filterMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function filterMapKV(callable $callback): HashMap
+    {
+        return $this->hashMap->filterMapKV($callback);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): iterable<array{TKO, TVO}> $callback
+     * @return HashMap<TKO, TVO>
+     */
+    public function flatMap(callable $callback): HashMap
+    {
+        return $this->flatMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): iterable<array{TKO, TVO}> $callback
+     * @return HashMap<TKO, TVO>
+     */
+    public function flatMapKV(callable $callback): HashMap
+    {
+        return $this->hashMap->flatMapKV($callback);
     }
 
     /**
@@ -409,7 +493,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function map(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\MapOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
+        return new NonEmptyHashMap($this->hashMap->map($callback));
     }
 
     /**
@@ -422,7 +506,29 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function mapKV(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
+        return new NonEmptyHashMap($this->hashMap->mapKV($callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(TV): void $callback
+     * @return NonEmptyHashMap<TK, TV>
+     */
+    public function tap(callable $callback): NonEmptyHashMap
+    {
+        return $this->tapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @param callable(TK, TV): void $callback
+     * @return NonEmptyHashMap<TK, TV>
+     */
+    public function tapKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->tapKV($callback));
     }
 
     /**
@@ -435,7 +541,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function reindex(callable $callback): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\ReindexOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
+        return new NonEmptyHashMap($this->hashMap->reindex($callback));
     }
 
     /**
@@ -448,7 +554,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function reindexKV(callable $callback): NonEmptyMap
     {
-        return NonEmptyHashMap::collectUnsafe(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return new NonEmptyHashMap($this->hashMap->reindexKV($callback));
     }
 
     /**
@@ -461,25 +567,106 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function groupBy(callable $callback): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(Ops\GroupByOperation::of($this->getKeyValueIterator())(dropFirstArg($callback)));
+        return $this->groupByKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TK, TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TV>>
+     */
+    public function groupByKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->groupByKV($callback));
     }
 
     /**
      * @inheritDoc
-     * @return NonEmptySeq<TK>
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TVO>>
      */
-    public function keys(): NonEmptySeq
+    public function groupMap(callable $group, callable $map): NonEmptyHashMap
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\KeysOperation::of($this->getKeyValueIterator())());
+        return $this->groupMapKV(dropFirstArg($group), dropFirstArg($map));
     }
 
     /**
      * @inheritDoc
-     * @return NonEmptySeq<TV>
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TVO>>
      */
-    public function values(): NonEmptySeq
+    public function groupMapKV(callable $group, callable $map): NonEmptyHashMap
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\ValuesOperation::of($this->getKeyValueIterator())());
+        return new NonEmptyHashMap($this->hashMap->groupMapKV($group, $map));
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
+    {
+        return $this->groupMapReduceKV(dropFirstArg($group), dropFirstArg($map), $reduce);
+    }
+
+    /**
+     * @inheritDoc
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function groupMapReduceKV(callable $group, callable $map, callable $reduce): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->groupMapReduceKV($group, $map, $reduce));
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyArrayList<TK>
+     */
+    public function keys(): NonEmptyArrayList
+    {
+        return $this->hashMap->keys()
+            ->toNonEmptyArrayList()
+            ->getUnsafe();
+    }
+
+    /**
+     * @inheritDoc
+     * @return NonEmptyArrayList<TV>
+     */
+    public function values(): NonEmptyArrayList
+    {
+        return $this->hashMap->values()
+            ->toNonEmptyArrayList()
+            ->getUnsafe();
     }
 
     public function toString(): string

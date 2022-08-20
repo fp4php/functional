@@ -30,10 +30,14 @@ final class NonEmptyMapOpsTest extends TestCase
 
     public function testEvery(): void
     {
-        $hm = NonEmptyHashMap::collectPairsUnsafe([['a', 0], ['b', 1]]);
+        $this->assertTrue(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->every(fn($entry) => $entry >= 0));
+        $this->assertFalse(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->every(fn($entry) => $entry > 0));
+    }
 
-        $this->assertTrue($hm->every(fn($entry) => $entry >= 0));
-        $this->assertFalse($hm->every(fn($entry) => $entry > 0));
+    public function testExists(): void
+    {
+        $this->assertTrue(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->exists(fn($entry) => $entry >= 0));
+        $this->assertFalse(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->exists(fn($entry) => $entry > 1));
     }
 
     public function testEveryMap(): void
@@ -78,6 +82,30 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
+    public function testFlatMap(): void
+    {
+        $this->assertEquals(
+            [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]],
+            NonEmptyHashMap::collectPairsNonEmpty([['2', 2], ['5', 5]])
+                ->flatMap(fn(int $val) => [
+                    [$val - 1, $val - 1],
+                    [$val, $val],
+                    [$val + 1, $val + 1],
+                ])
+                ->toList(),
+        );
+    }
+
+    public function testTap(): void
+    {
+        $this->assertEquals(
+            [[2, 22], [3, 33]],
+            NonEmptyHashMap::collectNonEmpty([2 => 22, 3 => 33])
+                ->tap(fn(int $v) => $v + 10)
+                ->toList(),
+        );
+    }
+
     public function testMap(): void
     {
         $hm = NonEmptyHashMap::collectPairsNonEmpty([['2', 22], ['3', 33]]);
@@ -119,6 +147,34 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
+    public function testGroupMap(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'odd' => NonEmptyHashMap::collectNonEmpty(['fst' => '1', 'trd' => '3']),
+                'even' => NonEmptyHashMap::collectNonEmpty(['snd' => '2']),
+            ]),
+            NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'trd' => 3])
+                ->groupMap(fn($i) => 0 === $i % 2 ? 'even' : 'odd', fn($i) => (string) $i),
+        );
+    }
+
+    public function testGroupMapReduce(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'oddDoubledSum' => 8,
+                'evenDoubledSum' => 4,
+            ]),
+            NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'trd' => 3])
+                ->groupMapReduce(
+                    fn(int $i) => 0 === $i % 2 ? 'evenDoubledSum' : 'oddDoubledSum',
+                    fn(int $i) => $i * 2,
+                    fn(int $old, int $new) => $old + $new,
+                ),
+        );
+    }
+
     public function testKeys(): void
     {
         $hm = NonEmptyHashMap::collectPairsNonEmpty([['a', 22], ['b', 33]]);
@@ -137,5 +193,19 @@ final class NonEmptyMapOpsTest extends TestCase
             [22, 33],
             $hm->values()->toList()
         );
+    }
+
+    public function testGetKeyValueIterator(): void
+    {
+        $expected = ['fst' => 1, 'snd' => 2, 'thr' => 3];
+        $actual = [];
+
+        $iterator = NonEmptyHashMap::collectNonEmpty($expected)->getKeyValueIterator();
+
+        foreach ($iterator as $key => $value) {
+            $actual[$key] = $value;
+        }
+
+        $this->assertEquals($expected, $actual);
     }
 }
