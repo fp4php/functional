@@ -301,4 +301,16 @@ interface SeqChainableOps
      * @return Seq<array{TV, TVI}>
      */
     public function zip(iterable $that): Seq;
+
+    /**
+     * Zips each collection element with their indexes
+     *
+     * ```php
+     * >>> ArrayList::collect([1, 2, 3])->zipWithKeys();
+     * => ArrayList([0, 1], [1, 2], [2, 3])
+     * ```
+     *
+     * @return Seq<array{int, TV}>
+     */
+    public function zipWithKeys(): Seq;
 }

@@ -754,6 +754,8 @@ final class ArrayList implements Seq
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @return ArrayList<array{int, TV}>
      */
     public function zipWithKeys(): ArrayList

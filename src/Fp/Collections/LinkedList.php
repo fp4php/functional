@@ -766,6 +766,8 @@ abstract class LinkedList implements Seq
     }
 
     /**
+     * {@inheritDoc}
+     *
      * @return LinkedList<array{int, TV}>
      */
     public function zipWithKeys(): LinkedList
