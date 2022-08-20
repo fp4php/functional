@@ -26,15 +26,8 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
  */
 function pluck(iterable $collection, string $key): array
 {
-    $aggregation = [];
-
-    foreach ($collection as $index => $element) {
-        /** @psalm-suppress MixedAssignment */
-        $aggregation[$index] = match (true) {
-            is_array($element) => $element[$key] ?? null,
-            is_object($element) => $element->{$key} ?? null,
-        };
-    }
-
-    return $aggregation;
+    return map($collection, fn($element) => match (true) {
+        is_array($element) => $element[$key] ?? null,
+        is_object($element) => $element->{$key} ?? null,
+    });
 }

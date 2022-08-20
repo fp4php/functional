@@ -11,18 +11,65 @@ use function Fp\Collection\pluck;
 final class PluckStaticTest
 {
     /**
-     * @return array<0|1, int>
+     * @param list<array{name: string, age: int}> $list
+     * @return list<string>
      */
-    public function testWithClass(): array
+    public function testListShape(array $list): array
     {
-        return pluck([new Foo(1), new Foo(2)], "a");
+        return pluck($list, 'name');
     }
 
     /**
-     * @return array<0|1, 1|2>
+     * @param non-empty-list<array{name: string, age: int}> $list
+     * @return non-empty-list<string>
      */
-    public function testWithObjectLikeArray(): array
+    public function testNonEmptyListShape(array $list): array
     {
-        return pluck([["a" => 1], ["a" => 2]], "a");
+        return pluck($list, 'name');
+    }
+
+    /**
+     * @param array<int, array{name: string, age: int}> $list
+     * @return array<int, string>
+     */
+    public function testArrayShape(array $list): array
+    {
+        return pluck($list, 'name');
+    }
+
+    /**
+     * @param non-empty-array<int, array{name: string, age: int}> $array
+     * @return non-empty-array<int, string>
+     */
+    public function testNonEmptyArrayShape(array $array): array
+    {
+        return pluck($array, 'name');
+    }
+
+    /**
+     * @param list<Foo> $list
+     * @return list<int>
+     */
+    public function testObjectList(array $list): array
+    {
+        return pluck($list, 'a');
+    }
+
+    /**
+     * @param list<Foo> $list
+     */
+    public function testObjectListUndefinedPropertyFetch(array $list): array
+    {
+        /** @psalm-suppress UndefinedPropertyFetch */
+        return pluck($list, 'undefined');
+    }
+
+    /**
+     * @param list<array{name: string, age: int}> $list
+     */
+    public function testShapeListUndefinedArrayKey(array $list): array
+    {
+        /** @psalm-suppress PossiblyUndefinedArrayOffset */
+        return pluck($list, 'undefined');
     }
 }
