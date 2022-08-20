@@ -105,17 +105,6 @@ final class StreamOpsTest extends TestCase
         );
     }
 
-    public function testReduce(): void
-    {
-        /** @psalm-var Stream<string> $list */
-        $list = Stream::emits(['1', '2', '3']);
-
-        $this->assertEquals(
-            '123',
-            $list->reduce(fn(string $acc, $e) => $acc . $e)->get()
-        );
-    }
-
     public function testMap(): void
     {
         $this->assertEquals(

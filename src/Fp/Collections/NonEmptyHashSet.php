@@ -385,19 +385,6 @@ final class NonEmptyHashSet implements NonEmptySet
     /**
      * {@inheritDoc}
      *
-     * @template TA
-     *
-     * @param callable(TV|TA, TV): (TV|TA) $callback
-     * @return (TV|TA)
-     */
-    public function reduce(callable $callback): mixed
-    {
-        return Ops\ReduceOperation::of($this->getIterator())($callback)->getUnsafe();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @template TVO
      *
      * @param TVO $init

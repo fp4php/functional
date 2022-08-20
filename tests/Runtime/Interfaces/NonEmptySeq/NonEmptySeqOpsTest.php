@@ -444,24 +444,6 @@ final class NonEmptySeqOpsTest extends TestCase
         );
     }
 
-    public function provideTestReduceData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty(['1', '2', '3'])];
-    }
-
-    /**
-     * @dataProvider provideTestReduceData
-     * @param NonEmptySeq<string> $seq
-     */
-    public function testReduce(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(
-            '123',
-            $seq->reduce(fn(string $acc, $e) => $acc . $e)
-        );
-    }
-
     public function provideTestFoldData(): Generator
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
@@ -469,7 +451,7 @@ final class NonEmptySeqOpsTest extends TestCase
     }
 
     /**
-     * @dataProvider provideTestReduceData
+     * @dataProvider provideTestFoldData
      * @param NonEmptySeq<string> $seq
      */
     public function testFold(NonEmptySeq $seq): void

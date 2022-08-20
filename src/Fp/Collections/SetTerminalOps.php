@@ -262,22 +262,6 @@ interface SetTerminalOps
     public function fold(mixed $init, callable $callback): mixed;
 
     /**
-     * Reduce multiple elements into one
-     * Returns None for empty collection
-     *
-     * ```php
-     * >>> HashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get();
-     * => '12'
-     * ```
-     *
-     * @template TA
-     *
-     * @param callable(TV|TA, TV): (TV|TA) $callback
-     * @return Option<TV|TA>
-     */
-    public function reduce(callable $callback): Option;
-
-    /**
      * Check if this set is subset of another set
      *
      * ```php

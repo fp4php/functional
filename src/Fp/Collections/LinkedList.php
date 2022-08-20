@@ -395,19 +395,6 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TA
-     *
-     * @param callable(TV|TA, TV): (TV|TA) $callback
-     * @return Option<TV|TA>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return Ops\ReduceOperation::of($this->getIterator())($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @return Option<TV>
      */
     public function head(): Option

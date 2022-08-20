@@ -141,17 +141,6 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertEquals($f1, $hs->firstOf(Foo::class)->get());
     }
 
-    public function testReduce(): void
-    {
-        /** @psalm-var NonEmptyHashSet<string> $list */
-        $list = NonEmptyHashSet::collectNonEmpty(['1', '2', '3']);
-
-        $this->assertEquals(
-            '123',
-            $list->reduce(fn(string $acc, $e) => $acc . $e)
-        );
-    }
-
     public function testFold(): void
     {
         $list = NonEmptyHashSet::collectNonEmpty(['1', '2', '3']);

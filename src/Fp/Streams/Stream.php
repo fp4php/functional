@@ -605,19 +605,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
-     * @template TA
-     *
-     * @param callable(TV|TA, TV): (TV|TA) $callback
-     * @return Option<TV|TA>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return $this->leaf(Ops\ReduceOperation::of($this->emitter)($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @return Option<TV>
      */
     public function head(): Option

@@ -345,21 +345,6 @@ interface NonEmptySeqTerminalOps
     public function lastElement(): mixed;
 
     /**
-     * Reduce multiple elements into one
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty(['1', '2'])->reduce(fn($acc, $cur) => $acc . $cur);
-     * => '12'
-     * ```
-     *
-     * @template TA
-     *
-     * @param callable(TV|TA, TV): (TV|TA) $callback
-     * @return (TV|TA)
-     */
-    public function reduce(callable $callback): mixed;
-
-    /**
      * Fold many elements into one
      *
      * ```php

@@ -74,7 +74,6 @@
             "src/Fp/Functions/Collection/Partition.php",
             "src/Fp/Functions/Collection/Pluck.php",
             "src/Fp/Functions/Collection/Pop.php",
-            "src/Fp/Functions/Collection/Reduce.php",
             "src/Fp/Functions/Collection/Reindex.php",
             "src/Fp/Functions/Collection/Reverse.php",
             "src/Fp/Functions/Collection/Second.php",

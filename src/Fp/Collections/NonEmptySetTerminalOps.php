@@ -186,21 +186,6 @@ interface NonEmptySetTerminalOps
     public function groupBy(callable $callback): NonEmptyMap;
 
     /**
-     * Reduce multiple elements into one
-     *
-     * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur);
-     * => '12'
-     * ```
-     *
-     * @template TA
-     *
-     * @param callable(TV|TA, TV): (TV|TA) $callback
-     * @return (TV|TA)
-     */
-    public function reduce(callable $callback): mixed;
-
-    /**
      * Fold many elements into one
      *
      * ```php

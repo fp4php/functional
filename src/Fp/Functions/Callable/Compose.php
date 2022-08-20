@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Callable;
 
-use Fp\Collections\NonEmptyLinkedList;
-
 use function Fp\Collection\filterNotNull;
+use function Fp\Collection\tail;
 
 /**
  * Compose functions
@@ -76,9 +75,7 @@ function compose(
 {
     $callableChain = filterNotNull([$aToB, $bToC, $cToD, $dToF, $fToG, $gToH, $hToI, $iToJ, $jToK, $kToL]);
 
-    return NonEmptyLinkedList::collectUnsafe($callableChain)
-        ->reduce(function(callable $acc, callable $cur) {
-            return fn(mixed $v): mixed => $cur($acc($v));
-        });
+    return array_reduce(tail($callableChain), function(callable $acc, callable $cur) {
+        return fn(mixed $v): mixed => $cur($acc($v));
+    }, $callableChain[0]);
 }
-
