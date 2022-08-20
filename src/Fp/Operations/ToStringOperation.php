@@ -28,28 +28,10 @@ final class ToStringOperation
 
     private static function arrayToStr(array $items): string
     {
-        $parts = self::isList($items)
+        $parts = array_is_list($items)
             ? map($items, fn($v) => self::of($v))
             : mapKV($items, fn($k, $v) => self::of($k) . ' => ' . self::of($v));
 
         return '[' . implode(', ', $parts) . ']';
-    }
-
-    private static function isList(array $array): bool
-    {
-        if ([] === $array || $array === array_values($array)) {
-            return true;
-        }
-
-        $nextKey = -1;
-
-        /** @psalm-suppress MixedAssignment */
-        foreach ($array as $k => $v) {
-            if ($k !== ++$nextKey) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
