@@ -18,6 +18,7 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionGetReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
@@ -53,5 +54,6 @@ class FunctionalPlugin implements PluginEntryPointInterface
 
         $register(FoldMethodReturnTypeProvider::class);
         $register(MapTapNMethodReturnTypeProvider::class);
+        $register(PluckMethodReturnTypeProvider::class);
     }
 }

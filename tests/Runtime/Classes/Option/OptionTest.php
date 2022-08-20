@@ -19,6 +19,12 @@ use Tests\Mock\Foo;
 
 final class OptionTest extends TestCase
 {
+    public function testOptionPluck(): void
+    {
+        $this->assertEquals(Option::some(1), Option::some(new Foo(a: 1))->pluck('a'));
+        $this->assertEquals(Option::some(1), Option::some(['a' => 1])->pluck('a'));
+    }
+
     public function testToString(): void
     {
         $this->assertEquals('None', (string) Option::none());

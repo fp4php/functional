@@ -122,6 +122,17 @@ abstract class Option
     }
 
     /**
+     * @return Option<mixed>
+     */
+    public function pluck(string $key): Option
+    {
+        return $this->map(fn($item) => match (true) {
+            is_object($item) => $item->{$key} ?? null,
+            is_array($item) => $item[$key] ?? null,
+        });
+    }
+
+    /**
      * 1) Unwrap the box
      * 2) If the box is empty then do nothing
      * 3) Pass unwrapped value to callback
