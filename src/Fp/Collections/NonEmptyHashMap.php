@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations as Ops;
+use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
 use Generator;
 
@@ -362,6 +363,19 @@ final class NonEmptyHashMap implements NonEmptyMap
         return $this->hashMap
             ->sequenceOption()
             ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldingOperation
+    {
+        return new FoldingOperation($this->getKeyValueIterator(), $init);
     }
 
     /**

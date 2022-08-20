@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
+use Fp\Collections\Map;
 use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\NonEmptyMap;
 use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
@@ -39,6 +43,7 @@ use Psalm\Type\Union;
 
 use function Fp\Cast\asList;
 use function Fp\Collection\first;
+use function Fp\Collection\last;
 use function Fp\Collection\map;
 use function Fp\Collection\second;
 use function Fp\Collection\sequenceOption;
@@ -61,6 +66,10 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             HashSet::class,
             NonEmptySet::class,
             NonEmptyHashSet::class,
+            Map::class,
+            HashMap::class,
+            NonEmptyMap::class,
+            NonEmptyHashMap::class,
         ];
     }
 
@@ -152,7 +161,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
         // Then $integers->fold(0) will be FoldingOperation<int, int>
         return proveTrue('fold' === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOption([
-                first($event->getTemplateTypeParameters() ?? []),
+                last($event->getTemplateTypeParameters() ?? []),
                 proveOf($event->getStmt(), MethodCall::class)
                     ->flatMap(
                         fn(MethodCall $call) => first($call->getArgs())

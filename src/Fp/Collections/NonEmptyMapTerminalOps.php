@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldingOperation;
 
 /**
  * @template TK
@@ -45,6 +46,21 @@ interface NonEmptyMapTerminalOps
      * @return Option<TV>
      */
     public function get(mixed $key): Option;
+
+    /**
+     * Fold many elements into one
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'thr' => 3])->fold('0')(fn($acc, $cur) => $acc . $cur);
+     * => '0123'
+     * ```
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldingOperation;
 
     /**
      * Returns true if every collection element satisfy the condition

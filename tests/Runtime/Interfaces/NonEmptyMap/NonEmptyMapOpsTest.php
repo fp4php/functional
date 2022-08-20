@@ -96,6 +96,13 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
+    public function testFold(): void
+    {
+        $hm = NonEmptyHashMap::collectPairsNonEmpty([['2', 2], ['3', 3]]);
+
+        $this->assertEquals(6, $hm->fold(1)(fn($acc, $cur) => $acc + $cur));
+    }
+
     public function testTap(): void
     {
         $this->assertEquals(

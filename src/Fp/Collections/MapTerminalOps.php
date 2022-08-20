@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldingOperation;
 
 /**
  * @template TK
@@ -141,23 +142,19 @@ interface MapTerminalOps
     public function sequenceOption(): Option;
 
     /**
-     * Fold many pairs of key-value into one
+     * Fold many elements into one
      *
      * ```php
-     * >>> $collection = HashMap::collectPairs([['2', 2], ['3', 3]]);
-     * => HashMap('2' -> 2, '3' -> 3)
-     *
-     * >>> $collection->fold(1, fn(int $acc, $cur): int => $acc + $cur]);
-     * => 6
+     * >>> HashMap::collect(['fst' => 1, 'snd' => 2, 'thr' => 3])->fold('0')(fn($acc, $cur) => $acc . $cur);
+     * => '0123'
      * ```
      *
-     * @template TA
+     * @template TVO
      *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
      */
-    public function fold(mixed $init, callable $callback): mixed;
+    public function fold(mixed $init): FoldingOperation;
 
     public function isEmpty(): bool;
 }

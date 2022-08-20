@@ -107,13 +107,9 @@ final class MapOpsTest extends TestCase
 
     public function testFold(): void
     {
-        /** @var HashMap<string, int> $hm */
         $hm = HashMap::collectPairs([['2', 2], ['3', 3]]);
 
-        $this->assertEquals(
-            6,
-            $hm->fold(1, fn(int $acc, $cur) => $acc + $cur)
-        );
+        $this->assertEquals(6, $hm->fold(1)(fn($acc, $cur) => $acc + $cur));
     }
 
     public function testMap(): void
