@@ -321,6 +321,39 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return HashMap<TKO, NonEmptyHashSet<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): HashMap
+    {
+        return Ops\GroupMapOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map))
+            ->map(fn(NonEmptyHashMap $hs) => $hs->values()->toNonEmptyHashSet());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return HashMap<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): HashMap
+    {
+        return Ops\GroupMapReduceOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map), $reduce);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
@@ -610,6 +643,14 @@ final class HashSet implements Set
         return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
+    {
+        return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
+    }
+
     public function toString(): string
     {
         return (string) $this;
@@ -619,7 +660,6 @@ final class HashSet implements Set
     {
         return $this
             ->map(fn($value) => Ops\ToStringOperation::of($value))
-            ->toArrayList()
             ->mkString('HashSet(', ', ', ')');
     }
 }

@@ -185,6 +185,67 @@ interface SetTerminalOps
     public function groupBy(callable $callback): Map;
 
     /**
+     * ```php
+     * >>> HashSet::collect([
+     * >>>     ['id' => 10, 'sum' => 10],
+     * >>>     ['id' => 10, 'sum' => 15],
+     * >>>     ['id' => 10, 'sum' => 20],
+     * >>>     ['id' => 20, 'sum' => 10],
+     * >>>     ['id' => 20, 'sum' => 15],
+     * >>>     ['id' => 30, 'sum' => 20],
+     * >>> ])->groupMap(
+     * >>>     fn(array $a) => $a['id'],
+     * >>>     fn(array $a) => $a['sum'] + 1,
+     * >>> );
+     * => HashMap(
+     * =>   10 -> NonEmptyHashSet(21, 16, 11),
+     * =>   20 -> NonEmptyHashSet(16, 11),
+     * =>   30 -> NonEmptyHashSet(21),
+     * => )
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return Map<TKO, NonEmptySet<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): Map;
+
+    /**
+     * Partitions this Set<TV> into a Map<TKO, TVO> according to a discriminator function $group.
+     * All the values that have the same discriminator are then transformed by the $map and
+     * then reduced into a single value with the $reduce.
+     *
+     *  * ```php
+     * >>> HashSet::collect([
+     * >>>      ['id' => 10, 'val' => 10],
+     * >>>      ['id' => 10, 'val' => 15],
+     * >>>      ['id' => 10, 'val' => 20],
+     * >>>      ['id' => 20, 'val' => 10],
+     * >>>      ['id' => 20, 'val' => 15],
+     * >>>      ['id' => 30, 'val' => 20],
+     * >>> ])->groupMapReduce(
+     * >>>     fn(array $a) => $a['id'],
+     * >>>     fn(array $a) => $a['val'],
+     * >>>     fn(int $old, int $new) => $old + $new,
+     * >>> );
+     * => HashMap([10 => 45, 20 => 25, 30 => 20])
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return Map<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): Map;
+
+    /**
      * Fold many elements into one
      *
      * ```php
@@ -310,6 +371,20 @@ interface SetTerminalOps
      * @return Option<TV>
      */
     public function lastElement(): Option;
+
+    /**
+     * Displays all elements of this collection in a string
+     * using start, end, and separator strings.
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2, 3])->mkString("(", ",", ")")
+     * => '(1,2,3)'
+     *
+     * >>> HashSet::collect([])->mkString("(", ",", ")")
+     * => '()'
+     * ```
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string;
 
     public function isEmpty(): bool;
 }

@@ -115,6 +115,43 @@ final class SetOpsTest extends TestCase
         );
     }
 
+    public function testGroupMap(): void
+    {
+        $this->assertEquals(
+            HashMap::collect([
+                'odd' => NonEmptyHashSet::collectNonEmpty(['num-3', 'num-1']),
+                'even' => NonEmptyHashSet::collectNonEmpty(['num-2']),
+            ]),
+            HashSet::collect([1, 1, 2, 2, 3, 3])->groupMap(
+                fn($i) => 0 === $i % 2 ? 'even' : 'odd',
+                fn($i) => "num-{$i}",
+            ),
+        );
+    }
+
+    public function testGroupMapReduce(): void
+    {
+        $this->assertEquals(
+            HashMap::collect([
+                10 => [10, 15, 20],
+                20 => [10, 15],
+                30 => [20],
+            ]),
+            HashSet::collect([
+                ['id' => 10, 'sum' => 10],
+                ['id' => 10, 'sum' => 15],
+                ['id' => 10, 'sum' => 20],
+                ['id' => 20, 'sum' => 10],
+                ['id' => 20, 'sum' => 15],
+                ['id' => 30, 'sum' => 20],
+            ])->groupMapReduce(
+                fn(array $a) => $a['id'],
+                fn(array $a) => [$a['sum']],
+                fn(array $old, array $new) => array_merge($old, $new),
+            )
+        );
+    }
+
     public function testFilter(): void
     {
         $this->assertEquals([1], HashSet::collect([new Foo(1), 1, 1, new Foo(1)])->filter(fn($i) => $i === 1)->toList());
@@ -252,5 +289,11 @@ final class SetOpsTest extends TestCase
             HashSet::collect([1, 2, 2])
                 ->reindex(fn($value) => "key-{$value}"),
         );
+    }
+
+    public function testMkString(): void
+    {
+        $this->assertEquals('(1, 2, 3)', HashSet::collect([1, 2, 3])->mkString('(', ', ', ')'));
+        $this->assertEquals('()', HashSet::collect([])->mkString('(', ', ', ')'));
     }
 }
