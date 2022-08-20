@@ -198,7 +198,6 @@ final class SetOpsTest extends TestCase
 
     public function testFold(): void
     {
-        /** @psalm-var HashSet<int> $list */
         $list = HashSet::collect([2, 3]);
 
         $this->assertEquals(

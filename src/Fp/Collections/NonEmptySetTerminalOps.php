@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldingOperation;
 
 /**
  * @psalm-suppress InvalidTemplateParam
@@ -198,6 +199,21 @@ interface NonEmptySetTerminalOps
      * @return (TV|TA)
      */
     public function reduce(callable $callback): mixed;
+
+    /**
+     * Fold many elements into one
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collect(['1', '2'])->fold('0')(fn($acc, $cur) => $acc . $cur);
+     * => '012'
+     * ```
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldingOperation;
 
     /**
      * Check if this set is subset of another set

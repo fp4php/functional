@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations as Ops;
+use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
@@ -24,7 +25,7 @@ final class NonEmptyHashSet implements NonEmptySet
      * @internal
      * @param HashSet<TV> $set
      */
-    public function __construct(private HashSet $set)
+    public function __construct(private readonly HashSet $set)
     {
     }
 
@@ -392,6 +393,19 @@ final class NonEmptyHashSet implements NonEmptySet
     public function reduce(callable $callback): mixed
     {
         return Ops\ReduceOperation::of($this->getIterator())($callback)->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldingOperation
+    {
+        return new FoldingOperation($this->getIterator(), $init);
     }
 
     /**

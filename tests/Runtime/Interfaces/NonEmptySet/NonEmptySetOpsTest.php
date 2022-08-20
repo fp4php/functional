@@ -152,6 +152,16 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testFold(): void
+    {
+        $list = NonEmptyHashSet::collectNonEmpty(['1', '2', '3']);
+
+        $this->assertEquals(
+            '0123',
+            $list->fold('0')(fn(string $acc, $e) => $acc . $e)
+        );
+    }
+
     public function testMap(): void
     {
         $this->assertEquals(
