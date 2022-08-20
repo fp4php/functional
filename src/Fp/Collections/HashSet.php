@@ -578,6 +578,22 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return HashSet<TVO>
+     */
+    public function mapN(callable $callback): HashSet
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
      * @return HashSet<TV>
      */

@@ -119,6 +119,16 @@ interface NonEmptySetChainableOps
     public function map(callable $callback): NonEmptySet;
 
     /**
+     * Same as {@see NonEmptySetChainableOps::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return NonEmptySet<TVO>
+     */
+    public function mapN(callable $callback): NonEmptySet;
+
+    /**
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([2, 5])
      * >>>     ->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])

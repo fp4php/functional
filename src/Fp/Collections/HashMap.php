@@ -479,6 +479,22 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function mapN(callable $callback): HashMap
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
      * @return HashMap<TK, TV>
      */

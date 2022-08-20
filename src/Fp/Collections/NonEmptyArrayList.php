@@ -238,6 +238,22 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return NonEmptyArrayList<TVO>
+     */
+    public function mapN(callable $callback): NonEmptyArrayList
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVI
      *
      * @param TVI $elem

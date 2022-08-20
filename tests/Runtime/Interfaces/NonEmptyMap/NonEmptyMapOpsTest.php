@@ -127,6 +127,25 @@ final class NonEmptyMapOpsTest extends TestCase
             $hm->mapKV(fn($key, $elem) => "{$key}-{$elem}")->toList()
         );
     }
+
+    public function testMapN(): void
+    {
+        $tuples = [
+            'fst' => [1, true, true],
+            'snd' => [2, true, false],
+            'thr' => [3, false, false],
+        ];
+
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'fst' => new Foo(1, true, true),
+                'snd' => new Foo(2, true, false),
+                'thr' => new Foo(3, false, false),
+            ]),
+            NonEmptyHashMap::collectNonEmpty($tuples)->mapN(Foo::create(...)),
+        );
+    }
+
     public function testReindex(): void
     {
         $hm = NonEmptyHashMap::collectPairsNonEmpty([['2', 22], ['3', 33]]);

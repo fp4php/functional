@@ -535,6 +535,22 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVO
      *
+     * @param callable(mixed...): TVO $callback
+     * @return NonEmptyHashSet<TVO>
+     */
+    public function mapN(callable $callback): NonEmptyHashSet
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
      * @param callable(TV): (iterable<TVO>) $callback
      * @return HashSet<TVO>
      */

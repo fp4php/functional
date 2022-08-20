@@ -524,6 +524,22 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return NonEmptyHashMap<TK, TVO>
+     */
+    public function mapN(callable $callback): NonEmptyHashMap
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
      * @inheritDoc
      *
      * @param callable(TV): void $callback

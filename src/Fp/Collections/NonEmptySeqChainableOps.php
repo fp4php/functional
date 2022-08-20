@@ -166,6 +166,16 @@ interface NonEmptySeqChainableOps
     public function map(callable $callback): NonEmptySeq;
 
     /**
+     * Same as {@see NonEmptySeqChainableOps::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return NonEmptySeq<TVO>
+     */
+    public function mapN(callable $callback): NonEmptySeq;
+
+    /**
      * Copy collection in reversed order
      *
      * ```php

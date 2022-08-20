@@ -171,6 +171,16 @@ interface NonEmptyMapChainableOps
     public function mapKV(callable $callback): NonEmptyMap;
 
     /**
+     * Same as {@see NonEmptyMapChainableOps::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return NonEmptyMap<TK, TVO>
+     */
+    public function mapN(callable $callback): NonEmptyMap;
+
+    /**
      * Call a function for every collection element
      *
      * ```php

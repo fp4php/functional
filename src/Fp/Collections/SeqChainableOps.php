@@ -167,6 +167,16 @@ interface SeqChainableOps
     public function map(callable $callback): Seq;
 
     /**
+     * Same as {@see SeqChainableOps::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return Seq<TVO>
+     */
+    public function mapN(callable $callback): Seq;
+
+    /**
      * Copy collection in reversed order
      *
      * ```php

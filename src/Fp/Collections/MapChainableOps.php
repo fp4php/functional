@@ -168,6 +168,16 @@ interface MapChainableOps
     public function mapKV(callable $callback): Map;
 
     /**
+     * Same as {@see MapChainableOps::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return Map<TK, TVO>
+     */
+    public function mapN(callable $callback): Map;
+
+    /**
      * Call a function for every collection element
      *
      * ```php

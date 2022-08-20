@@ -344,6 +344,32 @@ final class SeqOpsTest extends TestCase
         );
     }
 
+    public function provideTestMapNData(): Generator
+    {
+        $tuples = [
+            [1, true, true],
+            [2, true, false],
+            [3, false, false],
+        ];
+        $expected = [
+            new Foo(1, true, true),
+            new Foo(2, true, false),
+            new Foo(3, false, false),
+        ];
+        yield ArrayList::class => [ArrayList::collect($tuples), ArrayList::collect($expected)];
+        yield LinkedList::class => [LinkedList::collect($tuples), LinkedList::collect($expected)];
+    }
+
+    /**
+     * @param Seq<array{int, bool, bool}> $seq
+     * @param Seq<Foo> $expected
+     * @dataProvider provideTestMapNData
+     */
+    public function testMapN(Seq $seq, Seq $expected): void
+    {
+        $this->assertEquals($expected, $seq->mapN(Foo::create(...)));
+    }
+
     public function provideTestFoldData(): Generator
     {
         yield ArrayList::class => [ArrayList::collect(['1', '2', '3'])];

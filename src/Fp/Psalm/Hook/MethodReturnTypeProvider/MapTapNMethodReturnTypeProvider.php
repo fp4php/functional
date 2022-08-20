@@ -4,6 +4,19 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
+use Fp\Collections\HashMap;
+use Fp\Collections\HashSet;
+use Fp\Collections\Map;
+use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyHashSet;
+use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\NonEmptyMap;
+use Fp\Collections\NonEmptySeq;
+use Fp\Collections\NonEmptySet;
+use Fp\Collections\Seq;
+use Fp\Collections\LinkedList;
+use Fp\Collections\Set;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
@@ -32,7 +45,24 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
 {
     public static function getClassLikeNames(): array
     {
-        return [Option::class, Either::class];
+        return [
+            Seq::class,
+            ArrayList::class,
+            LinkedList::class,
+            NonEmptySeq::class,
+            NonEmptyArrayList::class,
+            NonEmptyLinkedList::class,
+            Set::class,
+            HashSet::class,
+            NonEmptySet::class,
+            NonEmptyHashSet::class,
+            Map::class,
+            HashMap::class,
+            NonEmptyMap::class,
+            NonEmptyHashMap::class,
+            Option::class,
+            Either::class,
+        ];
     }
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union

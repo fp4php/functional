@@ -552,6 +552,22 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return LinkedList<TVO>
+     */
+    public function mapN(callable $callback): LinkedList
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVI
      *
      * @param TVI $elem

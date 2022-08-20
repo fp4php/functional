@@ -539,6 +539,22 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return ArrayList<TVO>
+     */
+    public function mapN(callable $callback): ArrayList
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVI
      *
      * @param TVI $elem

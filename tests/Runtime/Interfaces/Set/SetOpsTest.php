@@ -214,6 +214,24 @@ final class SetOpsTest extends TestCase
         );
     }
 
+    public function testMapN(): void
+    {
+        $tuples = [
+            [1, true, true],
+            [2, true, false],
+            [3, false, false],
+        ];
+
+        $this->assertEquals(
+            HashSet::collect([
+                new Foo(1, true, true),
+                new Foo(2, true, false),
+                new Foo(3, false, false),
+            ]),
+            HashSet::collect($tuples)->mapN(Foo::create(...)),
+        );
+    }
+
     public function testTap(): void
     {
         $this->assertEquals(

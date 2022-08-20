@@ -159,6 +159,24 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testMapN(): void
+    {
+        $tuples = [
+            [1, true, true],
+            [2, true, false],
+            [3, false, false],
+        ];
+
+        $this->assertEquals(
+            NonEmptyHashSet::collectNonEmpty([
+                new Foo(1, true, true),
+                new Foo(2, true, false),
+                new Foo(3, false, false),
+            ]),
+            NonEmptyHashSet::collectNonEmpty($tuples)->mapN(Foo::create(...)),
+        );
+    }
+
     public function testFlatMap(): void
     {
         $this->assertEquals(

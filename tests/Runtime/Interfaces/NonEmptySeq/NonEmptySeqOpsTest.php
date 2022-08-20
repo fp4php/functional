@@ -444,6 +444,39 @@ final class NonEmptySeqOpsTest extends TestCase
         );
     }
 
+    public function provideTestMapNData(): Generator
+    {
+        $tuples = [
+            [1, true, true],
+            [2, true, false],
+            [3, false, false],
+        ];
+        $expected = [
+            new Foo(1, true, true),
+            new Foo(2, true, false),
+            new Foo(3, false, false),
+        ];
+
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty($tuples),
+            NonEmptyArrayList::collectNonEmpty($expected),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty($tuples),
+            NonEmptyLinkedList::collectNonEmpty($expected),
+        ];
+    }
+
+    /**
+     * @param NonEmptySeq<array{int, bool, bool}> $seq
+     * @param NonEmptySeq<Foo> $expected
+     * @dataProvider provideTestMapNData
+     */
+    public function testMapN(NonEmptySeq $seq, NonEmptySeq $expected): void
+    {
+        $this->assertEquals($expected, $seq->mapN(Foo::create(...)));
+    }
+
     public function provideTestFoldData(): Generator
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];

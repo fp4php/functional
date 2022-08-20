@@ -126,6 +126,25 @@ final class MapOpsTest extends TestCase
             $hm->mapKV(fn($key, $elem) => "key-{$key}-val-{$elem}")->toList()
         );
     }
+
+    public function testMapN(): void
+    {
+        $tuples = [
+            'fst' => [1, true, true],
+            'snd' => [2, true, false],
+            'thr' => [3, false, false],
+        ];
+
+        $this->assertEquals(
+            HashMap::collect([
+                'fst' => new Foo(1, true, true),
+                'snd' => new Foo(2, true, false),
+                'thr' => new Foo(3, false, false),
+            ]),
+            HashMap::collect($tuples)->mapN(Foo::create(...)),
+        );
+    }
+
     public function testTap(): void
     {
         $hm = HashMap::collectPairs([['2', 22], ['3', 33]])

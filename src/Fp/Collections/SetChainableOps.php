@@ -159,6 +159,16 @@ interface SetChainableOps
     public function map(callable $callback): Set;
 
     /**
+     * Same as {@see SetChainableOps::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return Set<TVO>
+     */
+    public function mapN(callable $callback): Set;
+
+    /**
      * Call a function for every collection element
      *
      * ```php
