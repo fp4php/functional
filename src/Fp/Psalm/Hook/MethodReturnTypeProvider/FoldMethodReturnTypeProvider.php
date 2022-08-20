@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
+use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashSet;
+use Fp\Collections\NonEmptyLinkedList;
+use Fp\Collections\NonEmptySeq;
+use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
+use Fp\Collections\Set;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldingOperation;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
@@ -46,7 +53,14 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             Seq::class,
             LinkedList::class,
             ArrayList::class,
+            NonEmptySeq::class,
+            NonEmptyLinkedList::class,
+            NonEmptyArrayList::class,
             FoldingOperation::class,
+            Set::class,
+            HashSet::class,
+            NonEmptySet::class,
+            NonEmptyHashSet::class,
         ];
     }
 

@@ -30,6 +30,19 @@ interface NonEmptySeqCollector
 
     /**
      * ```php
+     * >>> NonEmptyArrayList::singleton(1);
+     * => NonEmptyArrayList(1)
+     * ```
+     *
+     * @template TVI
+     *
+     * @param TVI $val
+     * @return NonEmptySeq<TVI>
+     */
+    public static function singleton(mixed $val): NonEmptySeq;
+
+    /**
+     * ```php
      * >>> NonEmptyArrayList::collectUnsafe([1, 2]);
      * => NonEmptyArrayList(1, 2)
      *

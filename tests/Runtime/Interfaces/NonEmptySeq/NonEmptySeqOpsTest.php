@@ -194,6 +194,12 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals([[0, 'a'], [1, 'b']], $seq->zip(['a', 'b'])->toList());
     }
 
+    public function testZipWithKeys(): void
+    {
+        $this->assertEquals([[0, 1], [1, 2]], NonEmptyArrayList::collectNonEmpty([1, 2])->zipWithKeys()->toList());
+        $this->assertEquals([[0, 1], [1, 2]], NonEmptyLinkedList::collectNonEmpty([1, 2])->zipWithKeys()->toList());
+    }
+
     /**
      * @dataProvider provideTestTraverseOptionData
      */
@@ -453,6 +459,24 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals(
             '123',
             $seq->reduce(fn(string $acc, $e) => $acc . $e)
+        );
+    }
+
+    public function provideTestFoldData(): Generator
+    {
+        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
+        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty(['1', '2', '3'])];
+    }
+
+    /**
+     * @dataProvider provideTestReduceData
+     * @param NonEmptySeq<string> $seq
+     */
+    public function testFold(NonEmptySeq $seq): void
+    {
+        $this->assertEquals(
+            '0123',
+            $seq->fold('0')(fn($acc, $e) => $acc . $e),
         );
     }
 

@@ -6,11 +6,13 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations as Ops;
+use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
 use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\fromPairs;
+use function Fp\Collection\keys;
 
 /**
  * @template-covariant TV
@@ -26,6 +28,19 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function __construct(public mixed $head, public LinkedList $tail)
     {
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $val
+     * @return NonEmptyLinkedList<TVI>
+     */
+    public static function singleton(mixed $val): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectNonEmpty([$val]);
     }
 
     /**
@@ -301,6 +316,16 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @return NonEmptyLinkedList<array{int, TV}>
+     */
+    public function zipWithKeys(): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectUnsafe(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV, TV): int $cmp
      * @return NonEmptyLinkedList<TV>
      */
@@ -510,6 +535,19 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldingOperation
+    {
+        return new FoldingOperation($this->getIterator(), $init);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return TV
      */
     public function firstElement(): mixed
@@ -559,6 +597,19 @@ final class NonEmptyLinkedList implements NonEmptySeq
 
         return (new NonEmptyHashMap($groups))
             ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyArrayList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $separator
+     * @return NonEmptyLinkedList<TV | TVI>
+     */
+    public function intersperse(mixed $separator): NonEmptyLinkedList
+    {
+        return NonEmptyLinkedList::collectUnsafe(Ops\IntersperseOperation::of($this->getIterator())($separator));
     }
 
     /**
@@ -721,6 +772,14 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function toString(): string
     {
         return (string) $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
+    {
+        return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
     }
 
     public function __toString(): string

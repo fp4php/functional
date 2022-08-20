@@ -285,4 +285,31 @@ interface NonEmptySeqChainableOps
      * @return NonEmptySeq<array{TV, TVI}>
      */
     public function zip(iterable $that): NonEmptySeq;
+
+    /**
+     * Zips each collection element with their indexes
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([1, 2, 3])->zipWithKeys();
+     * => NonEmptyArrayList([0, 1], [1, 2], [2, 3])
+     * ```
+     *
+     * @return NonEmptySeq<array{int, TV}>
+     */
+    public function zipWithKeys(): NonEmptySeq;
+
+    /**
+     * Add specified separator between every pair of elements in the source collection.
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([1, 2, 3])->intersperse(0)->toList();
+     * => [1, 0, 2, 0, 3]
+     * ```
+     *
+     * @template TVI
+     *
+     * @param TVI $separator
+     * @return NonEmptySeq<TV | TVI>
+     */
+    public function intersperse(mixed $separator): NonEmptySeq;
 }

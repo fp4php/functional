@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldingOperation;
 
 /**
  * @psalm-suppress InvalidTemplateParam
@@ -357,4 +358,30 @@ interface NonEmptySeqTerminalOps
      * @return (TV|TA)
      */
     public function reduce(callable $callback): mixed;
+
+    /**
+     * Fold many elements into one
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collect(['1', '2'])->fold('0')(fn($acc, $cur) => $acc . $cur);
+     * => '012'
+     * ```
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldingOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldingOperation;
+
+    /**
+     * Displays all elements of this collection in a string
+     * using start, end, and separator strings.
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->mkString("(", ",", ")")
+     * => '(1,2,3)'
+     * ```
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string;
 }

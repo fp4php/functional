@@ -76,6 +76,26 @@ final class NonEmptySeqTest extends TestCase
         $this->assertEquals($expected, $seq->toString());
     }
 
+    public function testMkString(): void
+    {
+        $this->assertEquals('(1, 2, 3)', NonEmptyArrayList::collectNonEmpty([1, 2, 3])->mkString('(', ', ', ')'));
+        $this->assertEquals('(1, 2, 3)', NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->mkString('(', ', ', ')'));
+    }
+
+    public function provideTestIntersperseData(): Generator
+    {
+        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([0, 1, 2])];
+        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([0, 1, 2])];
+    }
+
+    /**
+     * @dataProvider provideTestIntersperseData
+     */
+    public function testIntersperse(NonEmptySeq $seq): void
+    {
+        $this->assertEquals([0 , ',', 1, ',', 2], $seq->intersperse(',')->toList());
+    }
+
     public function provideTestCastsData(): Generator
     {
         yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
