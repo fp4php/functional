@@ -39,9 +39,20 @@ final class PluckPropertyTypeResolver
         return proveOf($context->object, TNamedObject::class)
             ->flatMap(PsalmApi::$classlikes->getStorage(...))
             ->flatMap(fn(ClassLikeStorage $storage) => at($storage->properties, $context->key->value)
+                ->orElse(fn() => self::getPropertyFromParentClass($storage, $context->key->value))
                 ->map(fn(PropertyStorage $property) => $property->type ?? Type::getMixed())
                 ->orElse(fn() => self::undefinedPropertyIssue($storage->name, $context))
             );
+    }
+
+    /**
+     * @return Option<PropertyStorage>
+     */
+    private static function getPropertyFromParentClass(ClassLikeStorage $storage, string $property): Option
+    {
+        return at($storage->declaring_property_ids, $property)
+            ->flatMap(PsalmApi::$classlikes->getStorage(...))
+            ->flatMap(fn(ClassLikeStorage $parent) => at($parent->properties, $property));
     }
 
     /**
