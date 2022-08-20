@@ -6,13 +6,28 @@ namespace Tests\Runtime\Functions\Callable;
 
 use PHPUnit\Framework\TestCase;
 
+use Tests\Mock\Baz;
+use Tests\Mock\Foo;
+
 use function Fp\Callable\compose;
+use function Fp\Callable\ctor;
 use function Fp\Callable\partial;
 use function Fp\Callable\partialLeft;
 use function Fp\Callable\partialRight;
 
 final class CallableTest extends TestCase
 {
+    public function testCtor(): void
+    {
+        $fooCtor = ctor(Foo::class);
+        $bazCtor = ctor(Baz::class);
+
+        $this->assertEquals(new Foo(a: 1, b: true, c: true), $fooCtor(1));
+        $this->assertEquals(new Foo(a: 1, b: false, c: true), $fooCtor(1, false));
+        $this->assertEquals(new Foo(a: 1, b: false, c: false), $fooCtor(1, false, false));
+        $this->assertEquals(new Baz(), $bazCtor());
+    }
+
     public function testCompose(): void
     {
         $aToB = fn(int $a): int => $a + 1;

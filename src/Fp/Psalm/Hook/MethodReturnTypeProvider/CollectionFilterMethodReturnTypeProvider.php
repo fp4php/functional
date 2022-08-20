@@ -36,6 +36,7 @@ use Fp\Functional\Option\Option;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 
+use function Fp\Callable\ctor;
 use function Fp\Collection\first;
 use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
@@ -91,7 +92,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
                         ? new CollectionTypeParams($template_params[0], $template_params[1])
                         : new CollectionTypeParams(Type::getArrayKey(), $template_params[0])),
             ]))
-            ->map(fn($args) => new RefinementContext(...$args))
+            ->mapN(ctor(RefinementContext::class))
             ->map(RefineByPredicate::for(...))
             ->map(fn(CollectionTypeParams $result) => self::getReturnType($event, $result))
             ->get();

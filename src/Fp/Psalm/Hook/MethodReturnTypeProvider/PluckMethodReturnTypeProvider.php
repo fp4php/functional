@@ -19,6 +19,7 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Union;
 
+use function Fp\Callable\ctor;
 use function Fp\Collection\last;
 use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
@@ -47,7 +48,7 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
                 Option::some($event->getSource()),
                 Option::some($event->getCodeLocation()),
             ]))
-            ->map(fn($args) => new PluckResolveContext(...$args))
+            ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))
             ->map(fn(Union $result) => new TGenericObject(Option::class, [$result]))
             ->map(fn(TGenericObject $result) => new Union([$result]))

@@ -18,6 +18,7 @@ use Psalm\Type;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 
+use function Fp\Callable\ctor;
 use function Fp\Collection\first;
 use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
@@ -42,7 +43,7 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
                 first($event->getTemplateTypeParameters() ?? [])
                     ->map(fn($type_param) => new CollectionTypeParams(Type::getArrayKey(), $type_param)),
             ]))
-            ->map(fn($args) => new RefinementContext(...$args))
+            ->mapN(ctor(RefinementContext::class))
             ->map(RefineByPredicate::for(...))
             ->map(fn(CollectionTypeParams $result) => new TGenericObject(Option::class, [$result->val_type]))
             ->map(fn(TGenericObject $result) => new Union([$result]))

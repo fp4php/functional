@@ -23,6 +23,7 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 
+use function Fp\Callable\ctor;
 use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
 
@@ -49,15 +50,17 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
                 Option::some($event->getStatementsSource()),
                 Option::some($event->getCodeLocation()),
             ]))
-            ->map(fn($args) => new PluckResolveContext(...$args))
+            ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))
-            ->map(fn(Union $result) => match (true) {
-                self::itWas(TNonEmptyList::class, $event) => new TNonEmptyList($result),
-                self::itWas(TList::class, $event) => new TList($result),
-                self::itWas(TNonEmptyArray::class, $event) => new TNonEmptyArray([self::getArrayKey($event), $result]),
-                default => new TArray([self::getArrayKey($event), $result]),
-            })
-            ->map(fn(Type\Atomic $result) => new Union([$result]))
+            ->map(fn(Union $result) => [
+                match (true) {
+                    self::itWas(TNonEmptyList::class, $event) => new TNonEmptyList($result),
+                    self::itWas(TList::class, $event) => new TList($result),
+                    self::itWas(TNonEmptyArray::class, $event) => new TNonEmptyArray([self::getArrayKey($event), $result]),
+                    default => new TArray([self::getArrayKey($event), $result]),
+                },
+            ])
+            ->map(ctor(Union::class))
             ->get();
     }
 

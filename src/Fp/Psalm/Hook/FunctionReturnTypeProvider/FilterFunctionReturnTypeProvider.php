@@ -22,6 +22,7 @@ use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Fp\Functional\Option\Option;
 
+use function Fp\Callable\ctor;
 use function Fp\Collection\at;
 use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
@@ -56,7 +57,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
                     ->map(fn(CallArg $arg) => $arg->type)
                     ->flatMap(GetCollectionTypeParams::keyValue(...)),
             ]))
-            ->map(fn($args) => new RefinementContext(...$args))
+            ->mapN(ctor(RefinementContext::class))
             ->map(RefineByPredicate::for(...))
             ->map(fn(CollectionTypeParams $result) => self::getReturnType($event, $result))
             ->get();
