@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
@@ -18,10 +19,15 @@ use function Fp\Cast\asGenerator;
  * @template-covariant TV
  * @implements NonEmptyMap<TK, TV>
  *
+ * @psalm-seal-methods
+ * @mixin NonEmptyHashMapExtensions<TK, TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyHashMap implements NonEmptyMap
 {
+    use WithExtensions;
+
     /**
      * @internal
      * @param HashMap<TK, TV> $hashMap

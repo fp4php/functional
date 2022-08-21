@@ -15,6 +15,7 @@ use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Unit;
+use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Generator;
 use IteratorAggregate;
@@ -36,23 +37,19 @@ use function Fp\Cast\asNonEmptyList;
  * @implements StreamEmitter<TV>
  * @implements IteratorAggregate<TV>
  *
+ * @psalm-seal-methods
+ * @mixin StreamExtensions<TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 {
-    /**
-     * @var Generator<int, TV>
-     */
+    use WithExtensions;
+
+    /** @var Generator<int, TV> */
     private Generator $emitter;
 
-    /**
-     * @psalm-readonly-allow-private-mutation $forked
-     */
     private bool $forked = false;
-
-    /**
-     * @psalm-readonly-allow-private-mutation $drained
-     */
     private bool $drained = false;
 
     /**

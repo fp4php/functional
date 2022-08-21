@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
@@ -18,10 +19,15 @@ use function Fp\Collection\keys;
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
  *
+ * @psalm-seal-methods
+ * @mixin NonEmptyLinkedListExtensions<TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyLinkedList implements NonEmptySeq
 {
+    use WithExtensions;
+
     /**
      * @param TV $head
      * @param LinkedList<TV> $tail

@@ -18,6 +18,9 @@ use function Fp\Cast\fromPairs;
  * @template-covariant TV
  * @implements NonEmptySet<TV>
  *
+ * @psalm-seal-methods
+ * @mixin NonEmptyHashSetExtensions<TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyHashSet implements NonEmptySet

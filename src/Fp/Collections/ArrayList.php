@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use ArrayIterator;
 use Fp\Functional\Option\Option;
+use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
@@ -23,10 +24,15 @@ use function Fp\Evidence\proveNonEmptyList;
  * @template-covariant TV
  * @implements Seq<TV>
  *
+ * @psalm-seal-methods
+ * @mixin ArrayListExtensions<TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class ArrayList implements Seq
 {
+    use WithExtensions;
+
     /**
      * @param list<TV> $elements
      */

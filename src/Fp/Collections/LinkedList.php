@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldingOperation;
@@ -24,10 +25,15 @@ use function Fp\Evidence\proveNonEmptyList;
  * @template-covariant TV
  * @implements Seq<TV>
  *
+ * @psalm-seal-methods
+ * @mixin LinkedListExtensions<TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 abstract class LinkedList implements Seq
 {
+    use WithExtensions;
+
     /**
      * {@inheritDoc}
      *

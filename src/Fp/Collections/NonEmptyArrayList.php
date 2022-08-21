@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldingOperation;
 use Fp\Streams\Stream;
@@ -18,10 +19,15 @@ use function Fp\Collection\keys;
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
  *
+ * @psalm-seal-methods
+ * @mixin NonEmptyArrayListExtensions<TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyArrayList implements NonEmptySeq
 {
+    use WithExtensions;
+
     /**
      * @internal
      * @param ArrayList<TV> $arrayList

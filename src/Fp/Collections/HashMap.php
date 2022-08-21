@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\WithExtensions;
 use Fp\Operations\FoldingOperation;
 use Generator;
 use Fp\Operations as Ops;
@@ -22,10 +23,15 @@ use function Fp\Evidence\proveNonEmptyList;
  * @template-covariant TV
  * @implements Map<TK, TV>
  *
+ * @psalm-seal-methods
+ * @mixin HashMapExtensions<TK, TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class HashMap implements Map
 {
+    use WithExtensions;
+
     private bool $empty;
 
     /**

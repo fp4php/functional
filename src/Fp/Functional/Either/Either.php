@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Functional\Either;
 
 use Fp\Functional\Option\Option;
+use Fp\Functional\WithExtensions;
 use Fp\Operations\ToStringOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
@@ -16,10 +17,15 @@ use Throwable;
  * @template-covariant R
  * @psalm-yield R
  *
+ * @psalm-seal-methods
+ * @mixin EitherExtensions<L, R>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 abstract class Either
 {
+    use WithExtensions;
+
     /**
      * Unwrap "the box" and get contained success value
      * or given fallback for case when

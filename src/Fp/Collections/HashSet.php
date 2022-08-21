@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
@@ -20,10 +21,15 @@ use function Fp\Evidence\proveNonEmptyList;
  * @template-covariant TV
  * @implements Set<TV>
  *
+ * @psalm-seal-methods
+ * @mixin HashSetExtensions<TV>
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 final class HashSet implements Set
 {
+    use WithExtensions;
+
     /**
      * @param HashMap<TV, TV> $map
      */

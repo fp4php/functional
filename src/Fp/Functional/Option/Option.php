@@ -9,6 +9,7 @@ use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
+use Fp\Functional\WithExtensions;
 use Fp\Operations\ToStringOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
@@ -38,10 +39,15 @@ use function Fp\objectOf;
  * @template-covariant A
  * @psalm-yield A
  *
+ * @psalm-seal-methods
+ * @mixin OptionExtensions
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 abstract class Option
 {
+    use WithExtensions;
+
     /**
      * Check if there is something inside the box
      *
