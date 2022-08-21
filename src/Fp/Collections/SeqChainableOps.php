@@ -208,6 +208,18 @@ interface SeqChainableOps
     public function tail(): Seq;
 
     /**
+     * Returns every collection element except last
+     *
+     * ```php
+     * >>> LinkedList::collect([1, 2, 3])->init()->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return Seq<TV>
+     */
+    public function init(): Seq;
+
+    /**
      * Take collection elements while predicate is true
      *
      * ```php

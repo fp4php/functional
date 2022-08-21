@@ -174,6 +174,16 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @return ArrayList<TV>
+     */
+    public function init(): ArrayList
+    {
+        return $this->arrayList->init();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return NonEmptyArrayList<TV>
      */
     public function reverse(): NonEmptyArrayList

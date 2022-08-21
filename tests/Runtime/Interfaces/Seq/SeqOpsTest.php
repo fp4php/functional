@@ -419,6 +419,14 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals(['2', '3'], $seq->tail()->toList());
     }
 
+    /**
+     * @dataProvider provideTestTailData
+     */
+    public function testInit(Seq $seq): void
+    {
+        $this->assertEquals(['1', '2'], $seq->init()->toList());
+    }
+
     public function provideTestGroupMapData(): Generator
     {
         $foo1 = new Foo(1);

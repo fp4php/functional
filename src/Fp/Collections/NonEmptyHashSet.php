@@ -449,6 +449,16 @@ final class NonEmptyHashSet implements NonEmptySet
     /**
      * {@inheritDoc}
      *
+     * @return HashSet<TV>
+     */
+    public function init(): HashSet
+    {
+        return HashSet::collect(Ops\InitOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVI
      *
      * @param TVI $element

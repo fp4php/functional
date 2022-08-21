@@ -293,6 +293,16 @@ final class ArrayList implements Seq
      *
      * @return ArrayList<TV>
      */
+    public function init(): ArrayList
+    {
+        return ArrayList::collect(Ops\InitOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
     public function reverse(): ArrayList
     {
         return new ArrayList(array_reverse($this->elements));

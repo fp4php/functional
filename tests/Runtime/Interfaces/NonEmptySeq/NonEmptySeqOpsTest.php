@@ -526,6 +526,14 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals(['2', '3'], $seq->tail()->toList());
     }
 
+    /**
+     * @dataProvider provideTestTailData
+     */
+    public function testInit(NonEmptySeq $seq): void
+    {
+        $this->assertEquals(['1', '2'], $seq->init()->toList());
+    }
+
     public function provideTestGroupByData(): Generator
     {
         $foo1 = new Foo(1);

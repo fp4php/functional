@@ -184,6 +184,16 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @return ArrayList<TV>
+     */
+    public function init(): ArrayList
+    {
+        return ArrayList::collect(Ops\InitOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      * @return LinkedList<TV>
      */

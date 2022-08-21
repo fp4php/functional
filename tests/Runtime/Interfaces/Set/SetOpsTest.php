@@ -268,6 +268,14 @@ final class SetOpsTest extends TestCase
         );
     }
 
+    public function testInit(): void
+    {
+        $this->assertEquals(
+            [1, 2],
+            HashSet::collect([1, 2, 3])->init()->toList()
+        );
+    }
+
     public function testIntersectAndDiff(): void
     {
         $this->assertEquals(

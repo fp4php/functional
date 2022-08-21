@@ -505,6 +505,16 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @return HashSet<TV>
+     */
+    public function init(): HashSet
+    {
+        return HashSet::collect(Ops\InitOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      * @return HashSet<TV>
      */

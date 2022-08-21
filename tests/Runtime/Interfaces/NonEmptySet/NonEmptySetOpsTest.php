@@ -224,6 +224,14 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testInit(): void
+    {
+        $this->assertEquals(
+            [1, 2],
+            NonEmptyHashSet::collectNonEmpty([1, 2, 3])->init()->toList()
+        );
+    }
+
     public function testIntersectAndDiff(): void
     {
         $this->assertEquals(

@@ -37,6 +37,7 @@ use Psalm\Type\Union;
 
 use function Fp\Collection\init;
 use function Fp\Collection\last;
+use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveNonEmptyList;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
@@ -254,7 +255,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                 ...$cloned->properties,
                 ...array_fill(0, $current_args_count - $func_args_count, last($cloned->properties)->getUnsafe()),
             ],
-            $func_args_count > $current_args_count => init($cloned->properties),
+            $func_args_count > $current_args_count => proveNonEmptyArray(init($cloned->properties))->getUnsafe(),
             default => $cloned->properties,
         };
 

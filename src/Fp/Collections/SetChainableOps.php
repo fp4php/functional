@@ -204,6 +204,18 @@ interface SetChainableOps
     public function tail(): Set;
 
     /**
+     * Returns every collection element except last
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2, 3])->init()->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return Set<TV>
+     */
+    public function init(): Set;
+
+    /**
      * Computes the intersection between this set and another set.
      *
      * ```php

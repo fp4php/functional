@@ -421,6 +421,16 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @return LinkedList<TV>
+     */
+    public function init(): LinkedList
+    {
+        return LinkedList::collect(Ops\InitOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
