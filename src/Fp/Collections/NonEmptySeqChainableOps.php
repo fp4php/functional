@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface NonEmptySeqChainableOps
 {
@@ -84,6 +87,8 @@ interface NonEmptySeqChainableOps
      *
      * @param callable(TV): bool $predicate
      * @return Seq<TV>
+     *
+     * @see CollectionFilterMethodReturnTypeProvider
      */
     public function filter(callable $predicate): Seq;
 
@@ -172,6 +177,8 @@ interface NonEmptySeqChainableOps
      *
      * @param callable(mixed...): TVO $callback
      * @return NonEmptySeq<TVO>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function mapN(callable $callback): NonEmptySeq;
 

@@ -15,7 +15,7 @@ use Iterator;
 interface NonEmptySeq extends NonEmptyCollection, NonEmptySeqOps, NonEmptySeqCollector
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @return Iterator<TV>
      */
     public function getIterator(): Iterator;

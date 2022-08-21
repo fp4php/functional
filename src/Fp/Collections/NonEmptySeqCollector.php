@@ -7,7 +7,6 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface NonEmptySeqCollector

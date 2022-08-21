@@ -7,7 +7,6 @@ namespace Fp\Collections;
 use Fp\Streams\Stream;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface NonEmptySetCastableOps

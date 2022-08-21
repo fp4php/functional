@@ -15,7 +15,7 @@ use Iterator;
 interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps, NonEmptySetCollector
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @return Iterator<TV>
      */
     public function getIterator(): Iterator;

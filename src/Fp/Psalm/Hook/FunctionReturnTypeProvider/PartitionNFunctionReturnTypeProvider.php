@@ -30,9 +30,6 @@ use function Fp\Evidence\proveOf;
 
 class PartitionNFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionIds(): array
     {
         return [
@@ -40,9 +37,6 @@ class PartitionNFunctionReturnTypeProvider implements FunctionReturnTypeProvider
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         $args = $event->getCallArgs();

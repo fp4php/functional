@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface SetTerminalOps
 {
@@ -258,6 +260,8 @@ interface SetTerminalOps
      * @param TA $init
      * @param callable(TA, TV): TA $callback
      * @return TA
+     *
+     * @see FoldMethodReturnTypeProvider
      */
     public function fold(mixed $init, callable $callback): mixed;
 

@@ -10,8 +10,6 @@ namespace Fp\Collections;
  * @extends MapChainableOps<TK, TV>
  * @extends MapTerminalOps<TK, TV>
  * @extends MapCastableOps<TK, TV>
- *
- * @psalm-suppress InvalidTemplateParam
  */
 interface MapOps extends MapChainableOps, MapTerminalOps, MapCastableOps
 {

@@ -20,9 +20,10 @@ use function Fp\Evidence\proveNonEmptyList;
 /**
  * O(1) {@see Seq::at()} and {@see Seq::__invoke} operations
  *
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements Seq<TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class ArrayList implements Seq
 {

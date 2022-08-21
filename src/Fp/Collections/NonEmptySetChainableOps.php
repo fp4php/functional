@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface NonEmptySetChainableOps
 {
@@ -50,6 +53,8 @@ interface NonEmptySetChainableOps
      *
      * @param callable(TV): bool $predicate
      * @return Set<TV>
+     *
+     * @see CollectionFilterMethodReturnTypeProvider
      */
     public function filter(callable $predicate): Set;
 
@@ -125,6 +130,8 @@ interface NonEmptySetChainableOps
      *
      * @param callable(mixed...): TVO $callback
      * @return NonEmptySet<TVO>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function mapN(callable $callback): NonEmptySet;
 

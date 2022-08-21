@@ -21,9 +21,10 @@ use function Fp\Evidence\proveNonEmptyList;
  * O(1) {@see Seq::prepended} operation
  * Fast {@see Seq::reverse} operation
  *
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements Seq<TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 abstract class LinkedList implements Seq
 {

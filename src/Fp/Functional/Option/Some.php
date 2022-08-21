@@ -7,17 +7,15 @@ namespace Fp\Functional\Option;
 /**
  * @template-covariant A
  * @extends Option<A>
- *
- * @psalm-suppress InvalidTemplateParam
  */
 final class Some extends Option
 {
     /**
      * @param A $value
      */
-    public function __construct(private mixed $value)
-    {
-    }
+    public function __construct(
+        private readonly mixed $value,
+    ) {}
 
     /**
      * @return A

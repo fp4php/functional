@@ -6,10 +6,12 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldingOperation;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
 /**
  * @template TK
  * @template-covariant TV
+ *
  * @psalm-suppress InvalidTemplateParam
  */
 interface MapTerminalOps
@@ -153,6 +155,8 @@ interface MapTerminalOps
      *
      * @param TVO $init
      * @return FoldingOperation<TV, TVO>
+     *
+     * @see FoldMethodReturnTypeProvider
      */
     public function fold(mixed $init): FoldingOperation;
 

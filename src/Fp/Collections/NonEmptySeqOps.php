@@ -9,8 +9,6 @@ namespace Fp\Collections;
  * @extends NonEmptySeqChainableOps<TV>
  * @extends NonEmptySeqTerminalOps<TV>
  * @extends NonEmptySeqCastableOps<TV>
- *
- * @psalm-suppress InvalidTemplateParam
  */
 interface NonEmptySeqOps extends NonEmptySeqChainableOps, NonEmptySeqTerminalOps, NonEmptySeqCastableOps
 {

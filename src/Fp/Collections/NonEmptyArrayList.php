@@ -15,9 +15,10 @@ use function Fp\Cast\fromPairs;
 use function Fp\Collection\keys;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyArrayList implements NonEmptySeq
 {

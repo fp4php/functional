@@ -7,8 +7,9 @@ namespace Fp\Streams;
 use Fp\Functional\Unit;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface StreamEmitter
 {

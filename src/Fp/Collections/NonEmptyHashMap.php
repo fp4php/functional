@@ -16,8 +16,9 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-suppress InvalidTemplateParam
  * @implements NonEmptyMap<TK, TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyHashMap implements NonEmptyMap
 {
@@ -30,7 +31,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -48,7 +49,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -62,7 +63,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -76,7 +77,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -102,7 +103,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -116,7 +117,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKI
      * @template TVI
@@ -146,7 +147,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -154,7 +155,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return list<array{TK, TV}>
      */
     public function toList(): array
@@ -163,7 +165,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return non-empty-list<array{TK, TV}>
      */
     public function toNonEmptyList(): array
@@ -173,7 +176,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO of array-key
      * @template TVO
@@ -187,7 +190,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO of array-key
      * @template TVO
@@ -201,7 +204,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return LinkedList<array{TK, TV}>
      */
     public function toLinkedList(): LinkedList
@@ -210,7 +214,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyLinkedList<array{TK, TV}>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
@@ -219,7 +224,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<array{TK, TV}>
      */
     public function toArrayList(): ArrayList
@@ -228,7 +234,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyArrayList<array{TK, TV}>
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
@@ -237,7 +244,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<array{TK, TV}>
      */
     public function toHashSet(): HashSet
@@ -246,7 +254,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyHashSet<array{TK, TV}>
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
@@ -255,7 +264,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
@@ -264,7 +274,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyHashMap<TK, TV>
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap
@@ -283,7 +294,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
      */
@@ -293,7 +304,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TK, TV): bool $predicate
      */
@@ -303,7 +314,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
      */
@@ -313,7 +324,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TK, TV): bool $predicate
      */
@@ -323,7 +334,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -336,7 +347,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -379,7 +390,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TK $key
      * @return Option<TV>
      */
@@ -389,7 +401,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TK $key
      * @return Option<TV>
      */
@@ -399,9 +412,11 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
+     *
      * @param TKI $key
      * @param TVI $value
      * @return NonEmptyHashMap<TK|TKI, TV|TVI>
@@ -412,7 +427,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TK $key
      * @return HashMap<TK, TV>
      */
@@ -422,7 +438,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
      * @return HashMap<TK, TV>
@@ -433,7 +449,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TK, TV): bool $predicate
      * @return Map<TK, TV>
@@ -444,7 +460,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -457,7 +473,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -470,7 +486,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -484,7 +500,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -498,7 +514,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -511,7 +527,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TVO
      *
@@ -540,7 +556,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TV): void $callback
      * @return NonEmptyHashMap<TK, TV>
@@ -551,7 +567,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @param callable(TK, TV): void $callback
      * @return NonEmptyHashMap<TK, TV>
@@ -562,7 +578,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -575,7 +591,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      *
@@ -614,7 +630,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -629,7 +645,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -644,7 +660,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -661,7 +677,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * @template TKO
      * @template TVO
@@ -678,7 +694,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyArrayList<TK>
      */
     public function keys(): NonEmptyArrayList
@@ -689,7 +706,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyArrayList<TV>
      */
     public function values(): NonEmptyArrayList

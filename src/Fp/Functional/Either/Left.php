@@ -7,15 +7,15 @@ namespace Fp\Functional\Either;
 /**
  * @template-covariant L
  * @extends Either<L, never>
- *
- * @psalm-suppress InvalidTemplateParam
  */
 final class Left extends Either
 {
     /**
      * @param L $value
      */
-    public function __construct(protected mixed $value) {}
+    public function __construct(
+        private readonly mixed $value,
+    ) {}
 
     /**
      * @psalm-return L

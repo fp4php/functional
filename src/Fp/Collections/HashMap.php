@@ -46,7 +46,7 @@ final class HashMap implements Map
      * @param iterable<TKI, TVI> $source
      * @return HashMap<TKI, TVI>
      */
-    public static function collect(iterable $source): self
+    public static function collect(iterable $source): HashMap
     {
         $gen = asGenerator(function() use ($source) {
             foreach ($source as $key => $value) {
@@ -66,7 +66,7 @@ final class HashMap implements Map
      * @param iterable<array{TKI, TVI}> $source
      * @return HashMap<TKI, TVI>
      */
-    public static function collectPairs(iterable $source): self
+    public static function collectPairs(iterable $source): HashMap
     {
         /**
          * @psalm-var HashTable<TKI, TVI> $hashTable
@@ -358,7 +358,7 @@ final class HashMap implements Map
      * @param TVI $value
      * @return HashMap<TK|TKI, TV|TVI>
      */
-    public function updated(mixed $key, mixed $value): self
+    public function updated(mixed $key, mixed $value): HashMap
     {
         return HashMap::collectPairs([...$this->toList(), [$key, $value]]);
     }
@@ -369,7 +369,7 @@ final class HashMap implements Map
      * @param TK $key
      * @return HashMap<TK, TV>
      */
-    public function removed(mixed $key): self
+    public function removed(mixed $key): HashMap
     {
         return $this->filterKV(fn($k) => $k !== $key);
     }
@@ -380,7 +380,7 @@ final class HashMap implements Map
      * @param callable(TV): bool $predicate
      * @return HashMap<TK, TV>
      */
-    public function filter(callable $predicate): self
+    public function filter(callable $predicate): HashMap
     {
         return $this->filterKV(dropFirstArg($predicate));
     }
@@ -404,7 +404,7 @@ final class HashMap implements Map
      * @param callable(TV): Option<TVO> $callback
      * @return HashMap<TK, TVO>
      */
-    public function filterMap(callable $callback): self
+    public function filterMap(callable $callback): HashMap
     {
         return $this->filterMapKV(dropFirstArg($callback));
     }
@@ -431,7 +431,7 @@ final class HashMap implements Map
      * @param callable(TV): (iterable<array{TKO, TVO}>) $callback
      * @return HashMap<TKO, TVO>
      */
-    public function flatMap(callable $callback): self
+    public function flatMap(callable $callback): HashMap
     {
         return $this->flatMapKV(dropFirstArg($callback));
     }
@@ -458,7 +458,7 @@ final class HashMap implements Map
      * @param callable(TV): TVO $callback
      * @return HashMap<TK, TVO>
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): HashMap
     {
         return $this->mapKV(dropFirstArg($callback));
     }
@@ -471,7 +471,7 @@ final class HashMap implements Map
      * @param callable(TK, TV): TVO $callback
      * @return HashMap<TK, TVO>
      */
-    public function mapKV(callable $callback): self
+    public function mapKV(callable $callback): HashMap
     {
         return HashMap::collect(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
     }
@@ -523,7 +523,7 @@ final class HashMap implements Map
      * @param callable(TV): TKO $callback
      * @return HashMap<TKO, TV>
      */
-    public function reindex(callable $callback): self
+    public function reindex(callable $callback): HashMap
     {
         return $this->reindexKV(dropFirstArg($callback));
     }

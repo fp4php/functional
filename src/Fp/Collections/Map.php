@@ -12,13 +12,11 @@ use Iterator;
  * @extends Collection<array{TK, TV}>
  * @extends MapOps<TK, TV>
  * @extends MapCollector<TK, TV>
- *
- * @psalm-suppress InvalidTemplateParam
  */
 interface Map extends Collection, MapOps, MapCollector
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @return Iterator<array{TK, TV}>
      */
     public function getIterator(): Iterator;

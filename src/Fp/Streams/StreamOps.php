@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Streams;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  * @implements StreamChainableOps<TV>
  * @implements StreamTerminalOps<TV>

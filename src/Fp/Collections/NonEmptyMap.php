@@ -9,7 +9,6 @@ use Iterator;
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-suppress InvalidTemplateParam
  * @extends NonEmptyCollection<array{TK, TV}>
  * @extends NonEmptyMapOps<TK, TV>
  * @extends NonEmptyMapCollector<TK, TV>
@@ -17,7 +16,7 @@ use Iterator;
 interface NonEmptyMap extends NonEmptyCollection, NonEmptyMapOps, NonEmptyMapCollector
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @return Iterator<array{TK, TV}>
      */
     public function getIterator(): Iterator;

@@ -25,9 +25,6 @@ use function Fp\Collection\tail;
 
 class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionIds(): array
     {
         return [
@@ -37,9 +34,6 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return head($event->getCallArgs())

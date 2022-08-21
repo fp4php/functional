@@ -10,6 +10,10 @@ use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
 use Fp\Operations\ToStringOperation;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionGetReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
 use Generator;
 use Throwable;
 
@@ -93,8 +97,8 @@ abstract class Option
     public function map(callable $callback): Option
     {
         return $this->isSome()
-            ? self::some($callback($this->get()))
-            : self::none();
+            ? Option::some($callback($this->get()))
+            : Option::none();
     }
 
     /**
@@ -112,6 +116,8 @@ abstract class Option
      *
      * @param callable(mixed...): B $to
      * @return Option<B>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function mapN(callable $callback): Option
     {
@@ -122,7 +128,18 @@ abstract class Option
     }
 
     /**
+     * Shortcut for {@see Option::map()}
+     *
+     * ```php
+     * >>> Option::some(['a' => 1])->pluck('a')
+     * => Some(1)
+     * >>> Option::some(new Foo(a: 1))->pluck('a')
+     * => Some(1)
+     * ```
+     *
      * @return Option<mixed>
+     *
+     * @see PluckMethodReturnTypeProvider
      */
     public function pluck(string $key): Option
     {
@@ -159,7 +176,7 @@ abstract class Option
             $callback($this->get());
             return $this;
         } else {
-            return self::none();
+            return Option::none();
         }
     }
 
@@ -177,6 +194,8 @@ abstract class Option
      *
      * @param callable(mixed...): void $callback
      * @return Option<A>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function tapN(callable $callback): Option
     {
@@ -214,15 +233,19 @@ abstract class Option
         if ($this->isSome() && $callback($this->get())->isSome()) {
             return $this;
         } else {
-            return self::none();
+            return Option::none();
         }
     }
 
     /**
+     * Same as {@see Option::flatTap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
      * @template B
      *
      * @param callable(mixed...): Option<B> $callback
      * @return Option<A>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function flatTapN(callable $callback): Option
     {
@@ -251,12 +274,14 @@ abstract class Option
      *
      * @param callable(A): bool $callback
      * @return Option<A>
+     *
+     * @see OptionFilterMethodReturnTypeProvider
      */
     public function filter(callable $callback): Option
     {
         return $this->isSome() && $callback($this->get())
             ? $this
-            : self::none();
+            : Option::none();
     }
 
     /**
@@ -276,17 +301,17 @@ abstract class Option
      * => None
      * ```
      *
-     * @template AA
+     * @template B
      *
-     * @param class-string<AA> $fqcn
-     * @return Option<AA>
+     * @param class-string<B> $fqcn
+     * @return Option<B>
      */
     public function filterOf(string $fqcn, bool $invariant = false): Option
     {
-        /** @var Option<AA> */
+        /** @var Option<B> */
         return $this->isSome() && objectOf($this->get(), $fqcn, $invariant)
             ? $this
-            : self::none();
+            : Option::none();
     }
 
     /**
@@ -315,7 +340,7 @@ abstract class Option
     {
         return $this->isSome()
             ? $callback($this->get())
-            : self::none();
+            : Option::none();
     }
 
     /**
@@ -333,6 +358,8 @@ abstract class Option
      *
      * @param callable(mixed...): Option<B> $callback
      * @return Option<B>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function flatMapN(callable $callback): Option
     {
@@ -415,8 +442,8 @@ abstract class Option
     public static function fromNullable(mixed $value): Option
     {
         return null !== $value
-            ? self::some($value)
-            : self::none();
+            ? Option::some($value)
+            : Option::none();
     }
 
     /**
@@ -440,9 +467,9 @@ abstract class Option
     public static function try(callable $callback): Option
     {
         try {
-            return self::some($callback());
+            return Option::some($callback());
         } catch (Throwable) {
-            return self::none();
+            return Option::none();
         }
     }
 
@@ -490,6 +517,8 @@ abstract class Option
      * ```
      *
      * @return A|null
+     *
+     * @see OptionGetReturnTypeProvider
      */
     public abstract function get(): mixed;
 

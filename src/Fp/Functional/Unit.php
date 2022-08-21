@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Fp\Functional;
 
-class Unit
+final class Unit
 {
-    private static ?self $instance = null;
+    private static ?Unit $instance = null;
 
     private function __construct()
     {
     }
 
-    public static function getInstance(): self
+    public static function getInstance(): Unit
     {
-        return is_null(self::$instance)
-            ? self::$instance = new self()
+        return null === self::$instance
+            ? self::$instance = new Unit()
             : self::$instance;
     }
 }

@@ -10,8 +10,9 @@ use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface StreamChainableOps
 {

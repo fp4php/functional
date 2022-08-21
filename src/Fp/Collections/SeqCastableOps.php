@@ -8,7 +8,6 @@ use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface SeqCastableOps

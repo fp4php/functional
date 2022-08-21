@@ -15,8 +15,9 @@ use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface StreamCastableOps
 {

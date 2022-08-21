@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
  */
 interface SeqCollector

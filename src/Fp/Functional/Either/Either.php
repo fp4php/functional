@@ -6,6 +6,8 @@ namespace Fp\Functional\Either;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations\ToStringOperation;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherGetReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 use Generator;
 use Throwable;
 
@@ -98,11 +100,11 @@ abstract class Either
      * => Right(2)
      * ```
      *
-     * @template LL
-     * @template RR
+     * @template LO
+     * @template RO
      *
-     * @param callable(): Either<LL, RR> $fallback
-     * @return Either<L|LL, R|RR>
+     * @param callable(): Either<LO, RO> $fallback
+     * @return Either<L|LO, R|RO>
      */
     public function orElse(callable $fallback): Either
     {
@@ -128,12 +130,12 @@ abstract class Either
      * => 'error!'
      * ```
      *
-     * @template TOutLeft
-     * @template TOutRight
+     * @template LO
+     * @template RO
      *
-     * @param callable(R): TOutRight $ifRight
-     * @param callable(L): TOutLeft $ifLeft
-     * @return TOutRight|TOutLeft
+     * @param callable(R): RO $ifRight
+     * @param callable(L): LO $ifLeft
+     * @return RO|LO
      */
     public function fold(callable $ifRight, callable $ifLeft): mixed
     {
@@ -189,6 +191,8 @@ abstract class Either
      *
      * @param callable(mixed...): void $callback
      * @return Either<L, R>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function tapN(callable $callback): Either
     {
@@ -223,8 +227,8 @@ abstract class Either
     public function map(callable $callback): Either
     {
         return $this->isLeft()
-            ? new Left($this->get())
-            : new Right($callback($this->get()));
+            ? Either::left($this->get())
+            : Either::right($callback($this->get()));
     }
 
     /**
@@ -238,10 +242,12 @@ abstract class Either
      * => Right(6)
      * ```
      *
-     * @template B
+     * @template RO
      *
-     * @param callable(mixed...): B $to
-     * @return Either<L, B>
+     * @param callable(mixed...): RO $to
+     * @return Either<L, RO>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function mapN(callable $callback): Either
     {
@@ -308,7 +314,7 @@ abstract class Either
     public function flatMap(callable $callback): Either
     {
         return $this->isLeft()
-            ? new Left($this->get())
+            ? Either::left($this->get())
             : $callback($this->get());
     }
 
@@ -328,6 +334,8 @@ abstract class Either
      *
      * @param callable(mixed...): Either<LO, RO> $callback
      * @return Either<LO|L, RO>
+     *
+     * @see MapTapNMethodReturnTypeProvider
      */
     public function flatMapN(callable $callback): Either
     {
@@ -384,7 +392,7 @@ abstract class Either
 
         }
 
-        return new Right($generator->getReturn());
+        return Either::right($generator->getReturn());
     }
 
     /**
@@ -400,10 +408,10 @@ abstract class Either
      * => Left(Exception('handled and converted to Left'))
      * ```
      *
-     * @template TRI
+     * @template RO
      *
-     * @param callable(): TRI $callback
-     * @return Either<Throwable, TRI>
+     * @param callable(): RO $callback
+     * @return Either<Throwable, RO>
      */
     public static function try(callable $callback): Either
     {
@@ -500,10 +508,10 @@ abstract class Either
      * => Left('error')
      * ```
      *
-     * @template LI
+     * @template LO
      *
-     * @param LI $value
-     * @return Either<LI, empty>
+     * @param LO $value
+     * @return Either<LO, empty>
      */
     public static function left(mixed $value): Either
     {
@@ -520,10 +528,10 @@ abstract class Either
      * => Right(1)
      * ```
      *
-     * @template RI
+     * @template RO
      *
-     * @param RI $value
-     * @return Either<empty, RI>
+     * @param RO $value
+     * @return Either<empty, RO>
      */
     public static function right(mixed $value): Either
     {
@@ -539,6 +547,8 @@ abstract class Either
      * ```
      *
      * @return L|R
+     *
+     * @see EitherGetReturnTypeProvider
      */
     abstract public function get(): mixed;
 

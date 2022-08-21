@@ -18,8 +18,9 @@ use function Fp\Evidence\proveNonEmptyList;
 
 /**
  * @template-covariant TV
- * @psalm-suppress InvalidTemplateParam
  * @implements Set<TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class HashSet implements Set
 {

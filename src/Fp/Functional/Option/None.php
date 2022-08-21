@@ -6,15 +6,14 @@ namespace Fp\Functional\Option;
 
 /**
  * @extends Option<never>
- * @psalm-suppress InvalidTemplateParam
  */
 final class None extends Option
 {
-    private static ?self $instance = null;
+    private static ?None $instance = null;
 
-    public static function getInstance(): self
+    public static function getInstance(): None
     {
-        return is_null(self::$instance) ? self::$instance = new self() : self::$instance;
+        return null === self::$instance ? self::$instance = new None() : self::$instance;
     }
 
     /**

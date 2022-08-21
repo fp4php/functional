@@ -15,7 +15,8 @@ use Iterator;
 interface Set extends Collection, SetOps, SetCollector
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return Iterator<TV>
      */
     public function getIterator(): Iterator;

@@ -8,8 +8,9 @@ use Fp\Collections\Map;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-suppress InvalidTemplateParam
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface StreamTerminalOps
 {
