@@ -33,7 +33,7 @@ final class FoldFunctionReturnTypeProvider implements FunctionReturnTypeProvider
                     ->pluck('type')
                     ->flatMap(GetCollectionTypeParams::value(...)),
                 PsalmApi::$args->getCallArgs($event)
-                    ->flatMap(fn(ArrayList $arrayList) => $arrayList->firstElement())
+                    ->flatMap(fn(ArrayList $args) => $args->firstElement())
                     ->pluck('type')
                     ->map(PsalmApi::$types->asNonLiteralType(...)),
             ]))
