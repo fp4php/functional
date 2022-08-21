@@ -47,7 +47,7 @@ final class ExtensionTest extends TestCase
             return ArrayList::collect(str_split($string));
         });
 
-        /** @psalm-suppress MixedAssignment, UndefinedMagicMethod */
+        /** @psalm-suppress MixedAssignment */
         $actual = ArrayList::collectChars('abc');
 
         $this->assertEquals(ArrayList::collect(['a', 'b', 'c']), $actual);
