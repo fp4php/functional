@@ -8,8 +8,7 @@ use Fp\Psalm\Hook\AfterExpressionAnalysis\ProveTrueExpressionAnalyzer;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\CtorFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionOfFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionNFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceEitherFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceOptionFunctionReturnTypeProvider;
@@ -38,8 +37,7 @@ class FunctionalPlugin implements PluginEntryPointInterface
         };
 
         $register(PartialFunctionReturnTypeProvider::class);
-        $register(PartitionFunctionReturnTypeProvider::class);
-        $register(PartitionOfFunctionReturnTypeProvider::class);
+        $register(PartitionNFunctionReturnTypeProvider::class);
         $register(PluckFunctionReturnTypeProvider::class);
 
         $register(FilterFunctionReturnTypeProvider::class);
