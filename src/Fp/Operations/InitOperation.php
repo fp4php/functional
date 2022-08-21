@@ -10,7 +10,7 @@ namespace Fp\Operations;
  *
  * @extends AbstractOperation<TK, TV>
  */
-final class ButLastOperation extends AbstractOperation
+final class InitOperation extends AbstractOperation
 {
     /**
      * @return array<TK, TV>

@@ -70,7 +70,7 @@
             "src/Fp/Functions/Collection/Head.php",
             "src/Fp/Functions/Collection/Keys.php",
             "src/Fp/Functions/Collection/Last.php",
-            "src/Fp/Functions/Collection/ButLast.php",
+            "src/Fp/Functions/Collection/Init.php",
             "src/Fp/Functions/Collection/Map.php",
             "src/Fp/Functions/Collection/Partition.php",
             "src/Fp/Functions/Collection/Pluck.php",

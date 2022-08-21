@@ -35,7 +35,7 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
-use function Fp\Collection\butLast;
+use function Fp\Collection\init;
 use function Fp\Collection\last;
 use function Fp\Evidence\proveNonEmptyList;
 use function Fp\Evidence\proveOf;
@@ -117,7 +117,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             return new Union([
                 new TGenericObject($event->getFqClasslikeName(), self::isMapN($event) || self::isFlatMapN($event)
                     ? [
-                        ...butLast($templates),
+                        ...init($templates),
                         Option::fromNullable($map_callback->return_type)
                             ->filter(fn() => self::isFlatMapN($event))
                             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
@@ -254,7 +254,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                 ...$cloned->properties,
                 ...array_fill(0, $current_args_count - $func_args_count, last($cloned->properties)->getUnsafe()),
             ],
-            $func_args_count > $current_args_count => butLast($cloned->properties),
+            $func_args_count > $current_args_count => init($cloned->properties),
             default => $cloned->properties,
         };
 
