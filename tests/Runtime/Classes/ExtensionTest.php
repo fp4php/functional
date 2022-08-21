@@ -9,60 +9,64 @@ use PHPUnit\Framework\TestCase;
 
 final class ExtensionTest extends TestCase
 {
+    /** @var non-empty-string */
+    private string $testMethodName = 'testMethod';
+
+    /** @var non-empty-string  */
+    private string $testStaticMethodName = 'testStaticMethod';
+
+    protected function setUp(): void
+    {
+        ArrayList::addInstanceExtension($this->testMethodName, function(ArrayList $list) {
+            /** @var ArrayList<int> $list */;
+            return $list->fold(0)(fn($acc, $cur) => $acc + $cur);
+        });
+
+        ArrayList::addStaticExtension($this->testStaticMethodName, function(string $string): ArrayList {
+            return ArrayList::collect(str_split($string));
+        });
+    }
+
     protected function tearDown(): void
     {
-        ArrayList::removeAllInstanceExtensions();
-        ArrayList::removeAllStaticExtensions();
+        ArrayList::removeInstanceExtension($this->testMethodName);
+        ArrayList::removeStaticExtension($this->testStaticMethodName);
     }
 
     public function testAddInstanceMethod(): void
     {
-        ArrayList::addInstanceExtension('sumAll', function(ArrayList $list) {
-            /** @var ArrayList<int> $list */;
-            return $list->fold(0)(fn($acc, $cur) => $acc + $cur);
-        });
-
         /** @psalm-suppress MixedAssignment, UndefinedMagicMethod */
-        $actual = ArrayList::collect([1, 2, 3])->sumAll();
+        $actual = ArrayList::collect([1, 2, 3])->{$this->testMethodName}();
 
         $this->assertEquals(6, $actual);
-        $this->assertArrayHasKey('sumAll', ArrayList::getAllInstanceExtensions());
+        $this->assertArrayHasKey($this->testMethodName, ArrayList::getAllInstanceExtensions());
     }
 
     public function testAddInstanceMethodTwice(): void
     {
-        $this->expectErrorMessage("Instance extension method 'sumAll' is already defined!");
+        $this->expectErrorMessage("Instance extension method '{$this->testMethodName}' is already defined!");
 
-        $function = function(ArrayList $list): int {
+        ArrayList::addInstanceExtension($this->testMethodName, function(ArrayList $list): int {
             /** @var ArrayList<int> $list */;
             return $list->fold(0)(fn($acc, $cur) => $acc + $cur);
-        };
-        ArrayList::addInstanceExtension('sumAll', $function);
-        ArrayList::addInstanceExtension('sumAll', $function);
+        });
     }
 
     public function testAddStaticMethod(): void
     {
-        ArrayList::addStaticExtension('collectChars', function(string $string) {
-            return ArrayList::collect(str_split($string));
-        });
-
         /** @psalm-suppress MixedAssignment */
-        $actual = ArrayList::collectChars('abc');
+        $actual = ArrayList::{$this->testStaticMethodName}('abc');
 
+        $this->assertArrayHasKey($this->testStaticMethodName, ArrayList::getAllStaticExtensions());
         $this->assertEquals(ArrayList::collect(['a', 'b', 'c']), $actual);
-        $this->assertArrayHasKey('collectChars', ArrayList::getAllStaticExtensions());
     }
 
     public function testAddStaticMethodTwice(): void
     {
-        $this->expectErrorMessage("Static extension method 'collectChars' is already defined!");
+        $this->expectErrorMessage("Static extension method '{$this->testStaticMethodName}' is already defined!");
 
-        $function = function(string $string): ArrayList {
+        ArrayList::addStaticExtension($this->testStaticMethodName, function(string $string): ArrayList {
             return ArrayList::collect(str_split($string));
-        };
-
-        ArrayList::addStaticExtension('collectChars', $function);
-        ArrayList::addStaticExtension('collectChars', $function);
+        });
     }
 }

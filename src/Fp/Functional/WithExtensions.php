@@ -13,14 +13,20 @@ trait WithExtensions
     /** @var array<non-empty-string, (Closure(mixed...): mixed)> */
     private static array $staticExtensions = [];
 
-    public static function removeAllInstanceExtensions(): void
+    /**
+     * @param non-empty-string $name
+     */
+    public static function removeInstanceExtension(string $name): void
     {
-        self::$instanceExtensions = [];
+        unset(self::$instanceExtensions[$name]);
     }
 
-    public static function removeAllStaticExtensions(): void
+    /**
+     * @param non-empty-string $name
+     */
+    public static function removeStaticExtension(string $name): void
     {
-        self::$staticExtensions = [];
+        unset(self::$staticExtensions[$name]);
     }
 
     /**
