@@ -386,15 +386,14 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
-     * @template TA
+     * @template TVO
      *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
+     * @param TVO $init
+     * @return Ops\FoldOperation<TV, TVO>
      */
-    public function fold(mixed $init, callable $callback): mixed
+    public function fold(mixed $init): Ops\FoldOperation
     {
-        return Ops\FoldOperation::of($this->getIterator())($init, $callback);
+        return new Ops\FoldOperation($this->getIterator(), $init);
     }
 
     /**

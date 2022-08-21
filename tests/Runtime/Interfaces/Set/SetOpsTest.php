@@ -198,12 +198,7 @@ final class SetOpsTest extends TestCase
 
     public function testFold(): void
     {
-        $list = HashSet::collect([2, 3]);
-
-        $this->assertEquals(
-            6,
-            $list->fold(1, fn(int $acc, $e) => $acc + $e)
-        );
+        $this->assertEquals(6, HashSet::collect([2, 3])->fold(1)(fn($acc, $e) => $acc + $e));
     }
 
     public function testMap(): void

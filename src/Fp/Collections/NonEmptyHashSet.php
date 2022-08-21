@@ -6,7 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 use Fp\Operations as Ops;
-use Fp\Operations\FoldingOperation;
+use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
@@ -392,11 +392,11 @@ final class NonEmptyHashSet implements NonEmptySet
      * @template TVO
      *
      * @param TVO $init
-     * @return FoldingOperation<TV, TVO>
+     * @return FoldOperation<TV, TVO>
      */
-    public function fold(mixed $init): FoldingOperation
+    public function fold(mixed $init): FoldOperation
     {
-        return new FoldingOperation($this->getIterator(), $init);
+        return new FoldOperation($this->getIterator(), $init);
     }
 
     /**

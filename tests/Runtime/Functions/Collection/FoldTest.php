@@ -19,7 +19,7 @@ final class FoldTest extends TestCase
 
         $this->assertEquals(
             'abc',
-            fold($init, $c, fn(string $acc, string $v) => $acc . $v)
+            fold($init, $c)(fn(string $acc, string $v) => $acc . $v),
         );
     }
 }

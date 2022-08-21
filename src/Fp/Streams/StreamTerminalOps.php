@@ -6,6 +6,7 @@ namespace Fp\Streams;
 
 use Fp\Collections\Map;
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldOperation;
 
 /**
  * @template-covariant TV
@@ -131,17 +132,18 @@ interface StreamTerminalOps
      * Fold many elements into one
      *
      * ```php
-     * >>> Stream::emits(['1', '2'])->fold('0', fn($acc, $cur) => $acc . $cur);
+     * >>> Stream::emits(['1', '2'])->fold('0')(fn($acc, $cur) => $acc . $cur);
      * => '012'
      * ```
      *
-     * @template TA
+     * @template TVO
      *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
+     *
+     * @see FoldMethodReturnTypeProvider
      */
-    public function fold(mixed $init, callable $callback): mixed;
+    public function fold(mixed $init): FoldOperation;
 
     /**
      * Return first stream element

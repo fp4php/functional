@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Fp\Operations\FoldingOperation;
+use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 use function Fp\id;
 
@@ -304,11 +304,11 @@ interface SeqTerminalOps
      * @template TVO
      *
      * @param TVO $init
-     * @return FoldingOperation<TV, TVO>
+     * @return FoldOperation<TV, TVO>
      *
      * @see FoldMethodReturnTypeProvider
      */
-    public function fold(mixed $init): FoldingOperation;
+    public function fold(mixed $init): FoldOperation;
 
     /**
      * Return first collection element

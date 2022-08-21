@@ -17,6 +17,7 @@ use Fp\Functional\Option\Option;
 use Fp\Functional\Unit;
 use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
+use Fp\Operations\FoldOperation;
 use Generator;
 use IteratorAggregate;
 use LogicException;
@@ -588,15 +589,14 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
-     * @template TA
+     * @template TVO
      *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
      */
-    public function fold(mixed $init, callable $callback): mixed
+    public function fold(mixed $init): FoldOperation
     {
-        return $this->leaf(Ops\FoldOperation::of($this->emitter)($init, $callback));
+        return $this->leaf(new FoldOperation($this->emitter, $init));
     }
 
     /**

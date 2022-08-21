@@ -7,7 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
-use Fp\Operations\FoldingOperation;
+use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Generator;
 
@@ -388,11 +388,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TVO
      *
      * @param TVO $init
-     * @return FoldingOperation<TV, TVO>
+     * @return FoldOperation<TV, TVO>
      */
-    public function fold(mixed $init): FoldingOperation
+    public function fold(mixed $init): FoldOperation
     {
-        return new FoldingOperation($this->getKeyValueIterator(), $init);
+        return new FoldOperation($this->getKeyValueIterator(), $init);
     }
 
     /**

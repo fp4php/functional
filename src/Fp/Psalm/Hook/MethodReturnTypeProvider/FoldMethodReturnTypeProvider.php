@@ -19,8 +19,9 @@ use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Functional\Option\Option;
-use Fp\Operations\FoldingOperation;
+use Fp\Operations\FoldOperation;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\Streams\Stream;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use Psalm\Issue\InvalidReturnStatement;
@@ -62,7 +63,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             NonEmptySeq::class,
             NonEmptyLinkedList::class,
             NonEmptyArrayList::class,
-            FoldingOperation::class,
+            FoldOperation::class,
             Set::class,
             HashSet::class,
             NonEmptySet::class,
@@ -71,6 +72,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             HashMap::class,
             NonEmptyMap::class,
             NonEmptyHashMap::class,
+            Stream::class,
         ];
     }
 
@@ -91,7 +93,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
         //             |                         |
         //             |                         |
         //            TInit                    TFold (return type of function)
-        return proveTrue(FoldingOperation::class === $event->getFqClasslikeName())
+        return proveTrue(FoldOperation::class === $event->getFqClasslikeName())
 
             // Get TInit and TFold
             ->flatMap(
@@ -169,7 +171,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
                     ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))
             ]))
             ->mapN(fn(Union $A, Union $TInit) => [
-                new TGenericObject(FoldingOperation::class, [$A, $TInit]),
+                new TGenericObject(FoldOperation::class, [$A, $TInit]),
             ])
             ->map(ctor(Union::class));
     }

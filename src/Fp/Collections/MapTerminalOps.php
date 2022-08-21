@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
-use Fp\Operations\FoldingOperation;
+use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
 /**
@@ -154,11 +154,11 @@ interface MapTerminalOps
      * @template TVO
      *
      * @param TVO $init
-     * @return FoldingOperation<TV, TVO>
+     * @return FoldOperation<TV, TVO>
      *
      * @see FoldMethodReturnTypeProvider
      */
-    public function fold(mixed $init): FoldingOperation;
+    public function fold(mixed $init): FoldOperation;
 
     public function isEmpty(): bool;
 

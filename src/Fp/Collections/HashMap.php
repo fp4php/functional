@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\WithExtensions;
-use Fp\Operations\FoldingOperation;
+use Fp\Operations\FoldOperation;
 use Generator;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
@@ -347,11 +347,11 @@ final class HashMap implements Map
      * @template TVO
      *
      * @param TVO $init
-     * @return FoldingOperation<TV, TVO>
+     * @return FoldOperation<TV, TVO>
      */
-    public function fold(mixed $init): FoldingOperation
+    public function fold(mixed $init): FoldOperation
     {
-        return new FoldingOperation($this->getKeyValueIterator(), $init);
+        return new FoldOperation($this->getKeyValueIterator(), $init);
     }
 
     /**

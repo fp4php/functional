@@ -96,13 +96,7 @@ final class StreamOpsTest extends TestCase
 
     public function testFold(): void
     {
-        /** @psalm-var Stream<int> $list */
-        $list = Stream::emits([2, 3]);
-
-        $this->assertEquals(
-            6,
-            $list->fold(1, fn(int $acc, $e) => $acc + $e)
-        );
+        $this->assertEquals(6, Stream::emits([2, 3])->fold(1)(fn(int $acc, $e) => $acc + $e));
     }
 
     public function testMap(): void

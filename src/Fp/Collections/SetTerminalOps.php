@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
+use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
 /**
@@ -251,19 +252,18 @@ interface SetTerminalOps
      * Fold many elements into one
      *
      * ```php
-     * >>> HashSet::collect(['1', '2', '2'])->fold('0', fn($acc, $cur) => $acc . $cur);
+     * >>> HashSet::collect(['1', '2'])->fold('0')(fn($acc, $cur) => $acc . $cur);
      * => '012'
      * ```
      *
-     * @template TA
+     * @template TVO
      *
-     * @param TA $init
-     * @param callable(TA, TV): TA $callback
-     * @return TA
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
      *
      * @see FoldMethodReturnTypeProvider
      */
-    public function fold(mixed $init, callable $callback): mixed;
+    public function fold(mixed $init): FoldOperation;
 
     /**
      * Check if this set is subset of another set
