@@ -41,6 +41,7 @@ use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 
+use function Fp\Callable\ctor;
 use function Fp\Cast\asList;
 use function Fp\Collection\first;
 use function Fp\Collection\last;
@@ -163,15 +164,14 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             ->flatMap(fn() => sequenceOption([
                 last($event->getTemplateTypeParameters() ?? []),
                 proveOf($event->getStmt(), MethodCall::class)
-                    ->flatMap(
-                        fn(MethodCall $call) => first($call->getArgs())
-                            ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
-                            ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))
-                    )
+                    ->flatMap(fn(MethodCall $call) => first($call->getArgs()))
+                    ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
+                    ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))
             ]))
-            ->mapN(fn(Union $A, Union $TInit) => new Union([
+            ->mapN(fn(Union $A, Union $TInit) => [
                 new TGenericObject(FoldingOperation::class, [$A, $TInit]),
-            ]));
+            ])
+            ->map(ctor(Union::class));
     }
 
     private static function neverToMixed(Union $type): Union

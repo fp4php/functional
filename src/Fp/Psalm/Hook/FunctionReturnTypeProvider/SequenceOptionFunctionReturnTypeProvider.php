@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Functional\Option\Option;
-use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
+
 use function Fp\Collection\first;
 use function Fp\Collection\traverseOption;
 
@@ -28,7 +28,9 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
     {
         return PsalmApi::$args->getCallArgs($event)
             ->flatMap(fn($args) => $args->head())
-            ->flatMap(fn(CallArg $arg) => PsalmApi::$types->asSingleAtomicOf(TKeyedArray::class, $arg->type))
+            ->pluck('type')
+            ->flatMap(PsalmApi::$types->asSingleAtomic(...))
+            ->filterOf(TKeyedArray::class)
             ->flatMap(fn(TKeyedArray $types) => traverseOption(
                 $types->properties,
                 fn(Union $type) => PsalmApi::$types

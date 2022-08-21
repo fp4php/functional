@@ -39,11 +39,11 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
         return PsalmApi::$args->getCallArgs($event)
             ->flatMap(fn(ArrayList $args) => sequenceOption([
                 $args->lastElement()
-                    ->map(fn(CallArg $arg) => $arg->type)
+                    ->pluck('type')
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                     ->filterOf(TLiteralString::class),
                 $args->firstElement()
-                    ->map(fn(CallArg $arg) => $arg->type)
+                    ->pluck('type')
                     ->flatMap(GetCollectionTypeParams::value(...))
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                     ->flatMap(fn($atomic) => proveOf($atomic, [TNamedObject::class, TKeyedArray::class])),
@@ -68,7 +68,8 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     {
         return PsalmApi::$args->getCallArgs($event)
             ->flatMap(fn(ArrayList $args) => $args->head())
-            ->flatMap(fn(CallArg $arg) => GetCollectionTypeParams::key($arg->type))
+            ->pluck('type')
+            ->flatMap(GetCollectionTypeParams::key(...))
             ->getOrCall(fn() => Type::getArrayKey());
     }
 
@@ -76,7 +77,7 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     {
         return PsalmApi::$args->getCallArgs($event)
             ->flatMap(fn(ArrayList $args) => $args->head())
-            ->map(fn(CallArg $arg) => $arg->type)
+            ->pluck('type')
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
             ->map(fn(Type\Atomic $atomic) => $atomic instanceof $class)
             ->getOrElse(false);

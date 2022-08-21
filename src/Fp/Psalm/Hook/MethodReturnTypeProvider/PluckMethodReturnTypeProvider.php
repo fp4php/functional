@@ -8,7 +8,6 @@ use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Pluck\PluckPropertyTypeResolver;
 use Fp\Psalm\Util\Pluck\PluckResolveContext;
-use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
@@ -38,7 +37,7 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
             ->flatMap(fn() => sequenceOption([
                 PsalmApi::$args->getCallArgs($event)
                     ->flatMap(fn(ArrayList $args) => $args->lastElement()
-                        ->map(fn(CallArg $arg) => $arg->type)
+                        ->pluck('type')
                         ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                         ->filterOf(TLiteralString::class)),
                 Option::fromNullable($event->getTemplateTypeParameters())
@@ -50,8 +49,10 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
             ]))
             ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))
-            ->map(fn(Union $result) => new TGenericObject(Option::class, [$result]))
-            ->map(fn(TGenericObject $result) => new Union([$result]))
+            ->map(fn(Union $result) => [
+                new TGenericObject(Option::class, [$result]),
+            ])
+            ->map(ctor(Union::class))
             ->get();
     }
 }
