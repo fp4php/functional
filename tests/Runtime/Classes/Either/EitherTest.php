@@ -190,13 +190,13 @@ final class EitherTest extends TestCase
     public function testFold(): void
     {
         $foldRight = Either::right(1)->fold(
-            fn(int $some) => $some + 1,
             fn() => 0,
+            fn(int $some) => $some + 1,
         );
 
         $foldLeft = Either::left('err')->fold(
-            fn(int $some) => $some + 1,
             fn() => 0,
+            fn(int $some) => $some + 1,
         );
 
         $this->assertEquals(2, $foldRight);

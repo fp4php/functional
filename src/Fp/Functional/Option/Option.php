@@ -490,18 +490,16 @@ abstract class Option
      * => 0
      * ```
      *
-     * @template TOutSome
-     * @template TOutNone
+     * @template SO
+     * @template NO
      *
-     * @param callable(A): TOutSome $ifSome
-     * @param callable(): TOutNone $ifNone
-     * @return TOutSome|TOutNone
+     * @param callable(): NO $ifNone
+     * @param callable(A): SO $ifSome
+     * @return SO|NO
      */
-    public function fold(callable $ifSome, callable $ifNone): mixed
+    public function fold(callable $ifNone, callable $ifSome): mixed
     {
-        return $this->isSome()
-            ? $ifSome($this->get())
-            : $ifNone();
+        return $this->isNone() ? $ifNone() : $ifSome($this->get());
     }
 
     /**

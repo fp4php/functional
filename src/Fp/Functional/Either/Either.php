@@ -133,15 +133,13 @@ abstract class Either
      * @template LO
      * @template RO
      *
-     * @param callable(R): RO $ifRight
      * @param callable(L): LO $ifLeft
+     * @param callable(R): RO $ifRight
      * @return RO|LO
      */
-    public function fold(callable $ifRight, callable $ifLeft): mixed
+    public function fold(callable $ifLeft, callable $ifRight): mixed
     {
-        return $this->isRight()
-            ? $ifRight($this->get())
-            : $ifLeft($this->get());
+        return $this->isLeft() ? $ifLeft($this->get()) : $ifRight($this->get());
     }
 
     /**
