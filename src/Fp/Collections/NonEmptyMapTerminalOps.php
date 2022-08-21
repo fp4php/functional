@@ -159,4 +159,141 @@ interface NonEmptyMapTerminalOps
      * @return Option<NonEmptyMap<TK, TVO>>
      */
     public function sequenceOption(): Option;
+
+    /**
+     * Produces new collection without an element with given key
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])->removed('b')->toList();
+     * => [['a', 1]]
+     * ```
+     *
+     * @param TK $key
+     * @return Map<TK, TV>
+     */
+    public function removed(mixed $key): Map;
+
+    /**
+     * Filter collection by condition
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 1], ['b', 2]])
+     * >>>     ->filter(fn(int $value) => $value > 1)
+     * >>>     ->toList();
+     * => [['b', 2]]
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     * @return Map<TK, TV>
+     *
+     * @see CollectionFilterMethodReturnTypeProvider
+     */
+    public function filter(callable $predicate): Map;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::filter()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Map<TK, TV>
+     *
+     * @see CollectionFilterMethodReturnTypeProvider
+     */
+    public function filterKV(callable $predicate): Map;
+
+    /**
+     * A combined {@see NonEmptyHashMap::map} and {@see NonEmptyHashMap::filter}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     * Also, NonEmpty* prefix will be lost.
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
+     * >>>     ->filterMap(fn($value) => is_numeric($value) ? Option::some((int) $value) : Option::none())
+     * >>>     ->toList();
+     * => [['b', 1], ['c', 2]]
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Map<TK, TVO>
+     */
+    public function filterMap(callable $callback): Map;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::filterMap()}, but passing also the key to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return Map<TK, TVO>
+     */
+    public function filterMapKV(callable $callback): Map;
+
+    /**
+     * Map collection and flatten the result
+     *
+     * ```php
+     * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['2', 2], ['5', 5]]);
+     * => NonEmptyHashMap('2' -> 2, '5' -> 5)
+     *
+     * >>> $collection
+     * >>>     ->flatMap(fn(int $val) => [
+     * >>>         [$val - 1, $val - 1],
+     * >>>         [$val, $val],
+     * >>>         [$val + 1, $val + 1]
+     * >>>     ])
+     * >>>     ->toList();
+     * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): iterable<array{TKO, TVO}> $callback
+     * @return Map<TKO, TVO>
+     */
+    public function flatMap(callable $callback): Map;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::flatMap()}, but passing also the key to the $callback function.
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): iterable<array{TKO, TVO}> $callback
+     * @return Map<TKO, TVO>
+     */
+    public function flatMapKV(callable $callback): Map;
+
+    /**
+     * Returns sequence of collection keys
+     *
+     * ```php
+     * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
+     * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     *
+     * >>> $collection->keys(fn($elem) => $elem + 1)->toList();
+     * => ['1', '2']
+     * ```
+     *
+     * @return NonEmptySeq<TK>
+     */
+    public function keys(): NonEmptySeq;
+
+    /**
+     * Returns sequence of collection values
+     *
+     * ```php
+     * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['1', 1], ['2', 2]]);
+     * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     *
+     * >>> $collection->values(fn($elem) => $elem + 1)->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return NonEmptySeq<TV>
+     */
+    public function values(): NonEmptySeq;
 }

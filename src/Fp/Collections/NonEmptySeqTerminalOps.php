@@ -79,6 +79,85 @@ interface NonEmptySeqTerminalOps
     public function everyOf(string $fqcn, bool $invariant = false): bool;
 
     /**
+     * Filter collection by condition.
+     * true - include element to new collection.
+     * false - exclude element from new collection.
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2])->filter(fn($elem) => $elem > 1)->toList();
+     * => [2]
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     * @return Seq<TV>
+     *
+     * @see CollectionFilterMethodReturnTypeProvider
+     */
+    public function filter(callable $predicate): Seq;
+
+    /**
+     * A combined {@see NonEmptySeq::map} and {@see NonEmptySeq::filter}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     * Also, NonEmpty* prefix will be lost.
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty(['zero', '1', '2'])
+     * >>>     ->filterMap(fn($elem) => is_numeric($elem) ? Option::some((int) $elem) : Option::none())
+     * >>>     ->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Seq<TVO>
+     */
+    public function filterMap(callable $callback): Seq;
+
+    /**
+     * Exclude null elements
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, null])->filterNotNull()->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return Seq<TV>
+     */
+    public function filterNotNull(): Seq;
+
+    /**
+     * Filter elements of given class
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, new Foo(2)])->filterOf(Foo::class)->toList();
+     * => [Foo(2)]
+     * ```
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO> $fqcn
+     * @param bool $invariant
+     * @return Seq<TVO>
+     */
+    public function filterOf(string $fqcn, bool $invariant = false): Seq;
+
+    /**
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList();
+     * => [1, 2, 3, 4, 5, 6]
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>) $callback
+     * @return Seq<TVO>
+     */
+    public function flatMap(callable $callback): Seq;
+
+    /**
      * Suppose you have an NonEmptyArrayList<TV> and you want to format each element with a function that returns an Option<TVO>.
      * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<NonEmptyArrayList<TVO>>
      * i.e. an Some<NonEmptyArrayList<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
@@ -307,6 +386,80 @@ interface NonEmptySeqTerminalOps
      * @return TV
      */
     public function head(): mixed;
+
+    /**
+     * Returns every collection element except first
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->tail()->toList();
+     * => [2, 3]
+     * ```
+     *
+     * @return Seq<TV>
+     */
+    public function tail(): Seq;
+
+    /**
+     * Returns every collection element except last
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->init()->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return Seq<TV>
+     */
+    public function init(): Seq;
+
+    /**
+     * Take collection elements while predicate is true
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->takeWhile(fn($e) => $e < 3)->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     * @return Seq<TV>
+     */
+    public function takeWhile(callable $predicate): Seq;
+
+    /**
+     * Drop collection elements while predicate is true
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->dropWhile(fn($e) => $e < 3)->toList();
+     * => [3]
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     * @return Seq<TV>
+     */
+    public function dropWhile(callable $predicate): Seq;
+
+    /**
+     * Take N collection elements
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->take(2)->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return Seq<TV>
+     */
+    public function take(int $length): Seq;
+
+    /**
+     * Drop N collection elements
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->drop(2)->toList();
+     * => [3]
+     * ```
+     *
+     * @return Seq<TV>
+     */
+    public function drop(int $length): Seq;
 
     /**
      * Returns last collection element which satisfies the condition

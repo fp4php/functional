@@ -358,34 +358,4 @@ interface MapChainableOps
      * @return Map<TKO, TVO>
      */
     public function groupMapReduceKV(callable $group, callable $map, callable $reduce): Map;
-
-    /**
-     * Returns sequence of collection keys
-     *
-     * ```php
-     * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
-     * => HashMap('1' -> 1, '2' -> 2)
-     *
-     * >>> $collection->keys(fn($elem) => $elem + 1)->toList();
-     * => ['1', '2']
-     * ```
-     *
-     * @return Seq<TK>
-     */
-    public function keys(): Seq;
-
-    /**
-     * Returns sequence of collection values
-     *
-     * ```php
-     * >>> $collection = HashMap::collectPairs([['1', 1], ['2', 2]]);
-     * => HashMap('1' -> 1, '2' -> 2)
-     *
-     * >>> $collection->values(fn($elem) => $elem + 1)->toList();
-     * => [1, 2]
-     * ```
-     *
-     * @return Seq<TV>
-     */
-    public function values(): Seq;
 }
