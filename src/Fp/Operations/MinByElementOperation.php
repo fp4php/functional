@@ -12,7 +12,7 @@ use Fp\Functional\Option\Option;
  * @template TV
  * @extends AbstractOperation<TK, TV>
  */
-class MaxByElementOperation extends AbstractOperation
+class MinByElementOperation extends AbstractOperation
 {
     /**
      * @psalm-param callable(TV): mixed $by
@@ -30,6 +30,6 @@ class MaxByElementOperation extends AbstractOperation
 
         $gen = SortedOperation::of($this->gen)($f);
 
-        return FirstOperation::of($gen)();
+        return LastOperation::of($gen)();
     }
 }

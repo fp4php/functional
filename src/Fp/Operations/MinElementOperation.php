@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Operations;
 
 use Fp\Functional\Option\Option;
-
 use function Fp\Cast\asList;
 
 /**
@@ -14,7 +13,7 @@ use function Fp\Cast\asList;
  * @template TV
  * @extends AbstractOperation<TK, TV>
  */
-class MaxElementOperation extends AbstractOperation
+class MinElementOperation extends AbstractOperation
 {
     /**
      * @return Option<TV>
@@ -23,6 +22,6 @@ class MaxElementOperation extends AbstractOperation
     {
         $list = asList($this->gen);
 
-        return Option::fromNullable(!empty($list) ? max($list) : null);
+        return Option::fromNullable(!empty($list) ? min($list) : null);
     }
 }
