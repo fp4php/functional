@@ -42,11 +42,10 @@ function first(iterable $collection, ?callable $predicate = null): Option
  * @template TVO
  *
  * @param iterable<TK, TV> $collection
- * @param class-string<TVO> $fqcn fully qualified class name
- * @param bool $invariant if turned on then subclasses are not allowed
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn
  * @return Option<TVO>
  */
-function firstOf(iterable $collection, string $fqcn, bool $invariant = false): Option
+function firstOf(iterable $collection, string|array $fqcn, bool $invariant = false): Option
 {
     return FirstOfOperation::of($collection)($fqcn, $invariant);
 }

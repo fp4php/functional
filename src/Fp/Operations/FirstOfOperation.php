@@ -6,7 +6,7 @@ namespace Fp\Operations;
 
 use Fp\Functional\Option\Option;
 
-use function Fp\of;
+use function Fp\Evidence\proveOf;
 
 /**
  * @template TK
@@ -19,13 +19,19 @@ final class FirstOfOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn fully qualified class name
-     * @param bool $invariant if turned on then subclasses are not allowed
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Option<TVO>
      */
-    public function __invoke(string $fqcn, bool $invariant = false): Option
+    public function __invoke(string|array $fqcn, bool $invariant = false): Option
     {
-        return FirstOperation::of($this->gen)(fn($_key, $elem) => of($elem, $fqcn, $invariant))
-            ->filterOf($fqcn, $invariant);
+        foreach ($this->gen as $value) {
+            $option = proveOf($value, $fqcn, $invariant);
+
+            if ($option->isSome()) {
+                return $option;
+            }
+        }
+
+        return Option::none();
     }
 }

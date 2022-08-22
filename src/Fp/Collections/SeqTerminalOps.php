@@ -271,11 +271,10 @@ interface SeqTerminalOps
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Option<TVO>
      */
-    public function firstOf(string $fqcn, bool $invariant = false): Option;
+    public function firstOf(string|array $fqcn, bool $invariant = false): Option;
 
     /**
      * Find last element of given class

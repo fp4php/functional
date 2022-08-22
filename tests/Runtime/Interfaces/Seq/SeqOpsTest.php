@@ -13,6 +13,7 @@ use Fp\Functional\Option\Option;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
+use Tests\Mock\Baz;
 use Tests\Mock\Foo;
 use Tests\Mock\SubBar;
 
@@ -221,6 +222,65 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals([$bar, $subBar], $seq->filterOf(Bar::class, false)->toList());
         $this->assertEquals([$bar], $seq->filterOf(Bar::class, true)->toList());
+    }
+
+    public function filterOfWithMultipleFqcnDataProvider(): Generator
+    {
+        $foo = new Foo(1);
+        $bar = new Bar(2);
+        $baz = new Baz();
+
+        yield ArrayList::class => [
+            ArrayList::collect([$foo, $bar, $baz]),
+            [Bar::class, Baz::class],
+            ArrayList::collect([$bar, $baz]),
+        ];
+
+        yield LinkedList::class => [
+            LinkedList::collect([$foo, $bar, $baz]),
+            [Bar::class, Baz::class],
+            LinkedList::collect([$bar, $baz]),
+        ];
+    }
+
+    /**
+     * @param Seq<Foo|Bar|Baz> $seq
+     * @param Seq<Foo|Bar|Baz> $expected
+     * @param non-empty-list<class-string<Foo>|class-string<Bar>|class-string<Baz>> $fqcn
+     *
+     * @dataProvider filterOfWithMultipleFqcnDataProvider
+     */
+    public function testFilterOfWithMultipleFqcn(Seq $seq, array $fqcn, Seq $expected): void
+    {
+        $this->assertEquals($expected, $seq->filterOf($fqcn));
+    }
+
+    public function firstOfWithMultipleFqcnDataProvider(): Generator
+    {
+        $foo = new Foo(1);
+        $bar = new Bar(2);
+        $baz = new Baz();
+
+        $fqcn = [Foo::class, Bar::class, Baz::class];
+
+        yield 'ArrayList (firstOf Foo)' => [ArrayList::collect([$foo, $bar, $baz]), $fqcn, $foo];
+        yield 'ArrayList (firstOf Bar)' => [ArrayList::collect([$bar, $foo, $baz]), $fqcn, $bar];
+        yield 'ArrayList (firstOf Baz)' => [ArrayList::collect([$baz, $bar, $foo]), $fqcn, $baz];
+
+        yield 'LinkedList (firstOf Foo)' => [LinkedList::collect([$foo, $bar, $baz]), $fqcn, $foo];
+        yield 'LinkedList (firstOf Bar)' => [LinkedList::collect([$bar, $foo, $baz]), $fqcn, $bar];
+        yield 'LinkedList (firstOf Baz)' => [LinkedList::collect([$baz, $bar, $foo]), $fqcn, $baz];
+    }
+
+    /**
+     * @param Seq<Foo|Bar|Baz> $seq
+     * @param non-empty-list<class-string<Foo>|class-string<Bar>|class-string<Baz>> $fqcn
+     *
+     * @dataProvider firstOfWithMultipleFqcnDataProvider
+     */
+    public function testFirstOfWithMultipleFqcn(Seq $seq, array $fqcn, Foo|Bar|Baz $expected): void
+    {
+        $this->assertEquals(Option::some($expected), $seq->firstOf($fqcn));
     }
 
     public function provideTestFirstData(): Generator
