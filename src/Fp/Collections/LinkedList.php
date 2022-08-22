@@ -672,11 +672,10 @@ abstract class LinkedList implements Seq
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn fully qualified class name
-     * @param bool $invariant if turned on then subclasses are not allowed
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return LinkedList<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): LinkedList
+    public function filterOf(string|array $fqcn, bool $invariant = false): LinkedList
     {
         return LinkedList::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
     }

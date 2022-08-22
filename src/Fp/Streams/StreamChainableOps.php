@@ -113,11 +113,10 @@ interface StreamChainableOps
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Stream<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): Stream;
+    public function filterOf(string|array $fqcn, bool $invariant = false): Stream;
 
     /**
      * A combined {@see Stream::map} and {@see Stream::filter}.

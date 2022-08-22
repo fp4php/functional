@@ -499,11 +499,10 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return HashSet<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): HashSet
+    public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
     {
         return $this->set->filterOf($fqcn, $invariant);
     }

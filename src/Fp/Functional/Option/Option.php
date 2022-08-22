@@ -18,6 +18,7 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
 use Generator;
 use Throwable;
 
+use function Fp\Evidence\proveOf;
 use function Fp\objectOf;
 
 /**
@@ -309,14 +310,13 @@ abstract class Option
      *
      * @template B
      *
-     * @param class-string<B> $fqcn
+     * @param class-string<B>|list<class-string<B>> $fqcn
      * @return Option<B>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): Option
+    public function filterOf(string|array $fqcn, bool $invariant = false): Option
     {
-        /** @var Option<B> */
-        return $this->isSome() && objectOf($this->get(), $fqcn, $invariant)
-            ? $this
+        return $this->isSome()
+            ? proveOf($this->get(), $fqcn, $invariant)
             : Option::none();
     }
 

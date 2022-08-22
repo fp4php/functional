@@ -145,11 +145,10 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return LinkedList<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): LinkedList
+    public function filterOf(string|array $fqcn, bool $invariant = false): LinkedList
     {
         return $this->toLinkedList()->filterOf($fqcn, $invariant);
     }

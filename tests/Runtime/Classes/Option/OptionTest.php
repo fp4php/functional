@@ -204,6 +204,23 @@ final class OptionTest extends TestCase
         );
     }
 
+    public function filterOfWithMultipleFqcnDataProvider(): iterable
+    {
+        yield [new Foo(1)];
+        yield [new Bar(2)];
+    }
+
+    /**
+     * @dataProvider filterOfWithMultipleFqcnDataProvider
+     */
+    public function testFilterOfWithMultipleFqcn(Foo|Bar $item): void
+    {
+        $this->assertEquals(
+            Option::some($item),
+            Option::some($item)->filterOf([Foo::class, Bar::class]),
+        );
+    }
+
     public function testTap(): void
     {
         $this->assertEquals(1, Option::some(1)->tap(fn($e) => $e)->get());

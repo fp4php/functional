@@ -339,11 +339,10 @@ interface NonEmptySetTerminalOps
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Set<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): Set;
+    public function filterOf(string|array $fqcn, bool $invariant = false): Set;
 
     /**
      * A combined {@see NonEmptySet::map} and {@see NonEmptySet::filter}.

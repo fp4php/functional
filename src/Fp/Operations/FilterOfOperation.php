@@ -20,12 +20,12 @@ final class FilterOfOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Generator<TK, TVO>
      */
-    public function __invoke(string $fqcn, bool $invariant = false): Generator
+    public function __invoke(string|array $fqcn, bool $invariant = false): Generator
     {
-        return asGenerator(function () use ($fqcn, $invariant) {
+        return asGenerator(function() use ($fqcn, $invariant) {
             foreach ($this->gen as $key => $value) {
                 $option = proveOf($value, $fqcn, $invariant);
 

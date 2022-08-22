@@ -106,12 +106,11 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  * @template TP of bool
  *
  * @param iterable<TK, TV> $collection
- * @param class-string<TVO> $fqcn fully qualified class name
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn
  * @param TP $preserveKeys
- * @param bool $invariant if turned on then subclasses are not allowed
  * @return (TP is true ? array<TK, TVO> : list<TVO>)
  */
-function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false, bool $invariant = false): array
+function filterOf(iterable $collection, string|array $fqcn, bool $preserveKeys = false, bool $invariant = false): array
 {
     $gen = FilterOfOperation::of($collection)($fqcn, $invariant);
     return $preserveKeys

@@ -660,11 +660,10 @@ final class ArrayList implements Seq
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return ArrayList<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): ArrayList
+    public function filterOf(string|array $fqcn, bool $invariant = false): ArrayList
     {
         return ArrayList::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
     }

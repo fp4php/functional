@@ -138,11 +138,10 @@ interface NonEmptySeqTerminalOps
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Seq<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): Seq;
+    public function filterOf(string|array $fqcn, bool $invariant = false): Seq;
 
     /**
      * ```php

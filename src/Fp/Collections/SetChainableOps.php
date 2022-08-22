@@ -96,11 +96,10 @@ interface SetChainableOps
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant if
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Set<TVO>
      */
-    public function filterOf(string $fqcn, bool $invariant = false): Set;
+    public function filterOf(string|array $fqcn, bool $invariant = false): Set;
 
     /**
      * Exclude null elements
