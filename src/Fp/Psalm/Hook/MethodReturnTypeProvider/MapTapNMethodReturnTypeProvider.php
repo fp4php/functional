@@ -20,7 +20,7 @@ use Fp\Collections\Set;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
-use Fp\PsalmToolkit\Toolkit\CallArg;
+use Fp\Psalm\Util\MapTapNContext;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Issue\IfThisIsMismatch;
 use Psalm\IssueBuffer;
@@ -35,6 +35,7 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
+use function Fp\Collection\dropRight;
 use function Fp\Collection\init;
 use function Fp\Collection\last;
 use function Fp\Evidence\proveNonEmptyArray;
@@ -69,7 +70,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         $return_type = Option::do(function() use ($event) {
-            $templates = yield proveTrue(self::isMapN($event) || self::isTapN($event) || self::isFlatMapN($event) || self::isFlatTapN($event))
+            $templates = yield proveTrue(self::isSupportedMethod($event))
                 ->flatMap(fn() => proveNonEmptyList($event->getTemplateTypeParameters() ?? []));
 
             // Take the most right template:
@@ -79,13 +80,13 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             $current_args = yield last($templates)
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                 ->filterOf(TKeyedArray::class)
-                ->filter(fn(TKeyedArray $keyed) => self::isTuple($keyed))
+                ->filter(self::isTuple(...))
                 ->orElse(fn() => self::valueTypeIsNotTupleIssue($event));
 
             // $callback mapN/tapN argument
             $map_callback = yield PsalmApi::$args->getCallArgs($event)
                 ->flatMap(fn(ArrayList $args) => $args->firstElement())
-                ->map(fn(CallArg $arg) => $arg->type)
+                ->pluck('type')
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                 ->flatMap(fn(Atomic $atomic) => proveOf($atomic, [TCallable::class, TClosure::class]));
 
@@ -98,18 +99,24 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                     ->toNonEmptyArray())
                 ->map(fn(array $types) => new TKeyedArray($types));
 
-            $is_variadic = last($map_callback->params ?? [])
-                ->pluck('is_variadic')
-                ->getOrElse(false);
-
-            $optional_count = ArrayList::collect($map_callback->params ?? [])
-                ->reverse()
-                ->takeWhile(fn(FunctionLikeParameter $p) => $p->is_optional)
-                ->count();
+            $ctx = new MapTapNContext(
+                event: $event,
+                func_args: $func_args,
+                current_args: $current_args,
+                is_variadic: last($map_callback->params ?? [])
+                    ->pluck('is_variadic')
+                    ->getOrElse(false),
+                optional_count: ArrayList::collect($map_callback->params ?? [])
+                    ->filter(fn(FunctionLikeParameter $p) => $p->is_optional)
+                    ->count(),
+                required_count: ArrayList::collect($map_callback->params ?? [])
+                    ->filter(fn(FunctionLikeParameter $p) => !$p->is_optional)
+                    ->count(),
+            );
 
             // Assert that $func_args is assignable to $current_args
-            proveTrue(self::isTypeContainedByType($func_args, $current_args, $is_variadic, $optional_count))
-                ->orElse(fn() => self::typesAreNotCompatibleIssue($event, $func_args, $current_args, $is_variadic, $optional_count));
+            proveTrue(self::isTypeContainedByType($ctx))
+                ->orElse(fn() => self::typesAreNotCompatibleIssue($ctx));
 
             // Change most right template if the mapN/flatMapN was call:
             //    Option<A>    -> Option<B>
@@ -133,6 +140,14 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
         });
 
         return $return_type->get();
+    }
+
+    private static function isSupportedMethod(MethodReturnTypeProviderEvent $event): bool
+    {
+        return self::isMapN($event)
+            || self::isTapN($event)
+            || self::isFlatMapN($event)
+            || self::isFlatTapN($event);
     }
 
     private static function isTuple(TKeyedArray $keyed): bool
@@ -180,66 +195,53 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
     /**
      * @return Option<never>
      */
-    private static function typesAreNotCompatibleIssue(
-        MethodReturnTypeProviderEvent $event,
-        TKeyedArray $func_args,
-        TKeyedArray $current_args,
-        bool $is_variadic,
-        int $optional_count,
-    ): Option
+    private static function typesAreNotCompatibleIssue(MapTapNContext $ctx): Option
     {
-        $mappable_class = $event->getFqClasslikeName();
-        $source = $event->getSource();
+        $mappable_class = $ctx->event->getFqClasslikeName();
+        $source = $ctx->event->getSource();
 
-        $tuned_func_args = self::tuneForOptionalAndVariadicParams($func_args, $current_args, $is_variadic, $optional_count);
+        $tuned_func_args = self::tuneForOptionalAndVariadicParams($ctx);
 
         $issue = new IfThisIsMismatch(
             message: implode(', ', [
                 "Object must be type of {$mappable_class}<{$tuned_func_args->getId()}>",
-                "actual type {$mappable_class}<{$current_args->getId()}>",
+                "actual type {$mappable_class}<{$ctx->current_args->getId()}>",
             ]),
-            code_location: $event->getCodeLocation(),
+            code_location: $ctx->event->getCodeLocation(),
         );
 
         IssueBuffer::accepts($issue, $source->getSuppressedIssues());
         return Option::none();
     }
 
-    private static function isTypeContainedByType(
-        TKeyedArray $func_args,
-        TKeyedArray $current_args,
-        bool $is_variadic,
-        int $optional_count,
-    ): bool
+    private static function isTypeContainedByType(MapTapNContext $context): bool
     {
         return PsalmApi::$types->isTypeContainedByType(
-            new Union([$current_args]),
+            new Union([$context->current_args]),
             new Union([
-                self::tuneForOptionalAndVariadicParams($func_args, $current_args, $is_variadic, $optional_count),
+                self::tuneForOptionalAndVariadicParams($context),
             ]),
         );
     }
 
-    private static function tuneForOptionalAndVariadicParams(
-        TKeyedArray $func_args,
-        TKeyedArray $current_args,
-        bool $is_variadic,
-        int $optional_count,
-    ): TKeyedArray
+    private static function tuneForOptionalAndVariadicParams(MapTapNContext $ctx): TKeyedArray
     {
         return self::tuneForOptional(
-            func_args: $is_variadic ? self::tuneForVariadic($func_args, $current_args) : $func_args,
-            drop_length: $optional_count - count($current_args->properties),
+            func_args: $ctx->is_variadic
+                ? self::tuneForVariadic($ctx->func_args, $ctx->current_args)
+                : $ctx->func_args,
+            drop_length: $ctx->optional_count > 0
+                ? $ctx->required_count + $ctx->optional_count - count($ctx->current_args->properties)
+                : 0,
         );
     }
 
     private static function tuneForOptional(TKeyedArray $func_args, int $drop_length): TKeyedArray
     {
-        $cloned = clone $func_args;
+        $propsOption = proveNonEmptyList(dropRight($func_args->properties, $drop_length));
 
-        for ($i = 0; $i <= $drop_length; $i++) {
-            array_pop($cloned->properties);
-        }
+        $cloned = clone $func_args;
+        $cloned->properties = $propsOption->getOrElse($cloned->properties);
 
         return $cloned;
     }
@@ -249,15 +251,23 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
         $func_args_count = count($func_args->properties);
         $current_args_count = count($current_args->properties);
 
-        $cloned = clone $func_args;
-        $cloned->properties = match (true) {
-            $func_args_count < $current_args_count => [
-                ...$cloned->properties,
-                ...array_fill(0, $current_args_count - $func_args_count, last($cloned->properties)->getUnsafe()),
-            ],
-            $func_args_count > $current_args_count => proveNonEmptyArray(init($cloned->properties))->getUnsafe(),
-            default => $cloned->properties,
+        $propsOption = match (true) {
+            // There are variadic args: extend type with variadic param type
+            $current_args_count > $func_args_count => last($func_args->properties)
+                ->map(fn($last) => [
+                    ...$func_args->properties,
+                    ...array_fill(0, $current_args_count - $func_args_count, $last),
+                ]),
+
+            // No variadic args: remove variadic param from type
+            $current_args_count < $func_args_count => proveNonEmptyArray(init($func_args->properties)),
+
+            // Exactly one variadic arg: leave as is
+            default => Option::none(),
         };
+
+        $cloned = clone $func_args;
+        $cloned->properties = $propsOption->getOrElse($cloned->properties);
 
         return $cloned;
     }
