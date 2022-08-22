@@ -35,7 +35,7 @@ final class ExtensionTest extends TestCase
 
     public function testAddInstanceMethod(): void
     {
-        /** @psalm-suppress MixedAssignment, UndefinedMagicMethod */
+        /** @psalm-suppress MixedAssignment */
         $actual = ArrayList::collect([1, 2, 3])->{$this->testMethodName}();
 
         $this->assertEquals(6, $actual);
