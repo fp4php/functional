@@ -23,6 +23,7 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
+use Tests\Static\Plugin\Psalm8124WorkaroundTest;
 
 /**
  * Plugin entrypoint
@@ -57,5 +58,16 @@ class FunctionalPlugin implements PluginEntryPointInterface
         $register(MapTapNMethodReturnTypeProvider::class);
         $register(PluckMethodReturnTypeProvider::class);
         $register(CtorFunctionReturnTypeProvider::class);
+
+        self::registerStub($registration);
+    }
+
+    /**
+     * @see Psalm8124WorkaroundTest
+     */
+    private static function registerStub(RegistrationInterface $registration): void
+    {
+        $registration->addStubFile(__DIR__ . '/Stubs/Psalm8124Workaround/ArrayList.phpstub');
+        $registration->addStubFile(__DIR__ . '/Stubs/Psalm8124Workaround/LinkedList.phpstub');
     }
 }
