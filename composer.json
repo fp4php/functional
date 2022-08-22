@@ -53,6 +53,7 @@
             "src/Fp/Functions/Cast/AsList.php",
             "src/Fp/Functions/Cast/AsNonEmptyArray.php",
             "src/Fp/Functions/Cast/AsNonEmptyList.php",
+            "src/Fp/Functions/Collection/Drop.php",
             "src/Fp/Functions/Collection/At.php",
             "src/Fp/Functions/Collection/Chunks.php",
             "src/Fp/Functions/Collection/Every.php",
