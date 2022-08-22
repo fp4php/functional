@@ -26,10 +26,10 @@ class MinByElementOperation extends AbstractOperation
              * @param TV $l
              * @return int
              */
-            fn(mixed $r, mixed $l): int => $by($l) <=> $by($r);
+            fn(mixed $r, mixed $l): int => $by($r) <=> $by($l);
 
         $gen = SortedOperation::of($this->gen)($f);
 
-        return LastOperation::of($gen)();
+        return FirstOperation::of($gen)();
     }
 }
