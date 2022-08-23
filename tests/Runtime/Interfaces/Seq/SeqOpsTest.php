@@ -657,4 +657,76 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals($option, $seq->maxBy(fn(Foo $foo) => $foo->a));
     }
+
+    public function provideTestMinNotEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([3, 7, 2]), Option::some(2)];
+        yield LinkedList::class => [LinkedList::collect([9, 1, 2]), Option::some(1)];
+    }
+
+    /**
+     * @dataProvider provideTestMinNotEmptyCollections
+     */
+    public function testMinInNotEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->min());
+    }
+
+    public function provideTestMinEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [ArrayList::collect([]), Option::none()];
+        yield LinkedList::class => [LinkedList::collect([]), Option::none()];
+    }
+
+    /**
+     * @dataProvider provideTestMinEmptyCollections
+     */
+    public function testMinInEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->min());
+    }
+
+    public function provideTestMinByNotEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([new Foo(1), new Foo(5), new Foo(2)]),
+            Option::some(new Foo(1))
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([new Foo(9), new Foo(4), new Foo(2)]),
+            Option::some(new Foo(2))
+        ];
+    }
+
+    /**
+     * @param Seq<Foo> $seq
+     * @param Option<Foo> $option
+     * @dataProvider provideTestMinByNotEmptyCollections
+     */
+    public function testMinByInNotEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->minBy(fn(Foo $foo) => $foo->a));
+    }
+
+    public function provideTestMinByEmptyCollections(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([]),
+            Option::none()
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([]),
+            Option::none()
+        ];
+    }
+
+    /**
+     * @param Seq<Foo> $seq
+     * @param Option<Foo> $option
+     * @dataProvider provideTestMinByEmptyCollections
+     */
+    public function testMinByInEmptyCollection(Seq $seq, Option $option): void
+    {
+        $this->assertEquals($option, $seq->minBy(fn(Foo $foo) => $foo->a));
+    }
 }

@@ -301,11 +301,36 @@ interface SeqTerminalOps
      *
      * ```php
      * >>> LinkedList::collect([new Foo(1), new Bar(6), new Foo(2)])->maxBy(fn(Foo $foo) => $foo->a)->get();
-     * => 6
+     * => Bar(6)
      * ```
      *
      * @psalm-param callable(TV): mixed $callback
      * @psalm-return Option<TV>
      */
     public function maxBy(callable $callback): Option;
+
+    /**
+     * Returns the minimum value from collection
+     *
+     * ```php
+     * >>> LinkedList::collect([1, 4, 2])->min()->get();
+     * => 1
+     * ```
+     *
+     * @psalm-return Option<TV>
+     */
+    public function min(): Option;
+
+    /**
+     * Returns the minimum value from collection by iterating each element using the callback
+     *
+     * ```php
+     * >>> LinkedList::collect([new Foo(1), new Bar(6), new Foo(2)])->minBy(fn(Foo $foo) => $foo->a)->get();
+     * => Foo(1)
+     * ```
+     *
+     * @psalm-param callable(TV): mixed $callback
+     * @psalm-return Option<TV>
+     */
+    public function minBy(callable $callback): Option;
 }

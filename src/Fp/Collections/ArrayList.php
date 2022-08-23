@@ -30,6 +30,8 @@ use Fp\Operations\LastOperation;
 use Fp\Operations\MapValuesOperation;
 use Fp\Operations\MaxByElementOperation;
 use Fp\Operations\MaxElementOperation;
+use Fp\Operations\MinByElementOperation;
+use Fp\Operations\MinElementOperation;
 use Fp\Operations\MkStringOperation;
 use Fp\Operations\PrependedAllOperation;
 use Fp\Operations\PrependedOperation;
@@ -626,5 +628,24 @@ final class ArrayList implements Seq
     public function maxBy(callable $callback): Option
     {
         return MaxByElementOperation::of($this->getIterator())($callback);
+    }
+
+    /**
+     * @inheritDoc
+     * @return Option<TV>
+     */
+    public function min(): Option
+    {
+        return MinElementOperation::of($this->getIterator())();
+    }
+
+    /**
+     * @inheritDoc
+     * @psalm-param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function minBy(callable $callback): Option
+    {
+        return MinByElementOperation::of($this->getIterator())($callback);
     }
 }
