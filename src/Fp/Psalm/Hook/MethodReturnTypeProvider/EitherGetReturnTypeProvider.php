@@ -8,6 +8,7 @@ use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
 use Fp\Functional\Option\Option;
+use Fp\Psalm\Util\TypeFromPsalmAssertionResolver;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TGenericObject;
@@ -23,7 +24,7 @@ final class EitherGetReturnTypeProvider implements MethodReturnTypeProviderInter
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
-        return GenericGetReturnTypeProvider::getMethodReturnType(
+        return TypeFromPsalmAssertionResolver::getMethodReturnType(
             event: $event,
             for_class: Either::class,
             to_negated: fn(TGenericObject $either, string $possibility) => match (true) {

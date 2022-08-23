@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
+namespace Fp\Psalm\Util;
 
 use Closure;
 use Fp\Functional\Option\Option;
@@ -19,7 +19,7 @@ use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
 use function Fp\Evidence\proveTrue;
 
-final class GenericGetReturnTypeProvider
+final class TypeFromPsalmAssertionResolver
 {
     /**
      * @param class-string $for_class

@@ -7,6 +7,7 @@ namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
+use Fp\Psalm\Util\TypeFromPsalmAssertionResolver;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type;
@@ -24,7 +25,7 @@ final class OptionGetReturnTypeProvider implements MethodReturnTypeProviderInter
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
-        return GenericGetReturnTypeProvider::getMethodReturnType(
+        return TypeFromPsalmAssertionResolver::getMethodReturnType(
             event: $event,
             for_class: Option::class,
             to_negated: fn(TGenericObject $option, string $possibility) => match (true) {
