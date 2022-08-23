@@ -376,11 +376,10 @@ abstract class LinkedList implements Seq
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      * @return Option<TVO>
      */
-    public function lastOf(string $fqcn, bool $invariant = false): Option
+    public function lastOf(string|array $fqcn, bool $invariant = false): Option
     {
         return Ops\LastOfOperation::of($this->getIterator())($fqcn, $invariant);
     }
