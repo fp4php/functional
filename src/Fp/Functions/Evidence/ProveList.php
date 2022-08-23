@@ -99,12 +99,12 @@ function proveNonEmptyList(iterable $collection): Option
  * @template TVO
  *
  * @param iterable<TK, TV> $collection
- * @param class-string<TVO> $fqcn fully qualified class name
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn fully qualified class name
  * @param bool $invariant if turned on then subclasses are not allowed
  *
  * @return Option<list<TVO>>
  */
-function proveListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
+function proveListOf(iterable $collection, string|array $fqcn, bool $invariant = false): Option
 {
     return Option::do(function () use ($collection, $fqcn, $invariant) {
         $list = yield proveList($collection);
@@ -135,12 +135,12 @@ function proveListOf(iterable $collection, string $fqcn, bool $invariant = false
  * @template TVO
  *
  * @param iterable<TK, TV> $collection
- * @param class-string<TVO> $fqcn fully qualified class name
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn fully qualified class name
  * @param bool $invariant if turned on then subclasses are not allowed
  *
  * @return Option<non-empty-list<TVO>>
  */
-function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
+function proveNonEmptyListOf(iterable $collection, string|array $fqcn, bool $invariant = false): Option
 {
     return Option::do(function () use ($collection, $fqcn, $invariant) {
         $list = yield proveListOf($collection, $fqcn, $invariant);

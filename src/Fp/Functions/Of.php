@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp;
 
+use function Fp\Collection\exists;
 use function Fp\Evidence\proveClassString;
 use function Fp\Evidence\proveObject;
 
@@ -17,12 +18,12 @@ use function Fp\Evidence\proveObject;
  *
  * @template TO
  *
- * @param class-string<TO> $fqcn
+ * @param class-string<TO>|list<class-string<TO>> $fqcn
  * @param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-assert-if-true TO $subject
  */
-function of(mixed $subject, string $fqcn, bool $invariant = false): bool
+function of(mixed $subject, string|array $fqcn, bool $invariant = false): bool
 {
     return objectOf($subject, $fqcn, $invariant);
 }
@@ -37,17 +38,20 @@ function of(mixed $subject, string $fqcn, bool $invariant = false): bool
  *
  * @template TO
  *
- * @param class-string<TO> $fqcn
+ * @param class-string<TO>|list<class-string<TO>> $fqcn
  * @param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-assert-if-true TO $subject
  */
-function objectOf(mixed $subject, string $fqcn, bool $invariant = false): bool
+function objectOf(mixed $subject, string|array $fqcn, bool $invariant = false): bool
 {
+    $fqcnList = is_string($fqcn) ? [$fqcn] : $fqcn;
+
     return proveObject($subject)
-        ->map(fn(object $object) => $invariant
-            ? $object::class === $fqcn
-            : is_a($object, $fqcn)
+        ->map(
+            fn(object $object) => exists($fqcnList, fn($fqcn) => $invariant
+                ? $object::class === $fqcn
+                : is_a($object, $fqcn))
         )
         ->getOrElse(false);
 }
@@ -62,17 +66,20 @@ function objectOf(mixed $subject, string $fqcn, bool $invariant = false): bool
  *
  * @template TO
  *
- * @param class-string<TO> $fqcn
+ * @param class-string<TO>|list<class-string<TO>> $fqcn
  * @param bool $invariant if turned on then subclasses are not allowed
  *
  * @psalm-assert-if-true class-string<TO> $subject
  */
-function classOf(mixed $subject, string $fqcn, bool $invariant = false): bool
+function classOf(mixed $subject, string|array $fqcn, bool $invariant = false): bool
 {
+    $fqcnList = is_string($fqcn) ? [$fqcn] : $fqcn;
+
     return proveClassString($subject)
-        ->map(fn(string $classString) => $invariant
-            ? $classString === $fqcn
-            : is_a($classString, $fqcn, true)
+        ->map(
+            fn(string $classString) => exists($fqcnList, fn($fqcn) => $invariant
+                ? $classString === $fqcn
+                : is_a($classString, $fqcn, true))
         )
         ->getOrElse(false);
 }
