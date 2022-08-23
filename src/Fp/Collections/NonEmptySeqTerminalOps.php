@@ -320,10 +320,9 @@ interface NonEmptySeqTerminalOps
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
-    public function existsOf(string $fqcn, bool $invariant = false): bool;
+    public function existsOf(string|array $fqcn, bool $invariant = false): bool;
 
     /**
      * Find first element which satisfies the condition

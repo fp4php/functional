@@ -339,10 +339,9 @@ abstract class LinkedList implements Seq
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
-    public function existsOf(string $fqcn, bool $invariant = false): bool
+    public function existsOf(string|array $fqcn, bool $invariant = false): bool
     {
         return Ops\ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
     }

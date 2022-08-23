@@ -516,10 +516,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
-    public function everyOf(string $fqcn, bool $invariant = false): bool
+    public function everyOf(string|array $fqcn, bool $invariant = false): bool
     {
         return $this->leaf(Ops\EveryOfOperation::of($this->emitter)($fqcn, $invariant));
     }
@@ -539,10 +538,9 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
-    public function existsOf(string $fqcn, bool $invariant = false): bool
+    public function existsOf(string|array $fqcn, bool $invariant = false): bool
     {
         return $this->leaf(Ops\ExistsOfOperation::of($this->emitter)($fqcn, $invariant));
     }
