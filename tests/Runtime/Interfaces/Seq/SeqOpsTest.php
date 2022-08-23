@@ -648,12 +648,39 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals(
             [1, 2, 3],
-            $seq->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList()
+            $seq->sorted()->toList()
         );
 
         $this->assertEquals(
             [3, 2, 1],
-            $seq->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList()
+            $seq->sortedDesc()->toList()
+        );
+    }
+
+    public function provideTestSortedByData(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([new Foo(1), new Foo(2), new Foo(3)]),
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([new Foo(1), new Foo(2), new Foo(3)]),
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestSortedByData
+     * @param Seq<Foo> $seq
+     */
+    public function testSortedBy(Seq $seq): void
+    {
+        $this->assertEquals(
+            [new Foo(1), new Foo(2), new Foo(3)],
+            $seq->sortedBy(fn(Foo $obj) => $obj->a)->toList()
+        );
+
+        $this->assertEquals(
+            [new Foo(3), new Foo(2), new Foo(1)],
+            $seq->sortedDescBy(fn(Foo $obj) => $obj->a)->toList()
         );
     }
 

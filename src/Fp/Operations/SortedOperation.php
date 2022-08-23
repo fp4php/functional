@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
-use Fp\Collections\ArrayList;
-use Generator;
-
-use function Fp\Cast\asGenerator;
+use function Fp\Cast\asList;
 
 /**
  * @template TK
@@ -19,17 +16,61 @@ final class SortedOperation extends AbstractOperation
 {
     /**
      * @param callable(TV, TV): int $f
-     * @return Generator<TV>
+     * @return list<TV>
      */
-    public function __invoke(callable $f): Generator
+    public function __invoke(callable $f): array
     {
-        return asGenerator(function () use ($f) {
-            $sorted = ArrayList::collect($this->gen)->toList();
-            usort($sorted, $f);
+        $sorted = asList($this->gen);
+        usort($sorted, $f);
 
-            foreach ($sorted as $value) {
-                yield $value;
-            }
-        });
+        return $sorted;
+    }
+
+    /**
+     * @return list<TV>
+     */
+    public function asc(): array
+    {
+        return $this(fn($l, $r) => $l <=> $r);
+    }
+
+    /**
+     * @return list<TV>
+     */
+    public function desc(): array
+    {
+        return $this(fn($l, $r) => $r <=> $l);
+    }
+
+    /**
+     * @param callable(TV): mixed $callback
+     * @return list<TV>
+     */
+    public function ascBy(callable $callback): array
+    {
+        $f =
+            /**
+             * @param TV $l
+             * @param TV $r
+             */
+            fn(mixed $l, mixed $r): int => $callback($l) <=> $callback($r);
+
+        return $this($f);
+    }
+
+    /**
+     * @param callable(TV): mixed $callback
+     * @return list<TV>
+     */
+    public function descBy(callable $callback): array
+    {
+        $f =
+            /**
+             * @param TV $l
+             * @param TV $r
+             */
+            fn(mixed $l, mixed $r): int => $callback($r) <=> $callback($l);
+
+        return $this($f);
     }
 }

@@ -12,7 +12,6 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
-use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Unit;
 use Fp\Functional\WithExtensions;
@@ -461,7 +460,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      * {@inheritDoc}
      *
      * @param positive-int $size
-     * @return Stream<Seq<TV>>
+     * @return Stream<ArrayList<TV>>
      */
     public function chunks(int $size): Stream
     {
@@ -478,7 +477,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      * @template D
      *
      * @param callable(TV): D $discriminator
-     * @return Stream<array{D, Seq<TV>}>
+     * @return Stream<array{D, ArrayList<TV>}>
      */
     public function groupAdjacentBy(callable $discriminator): Stream
     {
@@ -491,14 +490,77 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
-     * {@inheritDoc}
+     * Ascending sort
      *
-     * @param callable(TV, TV): int $cmp
+     * ```php
+     * >>> Stream::emits([2, 1, 3])->sorted()->toList();
+     * => [1, 2, 3]
+     * ```
+     *
      * @return Stream<TV>
      */
-    public function sorted(callable $cmp): Stream
+    public function sorted(): Stream
     {
-        return $this->fork(Ops\SortedOperation::of($this->emitter)($cmp));
+        return $this->fork(asGenerator(function() {
+            yield from Ops\SortedOperation::of($this->emitter)->asc();
+        }));
+    }
+
+    /**
+     * Ascending sort by specific value
+     *
+     * ```php
+     * >>> Stream::emits([new Foo(2), new Foo(1), new Foo(3)])
+     *         ->sortedBy(fn(Foo $obj) => $obj->a)
+     *         ->toList();
+     * => [Foo(1), Foo(2), Foo(3)]
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Stream<TV>
+     */
+    public function sortedBy(callable $callback): Stream
+    {
+        return $this->fork(asGenerator(function() use ($callback) {
+            yield from Ops\SortedOperation::of($this->emitter)->ascBy($callback);
+        }));
+    }
+
+    /**
+     * Descending sort
+     *
+     * ```php
+     * >>> Stream::emits([2, 1, 3])->sorted()->toList();
+     * => [3, 2, 1]
+     * ```
+     *
+     * @return Stream<TV>
+     */
+    public function sortedDesc(): Stream
+    {
+        return $this->fork(asGenerator(function() {
+            yield from Ops\SortedOperation::of($this->emitter)->desc();
+        }));
+    }
+
+    /**
+     * Descending sort by specific value
+     *
+     * ```php
+     * >>> Stream::emits([new Foo(2), new Foo(1), new Foo(3)])
+     *         ->sortedBy(fn(Foo $obj) => $obj->a)
+     *         ->toList();
+     * => [Foo(3), Foo(2), Foo(1)]
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Stream<TV>
+     */
+    public function sortedDescBy(callable $callback): Stream
+    {
+        return $this->fork(asGenerator(function() use ($callback) {
+            yield from Ops\SortedOperation::of($this->emitter)->descBy($callback);
+        }));
     }
 
     /**

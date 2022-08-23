@@ -339,18 +339,56 @@ interface StreamChainableOps
     public function groupAdjacentBy(callable $discriminator): Stream;
 
     /**
-     * Sort streamed elements
+     * Ascending sort
      *
      * ```php
-     * >>> Stream::emits([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList();
+     * >>> Stream::emits([2, 1, 3])->sorted()->toList();
      * => [1, 2, 3]
+     * ```
      *
-     * >>> Stream::emits([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList();
+     * @return Stream<TV>
+     */
+    public function sorted(): Stream;
+
+    /**
+     * Ascending sort by specific value
+     *
+     * ```php
+     * >>> Stream::emits([new Foo(2), new Foo(1), new Foo(3)])
+     *         ->sortedBy(fn(Foo $obj) => $obj->a)
+     *         ->toList();
+     * => [Foo(1), Foo(2), Foo(3)]
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Stream<TV>
+     */
+    public function sortedBy(callable $callback): Stream;
+
+    /**
+     * Descending sort
+     *
+     * ```php
+     * >>> Stream::emits([2, 1, 3])->sorted()->toList();
      * => [3, 2, 1]
      * ```
      *
-     * @param callable(TV, TV): int $cmp
      * @return Stream<TV>
      */
-    public function sorted(callable $cmp): Stream;
+    public function sortedDesc(): Stream;
+
+    /**
+     * Descending sort by specific value
+     *
+     * ```php
+     * >>> Stream::emits([new Foo(2), new Foo(1), new Foo(3)])
+     *         ->sortedBy(fn(Foo $obj) => $obj->a)
+     *         ->toList();
+     * => [Foo(3), Foo(2), Foo(1)]
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Stream<TV>
+     */
+    public function sortedDescBy(callable $callback): Stream;
 }

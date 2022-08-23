@@ -747,12 +747,43 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @param callable(TV, TV): int $cmp
      * @return LinkedList<TV>
      */
-    public function sorted(callable $cmp): LinkedList
+    public function sorted(): LinkedList
     {
-        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())($cmp));
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->asc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return LinkedList<TV>
+     */
+    public function sortedBy(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->ascBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function sortedDesc(): LinkedList
+    {
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->desc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return LinkedList<TV>
+     */
+    public function sortedDescBy(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->descBy($callback));
     }
 
     /**

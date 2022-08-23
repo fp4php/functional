@@ -735,12 +735,43 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @param callable(TV, TV): int $cmp
      * @return ArrayList<TV>
      */
-    public function sorted(callable $cmp): ArrayList
+    public function sorted(): ArrayList
     {
-        return ArrayList::collect(Ops\SortedOperation::of($this->getIterator())($cmp));
+        return ArrayList::collect(Ops\SortedOperation::of($this->getIterator())->asc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return ArrayList<TV>
+     */
+    public function sortedBy(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\SortedOperation::of($this->getIterator())->ascBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function sortedDesc(): ArrayList
+    {
+        return ArrayList::collect(Ops\SortedOperation::of($this->getIterator())->desc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return ArrayList<TV>
+     */
+    public function sortedDescBy(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\SortedOperation::of($this->getIterator())->descBy($callback));
     }
 
     /**

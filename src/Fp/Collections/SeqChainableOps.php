@@ -269,20 +269,56 @@ interface SeqChainableOps
     public function drop(int $length): Seq;
 
     /**
-     * Sort collection
+     * Ascending sort
      *
      * ```php
-     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList();
-     * => [1, 2, 3]
-     *
-     * >>> LinkedList::collect([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList();
-     * => [3, 2, 1]
+     * >>> LinkedList::collect([2, 1, 3])->sorted();
+     * => LinkedList(1, 2, 3)
      * ```
      *
-     * @param callable(TV, TV): int $cmp
      * @return Seq<TV>
      */
-    public function sorted(callable $cmp): Seq;
+    public function sorted(): Seq;
+
+    /**
+     * Ascending sort by specific value
+     *
+     * ```php
+     * >>> LinkedList::collect([new Foo(2), new Foo(1), new Foo(3)])
+     *         ->sortedBy(fn(Foo $obj) => $obj->a);
+     * => LinkedList(Foo(1), Foo(2), Foo(3))
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Seq<TV>
+     */
+    public function sortedBy(callable $callback): Seq;
+
+    /**
+     * Descending sort
+     *
+     * ```php
+     * >>> LinkedList::collect([2, 1, 3])->sorted();
+     * => LinkedList(3, 2, 1)
+     * ```
+     *
+     * @return Seq<TV>
+     */
+    public function sortedDesc(): Seq;
+
+    /**
+     * Descending sort by specific value
+     *
+     * ```php
+     * >>> LinkedList::collect([new Foo(2), new Foo(1), new Foo(3)])
+     *         ->sortedBy(fn(Foo $obj) => $obj->a);
+     * => LinkedList(Foo(3), Foo(2), Foo(1))
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Seq<TV>
+     */
+    public function sortedDescBy(callable $callback): Seq;
 
     /**
      * Call a function for every collection element
