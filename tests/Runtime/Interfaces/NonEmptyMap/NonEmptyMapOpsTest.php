@@ -7,6 +7,7 @@ namespace Tests\Runtime\Interfaces\NonEmptyMap;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class NonEmptyMapOpsTest extends TestCase
@@ -32,6 +33,16 @@ final class NonEmptyMapOpsTest extends TestCase
     {
         $this->assertTrue(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->every(fn($entry) => $entry >= 0));
         $this->assertFalse(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->every(fn($entry) => $entry > 0));
+    }
+
+    public function testEveryOf(): void
+    {
+        $this->assertFalse(
+            NonEmptyHashMap::collectNonEmpty(['a' => new Foo(1), 'b' => new Bar(2)])->everyOf(Foo::class),
+        );
+        $this->assertTrue(
+            NonEmptyHashMap::collectNonEmpty(['a' => new Foo(1), 'b' => new Foo(2)])->everyOf(Foo::class),
+        );
     }
 
     public function testExists(): void

@@ -90,6 +90,16 @@ interface NonEmptyMapTerminalOps
     public function everyKV(callable $predicate): bool;
 
     /**
+     * Shortcut for `$map->every(fn($obj) => $obj instanceof Foo::class)`
+     *
+     * @template TVO
+     * @psalm-assert-if-true NonEmptyMap<TK, TVO> $this
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     */
+    public function everyOf(string|array $fqcn, bool $invariant = false): bool;
+
+    /**
      * Returns true if some collection element satisfy the condition
      * false otherwise
      *

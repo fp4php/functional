@@ -399,11 +399,11 @@ final class NonEmptyLinkedList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @template TVO
+     * @psalm-assert-if-true NonEmptySeq<TVO> $this
      *
-     * @param class-string<TVO> $fqcn
-     * @param bool $invariant
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
-    public function everyOf(string $fqcn, bool $invariant = false): bool
+    public function everyOf(string|array $fqcn, bool $invariant = false): bool
     {
         return Ops\EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
     }

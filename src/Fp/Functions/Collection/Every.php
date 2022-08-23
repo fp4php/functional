@@ -42,10 +42,9 @@ function every(iterable $collection, callable $predicate): bool
  * @template TVO
  *
  * @param iterable<TK, TV> $collection
- * @param class-string<TVO> $fqcn fully qualified class name
- * @param bool $invariant if turned on then subclasses are not allowed
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn
  */
-function everyOf(iterable $collection, string $fqcn, bool $invariant = false): bool
+function everyOf(iterable $collection, string|array $fqcn, bool $invariant = false): bool
 {
     return EveryOfOperation::of($collection)($fqcn, $invariant);
 }

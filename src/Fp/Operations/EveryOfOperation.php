@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
-use function Fp\of;
+use function Fp\Evidence\proveOf;
 
 /**
  * @template TK
@@ -17,12 +17,16 @@ final class EveryOfOperation extends AbstractOperation
     /**
      * @template TVO
      *
-     * @param class-string<TVO> $fqcn fully qualified class name
-     * @param bool $invariant if turned on then subclasses are not allowed
-     * @return bool
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
-    public function __invoke(string $fqcn, bool $invariant = false): bool
+    public function __invoke(string|array $fqcn, bool $invariant = false): bool
     {
-        return EveryOperation::of($this->gen)(fn($_key, $elem) => of($elem, $fqcn, $invariant));
+        foreach ($this->gen as $item) {
+            if (proveOf($item, $fqcn, $invariant)->isNone()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

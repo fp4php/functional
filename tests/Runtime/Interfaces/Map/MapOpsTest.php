@@ -8,6 +8,7 @@ use Fp\Collections\HashMap;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class MapOpsTest extends TestCase
@@ -35,6 +36,16 @@ final class MapOpsTest extends TestCase
 
         $this->assertTrue($hm->every(fn($entry) => $entry >= 0));
         $this->assertFalse($hm->every(fn($entry) => $entry > 0));
+    }
+
+    public function testEveryOf(): void
+    {
+        $this->assertFalse(
+            HashMap::collect(['a' => new Foo(1), 'b' => new Bar(2)])->everyOf(Foo::class),
+        );
+        $this->assertTrue(
+            HashMap::collect(['a' => new Foo(1), 'b' => new Foo(2)])->everyOf(Foo::class),
+        );
     }
 
     public function testExists(): void
