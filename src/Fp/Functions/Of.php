@@ -48,11 +48,12 @@ function objectOf(mixed $subject, string|array $fqcn, bool $invariant = false): 
     $fqcnList = is_string($fqcn) ? [$fqcn] : $fqcn;
 
     return proveObject($subject)
-        ->map(
-            fn(object $object) => exists($fqcnList, fn($fqcn) => $invariant
+        ->map(fn(object $object) => exists(
+            $fqcnList,
+            fn($fqcn) => $invariant
                 ? $object::class === $fqcn
-                : is_a($object, $fqcn))
-        )
+                : is_a($object, $fqcn)
+        ))
         ->getOrElse(false);
 }
 
@@ -76,10 +77,11 @@ function classOf(mixed $subject, string|array $fqcn, bool $invariant = false): b
     $fqcnList = is_string($fqcn) ? [$fqcn] : $fqcn;
 
     return proveClassString($subject)
-        ->map(
-            fn(string $classString) => exists($fqcnList, fn($fqcn) => $invariant
+        ->map(fn(string $classString) => exists(
+            $fqcnList,
+            fn($fqcn) => $invariant
                 ? $classString === $fqcn
-                : is_a($classString, $fqcn, true))
-        )
+                : is_a($classString, $fqcn, true),
+        ))
         ->getOrElse(false);
 }
