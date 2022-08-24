@@ -679,6 +679,25 @@ final class ArrayList implements Seq
     }
 
     /**
+     * @template TVI
+     * @psalm-if-this-is ArrayList<ArrayList<TVI>>
+     *
+     * @return ArrayList<TVI>
+     */
+    public function flatten(): ArrayList
+    {
+        $buffer = [];
+
+        foreach ($this as $list) {
+            foreach ($list as $key => $item) {
+                $buffer[$key] = $item;
+            }
+        }
+
+        return ArrayList::collect($buffer);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate
