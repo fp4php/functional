@@ -8,6 +8,7 @@ use Closure;
 use Fp\Functional\Option\Option;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Generator;
+use Psalm\Storage\ClassLikeStorage;
 use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TIterable;
@@ -206,7 +207,10 @@ final class AtomicUpcast
             function(Atomic $input, Atomic $to) {
                 yield proveTrue($input instanceof TGenericObject);
                 yield proveTrue($to instanceof TIterable);
-                $_storage = PsalmApi::$classlikes->getStorage($input);
+                $_storage = yield PsalmApi::$classlikes->getStorage($input)
+                    ->filter(fn(ClassLikeStorage $storage) => array_key_exists('traversable', $storage->class_implements));
+
+                // template_extended_offsets
 
                 return new TMixed();
             },
