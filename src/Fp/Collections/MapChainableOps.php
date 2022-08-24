@@ -102,6 +102,26 @@ interface MapChainableOps
     public function filterMapKV(callable $callback): Map;
 
     /**
+     * Converts this Map<TK, iterable<TVO>> into a Map<TKO, TVO>.
+     *
+     * ```php
+     * >>> HashMap::collect([
+     * >>>     'fst' => HashMap::collect(['k1' => 1, 'k2' => 2]),
+     * >>>     'snd' => HashMap::collect(['k3' => 3, 'k4' => 4]),
+     * >>>     'thr' => HashMap::collect(['k5' => 5, 'k6' => 6]),
+     * >>> ])->flatten();
+     * => HashMap('k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5, 'k6' => 6)
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     * @psalm-if-this-is Map<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>>
+     *
+     * @return Map<TKO, TVO>
+     */
+    public function flatten(): Map;
+
+    /**
      * Map collection and flatten the result
      *
      * ```php

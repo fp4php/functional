@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\NonEmptyMap;
 
+use Fp\Collections\HashMap;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
@@ -90,6 +91,30 @@ final class NonEmptyMapOpsTest extends TestCase
             NonEmptyHashMap::collectPairsNonEmpty([['a', 'zero'], ['b', '1'], ['c', '2']])
                 ->filterMap(fn($val) => is_numeric($val) ? Option::some((int) $val) : Option::none())
                 ->toList()
+        );
+    }
+
+    public function testFlatten(): void
+    {
+        $this->assertEquals(
+            HashMap::collect([]),
+            NonEmptyHashMap::collectNonEmpty([
+                HashMap::collect([]),
+                HashMap::collect([]),
+                HashMap::collect([]),
+            ])->flatten(),
+        );
+        $this->assertEquals(
+            HashMap::collect([
+                'fst' => 1,
+                'snd' => 2,
+                'thr' => 3,
+            ]),
+            NonEmptyHashMap::collectNonEmpty([
+                HashMap::collect(['fst' => 1]),
+                HashMap::collect(['snd' => 2]),
+                HashMap::collect(['thr' => 3]),
+            ])->flatten(),
         );
     }
 

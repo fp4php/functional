@@ -337,6 +337,39 @@ final class SeqOpsTest extends TestCase
         );
     }
 
+    public function provideTestFlattenData(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([]),
+            ArrayList::collect([
+                ArrayList::collect([1, 2]),
+                ArrayList::collect([3, 4]),
+                ArrayList::collect([5, 6]),
+            ]),
+        ];
+
+        yield LinkedList::class => [
+            LinkedList::collect([]),
+            LinkedList::collect([
+                LinkedList::collect([1, 2]),
+                LinkedList::collect([3, 4]),
+                LinkedList::collect([5, 6]),
+            ]),
+        ];
+    }
+
+    /**
+     * @param Seq<Seq<int>> $emptySeq
+     * @param Seq<Seq<int>> $nonEmptySeq
+     *
+     * @dataProvider provideTestFlattenData
+     */
+    public function testFlatten(Seq $emptySeq, Seq $nonEmptySeq): void
+    {
+        $this->assertEquals([], $emptySeq->flatten()->toList());
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $nonEmptySeq->flatten()->toList());
+    }
+
     public function provideTestHeadData(): Generator
     {
         yield ArrayList::class => [ArrayList::collect([2, 5])];

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Interfaces\NonEmptySeq;
 
+use Fp\Collections\ArrayList;
+use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyLinkedList;
@@ -375,6 +377,47 @@ final class NonEmptySeqOpsTest extends TestCase
             [1, 2, 3, 4, 5, 6],
             $seq->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList()
         );
+    }
+
+    public function provideTestFlattenData(): Generator
+    {
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([
+                ArrayList::empty(),
+                ArrayList::empty(),
+                ArrayList::empty(),
+            ]),
+            NonEmptyArrayList::collectNonEmpty([
+                ArrayList::collect([1, 2]),
+                ArrayList::collect([3, 4]),
+                ArrayList::collect([5, 6]),
+            ]),
+        ];
+
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([
+                LinkedList::empty(),
+                LinkedList::empty(),
+                LinkedList::empty(),
+            ]),
+            NonEmptyLinkedList::collectNonEmpty([
+                LinkedList::collect([1, 2]),
+                LinkedList::collect([3, 4]),
+                LinkedList::collect([5, 6]),
+            ]),
+        ];
+    }
+
+    /**
+     * @param NonEmptySeq<NonEmptySeq<int>> $emptySeq
+     * @param NonEmptySeq<NonEmptySeq<int>> $nonEmptySeq
+     *
+     * @dataProvider provideTestFlattenData
+     */
+    public function testFlatten(NonEmptySeq $emptySeq, NonEmptySeq $nonEmptySeq): void
+    {
+        $this->assertEquals([], $emptySeq->flatten()->toList());
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $nonEmptySeq->flatten()->toList());
     }
 
     public function provideTestHeadData(): Generator

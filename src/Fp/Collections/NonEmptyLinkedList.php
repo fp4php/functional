@@ -157,6 +157,19 @@ final class NonEmptyLinkedList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @template TVO
+     * @psalm-if-this-is NonEmptyLinkedList<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return LinkedList<TVO>
+     */
+    public function flatten(): LinkedList
+    {
+        return $this->toLinkedList()->flatten();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
      *
      * @param callable(TV): (iterable<TVO>) $callback
      * @return LinkedList<TVO>

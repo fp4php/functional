@@ -144,6 +144,25 @@ interface NonEmptySeqTerminalOps
     public function filterOf(string|array $fqcn, bool $invariant = false): Seq;
 
     /**
+     * Converts this NonEmptySeq<iterable<TVO>> into a Seq<TVO>.
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([
+     * >>>     LinkedList::collect([1, 2]),
+     * >>>     LinkedList::collect([3, 4]),
+     * >>>     LinkedList::collect([5, 6]),
+     * >>> ])->flatten();
+     * => LinkedList(1, 2, 3, 4, 5, 6)
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptySeq<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return Seq<TVO>
+     */
+    public function flatten(): Seq;
+
+    /**
      * ```php
      * >>> NonEmptyLinkedList::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList();
      * => [1, 2, 3, 4, 5, 6]

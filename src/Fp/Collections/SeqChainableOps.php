@@ -140,6 +140,25 @@ interface SeqChainableOps
     public function filterMap(callable $callback): Seq;
 
     /**
+     * Converts this Seq<iterable<TVO>> into a Seq<TVO>.
+     *
+     * ```php
+     * >>> LinkedList::collect([
+     * >>>     LinkedList::collect([1, 2]),
+     * >>>     LinkedList::collect([3, 4]),
+     * >>>     LinkedList::collect([5, 6]),
+     * >>> ])->flatten();
+     * => LinkedList(1, 2, 3, 4, 5, 6)
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is Seq<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return Seq<TVO>
+     */
+    public function flatten(): Seq;
+
+    /**
      * Map collection and then flatten the result
      *
      * ```php

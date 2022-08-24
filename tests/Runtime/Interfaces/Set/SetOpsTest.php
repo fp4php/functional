@@ -188,6 +188,22 @@ final class SetOpsTest extends TestCase
         $this->assertEquals($f1, $hs->firstOf(Foo::class)->get());
     }
 
+    public function testFlatten(): void
+    {
+        $this->assertEquals(
+            HashSet::collect([]),
+            HashSet::collect([])->flatten(),
+        );
+        $this->assertEquals(
+            HashSet::collect([1, 2, 3, 4]),
+            HashSet::collect([
+                HashSet::collect([1, 1, 2]),
+                HashSet::collect([2, 2, 3]),
+                HashSet::collect([3, 3, 4]),
+            ])->flatten(),
+        );
+    }
+
     public function testFlatMap(): void
     {
         $this->assertEquals(

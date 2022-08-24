@@ -681,6 +681,19 @@ abstract class LinkedList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
+     * @psalm-if-this-is LinkedList<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return LinkedList<TVO>
+     */
+    public function flatten(): LinkedList
+    {
+        return LinkedList::collect(Ops\FlattenOperation::of($this));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
      *
      * @param callable(TV): (iterable<TVO>) $callback
      * @return LinkedList<TVO>

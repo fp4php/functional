@@ -376,6 +376,25 @@ interface NonEmptySetTerminalOps
     public function filterNotNull(): Set;
 
     /**
+     * Converts this NonEmptySet<iterable<TVO>> into a Set<TVO>.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([
+     * >>>     HashSet::collect([1, 2]),
+     * >>>     HashSet::collect([3, 4]),
+     * >>>     HashSet::collect([5, 6]),
+     * >>> ])->flatten();
+     * => HashSet(1, 2, 3, 4, 5, 6)
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return Set<TVO>
+     */
+    public function flatten(): Set;
+
+    /**
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([2, 5])
      * >>>     ->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])

@@ -566,6 +566,19 @@ final class HashSet implements Set
      * {@inheritDoc}
      *
      * @template TVO
+     * @psalm-if-this-is HashSet<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return HashSet<TVO>
+     */
+    public function flatten(): HashSet
+    {
+        return HashSet::collect(Ops\FlattenOperation::of($this));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
      *
      * @param callable(TV): (iterable<TVO>) $callback
      * @return HashSet<TVO>

@@ -532,6 +532,19 @@ final class NonEmptyHashSet implements NonEmptySet
      * {@inheritDoc}
      *
      * @template TVO
+     * @psalm-if-this-is NonEmptyHashSet<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return Set<TVO>
+     */
+    public function flatten(): Set
+    {
+        return $this->set->flatten();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
      *
      * @param callable(TV): TVO $callback
      * @return NonEmptyHashSet<TVO>

@@ -134,6 +134,25 @@ interface SetChainableOps
     public function filterMap(callable $callback): Set;
 
     /**
+     * Converts this Set<iterable<TVO>> into a Set<TVO>.
+     *
+     * ```php
+     * >>> HashSet::collect([
+     * >>>     HashSet::collect([1, 2]),
+     * >>>     HashSet::collect([3, 4]),
+     * >>>     HashSet::collect([5, 6]),
+     * >>> ])->flatten();
+     * => HashSet(1, 2, 3, 4, 5, 6)
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is Set<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return Set<TVO>
+     */
+    public function flatten(): Set;
+
+    /**
      * ```php
      * >>> HashSet::collect([2, 5, 5])->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])->toList();
      * => [1, 2, 3, 4, 5, 6]

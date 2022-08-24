@@ -446,6 +446,23 @@ final class HashMap implements Map
      *
      * @template TKO
      * @template TVO
+     * @psalm-if-this-is HashMap<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>>
+     *
+     * @return HashMap<TKO, TVO>
+     */
+    public function flatten(): HashMap
+    {
+        /** @var Generator<TK, iterable<array{TKO, TVO}>> */
+        $gen = $this->getKeyValueIterator();
+
+        return HashMap::collectPairs(Ops\FlattenOperation::of($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
      *
      * @param callable(TV): (iterable<array{TKO, TVO}>) $callback
      * @return HashMap<TKO, TVO>

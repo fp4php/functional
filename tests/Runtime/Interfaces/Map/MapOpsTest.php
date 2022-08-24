@@ -97,6 +97,30 @@ final class MapOpsTest extends TestCase
         );
     }
 
+    public function testFlatten(): void
+    {
+        $this->assertEquals(
+            HashMap::collect([]),
+            HashMap::collect([
+                HashMap::collect([]),
+                HashMap::collect([]),
+                HashMap::collect([]),
+            ])->flatten(),
+        );
+        $this->assertEquals(
+            HashMap::collect([
+                'fst' => 1,
+                'snd' => 2,
+                'thr' => 3,
+            ]),
+            HashMap::collect([
+                HashMap::collect(['fst' => 1]),
+                HashMap::collect(['snd' => 2]),
+                HashMap::collect(['thr' => 3]),
+            ])->flatten(),
+        );
+    }
+
     public function testFlatMap(): void
     {
         $hm = HashMap::collectPairs([['2', 2], ['5', 5]]);

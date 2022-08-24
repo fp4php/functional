@@ -669,6 +669,19 @@ final class ArrayList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
+     * @psalm-if-this-is ArrayList<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     *
+     * @return ArrayList<TVO>
+     */
+    public function flatten(): ArrayList
+    {
+        return ArrayList::collect(Ops\FlattenOperation::of($this));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
      *
      * @param callable(TV): (iterable<TVO>) $callback
      * @return ArrayList<TVO>
