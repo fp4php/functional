@@ -10,12 +10,13 @@ use IteratorAggregate;
 
 /**
  * @template-covariant TV
- * @implements IteratorAggregate<empty, TV>
+ * @extends IteratorAggregate<int, TV>
  */
 interface NonEmptyCollection extends IteratorAggregate, Countable
 {
     /**
      * {@inheritDoc}
+     *
      * @return Iterator<TV>
      */
     public function getIterator(): Iterator;
