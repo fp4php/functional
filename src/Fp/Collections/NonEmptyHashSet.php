@@ -38,7 +38,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
      * @return Option<NonEmptyHashSet<TVI>>
      */
     public static function collect(iterable $source): Option
@@ -53,7 +53,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
      * @return NonEmptyHashSet<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptyHashSet
@@ -575,7 +575,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
      * @return HashSet<TVO>
      */
     public function flatMap(callable $callback): HashSet

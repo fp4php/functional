@@ -14,7 +14,7 @@ interface NonEmptySetCollector
     /**
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
      * @return Option<NonEmptySet<TVI>>
      */
     public static function collect(iterable $source): Option;
@@ -22,7 +22,7 @@ interface NonEmptySetCollector
     /**
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
      * @return NonEmptySet<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptySet;

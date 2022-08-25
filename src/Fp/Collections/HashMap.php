@@ -69,7 +69,7 @@ final class HashMap implements Map
      * @template TKI
      * @template TVI
      *
-     * @param iterable<array{TKI, TVI}> $source
+     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}>) $source
      * @return HashMap<TKI, TVI>
      */
     public static function collectPairs(iterable $source): HashMap
@@ -464,7 +464,7 @@ final class HashMap implements Map
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<array{TKO, TVO}>) $callback
+     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMap(callable $callback): HashMap
@@ -478,7 +478,7 @@ final class HashMap implements Map
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<array{TKO, TVO}>) $callback
+     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMapKV(callable $callback): HashMap

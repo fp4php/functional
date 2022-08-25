@@ -40,7 +40,7 @@ final class HashSet implements Set
      *
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
      * @return HashSet<TVI>
      */
     public static function collect(iterable $source): HashSet
@@ -463,25 +463,12 @@ final class HashSet implements Set
      *
      * @template TVI
      *
-     * @param iterable<TVI> $that
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $that
      * @return HashSet<TV|TVI>
      */
     public function appendedAll(iterable $that): HashSet
     {
         return HashSet::collect(Ops\AppendedAllOperation::of($this->getIterator())($that));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param iterable<TV> $that
-     * @return HashSet<TV>
-     */
-    public function removedAll(iterable $that): HashSet
-    {
-        return $this->diff(HashSet::collect($that));
     }
 
     /**
@@ -580,7 +567,7 @@ final class HashSet implements Set
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
      * @return HashSet<TVO>
      */
     public function flatMap(callable $callback): HashSet

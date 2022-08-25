@@ -7,11 +7,11 @@ namespace Tests\Static\Plugin;
 use Fp\Collections\ArrayList;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
-use Fp\Psalm\FunctionalPlugin;
+use Fp\Collections\NonEmptyArrayList;
+use Fp\Functional\Option\Option;
 
 /**
  * @see https://github.com/vimeo/psalm/issues/8124
- * When issue will be solved: remove stubs at {@see FunctionalPlugin::registerStub()}
  */
 final class Psalm8124WorkaroundTest
 {
@@ -41,7 +41,7 @@ final class Psalm8124WorkaroundTest
      *     LinkedList<int|string>,
      * }
      */
-    public function arrayListCollectionArrayList(ArrayList $list, HashSet $set): array
+    public function seqTest(ArrayList $list, HashSet $set): array
     {
         return [
             ArrayList::collect($list),
@@ -64,6 +64,40 @@ final class Psalm8124WorkaroundTest
             LinkedList::collect([1, 2, 3])->prependedAll($set),
             LinkedList::collect([1, 2, 3])->appendedAll($list),
             LinkedList::collect([1, 2, 3])->appendedAll($set),
+        ];
+    }
+
+    /**
+     * @param NonEmptyArrayList<int> $neList
+     * @param NonEmptyArrayList<string> $otherNeList
+     * @param ArrayList<string> $list
+     * @param HashSet<string> $set
+     * @return array{
+     *     Option<NonEmptyArrayList<string>>,
+     *     ArrayList<string>,
+     *     Option<NonEmptyArrayList<string>>,
+     *     ArrayList<string>,
+     *     NonEmptyArrayList<array{int, string}>,
+     *     NonEmptyArrayList<int|string>,
+     *     NonEmptyArrayList<int|string>,
+     *     NonEmptyArrayList<int|string>,
+     *     NonEmptyArrayList<int|string>,
+     *     NonEmptyArrayList<int|string>
+     * }
+     */
+    public function nonEmptySeqTest(NonEmptyArrayList $neList, NonEmptyArrayList $otherNeList, ArrayList $list, HashSet $set): array
+    {
+        return [
+            NonEmptyArrayList::collect($list),
+            $neList->flatMap(fn() => $list),
+            NonEmptyArrayList::collect($set),
+            $neList->flatMap(fn() => $set),
+            $neList->zip($otherNeList),
+            $neList->prependedAll($list),
+            $neList->prependedAll($set),
+            $neList->appendedAll($list),
+            $neList->appendedAll($set),
+            $neList->appendedAll($otherNeList),
         ];
     }
 }

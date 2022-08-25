@@ -170,7 +170,7 @@ interface NonEmptySeqTerminalOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
      * @return Seq<TVO>
      */
     public function flatMap(callable $callback): Seq;

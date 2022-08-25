@@ -404,7 +404,7 @@ interface NonEmptySetTerminalOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
      * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;

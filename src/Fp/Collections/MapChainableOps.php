@@ -141,7 +141,7 @@ interface MapChainableOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<array{TKO, TVO}>) $callback
+     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
      * @return Map<TKO, TVO>
      */
     public function flatMap(callable $callback): Map;
@@ -152,7 +152,7 @@ interface MapChainableOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<array{TKO, TVO}>) $callback
+     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
      * @return Map<TKO, TVO>
      */
     public function flatMapKV(callable $callback): Map;

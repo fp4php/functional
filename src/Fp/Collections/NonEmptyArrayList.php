@@ -54,7 +54,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
      * @return Option<NonEmptyArrayList<TVI>>
      */
     public static function collect(iterable $source): Option
@@ -69,7 +69,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
      * @return NonEmptyArrayList<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptyArrayList
@@ -171,7 +171,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
      * @return ArrayList<TVO>
      */
     public function flatMap(callable $callback): ArrayList
@@ -298,7 +298,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param iterable<TVI> $suffix
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $suffix
      * @return NonEmptyArrayList<TV|TVI>
      */
     public function appendedAll(iterable $suffix): NonEmptyArrayList
@@ -324,7 +324,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param iterable<TVI> $prefix
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $prefix
      * @return NonEmptyArrayList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): NonEmptyArrayList

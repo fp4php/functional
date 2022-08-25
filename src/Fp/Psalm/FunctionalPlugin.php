@@ -58,16 +58,5 @@ final class FunctionalPlugin implements PluginEntryPointInterface
         $register(MapTapNMethodReturnTypeProvider::class);
         $register(PluckMethodReturnTypeProvider::class);
         $register(CtorFunctionReturnTypeProvider::class);
-
-        self::registerStub($registration);
-    }
-
-    /**
-     * @see Psalm8124WorkaroundTest
-     */
-    private static function registerStub(RegistrationInterface $registration): void
-    {
-        $registration->addStubFile(__DIR__ . '/Stubs/Psalm8124Workaround/ArrayList.phpstub');
-        $registration->addStubFile(__DIR__ . '/Stubs/Psalm8124Workaround/LinkedList.phpstub');
     }
 }

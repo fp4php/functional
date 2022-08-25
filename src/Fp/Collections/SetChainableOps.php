@@ -40,23 +40,10 @@ interface SetChainableOps
      *
      * @template TVI
      *
-     * @param iterable<TVI> $that
+     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $that
      * @return Set<TV|TVI>
      */
     public function appendedAll(iterable $that): Set;
-
-    /**
-     * Remove elements from the set
-     *
-     * ```php
-     * >>> HashSet::collect([1, 2, 3, 4])->appendedAll([3, 4])->toList();
-     * => [1, 2]
-     * ```
-     *
-     * @param iterable<TV> $that
-     * @return Set<TV>
-     */
-    public function removedAll(iterable $that): Set;
 
     /**
      * Produces new set with given element excluded
@@ -160,7 +147,7 @@ interface SetChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
      * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;
