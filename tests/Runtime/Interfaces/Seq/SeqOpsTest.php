@@ -829,6 +829,7 @@ final class SeqOpsTest extends TestCase
         yield ArrayList::class => [ArrayList::collect([3, 7, 2]), Option::some(7)];
         yield LinkedList::class => [LinkedList::collect([9, 1, 2]), Option::some(9)];
     }
+
     /**
      * @dataProvider provideTestMaxNotEmptyCollections
      */
@@ -836,11 +837,13 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals($option, $seq->max());
     }
+
     public function provideTestMaxEmptyCollections(): Generator
     {
         yield ArrayList::class => [ArrayList::collect([]), Option::none()];
         yield LinkedList::class => [LinkedList::collect([]), Option::none()];
     }
+
     /**
      * @dataProvider provideTestMaxEmptyCollections
      */
@@ -848,6 +851,7 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals($option, $seq->max());
     }
+
     public function provideTestMaxByNotEmptyCollections(): Generator
     {
         yield ArrayList::class => [
@@ -859,6 +863,7 @@ final class SeqOpsTest extends TestCase
             Option::some(new Foo(9))
         ];
     }
+
     /**
      * @param Seq<Foo> $seq
      * @param Option<Foo> $option
@@ -868,6 +873,7 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals($option, $seq->maxBy(fn(Foo $foo) => $foo->a));
     }
+
     public function provideTestMaxByEmptyCollections(): Generator
     {
         yield ArrayList::class => [
@@ -879,6 +885,7 @@ final class SeqOpsTest extends TestCase
             Option::none()
         ];
     }
+
     /**
      * @param Seq<Foo> $seq
      * @param Option<Foo> $option

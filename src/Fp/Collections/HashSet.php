@@ -668,6 +668,48 @@ final class HashSet implements Set
         return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function max(): Option
+    {
+        return Ops\MaxElementOperation::of($this->getIterator())();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function maxBy(callable $callback): Option
+    {
+        return Ops\MaxByElementOperation::of($this->getIterator())($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function min(): Option
+    {
+        return Ops\MinElementOperation::of($this->getIterator())();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function minBy(callable $callback): Option
+    {
+        return Ops\MinByElementOperation::of($this->getIterator())($callback);
+    }
+
     public function toString(): string
     {
         return (string) $this;

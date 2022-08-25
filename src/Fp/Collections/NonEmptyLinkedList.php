@@ -811,6 +811,48 @@ final class NonEmptyLinkedList implements NonEmptySeq
         return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function max(): mixed
+    {
+        return $this->toLinkedList()->max()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function maxBy(callable $callback): mixed
+    {
+        return $this->toLinkedList()->maxBy($callback)->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function min(): mixed
+    {
+        return $this->toLinkedList()->min()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function minBy(callable $callback): mixed
+    {
+        return $this->toLinkedList()->minBy($callback)->getUnsafe();
+    }
+
     public function __toString(): string
     {
         return $this

@@ -315,4 +315,52 @@ final class SetOpsTest extends TestCase
         $this->assertEquals('(1, 2, 3)', HashSet::collect([1, 2, 3])->mkString('(', ', ', ')'));
         $this->assertEquals('()', HashSet::collect([])->mkString('(', ', ', ')'));
     }
+
+    public function testMax(): void
+    {
+        $this->assertEquals(Option::some(3), HashSet::collect([2, 1, 3])->max());
+        $this->assertEquals(Option::none(), HashSet::collect([])->max());
+    }
+
+    public function testMaxBy(): void
+    {
+        $neSet = HashSet::collect([new Foo(2), new Foo(1), new Foo(3)]);
+
+        /** @var HashSet<Foo> $emptySet */
+        $emptySet = HashSet::collect([]);
+
+        $this->assertEquals(
+            Option::some(new Foo(3)),
+            $neSet->maxBy(fn(Foo $obj) => $obj->a),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySet->maxBy(fn(Foo $obj) => $obj->a),
+        );
+    }
+
+    public function testMin(): void
+    {
+        $this->assertEquals(Option::some(1), HashSet::collect([2, 1, 3])->min());
+        $this->assertEquals(Option::none(), HashSet::collect([])->min());
+    }
+
+    public function testMinBy(): void
+    {
+        $neSet = HashSet::collect([new Foo(2), new Foo(1), new Foo(3)]);
+
+        /** @var HashSet<Foo> $emptySet */
+        $emptySet = HashSet::collect([]);
+
+        $this->assertEquals(
+            Option::some(new Foo(1)),
+            $neSet->minBy(fn(Foo $obj) => $obj->a),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySet->minBy(fn(Foo $obj) => $obj->a),
+        );
+    }
 }

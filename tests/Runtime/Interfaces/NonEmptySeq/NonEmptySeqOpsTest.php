@@ -708,4 +708,76 @@ final class NonEmptySeqOpsTest extends TestCase
                 ->reindex(fn($value) => "key-{$value}"),
         );
     }
+
+    public function provideTestMaxNotEmptyCollections(): Generator
+    {
+        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([3, 7, 2]), 7];
+        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([9, 1, 2]), 9];
+    }
+
+    /**
+     * @dataProvider provideTestMaxNotEmptyCollections
+     */
+    public function testMaxInNotEmptyCollection(NonEmptySeq $seq, int $expected): void
+    {
+        $this->assertEquals($expected, $seq->max());
+    }
+
+    public function provideTestMaxByNotEmptyCollections(): Generator
+    {
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([new Foo(1), new Foo(5), new Foo(2)]),
+            new Foo(5),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([new Foo(9), new Foo(1), new Foo(2)]),
+            new Foo(9),
+        ];
+    }
+
+    /**
+     * @param NonEmptySeq<Foo> $seq
+     *
+     * @dataProvider provideTestMaxByNotEmptyCollections
+     */
+    public function testMaxByInNotEmptyCollection(NonEmptySeq $seq, Foo $expected): void
+    {
+        $this->assertEquals($expected, $seq->maxBy(fn(Foo $foo) => $foo->a));
+    }
+
+    public function provideTestMinNotEmptyCollections(): Generator
+    {
+        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([3, 7, 2]), 2];
+        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([9, 1, 2]), 1];
+    }
+
+    /**
+     * @dataProvider provideTestMinNotEmptyCollections
+     */
+    public function testMinInNotEmptyCollection(NonEmptySeq $seq, int $expected): void
+    {
+        $this->assertEquals($expected, $seq->min());
+    }
+
+    public function provideTestMinByNotEmptyCollections(): Generator
+    {
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([new Foo(1), new Foo(5), new Foo(2)]),
+            new Foo(1),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([new Foo(9), new Foo(4), new Foo(2)]),
+            new Foo(2),
+        ];
+    }
+
+    /**
+     * @param NonEmptySeq<Foo> $seq
+     *
+     * @dataProvider provideTestMinByNotEmptyCollections
+     */
+    public function testMinByInNotEmptyCollection(NonEmptySeq $seq, Foo $expected): void
+    {
+        $this->assertEquals($expected, $seq->minBy(fn(Foo $foo) => $foo->a));
+    }
 }

@@ -633,7 +633,49 @@ final class NonEmptyHashSet implements NonEmptySet
     {
         return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
     }
-    
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function max(): mixed
+    {
+        return $this->set->max()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function maxBy(callable $callback): mixed
+    {
+        return $this->set->maxBy($callback)->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function min(): mixed
+    {
+        return $this->set->min()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function minBy(callable $callback): mixed
+    {
+        return $this->set->minBy($callback)->getUnsafe();
+    }
+
     public function toString(): string
     {
         return (string) $this;
@@ -642,7 +684,7 @@ final class NonEmptyHashSet implements NonEmptySet
     public function __toString(): string
     {
         return $this
-            ->map(fn($value) => Ops\ToStringOperation::of($value))
+            ->map(Ops\ToStringOperation::of(...))
             ->toArrayList()
             ->mkString('NonEmptyHashSet(', ', ', ')');
     }

@@ -460,4 +460,54 @@ interface NonEmptySetTerminalOps
      * @return Set<TV>
      */
     public function diff(Set|NonEmptySet $that): Set;
+
+    /**
+     * Returns the maximum value from collection
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 4, 2])->max();
+     * => 4
+     * ```
+     *
+     * @return TV
+     */
+    public function max(): mixed;
+
+    /**
+     * Returns the maximum value from collection by iterating each element using the callback
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([new Foo(1), new Bar(6), new Foo(2)])->maxBy(fn(Foo $foo) => $foo->a);
+     * => Bar(6)
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function maxBy(callable $callback): mixed;
+
+    /**
+     * Returns the minimum value from collection
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 4, 2])->min();
+     * => 1
+     * ```
+     *
+     * @return TV
+     */
+    public function min(): mixed;
+
+    /**
+     * Returns the minimum value from collection by iterating each element using the callback
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([new Foo(1), new Bar(6), new Foo(2)])->minBy(fn(Foo $foo) => $foo->a);
+     * => Foo(1)
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function minBy(callable $callback): mixed;
 }

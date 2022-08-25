@@ -17,6 +17,7 @@ use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 use Generator;
 use PHPUnit\Framework\TestCase;
+use Tests\Mock\Foo;
 
 final class NonEmptySetTest extends TestCase
 {
@@ -150,5 +151,35 @@ final class NonEmptySetTest extends TestCase
     public function testCount(NonEmptySet $set): void
     {
         $this->assertEquals(3, $set->count());
+    }
+
+    public function testMax(): void
+    {
+        $this->assertEquals(3, NonEmptyHashSet::collectNonEmpty([2, 1, 3])->max());
+    }
+
+    public function testMaxBy(): void
+    {
+        $neSet = NonEmptyHashSet::collectNonEmpty([new Foo(2), new Foo(1), new Foo(3)]);
+
+        $this->assertEquals(
+            new Foo(3),
+            $neSet->maxBy(fn(Foo $obj) => $obj->a),
+        );
+    }
+
+    public function testMin(): void
+    {
+        $this->assertEquals(1, NonEmptyHashSet::collectNonEmpty([2, 1, 3])->min());
+    }
+
+    public function testMinBy(): void
+    {
+        $neSet = NonEmptyHashSet::collectNonEmpty([new Foo(2), new Foo(1), new Foo(3)]);
+
+        $this->assertEquals(
+            new Foo(1),
+            $neSet->minBy(fn(Foo $obj) => $obj->a),
+        );
     }
 }
