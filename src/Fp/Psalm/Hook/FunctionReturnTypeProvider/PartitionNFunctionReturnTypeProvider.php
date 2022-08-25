@@ -29,7 +29,7 @@ use function Fp\Collection\sequenceOption;
 use function Fp\Collection\tail;
 use function Fp\Evidence\proveOf;
 
-class PartitionNFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
+final class PartitionNFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
     public static function getFunctionIds(): array
     {

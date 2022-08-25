@@ -27,7 +27,7 @@ use function Fp\Callable\ctor;
 use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveOf;
 
-class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
+final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
     public static function getFunctionIds(): array
     {

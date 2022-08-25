@@ -23,7 +23,7 @@ use function Fp\Collection\head;
 use function Fp\Collection\map;
 use function Fp\Collection\tail;
 
-class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
+final class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
     public static function getFunctionIds(): array
     {

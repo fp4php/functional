@@ -28,7 +28,7 @@ use Tests\Static\Plugin\Psalm8124WorkaroundTest;
 /**
  * Plugin entrypoint
  */
-class FunctionalPlugin implements PluginEntryPointInterface
+final class FunctionalPlugin implements PluginEntryPointInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {

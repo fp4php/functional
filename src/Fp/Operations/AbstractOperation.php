@@ -14,7 +14,7 @@ use function Fp\Cast\asGenerator;
  * @psalm-consistent-constructor
  * @psalm-consistent-templates
  */
-class AbstractOperation
+abstract class AbstractOperation
 {
     /**
      * @var Generator<TK, TV>
