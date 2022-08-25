@@ -9,12 +9,12 @@ use Fp\Functional\Option\Option;
 use function Fp\Cast\asList;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template TV
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class MaxElementOperation extends AbstractOperation
+final class MaxElementOperation extends AbstractOperation
 {
     /**
      * @return Option<TV>

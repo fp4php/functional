@@ -389,7 +389,7 @@ interface SeqTerminalOps
      * => 4
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function max(): Option;
 
@@ -401,8 +401,8 @@ interface SeqTerminalOps
      * => Bar(6)
      * ```
      *
-     * @psalm-param callable(TV): mixed $callback
-     * @psalm-return Option<TV>
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
      */
     public function maxBy(callable $callback): Option;
 
@@ -414,7 +414,7 @@ interface SeqTerminalOps
      * => 1
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function min(): Option;
 
@@ -426,8 +426,8 @@ interface SeqTerminalOps
      * => Foo(1)
      * ```
      *
-     * @psalm-param callable(TV): mixed $callback
-     * @psalm-return Option<TV>
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
      */
     public function minBy(callable $callback): Option;
 }

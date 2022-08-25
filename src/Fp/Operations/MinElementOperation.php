@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Fp\Operations;
 
 use Fp\Functional\Option\Option;
+
 use function Fp\Cast\asList;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template TV
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class MinElementOperation extends AbstractOperation
+final class MinElementOperation extends AbstractOperation
 {
     /**
      * @return Option<TV>
