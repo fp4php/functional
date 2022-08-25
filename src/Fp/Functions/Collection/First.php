@@ -17,16 +17,30 @@ use function Fp\Callable\dropFirstArg;
  * => 1
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @param null|callable(TV): bool $predicate
  * @return Option<TV>
  */
 function first(iterable $collection, ?callable $predicate = null): Option
 {
     return FirstOperation::of($collection)(null !== $predicate ? dropFirstArg($predicate) : null);
+}
+
+/**
+ * Same as {@see first()} but passing also the key to the $predicate function.
+ *
+ * @template TK
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
+ * @return Option<TV>
+ */
+function firstKV(iterable $collection, callable $predicate): Option
+{
+    return FirstOperation::of($collection)($predicate);
 }
 
 /**
@@ -37,11 +51,10 @@ function first(iterable $collection, ?callable $predicate = null): Option
  * => Foo(1)
  * ```
  *
- * @template TK of array-key
  * @template TV
  * @template TVO
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @param class-string<TVO>|list<class-string<TVO>> $fqcn
  * @return Option<TVO>
  */

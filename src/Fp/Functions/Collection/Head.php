@@ -15,10 +15,9 @@ use Fp\Operations\HeadOperation;
  * => 1
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @return Option<TV>
  */
 function head(iterable $collection): Option

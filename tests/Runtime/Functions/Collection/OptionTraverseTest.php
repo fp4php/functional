@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use function Fp\Collection\sequenceOption;
 use function Fp\Collection\traverseOption;
+use function Fp\Collection\traverseOptionKV;
 
 final class OptionTraverseTest extends TestCase
 {
@@ -28,6 +29,37 @@ final class OptionTraverseTest extends TestCase
             traverseOption($c, fn(int $v) => $v < 2
                 ? Option::some($v)
                 : Option::none()),
+        );
+    }
+
+    public function testTraverseKV(): void
+    {
+        $c1 = [
+            1 => 1,
+            2 => 2,
+            3 => 3,
+        ];
+        $this->assertEquals(
+            Option::some($c1),
+            traverseOptionKV($c1, fn(int $k, int $v) => $k === $v
+                ? Option::some($v)
+                : Option::none()),
+        );
+
+        $keysBanList = ['fst'];
+        $valuesBanList = [3, 4];
+        $c2 = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+            'fth' => 4,
+        ];
+
+        $this->assertEquals(
+            Option::none(),
+            traverseOptionKV($c2, fn(string $k, int $v) => in_array($k, $keysBanList) || in_array($v, $valuesBanList)
+                ? Option::none()
+                : Option::some($v))
         );
     }
 

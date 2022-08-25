@@ -16,10 +16,9 @@ use function Fp\Cast\asList;
  * => [2, 3]
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @return list<TV>
  */
 function tail(iterable $collection): array

@@ -61,7 +61,7 @@ use function Fp\Callable\dropFirstArg;
  * @template TKO of array-key
  * @template TVO
  *
- * @param iterable<mixed, TV> $collection
+ * @param iterable<TV> $collection
  * @param callable(TV): TKO $group
  * @param callable(TV): TVO $map
  * @return array<TKO, non-empty-list<TVO>>
@@ -72,7 +72,29 @@ use function Fp\Callable\dropFirstArg;
  */
 function groupMap(iterable $collection, callable $group, callable $map): array
 {
-    return GroupMapOperation::of($collection)(dropFirstArg($group), dropFirstArg($map))
+    return groupMapKV($collection, dropFirstArg($group), dropFirstArg($map));
+}
+
+/**
+ * Same as {@see groupMap()} but passing also the key to the $group and $map functions.
+ *
+ * @template TK
+ * @template TV
+ * @template TKO of array-key
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): TKO $group
+ * @param callable(TK, TV): TVO $map
+ * @return array<TKO, non-empty-list<TVO>>
+ *
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-array<TKO, non-empty-list<TVO>>
+ *     : array<TKO, non-empty-list<TVO>>)
+ */
+function groupMapKV(iterable $collection, callable $group, callable $map): array
+{
+    return GroupMapOperation::of($collection)($group, $map)
         ->map(fn(NonEmptyHashMap $group) => $group->values()->toNonEmptyList())
         ->toArray();
 }

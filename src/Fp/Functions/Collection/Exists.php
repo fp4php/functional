@@ -25,7 +25,21 @@ use function Fp\Callable\dropFirstArg;
  */
 function exists(iterable $collection, callable $predicate): bool
 {
-    return ExistsOperation::of($collection)(dropFirstArg($predicate));
+    return existsKV($collection, dropFirstArg($predicate));
+}
+
+/**
+ * Same as {@see exists()} but passing also the key to the $predicate function.
+ *
+ * @template TK
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
+ */
+function existsKV(iterable $collection, callable $predicate): bool
+{
+    return ExistsOperation::of($collection)($predicate);
 }
 
 /**
@@ -40,6 +54,7 @@ function exists(iterable $collection, callable $predicate): bool
  * @template TK of array-key
  * @template TV
  * @template TVO
+ * @psalm-assert-if-true list<TVO> $collection
  *
  * @param iterable<TK, TV> $collection
  * @param class-string<TVO>|list<class-string<TVO>> $fqcn

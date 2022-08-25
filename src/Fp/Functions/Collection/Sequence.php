@@ -20,7 +20,6 @@ use function Fp\Cast\asArray;
  *
  * @param iterable<TK, Option<TVI> | Closure(): Option<TVI>> $collection
  * @return Option<array<TK, TVI>>
- *
  * @psalm-return (
  *    $collection is non-empty-list  ? Option<non-empty-list<TVI>>      :
  *    $collection is list            ? Option<list<TVI>>                :
@@ -42,7 +41,6 @@ function sequenceOption(iterable $collection): Option
  *
  * @param iterable<TK, Either<E, TVI> | Closure(): Either<E, TVI>> $collection
  * @return Either<E, array<TK, TVI>>
- *
  * @psalm-return (
  *    $collection is non-empty-list  ? Either<E, non-empty-list<TVI>>      :
  *    $collection is list            ? Either<E, list<TVI>>                :

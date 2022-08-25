@@ -17,29 +17,19 @@ use function Fp\Cast\asGenerator;
 final class ChunksOperation extends AbstractOperation
 {
     /**
-     * @template TPreserve of bool
-     *
-     * @param TPreserve $preserveKeys
      * @param positive-int $size
-     * @return (TPreserve is true
-     *     ? Generator<int, non-empty-array<TK, TV>>
-     *     : Generator<int, non-empty-list<TV>>
-     * )
+     * @return Generator<int, non-empty-list<TV>>
      */
-    public function __invoke(int $size, bool $preserveKeys = false): Generator
+    public function __invoke(int $size): Generator
     {
-        return asGenerator(function () use ($preserveKeys, $size) {
+        return asGenerator(function () use ($size) {
             $chunk = [];
             $i = 0;
 
-            foreach ($this->gen as $key => $value) {
+            foreach ($this->gen as $value) {
                 $i++;
 
-                if ($preserveKeys) {
-                    $chunk[$key] = $value;
-                } else {
-                    $chunk[] = $value;
-                }
+                $chunk[] = $value;
 
                 if (0 === $i % $size) {
                     yield $chunk;

@@ -7,6 +7,7 @@ namespace Tests\Runtime\Functions\Collection;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\flatMap;
+use function Fp\Collection\flatMapKV;
 
 final class FlatMapTest extends TestCase
 {
@@ -21,5 +22,16 @@ final class FlatMapTest extends TestCase
                 fn(int $v) => [$v - 1, $v, $v + 1]
             )
         );
+    }
+
+    public function testFlatMapKV(): void
+    {
+        $c = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        $this->assertEquals(['fst', 1, 'snd', 2, 'thr', 3], flatMapKV($c, fn($k, $v) => [$k, $v]));
     }
 }

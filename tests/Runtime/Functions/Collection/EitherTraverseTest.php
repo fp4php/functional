@@ -8,6 +8,7 @@ use Fp\Functional\Either\Either;
 use PHPUnit\Framework\TestCase;
 use function Fp\Collection\sequenceEither;
 use function Fp\Collection\traverseEither;
+use function Fp\Collection\traverseEitherKV;
 
 final class EitherTraverseTest extends TestCase
 {
@@ -28,6 +29,37 @@ final class EitherTraverseTest extends TestCase
             traverseEither($c, fn(int $v) => $v < 2
                 ? Either::right($v)
                 : Either::left('Is too high'))
+        );
+    }
+
+    public function testTraverseKV(): void
+    {
+        $c1 = [
+            1 => 1,
+            2 => 2,
+            3 => 3,
+        ];
+        $this->assertEquals(
+            Either::right($c1),
+            traverseEitherKV($c1, fn(int $k, int $v) => $k === $v
+                ? Either::right($v)
+                : Either::left('err')),
+        );
+
+        $keysBanList = ['fst'];
+        $valuesBanList = [3, 4];
+        $c2 = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+            'fth' => 4,
+        ];
+
+        $this->assertEquals(
+            Either::left('ban'),
+            traverseEitherKV($c2, fn(string $k, int $v) => in_array($k, $keysBanList) || in_array($v, $valuesBanList)
+                ? Either::left('ban')
+                : Either::right($v))
         );
     }
 

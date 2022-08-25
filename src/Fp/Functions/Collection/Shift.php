@@ -18,10 +18,9 @@ use function Fp\Cast\asNonEmptyList;
  * => [1, [2, 3]]
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @return Option<array{TV, list<TV>}>
  */
 function shift(iterable $collection): Option

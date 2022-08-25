@@ -7,11 +7,12 @@ namespace Fp\Collection;
 use Fp\Operations\InitOperation;
 
 /**
- * @template TK
+ * @template TK of array-key
  * @template TV
  *
  * @param iterable<TK, TV> $collection
- * @return ($collection is list<TV> ? list<TV> : array<TK, TV>)
+ * @return array<TK, TV>
+ * @psalm-return ($collection is list<TV> ? list<TV> : array<TK, TV>)
  */
 function init(iterable $collection): array
 {

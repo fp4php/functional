@@ -20,10 +20,9 @@ use function Fp\Collection\head;
  * => None
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @return Option<non-empty-list<TV>>
  */
 function asNonEmptyList(iterable $collection): Option

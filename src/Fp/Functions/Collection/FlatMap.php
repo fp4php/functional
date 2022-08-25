@@ -25,11 +25,27 @@ use function Fp\Cast\asList;
  * @template TV
  * @template TVO
  *
- * @param iterable<mixed, TV> $collection
+ * @param iterable<TV> $collection
  * @param callable(TV): iterable<TVO> $callback
  * @return list<TVO>
  */
 function flatMap(iterable $collection, callable $callback): array
 {
-    return asList(FlatMapOperation::of($collection)(dropFirstArg($callback)));
+    return flatMapKV($collection, dropFirstArg($callback));
+}
+
+/**
+ * Same as {@see flatMap()} but passing also the key to the $callback function.
+ *
+ * @template TK
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): iterable<TVO> $callback
+ * @return list<TVO>
+ */
+function flatMapKV(iterable $collection, callable $callback): array
+{
+    return asList(FlatMapOperation::of($collection)($callback));
 }

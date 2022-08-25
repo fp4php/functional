@@ -17,15 +17,28 @@ use function Fp\Callable\dropFirstArg;
  * => false
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @param callable(TV): bool $predicate
  */
 function every(iterable $collection, callable $predicate): bool
 {
-    return EveryOperation::of($collection)(dropFirstArg($predicate));
+    return everyKV($collection, dropFirstArg($predicate));
+}
+
+/**
+ * Same as {@see every()} but passing also the key to the $predicate function.
+ *
+ * @template TK
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
+ */
+function everyKV(iterable $collection, callable $predicate): bool
+{
+    return EveryOperation::of($collection)($predicate);
 }
 
 /**

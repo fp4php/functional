@@ -20,7 +20,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionNFunctionReturnTypeProvide
  *
  * @template TV
  *
- * @param iterable<mixed, TV> $collection
+ * @param iterable<TV> $collection
  * @param callable(TV): bool ...$predicates
  *
  * @no-named-arguments

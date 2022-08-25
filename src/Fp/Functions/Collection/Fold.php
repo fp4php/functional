@@ -15,11 +15,11 @@ use Fp\Operations\FoldOperation;
  * ```
  *
  * @template TV
- * @template TA
+ * @template TInit
  *
- * @param TA $init
+ * @param TInit $init
  * @param iterable<TV> $collection
- * @return FoldOperation<TV, TA>
+ * @return FoldOperation<TV, TInit>
  */
 function fold(mixed $init, iterable $collection): FoldOperation
 {

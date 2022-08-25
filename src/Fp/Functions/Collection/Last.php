@@ -31,6 +31,21 @@ function last(iterable $collection, ?callable $predicate = null): Option
 }
 
 /**
+ * Same as {@see last()} but passing also the key to the $predicate function.
+ *
+ * @template TK
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
+ * @return Option<TV>
+ */
+function lastKV(iterable $collection, callable $predicate): Option
+{
+    return LastOperation::of($collection)($predicate);
+}
+
+/**
  * Find last element of given class
  *
  * ```php

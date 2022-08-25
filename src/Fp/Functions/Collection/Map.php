@@ -22,16 +22,17 @@ use function Fp\Cast\asArray;
  *
  *
  * @template TK of array-key
- * @template TVI
+ * @template TV
  * @template TVO
  *
- * @param iterable<TK, TVI> $collection
- * @param callable(TVI): TVO $callback
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): TVO $callback
  *
- * @return (
- *    $collection is non-empty-list<TVI>      ? non-empty-list<TVO>      :
- *    $collection is list<TVI>                ? list<TVO>                :
- *    $collection is non-empty-array<TK, TVI> ? non-empty-array<TK, TVO> :
+ * @return array<TK, TVO>
+ * @psalm-return (
+ *    $collection is non-empty-list<TV>      ? non-empty-list<TVO>      :
+ *    $collection is list<TV>                ? list<TVO>                :
+ *    $collection is non-empty-array<TK, TV> ? non-empty-array<TK, TVO> :
  *    array<TK, TVO>
  * )
  */
@@ -44,22 +45,22 @@ function map(iterable $collection, callable $callback): array
  * Same as {@see map()}, but passing also the key to the $callback function.
  *
  * ```php
- * >>> mapKV(['one' => 1, 'two' => 2, 'three' => 3], fn(string $k, int $v) => "{$k}-{$v}");
- * => ['one-1', 'two-2', 'three-3']
+ * >>> mapKV(['one' => 1, 'two' => 2, 'three' => 3], fn($k, $v) => "{$k}-{$v}");
+ * => ['one' => 'one-1', 'two' => 'two-2', 'three' => 'three-3']
  * ```
  *
  *
  * @template TK of array-key
- * @template TVI
+ * @template TV
  * @template TVO
  *
- * @param iterable<TK, TVI> $collection
- * @param callable(TK, TVI): TVO $callback
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): TVO $callback
  *
  * @return (
- *    $collection is non-empty-list<TVI>      ? non-empty-list<TVO>      :
- *    $collection is list<TVI>                ? list<TVO>                :
- *    $collection is non-empty-array<TK, TVI> ? non-empty-array<TK, TVO> :
+ *    $collection is non-empty-list<TV>      ? non-empty-list<TVO>      :
+ *    $collection is list<TV>                ? list<TVO>                :
+ *    $collection is non-empty-array<TK, TV> ? non-empty-array<TK, TVO> :
  *    array<TK, TVO>
  * )
  */

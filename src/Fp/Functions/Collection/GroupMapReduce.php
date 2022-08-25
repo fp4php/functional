@@ -33,11 +33,11 @@ use function Fp\Callable\dropFirstArg;
  * @template TKO of array-key
  * @template TVO
  *
- * @param iterable<mixed, TV> $collection
+ * @param iterable<TV> $collection
  * @param callable(TV): TKO $group
  * @param callable(TV): TVO $map
  * @param callable(TVO, TVO): TVO $reduce
- * @return array<KOut, TVO>
+ * @return array<TKO, TVO>
  *
  * @psalm-return ($collection is non-empty-array
  *     ? non-empty-array<TKO, TVO>
@@ -45,5 +45,28 @@ use function Fp\Callable\dropFirstArg;
  */
 function groupMapReduce(iterable $collection, callable $group, callable $map, callable $reduce): array
 {
-    return GroupMapReduceOperation::of($collection)(dropFirstArg($group), dropFirstArg($map), $reduce)->toArray();
+    return groupMapReduceKV($collection, dropFirstArg($group), dropFirstArg($map), $reduce);
+}
+
+/**
+ * Same as {@see groupMapReduce()} but passing also the key to the $group and $map functions.
+ *
+ * @template TK
+ * @template TV
+ * @template TKO of array-key
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): TKO $group
+ * @param callable(TK, TV): TVO $map
+ * @param callable(TVO, TVO): TVO $reduce
+ * @return array<TKO, TVO>
+ *
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-array<TKO, TVO>
+ *     : array<TKO, TVO>)
+ */
+function groupMapReduceKV(iterable $collection, callable $group, callable $map, callable $reduce): array
+{
+    return GroupMapReduceOperation::of($collection)($group, $map, $reduce)->toArray();
 }

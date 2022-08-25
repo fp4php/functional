@@ -17,10 +17,10 @@ use function Fp\Cast\asArray;
  * => [1 => 1, 2 => 2]
  * ```
  *
- * @template TKO of array-key
  * @template TV
+ * @template TKO of array-key
  *
- * @param iterable<mixed, TV> $collection
+ * @param iterable<TV> $collection
  * @param callable(TV): TKO $callback
  * @return array<TKO, TV>
  *
@@ -41,9 +41,9 @@ function reindex(iterable $collection, callable $callback): array
  * => ['a-1' => 1, 'b-2' => 2]
  * ```
  *
- * @template TKO of array-key
  * @template TK
  * @template TV
+ * @template TKO of array-key
  *
  * @param iterable<TK, TV> $collection
  * @param callable(TK, TV): TKO $callback

@@ -19,7 +19,8 @@ use function Fp\Cast\asList;
  * @template TK
  *
  * @param iterable<TK, mixed> $collection
- * @return ($collection is non-empty-array ? non-empty-list<TK> : list<TK>)
+ * @return list<TK>
+ * @psalm-return ($collection is non-empty-array ? non-empty-list<TK> : list<TK>)
  */
 function keys(iterable $collection): array
 {

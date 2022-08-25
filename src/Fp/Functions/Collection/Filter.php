@@ -34,15 +34,11 @@ use function Fp\Cast\asList;
  */
 function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
-    $gen = FilterOperation::of($collection)(dropFirstArg($predicate));
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
+    return filterKV($collection, dropFirstArg($predicate), $preserveKeys);
 }
 
 /**
- * Filter collection by condition
- * Do not preserve keys by default
+ * Same as {@see filter()} but passing also the key to the $predicate function.
  *
  * ```php
  * >>> filterKV(['fst' => 1, 'snd' => 2, 'thd' => 3], fn($k, $v) => $k !== 'fst' && $v !== 3);
@@ -102,8 +98,8 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  *
  * @template TK of array-key
  * @template TV
- * @template TVO
  * @template TP of bool
+ * @template TVO
  *
  * @param iterable<TK, TV> $collection
  * @param class-string<TVO>|list<class-string<TVO>> $fqcn
@@ -132,8 +128,8 @@ function filterOf(iterable $collection, string|array $fqcn, bool $preserveKeys =
  *
  * @template TK of array-key
  * @template TV
- * @template TVO
  * @template TP of bool
+ * @template TVO
  *
  * @param iterable<TK, TV> $collection
  * @param callable(TV): Option<TVO> $predicate

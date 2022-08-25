@@ -16,10 +16,9 @@ use Fp\Operations\SecondOperation;
  * => 2
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @param null|callable(TV): bool $predicate
  *
  * @return Option<TV>

@@ -17,10 +17,9 @@ use Generator;
  * => [[1, 2], [3, 4]]
  * ```
  *
- * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TV> $collection
  * @param positive-int $chunkSize
  * @return Generator<non-empty-list<TV>>
  */

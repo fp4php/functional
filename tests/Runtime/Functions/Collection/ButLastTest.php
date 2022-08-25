@@ -7,7 +7,6 @@ namespace Tests\Runtime\Functions\Collection;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\init;
-use function Fp\Collection\last;
 
 final class ButLastTest extends TestCase
 {

@@ -20,13 +20,11 @@ use function Fp\Cast\asList;
  * => [[1, 'a'], [2, 'b']]
  * ```
  *
- * @template TKL of array-key
  * @template TVL
- * @template TKR of array-key
  * @template TVR
  *
- * @param iterable<TKL, TVL> $left first collection
- * @param iterable<TKR, TVR> $right second collection
+ * @param iterable<TVL> $left first collection
+ * @param iterable<TVR> $right second collection
  * @return list<array{TVL, TVR}>
  */
 function zip(iterable $left, iterable $right): array
