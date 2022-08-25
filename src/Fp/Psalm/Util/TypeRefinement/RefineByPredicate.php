@@ -14,7 +14,6 @@ use Fp\Functional\Option\Option;
 use Psalm\CodeLocation;
 use Psalm\Internal\Algebra;
 use Psalm\Internal\Algebra\FormulaGenerator;
-use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Type\Reconciler;
 use Psalm\Type\Union;
 
@@ -54,18 +53,11 @@ final class RefineByPredicate
     private static function forKey(RefinementContext $context): Option
     {
         return sequenceOption([
-            self::getPredicateKeyArgumentName($context),
-            self::getPredicateSingleReturn($context)
-        ])->flatMapN(fn(string $arg_name, Expr $return_expr) => self::refine(
-            source: $context->source,
-            assertions: self::collectAssertions(
-                context: $context,
-                return_expr: $return_expr,
-                predicate_arg_name: $arg_name,
-            ),
-            collection_type_param: $context->type_params->key_type,
-            return_expr: $return_expr,
-        ));
+            fn() => self::getPredicateKeyArgumentName($context),
+            fn() => self::getPredicateSingleReturn($context),
+            fn() => Option::some($context),
+            fn() => Option::some($context->type_params->key_type),
+        ])->flatMapN(self::refine(...));
     }
 
     /**
@@ -76,18 +68,11 @@ final class RefineByPredicate
     private static function forValue(RefinementContext $context): Option
     {
         return sequenceOption([
-            self::getPredicateValueArgumentName($context),
-            self::getPredicateSingleReturn($context),
-        ])->flatMapN(fn(string $arg_name, Expr $return_expr) => self::refine(
-            source: $context->source,
-            assertions: self::collectAssertions(
-                context: $context,
-                return_expr: $return_expr,
-                predicate_arg_name: $arg_name,
-            ),
-            collection_type_param: $context->type_params->val_type,
-            return_expr: $return_expr,
-        ));
+            fn() => self::getPredicateValueArgumentName($context),
+            fn() => self::getPredicateSingleReturn($context),
+            fn() => Option::some($context),
+            fn() => Option::some($context->type_params->val_type),
+        ])->flatMapN(self::refine(...));
     }
 
     /**
@@ -98,7 +83,7 @@ final class RefineByPredicate
     private static function getPredicateKeyArgumentName(RefinementContext $context): Option
     {
         return Option::some($context->refine_for)
-            ->filter(fn($refine_for) => RefinementContext::FILTER_KEY_VALUE === $context->refine_for)
+            ->filter(fn($refine_for) => RefineForEnum::KeyValue === $context->refine_for)
             ->flatMap(fn() => first($context->predicate->getParams()))
             ->flatMap(fn($key_param) => proveOf($key_param->var, Variable::class))
             ->flatMap(fn($variable) => proveString($variable->name))
@@ -113,7 +98,7 @@ final class RefineByPredicate
     private static function getPredicateValueArgumentName(RefinementContext $context): Option
     {
         return Option::some($context->refine_for)
-            ->filter(fn($refine_for) => RefinementContext::FILTER_VALUE === $context->refine_for)
+            ->filter(fn($refine_for) => RefineForEnum::Value === $context->refine_for)
             ->flatMap(fn() => first($context->predicate->getParams()))
             ->orElse(fn() => second($context->predicate->getParams()))
             ->flatMap(fn($value_param) => proveOf($value_param->var, Node\Expr\Variable::class))
@@ -173,12 +158,18 @@ final class RefineByPredicate
      * @psalm-return Option<Union>
      */
     private static function refine(
-        StatementsAnalyzer $source,
-        array $assertions,
-        Union $collection_type_param,
-        Expr $return_expr
+        string $arg_name,
+        Expr $return_expr,
+        RefinementContext $context,
+        Union $type,
     ): Option
     {
+        $assertions = self::collectAssertions(
+            context: $context,
+            return_expr: $return_expr,
+            predicate_arg_name: $arg_name,
+        );
+
         // reconcileKeyedTypes takes it by ref
         $changed_var_ids = [];
 
@@ -186,12 +177,12 @@ final class RefineByPredicate
             ->map(fn($assertions) => Reconciler::reconcileKeyedTypes(
                 new_types: $assertions,
                 active_new_types: $assertions,
-                existing_types: [self::CONSTANT_ARG_NAME => $collection_type_param],
+                existing_types: [self::CONSTANT_ARG_NAME => $type],
                 changed_var_ids: $changed_var_ids,
                 referenced_var_ids: [self::CONSTANT_ARG_NAME => true],
-                statements_analyzer: $source,
-                template_type_map: $source->getTemplateTypeMap() ?: [],
-                code_location: new CodeLocation($source, $return_expr)
+                statements_analyzer: $context->source,
+                template_type_map: $context->source->getTemplateTypeMap() ?: [],
+                code_location: new CodeLocation($context->source, $return_expr)
             ))
             ->flatMap(fn($reconciled_types) => at($reconciled_types, self::CONSTANT_ARG_NAME));
     }

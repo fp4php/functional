@@ -8,6 +8,7 @@ use Fp\Collections\ArrayList;
 use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
+use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
 use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
@@ -45,15 +46,15 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
     {
         return PsalmApi::$args->getCallArgs($event)
             ->flatMap(fn(ArrayList $args) => sequenceOption([
-                Option::some($event->getFunctionId() === 'fp\collection\filterkv'
-                    ? RefinementContext::FILTER_KEY_VALUE
-                    : RefinementContext::FILTER_VALUE),
-                $args->at(self::PREDICATE_IDX)
+                fn() => Option::some($event->getFunctionId() === 'fp\collection\filterkv'
+                    ? RefineForEnum::KeyValue
+                    : RefineForEnum::Value),
+                fn() => $args->at(self::PREDICATE_IDX)
                     ->map(fn(CallArg $arg) => $arg->node->value)
                     ->filterOf(FunctionLike::class),
-                Option::some($event->getContext()),
-                proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
-                $args->at(self::COLLECTION_IDX)
+                fn() => Option::some($event->getContext()),
+                fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
+                fn() => $args->at(self::COLLECTION_IDX)
                     ->map(fn(CallArg $arg) => $arg->type)
                     ->flatMap(GetCollectionTypeParams::keyValue(...)),
             ]))

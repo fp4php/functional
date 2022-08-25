@@ -38,17 +38,17 @@ class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInter
     {
         return PsalmApi::$args->getCallArgs($event)
             ->flatMap(fn(ArrayList $args) => sequenceOption([
-                $args->lastElement()
+                fn() => $args->lastElement()
                     ->pluck('type')
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                     ->filterOf(TLiteralString::class),
-                $args->firstElement()
+                fn() => $args->firstElement()
                     ->pluck('type')
                     ->flatMap(GetCollectionTypeParams::value(...))
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                     ->flatMap(fn($atomic) => proveOf($atomic, [TNamedObject::class, TKeyedArray::class])),
-                Option::some($event->getStatementsSource()),
-                Option::some($event->getCodeLocation()),
+                fn() => Option::some($event->getStatementsSource()),
+                fn() => Option::some($event->getCodeLocation()),
             ]))
             ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))

@@ -8,9 +8,11 @@ use Fp\Functional\Option\Option;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
+use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
+use Psalm\Type\Atomic;
 
 use function Fp\Collection\first;
 use function Fp\Collection\traverseOption;
@@ -31,13 +33,7 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
             ->pluck('type')
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
             ->filterOf(TKeyedArray::class)
-            ->flatMap(fn(TKeyedArray $types) => traverseOption(
-                $types->properties,
-                fn(Union $type) => PsalmApi::$types
-                    ->asSingleAtomicOf(TGenericObject::class, $type)
-                    ->filter(fn(TGenericObject $generic) => $generic->value === Option::class)
-                    ->flatMap(fn(TGenericObject $option) => first($option->type_params))
-            ))
+            ->flatMap(fn(TKeyedArray $types) => traverseOption($types->properties, self::getOptionTypeParam(...)))
             ->map(function(array $mapped) {
                 $is_list = array_is_list($mapped);
 
@@ -52,5 +48,21 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
                 ]);
             })
             ->get();
+    }
+
+    /**
+     * @return Option<Union>
+     */
+    private static function getOptionTypeParam(Union $type): Option
+    {
+        return PsalmApi::$types->asSingleAtomic($type)
+            ->flatMap(fn(Atomic $atomic) => match (true) {
+                $atomic instanceof TGenericObject => Option::some($atomic)
+                    ->filter(fn(TGenericObject $generic) => $generic->value === Option::class)
+                    ->flatMap(fn(TGenericObject $option) => first($option->type_params)),
+                $atomic instanceof TClosure => Option::fromNullable($atomic->return_type)
+                    ->flatMap(self::getOptionTypeParam(...)),
+                default => Option::none(),
+            });
     }
 }

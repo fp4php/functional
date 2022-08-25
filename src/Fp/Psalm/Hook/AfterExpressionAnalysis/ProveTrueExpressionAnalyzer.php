@@ -32,12 +32,12 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {
         sequenceOption([
-            Option::some($event->getExpr())
+            fn() => Option::some($event->getExpr())
                 ->filterOf(Yield_::class)
                 ->flatMap(self::getProveTrueArgsFromYield(...)),
-            proveOf($event->getStatementsSource(), StatementsAnalyzer::class)
+            fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class)
                 ->filter(fn(StatementsAnalyzer $source) => $source->getSource() instanceof ClosureAnalyzer),
-            Option::some($event),
+            fn() => Option::some($event),
         ])->tapN(self::assert(...));
 
         return null;

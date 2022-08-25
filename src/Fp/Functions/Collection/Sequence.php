@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
+use Closure;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Operations\TraverseEitherOperation;
@@ -17,7 +18,7 @@ use function Fp\Cast\asArray;
  * @template TK of array-key
  * @template TVI
  *
- * @param iterable<TK, Option<TVI>> $collection
+ * @param iterable<TK, Option<TVI> | Closure(): Option<TVI>> $collection
  * @return Option<array<TK, TVI>>
  *
  * @psalm-return (
@@ -39,7 +40,7 @@ function sequenceOption(iterable $collection): Option
  * @template TK of array-key
  * @template TVI
  *
- * @param iterable<TK, Either<E, TVI>> $collection
+ * @param iterable<TK, Either<E, TVI> | Closure(): Either<E, TVI>> $collection
  * @return Either<E, array<TK, TVI>>
  *
  * @psalm-return (

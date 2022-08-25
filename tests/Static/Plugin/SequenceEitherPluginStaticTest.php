@@ -7,6 +7,7 @@ namespace Tests\Static\Plugin;
 use Fp\Functional\Either\Either;
 use InvalidArgumentException;
 use RuntimeException;
+
 use function Fp\Collection\sequenceEither;
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveString;
@@ -68,6 +69,28 @@ final class SequenceEitherPluginStaticTest
         return sequenceEither([
             proveString($name)->toRight(fn() => new InvalidArgumentException('Invalid name')),
             proveInt($age)->toRight(fn() => new RuntimeException('Invalid age')),
+        ]);
+    }
+
+    /**
+     * @return Either<InvalidArgumentException|RuntimeException, array{name: string, age: int}>
+     */
+    public function sequenceLazyShape(mixed $name, mixed $age): Either
+    {
+        return sequenceEither([
+            'name' => fn() => proveString($name)->toRight(fn() => new InvalidArgumentException('Invalid name')),
+            'age' => fn() => proveInt($age)->toRight(fn() => new RuntimeException('Invalid age')),
+        ]);
+    }
+
+    /**
+     * @return Either<InvalidArgumentException|RuntimeException, array{string, int}>
+     */
+    public function sequenceLazyTuple(mixed $name, mixed $age): Either
+    {
+        return sequenceEither([
+            fn() => proveString($name)->toRight(fn() => new InvalidArgumentException('Invalid name')),
+            fn() => proveInt($age)->toRight(fn() => new RuntimeException('Invalid age')),
         ]);
     }
 }

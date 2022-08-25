@@ -9,6 +9,7 @@ use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
+use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
@@ -48,11 +49,11 @@ class PartitionNFunctionReturnTypeProvider implements FunctionReturnTypeProvider
             ->flatMap(
                 fn(CollectionTypeParams $type_params) => ArrayList::range(1, $partition_count + 1)
                     ->traverseOption(fn(int $offset) => sequenceOption([
-                        Option::some(RefinementContext::FILTER_VALUE),
-                        at($args, $offset)->pluck('value')->filterOf(FunctionLike::class),
-                        Option::some($event->getContext()),
-                        proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
-                        Option::some($type_params),
+                        fn() => Option::some(RefineForEnum::Value),
+                        fn() => at($args, $offset)->pluck('value')->filterOf(FunctionLike::class),
+                        fn() => Option::some($event->getContext()),
+                        fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
+                        fn() => Option::some($type_params),
                     ]))
                     ->map(fn(ArrayList $args) => $args
                         ->mapN(ctor(RefinementContext::class))

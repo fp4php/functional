@@ -35,17 +35,17 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
     {
         return proveTrue('pluck' === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOption([
-                PsalmApi::$args->getCallArgs($event)
+                fn() => PsalmApi::$args->getCallArgs($event)
                     ->flatMap(fn(ArrayList $args) => $args->lastElement()
                         ->pluck('type')
                         ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                         ->filterOf(TLiteralString::class)),
-                Option::fromNullable($event->getTemplateTypeParameters())
+                fn() => Option::fromNullable($event->getTemplateTypeParameters())
                     ->flatMap(fn(array $templates) => last($templates))
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                     ->flatMap(fn(Atomic $atomic) => proveOf($atomic, [TNamedObject::class, TKeyedArray::class])),
-                Option::some($event->getSource()),
-                Option::some($event->getCodeLocation()),
+                fn() => Option::some($event->getSource()),
+                fn() => Option::some($event->getCodeLocation()),
             ]))
             ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))

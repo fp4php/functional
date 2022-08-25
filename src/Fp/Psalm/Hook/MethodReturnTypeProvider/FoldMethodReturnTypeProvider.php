@@ -98,8 +98,8 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
             // Get TInit and TFold
             ->flatMap(
                 fn() => sequenceOption([
-                    second($event->getTemplateTypeParameters() ?? []),
-                    proveOf($event->getStmt(), MethodCall::class)
+                    fn() => second($event->getTemplateTypeParameters() ?? []),
+                    fn() => proveOf($event->getStmt(), MethodCall::class)
                         ->map(fn(MethodCall $call) => $call->getArgs())
                         ->flatMap(fn(array $args) => first($args))
                         ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
@@ -164,8 +164,8 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
         // Then $integers->fold(0) will be FoldingOperation<int, int>
         return proveTrue('fold' === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOption([
-                last($event->getTemplateTypeParameters() ?? []),
-                proveOf($event->getStmt(), MethodCall::class)
+                fn() => last($event->getTemplateTypeParameters() ?? []),
+                fn() => proveOf($event->getStmt(), MethodCall::class)
                     ->flatMap(fn(MethodCall $call) => first($call->getArgs()))
                     ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
                     ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))

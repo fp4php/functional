@@ -8,6 +8,7 @@ use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
+use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
 use PhpParser\Node\FunctionLike;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
@@ -34,11 +35,11 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
     {
         return proveTrue('filter' === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOption([
-                Option::some(RefinementContext::FILTER_VALUE),
-                first($event->getCallArgs())->pluck('value')->filterOf(FunctionLike::class),
-                Option::some($event->getContext()),
-                proveOf($event->getSource(), StatementsAnalyzer::class),
-                first($event->getTemplateTypeParameters() ?? [])
+                fn() => Option::some(RefineForEnum::Value),
+                fn() => first($event->getCallArgs())->pluck('value')->filterOf(FunctionLike::class),
+                fn() => Option::some($event->getContext()),
+                fn() => proveOf($event->getSource(), StatementsAnalyzer::class),
+                fn() => first($event->getTemplateTypeParameters() ?? [])
                     ->map(fn($value_type) => [Type::getArrayKey(), $value_type])
                     ->mapN(ctor(CollectionTypeParams::class)),
             ]))

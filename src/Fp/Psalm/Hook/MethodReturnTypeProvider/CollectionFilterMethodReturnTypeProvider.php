@@ -18,6 +18,7 @@ use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
+use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Streams\Stream;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
@@ -79,15 +80,15 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     {
         return proveTrue(in_array($event->getMethodNameLowercase(), self::getMethodNames()))
             ->flatMap(fn() => sequenceOption([
-                Option::some($event->getMethodNameLowercase() === 'filterkv'
-                    ? RefinementContext::FILTER_KEY_VALUE
-                    : RefinementContext::FILTER_VALUE),
-                self::extractPredicateArg($event)
+                fn() => Option::some($event->getMethodNameLowercase() === 'filterkv'
+                    ? RefineForEnum::KeyValue
+                    : RefineForEnum::Value),
+                fn() => self::extractPredicateArg($event)
                     ->map(fn(Arg $arg) => $arg->value)
                     ->filterOf(FunctionLike::class),
-                Option::some($event->getContext()),
-                proveOf($event->getSource(), StatementsAnalyzer::class),
-                Option::fromNullable($event->getTemplateTypeParameters())
+                fn() => Option::some($event->getContext()),
+                fn() => proveOf($event->getSource(), StatementsAnalyzer::class),
+                fn() => Option::fromNullable($event->getTemplateTypeParameters())
                     ->map(fn($template_params) => 2 === count($template_params)
                         ? new CollectionTypeParams($template_params[0], $template_params[1])
                         : new CollectionTypeParams(Type::getArrayKey(), $template_params[0])),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Static\Functions\Callable;
 
+use Closure;
 use Tests\Mock\Baz;
 use Tests\Mock\Foo;
 
@@ -11,6 +12,14 @@ use function Fp\Callable\ctor;
 
 final class CtorStaticTest
 {
+    /**
+     * @return Closure(int $a, bool $b, bool $c): Foo
+     */
+    public function ctorReturnsConstructorAsClosure(): Closure
+    {
+        return ctor(Foo::class);
+    }
+
     public function passOnlyOneRequiredArg(): Foo
     {
         return ctor(Foo::class)(1);

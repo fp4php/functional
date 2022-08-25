@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
+use Closure;
 use Fp\Collections\HashTable;
 use Fp\Functional\Option\Option;
 use Generator;
@@ -44,11 +45,13 @@ final class TraverseOptionOperation extends AbstractOperation
      * @template TKI
      * @template TVI
      *
-     * @param iterable<TKI, Option<TVI>> $collection
+     * @param iterable<TKI, Option<TVI> | Closure(): Option<TVI>> $collection
      * @return Option<Generator<TKI, TVI>>
      */
     public static function id(iterable $collection): Option
     {
-        return self::of($collection)(fn(mixed $_key, Option $i): Option => $i);
+        return self::of($collection)(
+            fn(mixed $_key, Option|Closure $i): Option => $i instanceof Closure ? $i() : $i,
+        );
     }
 }

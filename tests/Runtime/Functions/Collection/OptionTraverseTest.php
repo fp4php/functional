@@ -57,4 +57,39 @@ final class OptionTraverseTest extends TestCase
             ])
         );
     }
+
+    public function testLazySequence(): void
+    {
+        $this->assertEquals(
+            Option::some([1, 2]),
+            sequenceOption([
+                fn() => Option::some(1),
+                fn() => Option::some(2),
+            ]),
+        );
+
+        $this->assertEquals(
+            Option::some([1, 2]),
+            sequenceOption([
+                Option::some(1),
+                fn() => Option::some(2),
+            ]),
+        );
+
+        $this->assertEquals(
+            Option::some(['fst' => 1, 'snd' => 2]),
+            sequenceOption([
+                'fst' => fn() => Option::some(1),
+                'snd' => fn() => Option::some(2),
+            ]),
+        );
+
+        $this->assertEquals(
+            Option::some(['fst' => 1, 'snd' => 2]),
+            sequenceOption([
+                'fst' => Option::some(1),
+                'snd' => fn() => Option::some(2),
+            ]),
+        );
+    }
 }

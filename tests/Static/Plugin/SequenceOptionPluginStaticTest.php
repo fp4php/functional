@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Static\Plugin;
 
 use Fp\Functional\Option\Option;
+
 use function Fp\Collection\sequenceOption;
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveString;
@@ -66,6 +67,28 @@ final class SequenceOptionPluginStaticTest
         return sequenceOption([
             proveString($name),
             proveInt($age),
+        ]);
+    }
+
+    /**
+     * @return Option<array{name: string, age: int}>
+     */
+    public function sequenceLazyShape(mixed $name, mixed $age): Option
+    {
+        return sequenceOption([
+            'name' => fn() => proveString($name),
+            'age' => fn() => proveInt($age),
+        ]);
+    }
+
+    /**
+     * @return Option<array{string, int}>
+     */
+    public function sequenceLazyTuple(mixed $name, mixed $age): Option
+    {
+        return sequenceOption([
+            fn() => proveString($name),
+            fn() => proveInt($age),
         ]);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
+use Closure;
 use Fp\Collections\HashTable;
 use Fp\Functional\Either\Either;
 use Generator;
@@ -46,11 +47,13 @@ final class TraverseEitherOperation extends AbstractOperation
      * @template TKI
      * @template TVI
      *
-     * @param iterable<TKI, Either<E, TVI>> $collection
+     * @param iterable<TKI, Either<E, TVI> | Closure(): Either<E, TVI>> $collection
      * @return Either<E, Generator<TKI, TVI>>
      */
     public static function id(iterable $collection): Either
     {
-        return self::of($collection)(fn(mixed $_key, Either $i): Either => $i);
+        return self::of($collection)(
+            fn(mixed $_key, Either|Closure $i): Either => $i instanceof Closure ? $i() : $i
+        );
     }
 }

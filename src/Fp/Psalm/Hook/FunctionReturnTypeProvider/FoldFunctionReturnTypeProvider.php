@@ -28,11 +28,11 @@ final class FoldFunctionReturnTypeProvider implements FunctionReturnTypeProvider
     {
         return Option::some($event)
             ->flatMap(fn() => sequenceOption([
-                PsalmApi::$args->getCallArgs($event)
+                fn() => PsalmApi::$args->getCallArgs($event)
                     ->flatMap(fn(ArrayList $args) => $args->lastElement())
                     ->pluck('type')
                     ->flatMap(GetCollectionTypeParams::value(...)),
-                PsalmApi::$args->getCallArgs($event)
+                fn() => PsalmApi::$args->getCallArgs($event)
                     ->flatMap(fn(ArrayList $args) => $args->firstElement())
                     ->pluck('type')
                     ->map(PsalmApi::$types->asNonLiteralType(...)),
