@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
@@ -212,6 +213,56 @@ interface NonEmptySeqTerminalOps
      * @return Option<NonEmptySeq<TVO>>
      */
     public function sequenceOption(): Option;
+
+    /**
+     * Suppose you have an NonEmptySeq<TV> and you want to format each element with a function that returns an Either<E, TVO>.
+     * Using traverseEither you can apply $callback to all elements and directly obtain as a result an Either<E, NonEmptySeq<TVO>>
+     * i.e. an Right<NonEmptySeq<TVO>> if all the results are Right<TVO>, or a Left<E> if at least one result is Left<E>.
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([1, 2, 3])
+     * >>>     ->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'));
+     * => Right(NonEmptyArrayList(1, 2, 3))
+     *
+     * >>> NonEmptyArrayList::collectNonEmpty([0, 1, 2])
+     * >>>     ->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'));
+     * => Left('err')
+     * ```
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptySeq<TVO>>
+     */
+    public function traverseEither(callable $callback): Either;
+
+    /**
+     * Same as {@see NonEmptySeqTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([
+     * >>>     Either::right(1),
+     * >>>     Either::right(2),
+     * >>>     Either::right(3),
+     * >>> ])->sequenceEither();
+     * => Right(ArrayList(1, 2, 3))
+     *
+     * >>> NonEmptyArrayList::collectNonEmpty([
+     * >>>     Either::left('err'),
+     * >>>     Either::right(1),
+     * >>>     Either::right(2),
+     * >>> ])->sequenceEither();
+     * => Left('err')
+     * ```
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is NonEmptySeq<Either<E, TVO>>
+     *
+     * @return Either<E, NonEmptySeq<TVO>>
+     */
+    public function sequenceEither(): Either;
 
     /**
      * Group elements

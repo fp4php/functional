@@ -6,7 +6,10 @@ namespace Tests\Runtime\Interfaces\NonEmptyMap;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyMap;
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -52,28 +55,63 @@ final class NonEmptyMapOpsTest extends TestCase
         $this->assertFalse(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->exists(fn($entry) => $entry > 1));
     }
 
-    public function testEveryMap(): void
+    public function provideTestTraverseData(): Generator
     {
-        $hm = NonEmptyHashMap::collectPairsUnsafe([
-            ['a', new Foo(1)],
-            ['b', new Foo(2)],
-        ]);
+        yield NonEmptyHashMap::class => [
+            NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'thr' => 3]),
+            NonEmptyHashMap::collectNonEmpty(['zro' => 0, 'fst' => 1, 'thr' => 2]),
+        ];
+    }
 
+    /**
+     * @param NonEmptyMap<string, int> $map1
+     * @param NonEmptyMap<string, int> $map2
+     *
+     * @dataProvider provideTestTraverseData
+     */
+    public function testTraverseOption(NonEmptyMap $map1, NonEmptyMap $map2): void
+    {
         $this->assertEquals(
-            Option::some($hm),
-            $hm->traverseOption(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none())
+            Option::some($map1),
+            $map1->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
             Option::none(),
-            $hm->traverseOption(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none())
+            $map2->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
-            Option::some($hm),
-            $hm->map(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none())->sequenceOption()
+            Option::some($map1),
+            $map1->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
         );
         $this->assertEquals(
             Option::none(),
-            $hm->map(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none())->sequenceOption()
+            $map2->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
+    }
+
+    /**
+     * @param NonEmptyMap<string, int> $map1
+     * @param NonEmptyMap<string, int> $map2
+     *
+     * @dataProvider provideTestTraverseData
+     */
+    public function testTraverseEither(NonEmptyMap $map1, NonEmptyMap $map2): void
+    {
+        $this->assertEquals(
+            Either::right($map1),
+            $map1->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+        );
+        $this->assertEquals(
+            Either::left('err'),
+            $map2->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+        );
+        $this->assertEquals(
+            Either::right($map1),
+            $map1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
+        );
+        $this->assertEquals(
+            Either::left('err'),
+            $map2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
         );
     }
 

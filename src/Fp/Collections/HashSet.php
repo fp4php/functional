@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
@@ -272,6 +273,36 @@ final class HashSet implements Set
     public function sequenceOption(): Option
     {
         return Ops\TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => HashSet::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, HashSet<TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return Ops\TraverseEitherOperation::of($this->getIterator())(dropFirstArg($callback))
+            ->map(fn($gen) => HashSet::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is HashSet<Either<E, TVO>>
+     *
+     * @return Either<E, HashSet<TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return Ops\TraverseEitherOperation::id($this->getIterator())
             ->map(fn($gen) => HashSet::collect($gen));
     }
 

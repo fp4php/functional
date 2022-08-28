@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
@@ -393,6 +394,50 @@ final class NonEmptyHashMap implements NonEmptyMap
         return $this->hashMap
             ->sequenceOption()
             ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return $this->traverseEitherKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEitherKV(callable $callback): Either
+    {
+        return $this->hashMap->traverseEitherKV($callback)
+            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, Either<E, TVO>>
+     *
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return $this->hashMap->sequenceEither()
+            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
     }
 
     /**

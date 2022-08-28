@@ -7,7 +7,10 @@ namespace Tests\Runtime\Interfaces\Set;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\NonEmptyHashSet;
+use Fp\Collections\Set;
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
@@ -56,28 +59,63 @@ final class SetOpsTest extends TestCase
         $this->assertFalse(HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class));
     }
 
-    public function testEveryMap(): void
+    public function provideTestTraverseData(): Generator
     {
-        $hs = HashSet::collect([
-            new Foo(1),
-            new Foo(2),
-        ]);
+        yield HashSet::class => [
+            HashSet::collect([1, 2, 3]),
+            HashSet::collect([0, 1, 2]),
+        ];
+    }
 
+    /**
+     * @param Set<int> $set1
+     * @param Set<int> $set2
+     *
+     * @dataProvider provideTestTraverseData
+     */
+    public function testTraverseOption(Set $set1, Set $set2): void
+    {
         $this->assertEquals(
-            Option::some($hs),
-            $hs->traverseOption(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none()),
+            Option::some($set1),
+            $set1->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
             Option::none(),
-            $hs->traverseOption(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none()),
+            $set2->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
-            Option::some($hs),
-            $hs->map(fn($x) => $x->a >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+            Option::some($set1),
+            $set1->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
         );
         $this->assertEquals(
             Option::none(),
-            $hs->map(fn($x) => $x->a >= 2 ? Option::some($x) : Option::none())->sequenceOption(),
+            $set2->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
+    }
+
+    /**
+     * @param Set<int> $set1
+     * @param Set<int> $set2
+     *
+     * @dataProvider provideTestTraverseData
+     */
+    public function testTraverseEither(Set $set1, Set $set2): void
+    {
+        $this->assertEquals(
+            Either::right($set1),
+            $set1->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+        );
+        $this->assertEquals(
+            Either::left('err'),
+            $set2->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+        );
+        $this->assertEquals(
+            Either::right($set1),
+            $set1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
+        );
+        $this->assertEquals(
+            Either::left('err'),
+            $set2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
         );
     }
 

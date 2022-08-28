@@ -10,6 +10,7 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Generator;
 use PHPUnit\Framework\TestCase;
@@ -202,8 +203,23 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals([[0, 1], [1, 2]], NonEmptyLinkedList::collectNonEmpty([1, 2])->zipWithKeys()->toList());
     }
 
+    public function provideTestTraverseData(): Generator
+    {
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([1, 2, 3]),
+            NonEmptyArrayList::collectNonEmpty([0, 1, 2]),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([1, 2, 3]),
+            NonEmptyLinkedList::collectNonEmpty([0, 1, 2]),
+        ];
+    }
+
     /**
-     * @dataProvider provideTestTraverseOptionData
+     * @param NonEmptySeq<int> $seq1
+     * @param NonEmptySeq<int> $seq2
+     *
+     * @dataProvider provideTestTraverseData
      */
     public function testTraverseOption(NonEmptySeq $seq1, NonEmptySeq $seq2): void
     {
@@ -225,16 +241,30 @@ final class NonEmptySeqOpsTest extends TestCase
         );
     }
 
-    public function provideTestTraverseOptionData(): Generator
+    /**
+     * @param NonEmptySeq<int> $seq1
+     * @param NonEmptySeq<int> $seq2
+     *
+     * @dataProvider provideTestTraverseData
+     */
+    public function testTraverseEither(NonEmptySeq $seq1, NonEmptySeq $seq2): void
     {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([1, 2, 3]),
-            NonEmptyArrayList::collectNonEmpty([0, 1, 2]),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([1, 2, 3]),
-            NonEmptyLinkedList::collectNonEmpty([0, 1, 2]),
-        ];
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+        );
+        $this->assertEquals(
+            Either::left('err'),
+            $seq2->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+        );
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
+        );
+        $this->assertEquals(
+            Either::left('err'),
+            $seq2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
+        );
     }
 
     /**

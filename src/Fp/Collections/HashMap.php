@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\WithExtensions;
 use Fp\Operations\FoldOperation;
 use Generator;
@@ -351,6 +352,50 @@ final class HashMap implements Map
         $iterator = $this->getKeyValueIterator();
 
         return Ops\TraverseOptionOperation::id($iterator)
+            ->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, HashMap<TK, TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return $this->traverseEitherKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<E, TVO> $callback
+     * @return Either<E, HashMap<TK, TVO>>
+     */
+    public function traverseEitherKV(callable $callback): Either
+    {
+        return Ops\TraverseEitherOperation::of($this->getKeyValueIterator())($callback)
+            ->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is HashMap<TK, Either<E, TVO>>
+     *
+     * @return Either<E, HashMap<TK, TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return Ops\TraverseEitherOperation::id($this->getKeyValueIterator())
             ->map(fn($gen) => HashMap::collect($gen));
     }
 

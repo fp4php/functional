@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
@@ -152,6 +153,71 @@ interface MapTerminalOps
      * @return Option<Map<TK, TVO>>
      */
     public function sequenceOption(): Option;
+
+    /**
+     * Suppose you have an Map<TK, TV> and you want to format each element with a function that returns an Either<E, TVO>.
+     * Using traverseEither you can apply $callback to all elements and directly obtain as a result an Either<E, Map<TK, TVO>>
+     * i.e. an Right<Map<TK, TVO>> if all the results are Right<TVO>, or a Left<E> if at least one result is Left<E>.
+     *
+     * ```php
+     * >>> HashMap::collect(['fst' => 1, 'snd' => 2, 'thr' => 3])
+     * >>>     ->traverseEither(fn($x) => $x >= 1
+     * >>>         ? Either::right($x)
+     * >>>         : Either::left('err'));
+     * => Right(HashMap('fst' => 1, 'snd' => 2, 'thr' => 3))
+     *
+     * >>> HashMap::collect(['zro' => 0, 'fst' => 1, 'snd' => 2])
+     * >>>     ->traverseEither(fn($x) => $x >= 1
+     * >>>         ? Either::right($x)
+     * >>>         : Either::left('err'));
+     * => Left('err')
+     * ```
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, Map<TK, TVO>>
+     */
+    public function traverseEither(callable $callback): Either;
+
+    /**
+     * Same as {@see MapTerminalOps::traverseEither()}, but passing also the key to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<E, TVO> $callback
+     * @return Either<E, Map<TK, TVO>>
+     */
+    public function traverseEitherKV(callable $callback): Either;
+
+    /**
+     * Same as {@see MapTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> HashMap::collect([
+     * >>>     'fst' => Either::right(1),
+     * >>>     'snd' => Either::right(2),
+     * >>>     'thr' => Either::right(3),
+     * >>> ])->sequenceEither();
+     * => Right(HashMap('fst' => 1, 'snd' => 2, 'thr' => 3))
+     *
+     * >>> HashMap::collect([
+     * >>>     'fst' => Either::left('err'),
+     * >>>     'snd' => Either::right(2),
+     * >>>     'thr' => Either::right(3),
+     * >>> ])->sequenceEither();
+     * => Left('err')
+     * ```
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is Map<TK, Either<E, TVO>>
+     *
+     * @return Either<E, Map<TK, TVO>>
+     */
+    public function sequenceEither(): Either;
 
     /**
      * Fold many elements into one

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
@@ -446,6 +447,36 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function sequenceOption(): Option
     {
         return Ops\TraverseOptionOperation::id($this->getIterator())
+            ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyLinkedList<TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return Ops\TraverseEitherOperation::of($this->getIterator())(dropFirstArg($callback))
+            ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is NonEmptyLinkedList<Either<E, TVO>>
+     *
+     * @return Either<E, NonEmptyLinkedList<TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return Ops\TraverseEitherOperation::id($this->getIterator())
             ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
     }
 
