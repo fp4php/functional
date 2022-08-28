@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Separated\Separated;
 use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 use function Fp\id;
@@ -157,6 +158,41 @@ interface SeqTerminalOps
      * @return Either<E, Seq<TVO>>
      */
     public function sequenceEither(): Either;
+
+    /**
+     * Split collection to two parts by predicate function.
+     * If $predicate returns true then item gonna to right.
+     * Otherwise to left.
+     *
+     * ```php
+     * >>> ArrayList::collect([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3);
+     * => Separated(ArrayList(3, 4, 5), ArrayList(0, 1, 2))
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<Seq<TV>, Seq<TV>>
+     */
+    public function partition(callable $predicate): Separated;
+
+    /**
+     * Similar to {@see SeqTerminalOps::partition()} but uses {@see Either} instead of bool.
+     * So the output types LO/RO can be different from the input type TV.
+     * If $callback returns Right then item gonna to right.
+     * Otherwise to left.
+     *
+     * ```php
+     * >>> ArrayList::collect([0, 1, 2, 3, 4, 5])
+     * >>>     ->partitionMap(fn($i) => $i >= 5 ? Either::left("L: {$i}") : Either::right("R: {$i}"));
+     * => Separated(ArrayList('L: 5'), ArrayList('R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4'))
+     * ```
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<Seq<LO>, Seq<RO>>
+     */
+    public function partitionMap(callable $callback): Separated;
 
     /**
      * Group elements

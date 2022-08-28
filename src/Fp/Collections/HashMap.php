@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Either\Either;
+use Fp\Functional\Separated\Separated;
 use Fp\Functional\WithExtensions;
 use Fp\Operations\FoldOperation;
 use Generator;
@@ -397,6 +398,60 @@ final class HashMap implements Map
     {
         return Ops\TraverseEitherOperation::id($this->getKeyValueIterator())
             ->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return $this->partitionKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionKV(callable $predicate): Separated
+    {
+        return Ops\PartitionOperation::of($this->getKeyValueIterator())($predicate)
+            ->mapLeft(fn($left) => HashMap::collect($left))
+            ->map(fn($right) => HashMap::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return $this->partitionMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TK, TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapKV(callable $callback): Separated
+    {
+        return Ops\PartitionMapOperation::of($this->getKeyValueIterator())($callback)
+            ->mapLeft(fn($left) => HashMap::collect($left))
+            ->map(fn($right) => HashMap::collect($right));
     }
 
     /**

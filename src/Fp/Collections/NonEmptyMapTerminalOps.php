@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Separated\Separated;
 use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
@@ -208,6 +209,61 @@ interface NonEmptyMapTerminalOps
      * @return Either<E, NonEmptyMap<TK, TVO>>
      */
     public function traverseEitherKV(callable $callback): Either;
+
+    /**
+     * Split collection to two parts by predicate function.
+     * If $predicate returns true then item gonna to right.
+     * Otherwise to left.
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty(['k0' => 0, 'k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5])
+     * >>>     ->partition(fn($i) => $i < 3);
+     * => Separated(HashMap('k3' => 3, 'k4' => 4, 'k5' => 5), HashMap('k0' => 0, 'k1' => 1, 'k2' => 2))
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<Map<TK, TV>, Map<TK, TV>>
+     */
+    public function partition(callable $predicate): Separated;
+
+    /**
+     * Same as {@see NonEmptyMapTerminalOps::partition()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Separated<Map<TK, TV>, Map<TK, TV>>
+     */
+    public function partitionKV(callable $predicate): Separated;
+
+    /**
+     * Similar to {@see MapTerminalOps::partition()} but uses {@see Either} instead of bool.
+     * So the output types LO/RO can be different from the input type TV.
+     * If $callback returns Right then item gonna to right.
+     * Otherwise to left.
+     *
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty(['k0' => 0, 'k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5])
+     * >>>     ->partitionMap(fn($i) => $i >= 5 ? Either::left("L:{$i}") : Either::right("R:{$i}"));
+     * => Separated(HashMap('k5' => 'L:5'), HashMap('k0' => 'R:0', 'k1' => 'R:1', 'k2' => 'R:2', 'k3' => 'R:3', 'k4' => 'R:4'))
+     * ```
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<Map<TK, LO>, Map<TK, RO>>
+     */
+    public function partitionMap(callable $callback): Separated;
+
+    /**
+     * Same as {@see NonEmptyMapTerminalOps::partitionMap()}, but passing also the key to the $callback function.
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TK, TV): Either<LO, RO> $callback
+     * @return Separated<Map<TK, LO>, Map<TK, RO>>
+     */
+    public function partitionMapKV(callable $callback): Separated;
 
     /**
      * Same as {@see NonEmptyMapTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.

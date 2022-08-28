@@ -10,6 +10,7 @@ use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptySet;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
@@ -110,6 +111,29 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertEquals(
             Either::left('err'),
             $set2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
+        );
+    }
+
+    public function testPartition(): void
+    {
+        $this->assertEquals(
+            Separated::create(
+                HashSet::collect([3, 4, 5]),
+                HashSet::collect([0, 1, 2]),
+            ),
+            NonEmptyHashSet::collectNonEmpty([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3),
+        );
+    }
+
+    public function testPartitionMap(): void
+    {
+        $this->assertEquals(
+            Separated::create(
+                HashSet::collect(['L: 5']),
+                HashSet::collect(['R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4']),
+            ),
+            NonEmptyHashSet::collectNonEmpty([0, 1, 2, 3, 4, 5])
+                ->partitionMap(fn($i) => $i >= 5 ? Either::left("L: {$i}") : Either::right("R: {$i}")),
         );
     }
 

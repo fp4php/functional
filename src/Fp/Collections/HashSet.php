@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Fp\Functional\Either\Either;
+use Fp\Functional\Separated\Separated;
 use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
@@ -304,6 +305,35 @@ final class HashSet implements Set
     {
         return Ops\TraverseEitherOperation::id($this->getIterator())
             ->map(fn($gen) => HashSet::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<HashSet<TV>, HashSet<TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return Ops\PartitionOperation::of($this->getIterator())(dropFirstArg($predicate))
+            ->mapLeft(fn($left) => HashSet::collect($left))
+            ->map(fn($right) => HashSet::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<HashSet<LO>, HashSet<RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return Ops\PartitionMapOperation::of($this->getIterator())(dropFirstArg($callback))
+            ->mapLeft(fn($left) => HashSet::collect($left))
+            ->map(fn($right) => HashSet::collect($right));
     }
 
     /**

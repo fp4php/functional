@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Separated\Separated;
 use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldOperation;
@@ -423,6 +424,60 @@ final class NonEmptyHashMap implements NonEmptyMap
     {
         return $this->hashMap->traverseEitherKV($callback)
             ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return $this->partitionKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionKV(callable $predicate): Separated
+    {
+        return Ops\PartitionOperation::of($this->getKeyValueIterator())($predicate)
+            ->mapLeft(fn($left) => HashMap::collect($left))
+            ->map(fn($right) => HashMap::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return $this->partitionMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TK, TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapKV(callable $callback): Separated
+    {
+        return Ops\PartitionMapOperation::of($this->getKeyValueIterator())($callback)
+            ->mapLeft(fn($left) => HashMap::collect($left))
+            ->map(fn($right) => HashMap::collect($right));
     }
 
     /**

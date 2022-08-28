@@ -10,8 +10,10 @@ use Fp\Collections\NonEmptyArrayList;
 use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Collections\NonEmptySeq;
+use Fp\Collections\Seq;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
@@ -264,6 +266,69 @@ final class NonEmptySeqOpsTest extends TestCase
         $this->assertEquals(
             Either::left('err'),
             $seq2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
+        );
+    }
+
+    public function provideTestPartition(): Generator
+    {
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
+            Separated::create(
+                ArrayList::collect([3, 4, 5]),
+                ArrayList::collect([0, 1, 2]),
+            ),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
+            Separated::create(
+                LinkedList::collect([3, 4, 5]),
+                LinkedList::collect([0, 1, 2]),
+            ),
+        ];
+    }
+
+    /**
+     * @param NonEmptySeq<int> $seq
+     * @param Separated<Seq<int>, Seq<int>> $expected
+     *
+     * @dataProvider provideTestPartition
+     */
+    public function testPartition(NonEmptySeq $seq, Separated $expected): void
+    {
+        $this->assertEquals($seq->partition(fn($i) => $i < 3), $expected);
+    }
+
+    public function provideTestPartitionMap(): Generator
+    {
+        yield NonEmptyArrayList::class => [
+            NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
+            Separated::create(
+                ArrayList::collect(['L: 5']),
+                ArrayList::collect(['R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4']),
+            ),
+        ];
+        yield NonEmptyLinkedList::class => [
+            NonEmptyLinkedList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
+            Separated::create(
+                LinkedList::collect(['L: 5']),
+                LinkedList::collect(['R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4']),
+            ),
+        ];
+    }
+
+    /**
+     * @param NonEmptySeq<int> $seq
+     * @param Separated<Seq<string>, Seq<string>> $expected
+     *
+     * @dataProvider provideTestPartitionMap
+     */
+    public function testPartitionMap(NonEmptySeq $seq, Separated $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            $seq->partitionMap(fn($i) => $i >= 5
+                ? Either::left("L: {$i}")
+                : Either::right("R: {$i}")),
         );
     }
 

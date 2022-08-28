@@ -9,6 +9,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Collections\NonEmptyMap;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
@@ -113,6 +114,32 @@ final class NonEmptyMapOpsTest extends TestCase
             Either::left('err'),
             $map2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
         );
+    }
+
+    public function testPartition(): void
+    {
+        $expected = Separated::create(
+            HashMap::collect(['k3' => 3, 'k4' => 4, 'k5' => 5]),
+            HashMap::collect(['k0' => 0, 'k1' => 1, 'k2' => 2]),
+        );
+
+        $actual = NonEmptyHashMap::collectNonEmpty(['k0' => 0, 'k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5])
+            ->partition(fn($i) => $i < 3);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testPartitionMap(): void
+    {
+        $expected = Separated::create(
+            HashMap::collect(['k5' => 'L:5']),
+            HashMap::collect(['k0' => 'R:0', 'k1' => 'R:1', 'k2' => 'R:2', 'k3' => 'R:3', 'k4' => 'R:4']),
+        );
+
+        $actual = NonEmptyHashMap::collectNonEmpty(['k0' => 0, 'k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5])
+            ->partitionMap(fn($i) => $i >= 5 ? Either::left("L:{$i}") : Either::right("R:{$i}"));
+
+        $this->assertEquals($expected, $actual);
     }
 
     public function testFilter(): void
