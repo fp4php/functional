@@ -321,7 +321,7 @@ interface NonEmptyMapTerminalOps
      *
      * @template TKO
      * @template TVO
-     * @psalm-if-this-is NonEmptyMap<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>>
+     * @psalm-if-this-is NonEmptyMap<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>>
      *
      * @return Map<TKO, TVO>
      */
@@ -347,7 +347,7 @@ interface NonEmptyMapTerminalOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
+     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
      * @return Map<TKO, TVO>
      */
     public function flatMap(callable $callback): Map;
@@ -358,7 +358,7 @@ interface NonEmptyMapTerminalOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
+     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
      * @return Map<TKO, TVO>
      */
     public function flatMapKV(callable $callback): Map;

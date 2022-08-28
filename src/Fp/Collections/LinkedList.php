@@ -40,7 +40,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return LinkedList<TVI>
      */
     public static function collect(iterable $source): LinkedList
@@ -628,7 +628,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $suffix
+     * @param (iterable<TVI>|Collection<TVI>) $suffix
      * @return LinkedList<TV|TVI>
      */
     public function appendedAll(iterable $suffix): LinkedList
@@ -654,7 +654,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $prefix
+     * @param (iterable<TVI>|Collection<TVI>) $prefix
      * @return LinkedList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): LinkedList
@@ -712,7 +712,7 @@ abstract class LinkedList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is LinkedList<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is LinkedList<iterable<TVO>|Collection<TVO>>
      *
      * @return LinkedList<TVO>
      */
@@ -726,7 +726,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return LinkedList<TVO>
      */
     public function flatMap(callable $callback): LinkedList
@@ -848,7 +848,7 @@ abstract class LinkedList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $that
+     * @param (iterable<TVI>|Collection<TVI>) $that
      * @return LinkedList<array{TV, TVI}>
      */
     public function zip(iterable $that): LinkedList

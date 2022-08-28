@@ -55,7 +55,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return Option<NonEmptyArrayList<TVI>>
      */
     public static function collect(iterable $source): Option
@@ -70,7 +70,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return NonEmptyArrayList<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptyArrayList
@@ -158,7 +158,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptyArrayList<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is NonEmptyArrayList<iterable<TVO>|Collection<TVO>>
      *
      * @return ArrayList<TVO>
      */
@@ -172,7 +172,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return ArrayList<TVO>
      */
     public function flatMap(callable $callback): ArrayList
@@ -299,7 +299,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $suffix
+     * @param (iterable<TVI>|Collection<TVI>) $suffix
      * @return NonEmptyArrayList<TV|TVI>
      */
     public function appendedAll(iterable $suffix): NonEmptyArrayList
@@ -325,7 +325,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $prefix
+     * @param (iterable<TVI>|Collection<TVI>) $prefix
      * @return NonEmptyArrayList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): NonEmptyArrayList

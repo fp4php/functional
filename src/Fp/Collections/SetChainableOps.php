@@ -40,7 +40,7 @@ interface SetChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $that
+     * @param (iterable<TVI>|Collection<TVI>) $that
      * @return Set<TV|TVI>
      */
     public function appendedAll(iterable $that): Set;
@@ -133,7 +133,7 @@ interface SetChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is Set<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is Set<iterable<TVO>|Collection<TVO>>
      *
      * @return Set<TVO>
      */
@@ -147,7 +147,7 @@ interface SetChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;

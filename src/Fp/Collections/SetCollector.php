@@ -17,7 +17,7 @@ interface SetCollector
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return Set<TVI>
      */
     public static function collect(iterable $source): Set;

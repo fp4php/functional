@@ -89,7 +89,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKI
      * @template TVI
      *
-     * @param iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>) $source
      * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
     public static function collectPairs(iterable $source): Option
@@ -115,7 +115,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKI
      * @template TVI
      *
-     * @param iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>) $source
      * @return NonEmptyHashMap<TKI, TVI>
      */
     public static function collectPairsUnsafe(iterable $source): NonEmptyHashMap
@@ -554,7 +554,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      *
      * @template TKO
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>>
+     * @psalm-if-this-is NonEmptyHashMap<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>>
      *
      * @return HashMap<TKO, TVO>
      */
@@ -569,7 +569,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
+     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMap(callable $callback): HashMap
@@ -583,7 +583,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>|NonEmptyCollection<array{TKO, TVO}>) $callback
+     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMapKV(callable $callback): HashMap

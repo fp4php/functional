@@ -41,7 +41,7 @@ final class HashSet implements Set
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return HashSet<TVI>
      */
     public static function collect(iterable $source): HashSet
@@ -494,7 +494,7 @@ final class HashSet implements Set
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $that
+     * @param (iterable<TVI>|Collection<TVI>) $that
      * @return HashSet<TV|TVI>
      */
     public function appendedAll(iterable $that): HashSet
@@ -584,7 +584,7 @@ final class HashSet implements Set
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is HashSet<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is HashSet<iterable<TVO>|Collection<TVO>>
      *
      * @return HashSet<TVO>
      */
@@ -598,7 +598,7 @@ final class HashSet implements Set
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return HashSet<TVO>
      */
     public function flatMap(callable $callback): HashSet

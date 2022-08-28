@@ -63,7 +63,7 @@ interface NonEmptyMapCollector
      * @template TKI
      * @template TVI
      *
-     * @param iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>) $source
      * @return Option<NonEmptyMap<TKI, TVI>>
      */
     public static function collectPairs(iterable $source): Option;
@@ -77,7 +77,7 @@ interface NonEmptyMapCollector
      * @template TKI
      * @template TVI
      *
-     * @param iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>) $source
      * @return NonEmptyMap<TKI, TVI>
      */
     public static function collectPairsUnsafe(iterable $source): NonEmptyMap;

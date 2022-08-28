@@ -45,7 +45,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return ArrayList<TVI>
      */
     public static function collect(iterable $source): ArrayList
@@ -616,7 +616,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $suffix
+     * @param (iterable<TVI>|Collection<TVI>) $suffix
      * @return ArrayList<TV | TVI>
      */
     public function appendedAll(iterable $suffix): ArrayList
@@ -642,7 +642,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $prefix
+     * @param (iterable<TVI>|Collection<TVI>) $prefix
      * @return ArrayList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): ArrayList
@@ -701,7 +701,7 @@ final class ArrayList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is ArrayList<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is ArrayList<iterable<TVO>|Collection<TVO>>
      *
      * @return ArrayList<TVO>
      */
@@ -715,7 +715,7 @@ final class ArrayList implements Seq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return ArrayList<TVO>
      */
     public function flatMap(callable $callback): ArrayList
@@ -837,7 +837,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $that
+     * @param (iterable<TVI>|Collection<TVI>) $that
      * @return ArrayList<array{TV, TVI}>
      */
     public function zip(iterable $that): ArrayList

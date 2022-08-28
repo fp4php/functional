@@ -439,7 +439,7 @@ interface NonEmptySetTerminalOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptySet<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is NonEmptySet<iterable<TVO>|Collection<TVO>>
      *
      * @return Set<TVO>
      */
@@ -455,7 +455,7 @@ interface NonEmptySetTerminalOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;

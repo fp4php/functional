@@ -40,7 +40,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $suffix
+     * @param (iterable<TVI>|Collection<TVI>) $suffix
      * @return Seq<TV|TVI>
      */
     public function appendedAll(iterable $suffix): Seq;
@@ -70,7 +70,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $prefix
+     * @param (iterable<TVI>|Collection<TVI>) $prefix
      * @return Seq<TV|TVI>
      */
     public function prependedAll(iterable $prefix): Seq;
@@ -152,7 +152,7 @@ interface SeqChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is Seq<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is Seq<iterable<TVO>|Collection<TVO>>
      *
      * @return Seq<TVO>
      */
@@ -168,7 +168,7 @@ interface SeqChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return Seq<TVO>
      */
     public function flatMap(callable $callback): Seq;
@@ -380,7 +380,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $that
+     * @param (iterable<TVI>|Collection<TVI>) $that
      * @return Seq<array{TV, TVI}>
      */
     public function zip(iterable $that): Seq;

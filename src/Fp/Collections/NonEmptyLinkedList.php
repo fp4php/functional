@@ -55,7 +55,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return Option<NonEmptyLinkedList<TVI>>
      */
     public static function collect(iterable $source): Option
@@ -70,7 +70,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return NonEmptyLinkedList<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptyLinkedList
@@ -158,7 +158,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptyLinkedList<iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>>
+     * @psalm-if-this-is NonEmptyLinkedList<iterable<TVO>|Collection<TVO>>
      *
      * @return LinkedList<TVO>
      */
@@ -172,7 +172,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>|NonEmptyCollection<TVO>) $callback
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
      * @return LinkedList<TVO>
      */
     public function flatMap(callable $callback): LinkedList
@@ -299,7 +299,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $suffix
+     * @param (iterable<TVI>|Collection<TVI>) $suffix
      * @return NonEmptyLinkedList<TV|TVI>
      */
     public function appendedAll(iterable $suffix): NonEmptyLinkedList
@@ -325,7 +325,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>|NonEmptyCollection<TVI>) $prefix
+     * @param (iterable<TVI>|Collection<TVI>) $prefix
      * @return NonEmptyLinkedList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): NonEmptyLinkedList
