@@ -9,7 +9,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\CtorFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FoldFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
-use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionNFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceEitherFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceOptionFunctionReturnTypeProvider;
@@ -39,7 +39,7 @@ final class FunctionalPlugin implements PluginEntryPointInterface
         };
 
         $register(PartialFunctionReturnTypeProvider::class);
-        $register(PartitionNFunctionReturnTypeProvider::class);
+        $register(PartitionFunctionReturnTypeProvider::class);
         $register(PluckFunctionReturnTypeProvider::class);
 
         $register(FilterFunctionReturnTypeProvider::class);

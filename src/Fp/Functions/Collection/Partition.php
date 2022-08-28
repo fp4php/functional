@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionNFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider;
 
 /**
  * Divide collection by given conditions
@@ -24,9 +24,9 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionNFunctionReturnTypeProvide
  * @param callable(TV): bool ...$predicates
  *
  * @no-named-arguments
- * @see PartitionNFunctionReturnTypeProvider
+ * @see PartitionFunctionReturnTypeProvider
  */
-function partitionN(iterable $collection, callable ...$predicates): array
+function partition(iterable $collection, callable ...$predicates): array
 {
     $predicateCount = count($predicates);
     $partitions = array_fill(0, $predicateCount + 1, []);

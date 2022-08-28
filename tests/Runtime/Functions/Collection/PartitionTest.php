@@ -6,7 +6,7 @@ namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
 
-use function Fp\Collection\partitionN;
+use function Fp\Collection\partition;
 
 final class PartitionTest extends TestCase
 {
@@ -16,12 +16,12 @@ final class PartitionTest extends TestCase
 
         $this->assertEquals(
             [[2, 4], [1, 3]],
-            partitionN($c, fn(int $v) => $v % 2 === 0)
+            partition($c, fn(int $v) => $v % 2 === 0)
         );
 
         $this->assertEquals(
             [[1], [2], [3], [4], []],
-            partitionN(
+            partition(
                 $c,
                 fn(int $v) => $v === 1,
                 fn(int $v) => $v === 2,
