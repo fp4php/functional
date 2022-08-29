@@ -46,6 +46,14 @@ final class HashMap implements Map
     }
 
     /**
+     * @return HashMap<empty, empty>
+     */
+    public static function empty(): HashMap
+    {
+        return HashMap::collect([]);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @template TKI

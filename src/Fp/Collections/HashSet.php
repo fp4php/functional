@@ -51,6 +51,29 @@ final class HashSet implements Set
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $val
+     * @return HashSet<TVI>
+     */
+    public static function singleton(mixed $val): HashSet
+    {
+        return HashSet::collect([$val]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<empty>
+     */
+    public static function empty(): HashSet
+    {
+        return HashSet::collect([]);
+    }
+
+    /**
      * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator

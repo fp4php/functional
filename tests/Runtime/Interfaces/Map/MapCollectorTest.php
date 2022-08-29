@@ -12,6 +12,11 @@ final class MapCollectorTest extends TestCase
     public function testCollect(): void
     {
         $this->assertEquals(
+            [],
+            HashMap::empty()->toList(),
+        );
+
+        $this->assertEquals(
             [['a', 1], ['b', 2]],
             HashMap::collectPairs([['a', 1], ['b', 2]])->toList(),
         );

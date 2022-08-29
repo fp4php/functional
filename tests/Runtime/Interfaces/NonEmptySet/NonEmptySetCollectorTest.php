@@ -10,6 +10,11 @@ use PHPUnit\Framework\TestCase;
 
 final class NonEmptySetCollectorTest extends TestCase
 {
+    public function testSingleton(): void
+    {
+        $this->assertEquals([1], NonEmptyHashSet::singleton(1)->toList());
+    }
+
     public function testCollect(): void
     {
         $this->assertEquals([1, 2, 3], NonEmptyHashSet::collect([1, 2, 3])->getUnsafe()->toList());

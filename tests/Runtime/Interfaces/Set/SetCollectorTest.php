@@ -14,6 +14,16 @@ final class SetCollectorTest extends TestCase
     public function testCollect(): void
     {
         $this->assertEquals(
+            [],
+            HashSet::empty()->toList(),
+        );
+
+        $this->assertEquals(
+            [1],
+            HashSet::singleton(1)->toList(),
+        );
+
+        $this->assertEquals(
             [1, 2, 3],
             HashSet::collect([1, 1, 2, 3, 3])->toList(),
         );

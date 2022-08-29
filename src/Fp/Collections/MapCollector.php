@@ -12,6 +12,16 @@ interface MapCollector
 {
     /**
      * ```php
+     * >>> HashMap::empty()->toList();
+     * => []
+     * ```
+     *
+     * @return HashMap<empty, empty>
+     */
+    public static function empty(): HashMap;
+
+    /**
+     * ```php
      * >>> HashMap::collect(['a' =>  1, 'b' => 2]);
      * => HashMap('a' -> 1, 'b' -> 2)
      * ```

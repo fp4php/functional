@@ -55,6 +55,19 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVI
      *
+     * @param TVI $val
+     * @return NonEmptyHashSet<TVI>
+     */
+    public static function singleton(mixed $val): NonEmptyHashSet
+    {
+        return NonEmptyHashSet::collectNonEmpty([$val]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
      * @param (iterable<TVI>|Collection<TVI>) $source
      * @return NonEmptyHashSet<TVI>
      */

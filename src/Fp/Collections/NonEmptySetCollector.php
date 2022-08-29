@@ -30,9 +30,21 @@ interface NonEmptySetCollector
     /**
      * @template TVI
      *
-     * @param non-empty-array<array-key, TVI>|NonEmptyCollection<TVI> $source
+     * @param (non-empty-array<array-key, TVI>|NonEmptyCollection<TVI>) $source
      * @return NonEmptySet<TVI>
      */
     public static function collectNonEmpty(array|NonEmptyCollection $source): NonEmptySet;
 
+    /**
+     * ```php
+     * >>> NonEmptyHashSet::singleton(1)->toList();
+     * => [1]
+     * ```
+     *
+     * @template TVI
+     *
+     * @param TVI $val
+     * @return NonEmptySet<TVI>
+     */
+    public static function singleton(mixed $val): NonEmptySet;
 }
