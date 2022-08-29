@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
-use Fp\Functional\Option\Option;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -28,16 +27,14 @@ final class CtorFunctionReturnTypeProvider implements FunctionReturnTypeProvider
 
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
-        $return = Option::do(function() use ($event) {
-            $class = yield PsalmApi::$args->getCallArgs($event)
-                ->flatMap(fn(ArrayList $args) => $args->head())
-                ->pluck('type')
-                ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                ->filterOf(TLiteralClassString::class)
-                ->pluck('value')
-                ->map(ctor(TNamedObject::class));
-
-            return new Union([
+        return PsalmApi::$args->getCallArgs($event)
+            ->flatMap(fn(ArrayList $args) => $args->head())
+            ->pluck('type')
+            ->flatMap(PsalmApi::$types->asSingleAtomic(...))
+            ->filterOf(TLiteralClassString::class)
+            ->pluck('value')
+            ->map(ctor(TNamedObject::class))
+            ->map(fn(TNamedObject $class) => [
                 new TClosure(
                     params: PsalmApi::$classlikes->getStorage($class)
                         ->flatMap(fn(ClassLikeStorage $storage) => at($storage->methods, '__construct'))
@@ -45,9 +42,8 @@ final class CtorFunctionReturnTypeProvider implements FunctionReturnTypeProvider
                         ->getOrElse([]),
                     return_type: new Union([$class]),
                 )
-            ]);
-        });
-
-        return $return->get();
+            ])
+            ->map(ctor(Union::class))
+            ->get();
     }
 }
