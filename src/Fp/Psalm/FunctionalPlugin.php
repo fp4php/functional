@@ -20,10 +20,10 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\SeparatedToEitherMethodReturnTypeProvider;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
-use Tests\Static\Plugin\Psalm8124WorkaroundTest;
 
 /**
  * Plugin entrypoint
@@ -58,5 +58,6 @@ final class FunctionalPlugin implements PluginEntryPointInterface
         $register(MapTapNMethodReturnTypeProvider::class);
         $register(PluckMethodReturnTypeProvider::class);
         $register(CtorFunctionReturnTypeProvider::class);
+        $register(SeparatedToEitherMethodReturnTypeProvider::class);
     }
 }
