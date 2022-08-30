@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Functional\Either\Either;
+use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
@@ -22,7 +23,9 @@ final class SeparatedToEitherMethodReturnTypeProvider implements MethodReturnTyp
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
-        return proveNonEmptyList($event->getTemplateTypeParameters() ?? [])
+        return Option::some($event->getMethodNameLowercase())
+            ->filter(fn(string $method) => strtolower('toEither') === $method)
+            ->flatMap(fn() => proveNonEmptyList($event->getTemplateTypeParameters() ?? []))
             ->map(fn(array $templates) => new TGenericObject(Either::class, $templates))
             ->map(fn(TGenericObject $object) => new Union([$object]))
             ->get();
