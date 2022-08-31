@@ -6,6 +6,7 @@ namespace Fp\Collections;
 
 use Fp\Functional\Option\Option;
 
+use function Fp\Collection\map;
 use function Fp\Evidence\proveOf;
 
 /**
@@ -38,9 +39,7 @@ final class HashComparator
 
     public static function computeHashForArray(array $arr): string
     {
-        $list = LinkedList::collect($arr)
-            ->map(fn($elem): mixed => self::computeHash($elem))
-            ->toList();
+        $list = map($arr, fn($elem): mixed => self::computeHash($elem));
 
         return json_encode($list) ?: '';
     }

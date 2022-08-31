@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Functional\Either\Either;
-use Fp\Functional\Separated\Separated;
-use Fp\Functional\WithExtensions;
-use Fp\Operations\FoldOperation;
 use Generator;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Either\Either;
+use Fp\Functional\Separated\Separated;
+use Fp\Functional\WithExtensions;
 use Fp\Streams\Stream;
 
-use function Fp\Callable\dropFirstArg;
+use function Fp\Cast\asList;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asGenerator;
-use function Fp\Cast\asList;
-use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveNonEmptyList;
+use function Fp\Evidence\proveNonEmptyArray;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * @template TK
@@ -468,11 +467,11 @@ final class HashMap implements Map
      * @template TVO
      *
      * @param TVO $init
-     * @return FoldOperation<TV, TVO>
+     * @return Ops\FoldOperation<TV, TVO>
      */
-    public function fold(mixed $init): FoldOperation
+    public function fold(mixed $init): Ops\FoldOperation
     {
-        return new FoldOperation($this->getKeyValueIterator(), $init);
+        return new Ops\FoldOperation($this->getKeyValueIterator(), $init);
     }
 
     /**
@@ -819,19 +818,7 @@ final class HashMap implements Map
      */
     public function get(mixed $key): Option
     {
-        $elem = null;
-        $hash = (string) HashComparator::computeHash($key);
-
-        $bucket = Option::fromNullable($this->hashTable->table[$hash] ?? null)
-            ->getOrElse([]);
-
-        foreach ($bucket as [$k, $v]) {
-            if (HashComparator::hashEquals($key, $k)) {
-                $elem = $v;
-            }
-        }
-
-        return Option::fromNullable($elem);
+        return $this->hashTable->get($key);
     }
 
     public function toString(): string
