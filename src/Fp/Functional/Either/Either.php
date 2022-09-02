@@ -201,7 +201,7 @@ abstract class Either
     public function tapN(callable $callback): Either
     {
         return $this->tap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
+            /** @var array $tuple */
             $callback(...$tuple);
         });
     }
@@ -248,7 +248,7 @@ abstract class Either
      *
      * @template RO
      *
-     * @param callable(mixed...): RO $to
+     * @param callable(mixed...): RO $callback
      * @return Either<L, RO>
      *
      * @see MapTapNMethodReturnTypeProvider
@@ -256,7 +256,7 @@ abstract class Either
     public function mapN(callable $callback): Either
     {
         return $this->map(function($tuple) use ($callback): mixed {
-            /** @var array $tuple */;
+            /** @var array $tuple */
             return $callback(...$tuple);
         });
     }
@@ -344,7 +344,7 @@ abstract class Either
     public function flatMapN(callable $callback): Either
     {
         return $this->flatMap(function($tuple) use ($callback): Either {
-            /** @var array $tuple */;
+            /** @var array $tuple */
             return $callback(...$tuple);
         });
     }

@@ -19,7 +19,6 @@ use Generator;
 use Throwable;
 
 use function Fp\Evidence\proveOf;
-use function Fp\objectOf;
 
 /**
  * Option monad
@@ -121,7 +120,7 @@ abstract class Option
      *
      * @template B
      *
-     * @param callable(mixed...): B $to
+     * @param callable(mixed...): B $callback
      * @return Option<B>
      *
      * @see MapTapNMethodReturnTypeProvider
@@ -129,7 +128,7 @@ abstract class Option
     public function mapN(callable $callback): Option
     {
         return $this->map(function($tuple) use ($callback): mixed {
-            /** @var array $tuple */;
+            /** @var array $tuple */
             return $callback(...$tuple);
         });
     }
@@ -207,7 +206,7 @@ abstract class Option
     public function tapN(callable $callback): Option
     {
         return $this->tap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
+            /** @var array $tuple */
             $callback(...$tuple);
         });
     }
@@ -257,7 +256,7 @@ abstract class Option
     public function flatTapN(callable $callback): Option
     {
         return $this->flatTap(function($tuple) use ($callback): Option {
-            /** @var array $tuple */;
+            /** @var array $tuple */
             return $callback(...$tuple);
         });
     }
@@ -370,7 +369,7 @@ abstract class Option
     public function flatMapN(callable $callback): Option
     {
         return $this->flatMap(function($tuple) use ($callback): Option {
-            /** @var array $tuple */;
+            /** @var array $tuple */
             return $callback(...$tuple);
         });
     }
