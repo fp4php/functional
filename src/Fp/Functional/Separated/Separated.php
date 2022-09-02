@@ -7,6 +7,7 @@ namespace Fp\Functional\Separated;
 use Fp\Collections\Collection;
 use Fp\Functional\Either\Either;
 use Fp\Operations\ToStringOperation;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\SeparatedToEitherMethodReturnTypeProvider;
 
 /**
  * @template-covariant L
@@ -42,6 +43,13 @@ final class Separated
     }
 
     /**
+     * Transforms the left side.
+     *
+     * ```php
+     * >>> Separated::create(1, 2)->mapLeft(fn($i) => $i + 1);
+     * => Separated(2, 2)
+     * ```
+     *
      * @template LO
      *
      * @param callable(L): LO $callback
@@ -53,6 +61,13 @@ final class Separated
     }
 
     /**
+     * Transforms the right side.
+     *
+     * ```php
+     * >>> Separated::create(1, 2)->map(fn($i) => $i + 1);
+     * => Separated(1, 3)
+     * ```
+     *
      * @template RO
      *
      * @param callable(R): RO $callback
@@ -64,11 +79,73 @@ final class Separated
     }
 
     /**
+     * Performs side effect on the left side.
+     *
+     * ```php
+     * >>> Separated::create(1, 2)->tapLeft(fn($i) => print_r($i + 1));
+     * => Separated(1, 2)
+     * ```
+     *
+     * @param callable(L): void $callback
+     * @return Separated<L, R>
+     */
+    public function tapLeft(callable $callback): Separated
+    {
+        $callback($this->left);
+        return $this;
+    }
+
+    /**
+     * Performs side effect on the right side.
+     *
+     * ```php
+     * >>> Separated::create(1, 2)->tap(fn($i) => print_r($i + 1));
+     * => Separated(1, 2)
+     * ```
+     *
+     * @param callable(R): void $callback
+     * @return Separated<L, R>
+     */
+    public function tap(callable $callback): Separated
+    {
+        $callback($this->right);
+        return $this;
+    }
+
+    /**
+     * Swaps left and right sides.
+     *
+     * ```php
+     * >>> Separated(1, 2)->swap();
+     * => Separated(2, 1)
+     * ```
+     *
+     * @return Separated<R, L>
+     */
+    public function swap(): Separated
+    {
+        return new Separated($this->right, $this->left);
+    }
+
+    /**
+     * ```php
+     * >>> Separated(ArrayList::collect([1, 2, 3]), ArrayList::collect([4, 5, 6]))->toEither();
+     * => Left(ArrayList(1, 2, 3))
+     *
+     * >>> Separated(ArrayList::empty(), ArrayList::collect([4, 5, 6]))->toEither();
+     * => Right(ArrayList(4, 5, 6));
+     *
+     * >>> Separated(ArrayList::empty(), ArrayList::empty())->toEither();
+     * => Right(ArrayList(4, 5, 6));
+     * ```
+     *
      * @template LO
      * @template RO
      * @psalm-if-this-is Separated<Collection<LO>, Collection<RO>>
      *
      * @return Either<Collection<LO>, Collection<RO>>
+     *
+     * @see SeparatedToEitherMethodReturnTypeProvider
      */
     public function toEither(): Either
     {
@@ -77,6 +154,14 @@ final class Separated
             : Either::right($this->right);
     }
 
+    /**
+     * Returns string representation.
+     *
+     * ```php
+     * >>> Separated(1, 2)->toString();
+     * => 'Separated(1, 2)'
+     * ```
+     */
     public function toString(): string
     {
         return sprintf('Separated(%s, %s)',
@@ -85,6 +170,43 @@ final class Separated
     }
 
     /**
+     * Returns the left side.
+     *
+     * ```php
+     * >>> Separated(1, 2)->getLeft();
+     * => 1
+     * ```
+     *
+     * @return L
+     */
+    public function getLeft(): mixed
+    {
+        return $this->left;
+    }
+
+    /**
+     * Returns the right side.
+     *
+     * ```php
+     * >>> Separated(1, 2)->getRight();
+     * => 2
+     * ```
+     *
+     * @return R
+     */
+    public function getRight(): mixed
+    {
+        return $this->right;
+    }
+
+    /**
+     * Transforms pair to tuple with two elements.
+     *
+     * ```php
+     * >>> Separated(1, 2)->toTuple();
+     * => [1, 2]
+     * ```
+     *
      * @return array{L, R}
      */
     public function toTuple(): array
