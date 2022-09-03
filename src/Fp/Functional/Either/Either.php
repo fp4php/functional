@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Either;
 
+use Throwable;
+use Generator;
+use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Functional\WithExtensions;
 use Fp\Operations\ToStringOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
-use Generator;
-use Throwable;
 
 /**
  * @template-covariant L
@@ -25,6 +26,143 @@ use Throwable;
 abstract class Either
 {
     use WithExtensions;
+
+    #region Constructors
+
+    /**
+     * Fabric method.
+     *
+     * Create {@see Left} from value
+     *
+     * ```php
+     * >>> Either::left('error');
+     * => Left('error')
+     * ```
+     *
+     * @template LO
+     *
+     * @param LO $value
+     * @return Either<LO, empty>
+     */
+    public static function left(mixed $value): Either
+    {
+        return new Left($value);
+    }
+
+    /**
+     * Fabric method.
+     *
+     * Create {@see Right} from value
+     *
+     * ```php
+     * >>> Either::right(1);
+     * => Right(1)
+     * ```
+     *
+     * @template RO
+     *
+     * @param RO $value
+     * @return Either<empty, RO>
+     */
+    public static function right(mixed $value): Either
+    {
+        return new Right($value);
+    }
+
+    /**
+     * Fabric method which creates Either.
+     *
+     * Try/catch replacement.
+     *
+     * ```php
+     * >>> Either::try(fn() => 1);
+     * => Right(1)
+     *
+     * >>> Either::try(fn() => throw new Exception('handled and converted to Left'));
+     * => Left(Exception('handled and converted to Left'))
+     * ```
+     *
+     * @template RO
+     *
+     * @param callable(): RO $callback
+     * @return Either<Throwable, RO>
+     */
+    public static function try(callable $callback): Either
+    {
+        try {
+            return Either::right($callback());
+        } catch (Throwable $exception) {
+            return Either::left($exception);
+        }
+    }
+
+    /**
+     * Do-notation a.k.a. for-comprehension.
+     *
+     * Syntax sugar for sequential {@see Either::flatMap()} calls
+     *
+     * Syntax "$unwrappedValue = yield $box" mean:
+     * 1) unwrap the $box
+     * 2) if there is error in the box then short-circuit (stop) the computation
+     * 3) place contained in $box value into $unwrappedValue variable
+     *
+     * ```php
+     * >>> Either::do(function() {
+     *     $a = 1;
+     *     $b = yield Either::right(2);
+     *     $c = yield new Right(3);
+     *     $d = yield Either::left('error!'); // short circuit here
+     *     $e = 5;                            // not executed
+     *     return [$a, $b, $c, $d, $e];       // not executed
+     * });
+     * => Left('error!')
+     * ```
+     *
+     * @todo Replace Either<TL, mixed> with Either<TL, TR> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
+     *
+     * @template TL
+     * @template TR
+     * @template TO
+     *
+     * @param callable(): Generator<int, Either<TL, mixed>, TR, TO> $computation
+     * @return Either<TL, TO>
+     */
+    public static function do(callable $computation): Either {
+        $generator = $computation();
+
+        while ($generator->valid()) {
+            $currentStep = $generator->current();
+
+            if ($currentStep->isRight()) {
+                /** @psalm-suppress MixedArgument */
+                $generator->send($currentStep->get());
+            } else {
+                /** @var Either<TL, TO> $currentStep */
+                return $currentStep;
+            }
+
+        }
+
+        return Either::right($generator->getReturn());
+    }
+
+    #endregion Constructors
+
+    # region Destructors
+
+    /**
+     * Unwrap the box value
+     *
+     * ```php
+     * >>> Either::some(1)->get();
+     * => 1
+     * ```
+     *
+     * @return L|R
+     *
+     * @see EitherGetReturnTypeProvider
+     */
+    abstract public function get(): mixed;
 
     /**
      * Unwrap "the box" and get contained success value
@@ -96,30 +234,6 @@ abstract class Either
     }
 
     /**
-     * Combine two Either into one
-     *
-     * ```php
-     * >>> Either::right(1)->orElse(fn() => Either::right(2));
-     * => Right(1)
-     *
-     * >>> Either::left(1)->orElse(fn() => Either::right(2));
-     * => Right(2)
-     * ```
-     *
-     * @template LO
-     * @template RO
-     *
-     * @param callable(): Either<LO, RO> $fallback
-     * @return Either<L|LO, R|RO>
-     */
-    public function orElse(callable $fallback): Either
-    {
-        return $this->isRight()
-            ? $this
-            : $fallback();
-    }
-
-    /**
      * Fold possible outcomes
      *
      * ```php
@@ -148,63 +262,99 @@ abstract class Either
         return $this->isLeft() ? $ifLeft($this->get()) : $ifRight($this->get());
     }
 
+    # endregion Destructors
+
+    # region Refinements
+
     /**
-     * 1) Unwrap the box
-     * 2) If the box contains error value then do nothing
-     * 3) Pass unwrapped success value to callback
-     * 4) Return the same box
+     * Check if there is error value contained in the box
      *
      * ```php
-     * >>> $res1 = Either::right(1);
-     * => Right(1)
+     * >>> Either::some(1)->isLeft();
+     * => false
      *
-     * >>> $res2 = $res1->tap(function (int $i) { echo $i; });
-     * 1
-     * => Right(1)
-     *
-     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
-     * => Right('1')
+     * >>> Either::left('error')->isLeft();
+     * => true
      * ```
      *
-     * @param callable(R): void $callback
-     * @return Either<L, R>
+     * @psalm-assert-if-true Left<L>&\Fp\Functional\Assertion<"must-be-left"> $this
      */
-    public function tap(callable $callback): Either
+    public function isLeft(): bool
     {
-        if ($this->isLeft()) {
-            return Either::left($this->get());
-        }
-
-        $value = $this->get();
-        $callback($value);
-
-        return Either::right($value);
+        return $this instanceof Left;
     }
 
     /**
-     * Same as {@see Either::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     * Check if there is success value contained in the box
      *
      * ```php
-     * >>> $res1 = Either::right([1, 2, 3]);
-     * => Right(1)
+     * >>> Either::some(1)->isRight();
+     * => true
      *
-     * >>> $res2 = $res1->tapN(function (int $a, int $b, int $c) { print_r([$a, $b, $c]); });
-     * [1, 2, 3]
-     * => Right([1, 2, 3])
+     * >>> Either::left('error')->isRight();
+     * => false
      * ```
      *
-     * @param callable(mixed...): void $callback
-     * @return Either<L, R>
-     *
-     * @see MapTapNMethodReturnTypeProvider
+     * @psalm-assert-if-true Right<R>&\Fp\Functional\Assertion<"must-be-right"> $this
      */
-    public function tapN(callable $callback): Either
+    public function isRight(): bool
     {
-        return $this->tap(function($tuple) use ($callback) {
-            /** @var array $tuple */
-            $callback(...$tuple);
-        });
+        return $this instanceof Right;
     }
+
+    # endregion Refinements
+
+    # region Castable
+
+    /**
+     * Convert Either to Option
+     *
+     * ```php
+     * >>> Either::right(1)->toOption();
+     * => Some(1)
+     *
+     * >>> Either::left('error')->toOption();
+     * => None
+     * ```
+     *
+     * @return Option<R>
+     */
+    public function toOption(): Option
+    {
+        return $this->fold(
+            fn() => Option::none(),
+            fn($r) => Option::some($r),
+        );
+    }
+
+    /**
+     * @return ArrayList<R>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return $this->fold(
+            fn() => ArrayList::empty(),
+            fn($r) => ArrayList::singleton($r),
+        );
+    }
+
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
+    public function __toString(): string
+    {
+        $value = ToStringOperation::of($this->get());
+
+        return $this instanceof Left
+            ? "Left({$value})"
+            : "Right({$value})";
+    }
+
+    # endregion Castable
+
+    # region Chainable
 
     /**
      * 1) Unwrap the box
@@ -237,14 +387,6 @@ abstract class Either
 
     /**
      * Same as {@see Either::map()}, but deconstruct input tuple and pass it to the $callback function.
-     *
-     * ```php
-     * >>> $res1 = Either::right([1, 2, 3]);
-     * => Right([1, 2, 3])
-     *
-     * >>> $res2 = $res1->mapN(fn(int $a, int $b, int $c) => $a + $b + $c);
-     * => Right(6)
-     * ```
      *
      * @template RO
      *
@@ -296,6 +438,71 @@ abstract class Either
      * 1) Unwrap the box
      * 2) If the box contains error value then do nothing
      * 3) Pass unwrapped success value to callback
+     * 4) Return the same box
+     *
+     * ```php
+     * >>> $res1 = Either::right(1);
+     * => Right(1)
+     *
+     * >>> $res2 = $res1->tap(function (int $i) { echo $i; });
+     * 1
+     * => Right(1)
+     *
+     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
+     * => Right('1')
+     * ```
+     *
+     * @param callable(R): void $callback
+     * @return Either<L, R>
+     */
+    public function tap(callable $callback): Either
+    {
+        if ($this->isLeft()) {
+            return Either::left($this->get());
+        }
+
+        $value = $this->get();
+        $callback($value);
+
+        return Either::right($value);
+    }
+
+    /**
+     * Same as {@see Either::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): void $callback
+     * @return Either<L, R>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function tapN(callable $callback): Either
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */
+            $callback(...$tuple);
+        });
+    }
+
+    /**
+     * @param callable(L): void $callback
+     * @return Either<L, R>
+     */
+    public function tapLeft(callable $callback): Either
+    {
+        if ($this->isRight()) {
+            return Either::right($this->get());
+        }
+
+        $value = $this->get();
+        $callback($value);
+
+        return Either::left($value);
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box contains error value then do nothing
+     * 3) Pass unwrapped success value to callback
      * 4) Replace old box with new one returned by callback
      *
      * ```php
@@ -325,14 +532,6 @@ abstract class Either
     /**
      * Same as {@see Either::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
      *
-     * ```php
-     * >>> $res1 = Either::right([1, 2, 3]);
-     * => Right([1, 2, 3])
-     *
-     * >>> $res2 = $res1->flatMapN(fn(int $a, int $b, int $c) => Either::right($a + $b + $c));
-     * => Right(6)
-     * ```
-     *
      * @template LO
      * @template RO
      *
@@ -350,136 +549,65 @@ abstract class Either
     }
 
     /**
-     * Do-notation a.k.a. for-comprehension.
-     *
-     * Syntax sugar for sequential {@see Either::flatMap()} calls
-     *
-     * Syntax "$unwrappedValue = yield $box" mean:
-     * 1) unwrap the $box
-     * 2) if there is error in the box then short-circuit (stop) the computation
-     * 3) place contained in $box value into $unwrappedValue variable
-     *
-     * ```php
-     * >>> Either::do(function() {
-     *     $a = 1;
-     *     $b = yield Either::right(2);
-     *     $c = yield new Right(3);
-     *     $d = yield Either::left('error!'); // short circuit here
-     *     $e = 5;                            // not executed
-     *     return [$a, $b, $c, $d, $e];       // not executed
-     * });
-     * => Left('error!')
-     * ```
-     *
-     * @todo Replace Either<TL, mixed> with Either<TL, TR> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
-     *
-     * @template TL
-     * @template TR
-     * @template TO
-     *
-     * @param callable(): Generator<int, Either<TL, mixed>, TR, TO> $computation
-     * @return Either<TL, TO>
-     */
-    public static function do(callable $computation): Either {
-        $generator = $computation();
-
-        while ($generator->valid()) {
-            $currentStep = $generator->current();
-
-            if ($currentStep->isRight()) {
-                /** @psalm-suppress MixedArgument */
-                $generator->send($currentStep->get());
-            } else {
-                /** @var Either<TL, TO> $currentStep */
-                return $currentStep;
-            }
-
-        }
-
-        return Either::right($generator->getReturn());
-    }
-
-    /**
-     * Fabric method which creates Either.
-     *
-     * Try/catch replacement.
-     *
-     * ```php
-     * >>> Either::try(fn() => 1);
-     * => Right(1)
-     *
-     * >>> Either::try(fn() => throw new Exception('handled and converted to Left'));
-     * => Left(Exception('handled and converted to Left'))
-     * ```
-     *
+     * @template LO
      * @template RO
      *
-     * @param callable(): RO $callback
-     * @return Either<Throwable, RO>
+     * @param callable(R): Either<LO, RO> $callback
+     * @return Either<L|LO, R>
      */
-    public static function try(callable $callback): Either
+    public function flatTap(callable $callback): Either
     {
-        try {
-            return Either::right($callback());
-        } catch (Throwable $exception) {
-            return Either::left($exception);
+        if ($this->isLeft()) {
+            return Either::left($this->get());
         }
+
+        $value = $this->get();
+
+        return $callback($value)->fold(
+            fn($l) => Either::left($l),
+            fn() => Either::right($value),
+        );
     }
 
     /**
-     * Convert Either to Option
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Either<L|LO, R>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function flatTapN(callable $callback): Either
+    {
+        return $this->flatTap(function($tuple) use ($callback) {
+            /** @var array $tuple */
+            return $callback(...$tuple);
+        });
+    }
+
+    /**
+     * Combine two Either into one
      *
      * ```php
-     * >>> Either::right(1)->toOption();
-     * => Some(1)
+     * >>> Either::right(1)->orElse(fn() => Either::right(2));
+     * => Right(1)
      *
-     * >>> Either::left('error')->toOption();
-     * => None
+     * >>> Either::left(1)->orElse(fn() => Either::right(2));
+     * => Right(2)
      * ```
      *
-     * @return Option<R>
+     * @template LO
+     * @template RO
+     *
+     * @param callable(): Either<LO, RO> $fallback
+     * @return Either<L|LO, R|RO>
      */
-    public function toOption(): Option
+    public function orElse(callable $fallback): Either
     {
         return $this->isRight()
-            ? Option::some($this->get())
-            : Option::none();
-    }
-
-    /**
-     * Check if there is error value contained in the box
-     *
-     * ```php
-     * >>> Either::some(1)->isLeft();
-     * => false
-     *
-     * >>> Either::left('error')->isLeft();
-     * => true
-     * ```
-     *
-     * @psalm-assert-if-true Left<L>&\Fp\Functional\Assertion<"must-be-left"> $this
-     */
-    public function isLeft(): bool
-    {
-        return $this instanceof Left;
-    }
-
-    /**
-     * Check if there is success value contained in the box
-     *
-     * ```php
-     * >>> Either::some(1)->isRight();
-     * => true
-     *
-     * >>> Either::left('error')->isRight();
-     * => false
-     * ```
-     *
-     * @psalm-assert-if-true Right<R>&\Fp\Functional\Assertion<"must-be-right"> $this
-     */
-    public function isRight(): bool
-    {
-        return $this instanceof Right;
+            ? $this
+            : $fallback();
     }
 
     /**
@@ -502,71 +630,5 @@ abstract class Either
             : Either::left($this->get());
     }
 
-    /**
-     * Fabric method.
-     *
-     * Create {@see Left} from value
-     *
-     * ```php
-     * >>> Either::left('error');
-     * => Left('error')
-     * ```
-     *
-     * @template LO
-     *
-     * @param LO $value
-     * @return Either<LO, empty>
-     */
-    public static function left(mixed $value): Either
-    {
-        return new Left($value);
-    }
-
-    /**
-     * Fabric method.
-     *
-     * Create {@see Right} from value
-     *
-     * ```php
-     * >>> Either::right(1);
-     * => Right(1)
-     * ```
-     *
-     * @template RO
-     *
-     * @param RO $value
-     * @return Either<empty, RO>
-     */
-    public static function right(mixed $value): Either
-    {
-        return new Right($value);
-    }
-
-    /**
-     * Unwrap the box value
-     *
-     * ```php
-     * >>> Either::some(1)->get();
-     * => 1
-     * ```
-     *
-     * @return L|R
-     *
-     * @see EitherGetReturnTypeProvider
-     */
-    abstract public function get(): mixed;
-
-    public function toString(): string
-    {
-        return (string) $this;
-    }
-
-    public function __toString(): string
-    {
-        $value = ToStringOperation::of($this->get());
-
-        return $this instanceof Left
-            ? "Left({$value})"
-            : "Right({$value})";
-    }
+    # endregion Chainable
 }
