@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
-    backupGlobals="false"
     colors="true"
     bootstrap="tests/bootstrap.php"
     cacheResultFile=".phpunit.result.cache"
@@ -12,6 +11,7 @@
             <directory suffix=".php">src/Fp/Functional</directory>
             <directory suffix=".php">src/Fp/Functions</directory>
             <directory suffix=".php">src/Fp/Collections</directory>
+            <directory suffix=".php">src/Fp/Operations</directory>
             <directory suffix=".php">src/Fp/Streams</directory>
         </include>
         <report>

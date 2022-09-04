@@ -31,6 +31,8 @@ final class OptionTest extends TestCase
         $this->assertEquals('Some(42)', (string) Option::some(42));
         $this->assertEquals('None', Option::none()->toString());
         $this->assertEquals('Some(42)', Option::some(42)->toString());
+        $this->assertEquals('Some(true)', Option::some(true)->toString());
+        $this->assertEquals('Some(false)', Option::some(false)->toString());
     }
 
     public function testCreation(): void
