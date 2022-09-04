@@ -131,20 +131,38 @@ final class EitherTest extends TestCase
         $this->assertEquals(LinkedList::collect(['err']), $buff1->toLinkedList());
     }
 
-    public function testFlatTap(): void
+    public function testFlatTapLeft(): void
     {
         /** @var LinkedListBuffer<int> */
-        $buff1 = new LinkedListBuffer();
+        $buff = new LinkedListBuffer();
 
         /** @var Either<string, int> */
-        $right1 = Either::right(0);
-        $result1 = $right1->flatTap(fn(int $e) => $e > 0
-            ? Either::right($buff1->append($e))
+        $left = Either::left('err');
+        $result = $left->flatTap(fn(int $e) => $e > 0
+            ? Either::right($buff->append($e))
             : Either::left('invalid'));
 
-        $this->assertEquals(LinkedList::empty(), $buff1->toLinkedList());
-        $this->assertEquals('invalid', $result1->get());
+        $this->assertEquals(LinkedList::empty(), $buff->toLinkedList());
+        $this->assertEquals('err', $result->get());
+    }
 
+    public function testFlatTapWhenReturnsLeft(): void
+    {
+        /** @var LinkedListBuffer<int> */
+        $buff = new LinkedListBuffer();
+
+        /** @var Either<string, int> */
+        $right = Either::right(0);
+        $result = $right->flatTap(fn(int $e) => $e > 0
+            ? Either::right($buff->append($e))
+            : Either::left('invalid'));
+
+        $this->assertEquals(LinkedList::empty(), $buff->toLinkedList());
+        $this->assertEquals('invalid', $result->get());
+    }
+
+    public function testFlatTapWhenReturnsRight(): void
+    {
         /** @var LinkedListBuffer<int> */
         $buff2 = new LinkedListBuffer();
 
