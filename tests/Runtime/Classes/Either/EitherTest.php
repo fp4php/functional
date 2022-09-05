@@ -11,6 +11,7 @@ use Fp\Collections\LinkedListBuffer;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tests\Mock\Foo;
@@ -26,6 +27,11 @@ final class EitherTest extends TestCase
         $this->assertEquals('Right([])', Either::right([]));
         $this->assertEquals("Right([1, 2, 3])", Either::right([1, 2, 3]));
         $this->assertEquals("Right(['t' => 1])", Either::right(['t' => 1]));
+        $this->assertEquals('Left(InvalidArgumentException())', Either::left(new InvalidArgumentException()));
+        $this->assertEquals(
+            "Left(InvalidArgumentException('Invalid string given'))",
+            Either::left(new InvalidArgumentException('Invalid string given')),
+        );
     }
 
     public function testCreation(): void
