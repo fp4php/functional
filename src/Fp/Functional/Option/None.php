@@ -17,10 +17,17 @@ final class None extends Option
     }
 
     /**
-     * @return null
+     * {@inheritDoc}
+     *
+     * @template SO
+     * @template NO
+     *
+     * @param callable(): NO $ifNone
+     * @param callable(never): SO $ifSome
+     * @return SO|NO
      */
-    public function get(): mixed
+    public function fold(callable $ifNone, callable $ifSome): mixed
     {
-        return null;
+        return $ifNone();
     }
 }

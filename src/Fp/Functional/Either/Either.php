@@ -151,89 +151,6 @@ abstract class Either
     # region Destructors
 
     /**
-     * Unwrap the box value
-     *
-     * ```php
-     * >>> Either::some(1)->get();
-     * => 1
-     * ```
-     *
-     * @return L|R
-     *
-     * @see EitherGetReturnTypeProvider
-     */
-    abstract public function get(): mixed;
-
-    /**
-     * Unwrap "the box" and get contained success value
-     * or given fallback for case when
-     * there is error value in the box.
-     *
-     * ```php
-     * >>> Either::right(1)->getOrElse(0);
-     * => 1
-     *
-     * >>> Either::left('error')->getOrElse(0);
-     * => 0
-     * ```
-     *
-     * @template F
-     *
-     * @param F $fallback
-     * @return R|F
-     */
-    public function getOrElse(mixed $fallback): mixed
-    {
-        return $this->isRight()
-            ? $this->get()
-            : $fallback;
-    }
-
-    /**
-     * Unwrap "the box" and get contained success value
-     * or given fallback call result for case when
-     * there is error value in the box.
-     *
-     * ```php
-     * >>> Either::right(1)->getOrCall(fn() => 0);
-     * => 1
-     *
-     * >>> Either::left('error')->getOrCall(fn() => 0);
-     * => 0
-     * ```
-     *
-     * @template F
-     *
-     * @param callable(): F $fallback
-     * @return R|F
-     */
-    public function getOrCall(callable $fallback): mixed
-    {
-        return $this->isRight()
-            ? $this->get()
-            : $fallback();
-    }
-
-    /**
-     * ```php
-     * >>> Either::right(1)->getOrThrow(fn($err) => new RuntimeException($err));
-     * => 1
-     *
-     * >>> Either::left('error')->getOrThrow(fn($err) => new RuntimeException($err));
-     * RuntimeException with message 'error'
-     * ```
-     *
-     * @param callable(L): Throwable $fallback
-     * @return R
-     */
-    public function getOrThrow(callable $fallback): mixed
-    {
-        return $this->isRight()
-            ? $this->get()
-            : throw $fallback($this->get());
-    }
-
-    /**
      * Fold possible outcomes
      *
      * ```php
@@ -257,9 +174,99 @@ abstract class Either
      * @param callable(R): RO $ifRight
      * @return RO|LO
      */
-    public function fold(callable $ifLeft, callable $ifRight): mixed
+    abstract public function fold(callable $ifLeft, callable $ifRight): mixed;
+
+    /**
+     * Unwrap the box value
+     *
+     * ```php
+     * >>> Either::some(1)->get();
+     * => 1
+     * ```
+     *
+     * @return L|R
+     *
+     * @see EitherGetReturnTypeProvider
+     */
+    public function get(): mixed
     {
-        return $this->isLeft() ? $ifLeft($this->get()) : $ifRight($this->get());
+        return $this->fold(
+            /** @param L $left */
+            fn(mixed $left) => $left,
+            /** @param R $right */
+            fn(mixed $right) => $right,
+        );
+    }
+
+    /**
+     * Unwrap "the box" and get contained success value
+     * or given fallback for case when
+     * there is error value in the box.
+     *
+     * ```php
+     * >>> Either::right(1)->getOrElse(0);
+     * => 1
+     *
+     * >>> Either::left('error')->getOrElse(0);
+     * => 0
+     * ```
+     *
+     * @template F
+     *
+     * @param F $fallback
+     * @return R|F
+     */
+    public function getOrElse(mixed $fallback): mixed
+    {
+        return $this->getOrCall(fn() => $fallback);
+    }
+
+    /**
+     * ```php
+     * >>> Either::right(1)->getOrThrow(fn($err) => new RuntimeException($err));
+     * => 1
+     *
+     * >>> Either::left('error')->getOrThrow(fn($err) => new RuntimeException($err));
+     * RuntimeException with message 'error'
+     * ```
+     *
+     * @param callable(L): Throwable $fallback
+     * @return R
+     */
+    public function getOrThrow(callable $fallback): mixed
+    {
+        return $this->getOrCall(
+        /** @param L $left */
+            fn(mixed $left) => throw $fallback($left),
+        );
+    }
+
+    /**
+     * Unwrap "the box" and get contained success value
+     * or given fallback call result for case when
+     * there is error value in the box.
+     *
+     * ```php
+     * >>> Either::right(1)->getOrCall(fn() => 0);
+     * => 1
+     *
+     * >>> Either::left('error')->getOrCall(fn() => 0);
+     * => 0
+     * ```
+     *
+     * @template F
+     *
+     * @param callable(L): F $fallback
+     * @return R|F
+     */
+    public function getOrCall(callable $fallback): mixed
+    {
+        return $this->fold(
+            /** @param L $left */
+            fn(mixed $left) => $fallback($left),
+            /** @param R $right */
+            fn(mixed $right) => $right,
+        );
     }
 
     # endregion Destructors
@@ -380,9 +387,12 @@ abstract class Either
      */
     public function map(callable $callback): Either
     {
-        return $this->isLeft()
-            ? Either::left($this->get())
-            : Either::right($callback($this->get()));
+        return $this->fold(
+            /** @param L $l */
+            fn(mixed $l) => Either::left($l),
+            /** @param R $r */
+            fn(mixed $r) => Either::right($callback($r)),
+        );
     }
 
     /**
@@ -427,11 +437,12 @@ abstract class Either
      */
     public function mapLeft(callable $callback): Either
     {
-        /** @psalm-suppress InvalidArgument */
-        return $this
-            ->swap()
-            ->map($callback)
-            ->swap();
+        return $this->fold(
+            /** @param L $l */
+            fn(mixed $l) => Either::left($callback($l)),
+            /** @param R $r */
+            fn(mixed $r) => Either::right($r),
+        );
     }
 
     /**
@@ -457,14 +468,13 @@ abstract class Either
      */
     public function tap(callable $callback): Either
     {
-        if ($this->isLeft()) {
-            return Either::left($this->get());
-        }
-
-        $value = $this->get();
-        $callback($value);
-
-        return Either::right($value);
+        return $this->map(
+            /** @param R $r */
+            function(mixed $r) use ($callback) {
+                $callback($r);
+                return $r;
+            },
+        );
     }
 
     /**
@@ -489,14 +499,13 @@ abstract class Either
      */
     public function tapLeft(callable $callback): Either
     {
-        if ($this->isRight()) {
-            return Either::right($this->get());
-        }
-
-        $value = $this->get();
-        $callback($value);
-
-        return Either::left($value);
+        return $this->mapLeft(
+            /** @param L $l */
+            function(mixed $l) use ($callback) {
+                $callback($l);
+                return $l;
+            },
+        );
     }
 
     /**
@@ -524,9 +533,12 @@ abstract class Either
      */
     public function flatMap(callable $callback): Either
     {
-        return $this->isLeft()
-            ? Either::left($this->get())
-            : $callback($this->get());
+        return $this->fold(
+            /** @param L $l */
+            fn(mixed $l) => Either::left($l),
+            /** @param R $r */
+            fn(mixed $r) => $callback($r),
+        );
     }
 
     /**
@@ -557,15 +569,12 @@ abstract class Either
      */
     public function flatTap(callable $callback): Either
     {
-        if ($this->isLeft()) {
-            return Either::left($this->get());
-        }
-
-        $value = $this->get();
-
-        return $callback($value)->fold(
-            fn($l) => Either::left($l),
-            fn() => Either::right($value),
+        return $this->flatMap(
+            /** @param R $r */
+            fn(mixed $r) => $callback($r)->fold(
+                fn($l) => Either::left($l),
+                fn() => Either::right($r),
+            )
         );
     }
 
@@ -605,9 +614,7 @@ abstract class Either
      */
     public function orElse(callable $fallback): Either
     {
-        return $this->isRight()
-            ? $this
-            : $fallback();
+        return $this->fold($fallback, fn() => $this);
     }
 
     /**
@@ -625,9 +632,12 @@ abstract class Either
      */
     public function swap(): Either
     {
-        return $this->isLeft()
-            ? Either::right($this->get())
-            : Either::left($this->get());
+        return $this->fold(
+            /** @param L $l */
+            fn(mixed $l) => Either::right($l),
+            /** @param R $r */
+            fn(mixed $r) => Either::left($r),
+        );
     }
 
     # endregion Chainable

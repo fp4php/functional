@@ -7,6 +7,8 @@ namespace Fp\Functional\Either;
 /**
  * @template-covariant L
  * @extends Either<L, never>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class Left extends Either
 {
@@ -18,10 +20,17 @@ final class Left extends Either
     ) {}
 
     /**
-     * @psalm-return L
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(L): LO $ifLeft
+     * @param callable(never): RO $ifRight
+     * @return RO|LO
      */
-    public function get(): mixed
+    public function fold(callable $ifLeft, callable $ifRight): mixed
     {
-        return $this->value;
+        return $ifLeft($this->value);
     }
 }

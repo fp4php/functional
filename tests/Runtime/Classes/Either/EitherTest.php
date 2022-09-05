@@ -319,4 +319,10 @@ final class EitherTest extends TestCase
         $this->assertEquals(ArrayList::empty(), Either::left(1)->toArrayList());
         $this->assertEquals(ArrayList::singleton(1), Either::right(1)->toArrayList());
     }
+
+    public function testSwap(): void
+    {
+        $this->assertEquals(Either::left(1), Either::right(1)->swap());
+        $this->assertEquals(Either::right(1), Either::left(1)->swap());
+    }
 }

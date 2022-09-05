@@ -215,10 +215,7 @@ abstract class Option
      * @param callable(A): SO $ifSome
      * @return SO|NO
      */
-    public function fold(callable $ifNone, callable $ifSome): mixed
-    {
-        return $this->isNone() ? $ifNone() : $ifSome($this->get());
-    }
+    public abstract function fold(callable $ifNone, callable $ifSome): mixed;
 
     /**
      * Unwrap "the box" and get contained value
@@ -236,7 +233,14 @@ abstract class Option
      *
      * @see OptionGetReturnTypeProvider
      */
-    public abstract function get(): mixed;
+    public function get(): mixed
+    {
+        return $this->fold(
+            fn() => null,
+            /** @param A $value */
+            fn(mixed $value) => $value,
+        );
+    }
 
     /**
      * Unwrap "the box" and get contained value
@@ -254,9 +258,7 @@ abstract class Option
      */
     public function getUnsafe(): mixed
     {
-        return $this->isSome()
-            ? $this->get()
-            : throw new Error("Trying to get value of None");
+        return $this->getOrCall(fn() => throw new Error("Trying to get value of None"));
     }
 
     /**
@@ -278,9 +280,7 @@ abstract class Option
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        return $this->isSome()
-            ? $this->get()
-            : $fallback;
+        return $this->getOrCall(fn() => $fallback);
     }
 
     /**
@@ -302,9 +302,11 @@ abstract class Option
      */
     public function getOrCall(callable $fallback): mixed
     {
-        return $this->isSome()
-            ? $this->get()
-            : $fallback();
+        return $this->fold(
+            fn() => $fallback(),
+            /** @param A $value */
+            fn(mixed $value): mixed => $value
+        );
     }
 
     # endregion Destructors
@@ -366,9 +368,10 @@ abstract class Option
      */
     public function toLeft(callable $right): Either
     {
-        return $this->isSome()
-            ? Either::left($this->get())
-            : Either::right($right());
+        return $this->fold(
+            fn() => Either::right($right()),
+            fn($value) => Either::left($value),
+        );
     }
 
     /**
@@ -392,9 +395,10 @@ abstract class Option
      */
     public function toRight(callable $left): Either
     {
-        return $this->isSome()
-            ? Either::right($this->get())
-            : Either::left($left());
+        return $this->fold(
+            fn() => Either::left($left()),
+            fn($value) => Either::right($value)
+        );
     }
 
     /**
@@ -412,7 +416,10 @@ abstract class Option
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect($this->isSome() ? [$this->get()] : []);
+        return $this->fold(
+            fn() => ArrayList::empty(),
+            fn($value) => ArrayList::singleton($value)
+        );
     }
 
     public function toString(): string
@@ -455,9 +462,11 @@ abstract class Option
      */
     public function map(callable $callback): Option
     {
-        return $this->isSome()
-            ? Option::some($callback($this->get()))
-            : Option::none();
+        return $this->fold(
+            fn() => Option::none(),
+            /** @param A $val */
+            fn(mixed $val) => Option::some($callback($val))
+        );
     }
 
     /**
@@ -509,12 +518,13 @@ abstract class Option
      */
     public function tap(callable $callback): Option
     {
-        if ($this->isSome()) {
-            $callback($this->get());
-            return $this;
-        } else {
-            return Option::none();
-        }
+        return $this->map(
+            /** @param A $value */
+            function(mixed $value) use ($callback) {
+                $callback($value);
+                return $value;
+            }
+        );
     }
 
     /**
@@ -566,9 +576,11 @@ abstract class Option
      */
     public function flatMap(callable $callback): Option
     {
-        return $this->isSome()
-            ? $callback($this->get())
-            : Option::none();
+        return $this->fold(
+            fn() => Option::none(),
+            /** @param A $value */
+            fn(mixed $value) => $callback($value),
+        );
     }
 
     /**
@@ -622,11 +634,13 @@ abstract class Option
      */
     public function flatTap(callable $callback): Option
     {
-        if ($this->isSome() && $callback($this->get())->isSome()) {
-            return $this;
-        } else {
-            return Option::none();
-        }
+        return $this->flatMap(
+            /** @param A $value */
+            fn(mixed $value) => $callback($value)->fold(
+                fn() => Option::none(),
+                fn() => Option::some($value),
+            )
+        );
     }
 
     /**
@@ -671,9 +685,12 @@ abstract class Option
      */
     public function filter(callable $callback): Option
     {
-        return $this->isSome() && $callback($this->get())
-            ? $this
-            : Option::none();
+        return $this->flatMap(
+            /** @param A $value */
+            fn(mixed $value) => $callback($value)
+                ? Option::some($value)
+                : Option::none()
+        );
     }
 
     /**
@@ -700,9 +717,7 @@ abstract class Option
      */
     public function filterOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return $this->isSome()
-            ? proveOf($this->get(), $fqcn, $invariant)
-            : Option::none();
+        return $this->flatMap(fn(mixed $value) => proveOf($value, $fqcn, $invariant));
     }
 
     /**
@@ -723,9 +738,7 @@ abstract class Option
      */
     public function orElse(callable $fallback): Option
     {
-        return $this->isSome()
-            ? $this
-            : $fallback();
+        return $this->fold($fallback, fn() => $this);
     }
 
     /**

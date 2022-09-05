@@ -7,6 +7,8 @@ namespace Fp\Functional\Option;
 /**
  * @template-covariant A
  * @extends Option<A>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class Some extends Option
 {
@@ -18,10 +20,17 @@ final class Some extends Option
     ) {}
 
     /**
-     * @return A
+     * {@inheritDoc}
+     *
+     * @template SO
+     * @template NO
+     *
+     * @param callable(): NO $ifNone
+     * @param callable(A): SO $ifSome
+     * @return SO|NO
      */
-    public function get(): mixed
+    public function fold(callable $ifNone, callable $ifSome): mixed
     {
-        return $this->value;
+        return $ifSome($this->value);
     }
 }
