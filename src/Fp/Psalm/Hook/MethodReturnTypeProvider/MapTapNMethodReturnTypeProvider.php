@@ -21,6 +21,7 @@ use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\MapTapNContext;
+use Fp\Psalm\Util\MapTapNContextEnum;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Issue\IfThisIsMismatch;
 use Psalm\IssueBuffer;
@@ -31,14 +32,13 @@ use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
-use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
-use function Fp\Collection\dropRight;
-use function Fp\Collection\init;
+use function Fp\Collection\every;
+use function Fp\Collection\keys;
 use function Fp\Collection\last;
-use function Fp\Evidence\proveNonEmptyArray;
+use function Fp\Evidence\proveFalse;
 use function Fp\Evidence\proveNonEmptyList;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
@@ -80,8 +80,12 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             $current_args = yield last($templates)
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                 ->filterOf(TKeyedArray::class)
-                ->filter(self::isTuple(...))
-                ->orElse(fn() => self::valueTypeIsNotTupleIssue($event));
+                ->filter(fn(TKeyedArray $keyed) => self::isTuple($keyed) || self::isAssoc($keyed))
+                ->orElse(fn() => self::valueTypeIsNotValidKeyedArrayIssue($event));
+
+            $current_args_kind = self::isTuple($current_args)
+                ? MapTapNContextEnum::Tuple
+                : MapTapNContextEnum::Shape;
 
             // $callback mapN/tapN argument
             $map_callback = yield PsalmApi::$args->getCallArgs($event)
@@ -94,8 +98,16 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             $func_args = yield Option::some($map_callback)
                 ->flatMap(fn(TCallable|TClosure $func) => ArrayList::collect($func->params ?? [])
                     ->zipWithKeys()
-                    ->reindex(fn(array $tuple) => $current_args->is_list ? $tuple[0] : $tuple[1]->name)
-                    ->map(fn(array $tuple) => $tuple[1]->type ?? Type::getMixed())
+                    ->reindex(function(array $kv) use ($current_args_kind) {
+                        return $current_args_kind === MapTapNContextEnum::Shape ? $kv[1]->name : $kv[0];
+                    })
+                    ->map(function(array $kv) use ($current_args_kind) {
+                        $param_type = $kv[1]->type ?? Type::getMixed();
+
+                        return $current_args_kind === MapTapNContextEnum::Shape && $kv[1]->is_optional
+                            ? PsalmApi::$types->asPossiblyUndefined($param_type)
+                            : $param_type;
+                    })
                     ->toNonEmptyArray())
                 ->map(fn(array $types) => new TKeyedArray($types));
 
@@ -103,6 +115,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                 event: $event,
                 func_args: $func_args,
                 current_args: $current_args,
+                kind: $current_args_kind,
                 is_variadic: last($map_callback->params ?? [])
                     ->pluck('is_variadic')
                     ->getOrElse(false),
@@ -114,32 +127,15 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                     ->count(),
             );
 
+            proveFalse($ctx->is_variadic && self::isAssoc($current_args))
+                ->orElse(fn() => self::cannotSafelyCallShapeWithVariadicArg($ctx));
+
             // Assert that $func_args is assignable to $current_args
             proveTrue(self::isTypeContainedByType($ctx))
                 ->orElse(fn() => self::typesAreNotCompatibleIssue($ctx));
-
-            // Change most right template if the mapN/flatMapN was call:
-            //    Option<A>    -> Option<B>
-            //    Either<E, A> -> Either<E, B>
-            //    Map<K, A>    -> Map<K, B>
-            return new Union([
-                new TGenericObject($event->getFqClasslikeName(), self::isMapN($event) || self::isFlatMapN($event)
-                    ? [
-                        ...init($templates),
-                        Option::fromNullable($map_callback->return_type)
-                            ->filter(fn() => self::isFlatMapN($event))
-                            ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                            ->filterOf(TGenericObject::class)
-                            ->flatMap(fn(TGenericObject $generic) => last($generic->type_params))
-                            ->orElse(fn() => Option::fromNullable($map_callback->return_type))
-                            ->getOrCall(fn() => Type::getMixed()),
-                    ]
-                    : $templates,
-                ),
-            ]);
         });
 
-        return $return_type->get();
+        return null;
     }
 
     private static function isSupportedMethod(MethodReturnTypeProviderEvent $event): bool
@@ -153,6 +149,11 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
     private static function isTuple(TKeyedArray $keyed): bool
     {
         return array_is_list($keyed->properties) && $keyed->is_list && $keyed->sealed;
+    }
+
+    private static function isAssoc(TKeyedArray $keyed): bool
+    {
+        return every(keys($keyed->properties), is_string(...));
     }
 
     private static function isMapN(MethodReturnTypeProviderEvent $event): bool
@@ -178,14 +179,30 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
     /**
      * @return Option<never>
      */
-    private static function valueTypeIsNotTupleIssue(MethodReturnTypeProviderEvent $event): Option
+    private static function valueTypeIsNotValidKeyedArrayIssue(MethodReturnTypeProviderEvent $event): Option
     {
         $mappable_class = $event->getFqClasslikeName();
         $source = $event->getSource();
 
         $issue = new IfThisIsMismatch(
-            message: "Value template of class {$mappable_class} must be tuple",
+            message: "Value template of class {$mappable_class} must be tuple (all keys int from 0 to N) or shape (all keys is string)",
             code_location: $event->getCodeLocation(),
+        );
+
+        IssueBuffer::accepts($issue, $source->getSuppressedIssues());
+        return Option::none();
+    }
+
+    /**
+     * @return Option<never>
+     */
+    private static function cannotSafelyCallShapeWithVariadicArg(MapTapNContext $ctx): Option
+    {
+        $source = $ctx->event->getSource();
+
+        $issue = new IfThisIsMismatch(
+            message: 'Shape cannot safely passed to function with variadic parameter.',
+            code_location: $ctx->event->getCodeLocation(),
         );
 
         IssueBuffer::accepts($issue, $source->getSuppressedIssues());
@@ -200,7 +217,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
         $mappable_class = $ctx->event->getFqClasslikeName();
         $source = $ctx->event->getSource();
 
-        $tuned_func_args = self::tuneForOptionalAndVariadicParams($ctx);
+        $tuned_func_args = $ctx->kind->tuneForOptionalAndVariadicParams($ctx);
 
         $issue = new IfThisIsMismatch(
             message: implode(', ', [
@@ -219,56 +236,8 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
         return PsalmApi::$types->isTypeContainedByType(
             new Union([$context->current_args]),
             new Union([
-                self::tuneForOptionalAndVariadicParams($context),
+                $context->kind->tuneForOptionalAndVariadicParams($context),
             ]),
         );
-    }
-
-    private static function tuneForOptionalAndVariadicParams(MapTapNContext $ctx): TKeyedArray
-    {
-        return self::tuneForOptional(
-            func_args: $ctx->is_variadic
-                ? self::tuneForVariadic($ctx->func_args, $ctx->current_args)
-                : $ctx->func_args,
-            drop_length: $ctx->optional_count > 0
-                ? $ctx->required_count + $ctx->optional_count - count($ctx->current_args->properties)
-                : 0,
-        );
-    }
-
-    private static function tuneForOptional(TKeyedArray $func_args, int $drop_length): TKeyedArray
-    {
-        $propsOption = proveNonEmptyList(dropRight($func_args->properties, $drop_length));
-
-        $cloned = clone $func_args;
-        $cloned->properties = $propsOption->getOrElse($cloned->properties);
-
-        return $cloned;
-    }
-
-    private static function tuneForVariadic(TKeyedArray $func_args, TKeyedArray $current_args): TKeyedArray
-    {
-        $func_args_count = count($func_args->properties);
-        $current_args_count = count($current_args->properties);
-
-        $propsOption = match (true) {
-            // There are variadic args: extend type with variadic param type
-            $current_args_count > $func_args_count => last($func_args->properties)
-                ->map(fn($last) => [
-                    ...$func_args->properties,
-                    ...array_fill(0, $current_args_count - $func_args_count, $last),
-                ]),
-
-            // No variadic args: remove variadic param from type
-            $current_args_count < $func_args_count => proveNonEmptyArray(init($func_args->properties)),
-
-            // Exactly one variadic arg: leave as is
-            default => Option::none(),
-        };
-
-        $cloned = clone $func_args;
-        $cloned->properties = $propsOption->getOrElse($cloned->properties);
-
-        return $cloned;
     }
 }

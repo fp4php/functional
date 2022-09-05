@@ -18,6 +18,7 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
 use Generator;
 use Throwable;
 
+use function Fp\Callable\toSafeClosure;
 use function Fp\Evidence\proveOf;
 
 /**
@@ -491,7 +492,7 @@ abstract class Option
     {
         return $this->map(function($tuple) use ($callback): mixed {
             /** @var array $tuple */
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 
@@ -548,7 +549,7 @@ abstract class Option
     {
         return $this->tap(function($tuple) use ($callback) {
             /** @var array $tuple */
-            $callback(...$tuple);
+            toSafeClosure($callback)(...$tuple);
         });
     }
 
@@ -605,7 +606,7 @@ abstract class Option
     {
         return $this->flatMap(function($tuple) use ($callback): Option {
             /** @var array $tuple */
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 
@@ -657,7 +658,7 @@ abstract class Option
     {
         return $this->flatTap(function($tuple) use ($callback): Option {
             /** @var array $tuple */
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 

@@ -13,6 +13,7 @@ use Fp\Streams\Stream;
 use Iterator;
 
 use function Fp\Callable\dropFirstArg;
+use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\asNonEmptyList;
 use function Fp\Cast\fromPairs;
 
@@ -640,7 +641,7 @@ final class NonEmptyHashSet implements NonEmptySet
     {
         return $this->map(function($tuple) use ($callback) {
             /** @var array $tuple */;
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 

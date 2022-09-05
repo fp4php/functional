@@ -39,6 +39,7 @@
         },
         "files": [
             "src/Fp/Functions/Callable/Ctor.php",
+            "src/Fp/Functions/Callable/ToSafeClosure.php",
             "src/Fp/Functions/Callable/DropFirstArg.php",
             "src/Fp/Functions/Callable/Compose.php",
             "src/Fp/Functions/Callable/Partial.php",

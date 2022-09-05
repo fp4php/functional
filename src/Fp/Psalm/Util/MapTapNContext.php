@@ -13,6 +13,7 @@ final class MapTapNContext
         public readonly MethodReturnTypeProviderEvent $event,
         public readonly TKeyedArray $func_args,
         public readonly TKeyedArray $current_args,
+        public readonly MapTapNContextEnum $kind,
         public readonly bool $is_variadic,
         public readonly int $optional_count,
         public readonly int $required_count,

@@ -12,6 +12,7 @@ use Fp\Functional\Separated\Separated;
 use Fp\Functional\WithExtensions;
 use Fp\Streams\Stream;
 
+use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\asList;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asGenerator;
@@ -631,7 +632,7 @@ final class HashMap implements Map
     {
         return $this->map(function($tuple) use ($callback) {
             /** @var array $tuple */;
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 

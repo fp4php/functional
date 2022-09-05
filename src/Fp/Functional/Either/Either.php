@@ -13,6 +13,8 @@ use Fp\Operations\ToStringOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 
+use function Fp\Callable\toSafeClosure;
+
 /**
  * @template-covariant L
  * @template-covariant R
@@ -409,7 +411,7 @@ abstract class Either
     {
         return $this->map(function($tuple) use ($callback): mixed {
             /** @var array $tuple */
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 
@@ -489,7 +491,7 @@ abstract class Either
     {
         return $this->tap(function($tuple) use ($callback) {
             /** @var array $tuple */
-            $callback(...$tuple);
+            toSafeClosure($callback)(...$tuple);
         });
     }
 
@@ -556,7 +558,7 @@ abstract class Either
     {
         return $this->flatMap(function($tuple) use ($callback): Either {
             /** @var array $tuple */
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 
@@ -591,7 +593,7 @@ abstract class Either
     {
         return $this->flatTap(function($tuple) use ($callback) {
             /** @var array $tuple */
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 

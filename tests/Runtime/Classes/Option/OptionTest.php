@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\Option;
 
-use Error;
 use Exception;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Left;
@@ -13,7 +12,6 @@ use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
@@ -78,9 +76,11 @@ final class OptionTest extends TestCase
     {
         $some = Option::some([1, true, false])->mapN(Foo::create(...));
         $someAlso = Option::some([1, true])->mapN(Foo::create(...));
+        $someToo = Option::some(['a' => 1, 'b' => true, 'c' => false])->mapN(Foo::create(...));
 
         $this->assertEquals(Option::some(new Foo(1, true, false)), $some);
         $this->assertEquals(Option::some(new Foo(1, true, true)), $someAlso);
+        $this->assertEquals(Option::some(new Foo(1, true, false)), $someToo);
     }
 
     public function testFlatMap(): void

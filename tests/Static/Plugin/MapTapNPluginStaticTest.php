@@ -205,4 +205,99 @@ final class MapTapNPluginStaticTest
         /** @psalm-suppress IfThisIsMismatch */
         return $args->mapN(self::methodWithVariadicParam(...));
     }
+
+    /**
+     * @param Option<array{a: int, b: bool, c: bool}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllRequiredArgumentsToRegularMethodUsingShape(Option $args): Option
+    {
+        return $args->mapN(self::methodWithRegularParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int, b: bool}> $args
+     * @return Option<Foo>
+     */
+    public static function testForgetToPutOneRequiredArgumentsToRegularMethodUsingShape(Option $args): Option
+    {
+        /** @psalm-suppress IfThisIsMismatch */
+        return $args->mapN(self::methodWithRegularParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int}> $args
+     * @return Option<Foo>
+     */
+    public static function testForgetToPutTwoRequiredArgumentsToRegularMethodUsingShape(Option $args): Option
+    {
+        /** @psalm-suppress IfThisIsMismatch */
+        return $args->mapN(self::methodWithRegularParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int, b: bool, c: string}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllRequiredArgumentsWithOneInvalidArgumentToRegularMethodUsingShape(Option $args): Option
+    {
+        /** @psalm-suppress IfThisIsMismatch */
+        return $args->mapN(self::methodWithRegularParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int, b: string, c: string}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllRequiredArgumentsWithTwoInvalidArgumentToRegularMethodUsingShape(Option $args): Option
+    {
+        /** @psalm-suppress IfThisIsMismatch */
+        return $args->mapN(self::methodWithRegularParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutOnlyRequiredArgumentsToMethodWithOptionalParamsUsingShape(Option $args): Option
+    {
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int, b: bool}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutOneRequiredArgumentAndOneOptionalArgumentToMethodWithOptionalParamsUsingShape(Option $args): Option
+    {
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int, b: bool, c: bool}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutOneRequiredArgumentAndAllOptionalArgumentsToMethodWithOptionalParamsUsingShape(Option $args): Option
+    {
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int, b: bool, c: bool, d: string}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllArgumentsToMethodWithOptionalParamsAndOneUnknownUsingShape(Option $args): Option
+    {
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
+
+    /**
+     * @param Option<array{a: int, b: bool, c: string}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllArgumentsToMethodWithOptionalParamsAndOneInvalidUsingShape(Option $args): Option
+    {
+        /** @psalm-suppress IfThisIsMismatch */
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
 }

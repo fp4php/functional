@@ -14,6 +14,7 @@ use Fp\Streams\Stream;
 use Generator;
 
 use function Fp\Callable\dropFirstArg;
+use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\asGenerator;
 
 /**
@@ -684,7 +685,7 @@ final class NonEmptyHashMap implements NonEmptyMap
     {
         return $this->map(function($tuple) use ($callback) {
             /** @var array $tuple */;
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 

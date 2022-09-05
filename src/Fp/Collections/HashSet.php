@@ -13,6 +13,7 @@ use Fp\Streams\Stream;
 use Iterator;
 
 use function Fp\Callable\dropFirstArg;
+use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
 use function Fp\Cast\fromPairs;
@@ -684,7 +685,7 @@ final class HashSet implements Set
     {
         return $this->map(function($tuple) use ($callback) {
             /** @var array $tuple */;
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 

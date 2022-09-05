@@ -15,6 +15,7 @@ use Fp\Streams\Stream;
 use Iterator;
 
 use function Fp\Callable\dropFirstArg;
+use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\fromPairs;
 use function Fp\Collection\at;
 use function Fp\Collection\keys;
@@ -624,7 +625,7 @@ final class ArrayList implements Seq
     {
         return $this->map(function($tuple) use ($callback) {
             /** @var array $tuple */;
-            return $callback(...$tuple);
+            return toSafeClosure($callback)(...$tuple);
         });
     }
 

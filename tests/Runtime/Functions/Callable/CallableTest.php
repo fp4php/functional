@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Functions\Callable;
 
+use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 
 use Tests\Mock\Baz;
@@ -26,6 +27,10 @@ final class CallableTest extends TestCase
         $this->assertEquals(new Foo(a: 1, b: false, c: true), $fooCtor(1, false));
         $this->assertEquals(new Foo(a: 1, b: false, c: false), $fooCtor(1, false, false));
         $this->assertEquals(new Baz(), $bazCtor());
+        $this->assertEquals(
+            Option::some(new Foo(a: 1, b: true, c: false)),
+            Option::some(['a' => 1, 'b' => true, 'c' => false])->mapN($fooCtor),
+        );
     }
 
     public function testCompose(): void
