@@ -331,4 +331,26 @@ final class EitherTest extends TestCase
         $this->assertEquals(Either::left(1), Either::right(1)->swap());
         $this->assertEquals(Either::right(1), Either::left(1)->swap());
     }
+
+    public function testFilterOrElseToLeft(): void
+    {
+        /** @var Either<string, int> $num */
+        $num = Either::right(9);
+
+        $this->assertEquals(
+            Either::left('Less than 10'),
+            $num->filterOrElse(fn($i) => $i >= 10, fn() => 'Less than 10'),
+        );
+    }
+
+    public function testFilterOrElseToRight(): void
+    {
+        /** @var Either<string, int> $num */
+        $num = Either::right(10);
+
+        $this->assertEquals(
+            Either::right(10),
+            $num->filterOrElse(fn($i) => $i >= 10, fn() => 'Less than 10'),
+        );
+    }
 }

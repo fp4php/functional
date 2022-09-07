@@ -642,5 +642,22 @@ abstract class Either
         );
     }
 
+    /**
+     * @template LO
+     *
+     * @param callable(R): bool $callback
+     * @param callable(): LO $left
+     * @return Either<L|LO, R>
+     */
+    public function filterOrElse(callable $callback, callable $left): Either
+    {
+        return $this->fold(
+            /** @param L $l */
+            fn(mixed $l) => Either::left($l),
+            /** @param R $r */
+            fn(mixed $r) => $callback($r) ? Either::right($r) : Either::left($left()),
+        );
+    }
+
     # endregion Chainable
 }

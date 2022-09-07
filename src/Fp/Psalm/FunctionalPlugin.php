@@ -14,6 +14,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceEitherFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\SequenceOptionFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherFilterOrElseMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
@@ -45,6 +46,7 @@ final class FunctionalPlugin implements PluginEntryPointInterface
         $register(FilterFunctionReturnTypeProvider::class);
         $register(CollectionFilterMethodReturnTypeProvider::class);
         $register(OptionFilterMethodReturnTypeProvider::class);
+        $register(EitherFilterOrElseMethodReturnTypeProvider::class);
 
         $register(ProveTrueExpressionAnalyzer::class);
         $register(EitherGetReturnTypeProvider::class);
