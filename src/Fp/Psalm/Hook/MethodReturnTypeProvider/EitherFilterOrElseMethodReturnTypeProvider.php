@@ -62,13 +62,13 @@ final class EitherFilterOrElseMethodReturnTypeProvider implements MethodReturnTy
     {
         return Type::combineUnionTypes(
             first($event->getTemplateTypeParameters() ?? [])
-                ->getOrCall(fn() => Type::getMixed()),
+                ->getOrCall(fn() => Type::getNever()),
             second($event->getCallArgs())
                 ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                 ->filterOf([TClosure::class, TCallable::class])
                 ->flatMap(fn(TClosure|TCallable $func) => Option::fromNullable($func->return_type))
-                ->getOrCall(fn() => Type::getMixed()),
+                ->getOrCall(fn() => Type::getNever()),
         );
     }
 }
