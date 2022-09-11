@@ -22,6 +22,11 @@ final class HashTable
      */
     public array $table = [];
 
+    public function isEmpty(): bool
+    {
+        return empty($this->table);
+    }
+
     /**
      * @param TK $key
      * @return Option<TV>

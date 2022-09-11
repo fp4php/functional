@@ -42,7 +42,7 @@ final class HashMap implements Map
      */
     public function __construct(private readonly HashTable $hashTable)
     {
-        $this->empty = empty($hashTable->table);
+        $this->empty = $this->hashTable->isEmpty();
     }
 
     /**

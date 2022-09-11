@@ -8,8 +8,11 @@ use Fp\Functional\Either\Either;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function Fp\Collection\atOf;
 use function Fp\Collection\sequenceEither;
+use function Fp\Collection\sequenceEitherAcc;
 use function Fp\Evidence\proveInt;
+use function Fp\Evidence\proveNonEmptyString;
 use function Fp\Evidence\proveString;
 
 final class SequenceEitherPluginStaticTest
@@ -91,6 +94,74 @@ final class SequenceEitherPluginStaticTest
         return sequenceEither([
             fn() => proveString($name)->toRight(fn() => new InvalidArgumentException('Invalid name')),
             fn() => proveInt($age)->toRight(fn() => new RuntimeException('Invalid age')),
+        ]);
+    }
+
+    /**
+     * @param list<Either<string, int>> $list
+     * @return Either<non-empty-list<string>, list<int>>
+     */
+    public function sequenceAccWithList(array $list): Either
+    {
+        return sequenceEitherAcc($list);
+    }
+
+    /**
+     * @param non-empty-list<Either<string, int>> $list
+     * @return Either<non-empty-list<string>, non-empty-list<int>>
+     */
+    public function sequenceAccWithNonEmptyList(array $list): Either
+    {
+        return sequenceEitherAcc($list);
+    }
+
+    /**
+     * @param array<non-empty-string, Either<string, int>> $list
+     * @return Either<non-empty-array<non-empty-string, string>, array<non-empty-string, int>>
+     */
+    public function sequenceAccWithArray(array $list): Either
+    {
+        return sequenceEitherAcc($list);
+    }
+
+    /**
+     * @param non-empty-array<non-empty-string, Either<string, int>> $list
+     * @return Either<non-empty-array<non-empty-string, string>, non-empty-array<non-empty-string, int>>
+     */
+    public function sequenceAccWithNonEmptyArray(array $list): Either
+    {
+        return sequenceEitherAcc($list);
+    }
+
+    /**
+     * @return Either<
+     *     array{
+     *         name?: "Is not non-empty-string",
+     *         age?: "Is not int",
+     *         address?: array{
+     *             postcode?: "Is not int",
+     *             city?: "Is not string"
+     *         }
+     *     },
+     *     array{
+     *         name: non-empty-string,
+     *         age: int,
+     *         address?: array{
+     *             postcode: int,
+     *             city: non-empty-string
+     *         }
+     *     }
+     * >
+     */
+    public function sequenceAccShape(array $data): Either
+    {
+        return sequenceEitherAcc([
+            'name' => atOf(proveNonEmptyString(...), $data, 'name')->toRight(fn() => 'Is not non-empty-string'),
+            'age' => atOf(proveInt(...), $data, 'age')->toRight(fn() => 'Is not int'),
+            'address' => sequenceEitherAcc([
+                'postcode' => atOf(proveInt(...), $data, 'postcode')->toRight(fn() => 'Is not int'),
+                'city' => atOf(proveNonEmptyString(...), $data, 'city')->toRight(fn() => 'Is not string'),
+            ]),
         ]);
     }
 }

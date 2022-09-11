@@ -7,10 +7,12 @@ namespace Fp\Collection;
 use Closure;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Operations\TraverseEitherAccOperation;
 use Fp\Operations\TraverseEitherOperation;
 use Fp\Operations\TraverseOptionOperation;
 
 use function Fp\Cast\asArray;
+use function Fp\Cast\asList;
 
 /**
  * Same as {@see traverseOption()} but use {@see id()} implicitly for $callback.
@@ -51,4 +53,32 @@ function sequenceOption(iterable $collection): Option
 function sequenceEither(iterable $collection): Either
 {
     return TraverseEitherOperation::id($collection)->map(asArray(...));
+}
+
+/**
+ * Same as {@see sequenceEither()} but accumulates all left errors.
+ *
+ * @template E
+ * @template TK of array-key
+ * @template TVI
+ *
+ * @param iterable<TK, Either<E, TVI> | Closure(): Either<E, TVI>> $collection
+ * @return Either<non-empty-array<TK, E>, array<TK, TVI>>
+ * @psalm-return (
+ *    $collection is non-empty-list  ? Either<non-empty-list<E>, non-empty-list<TVI>>           :
+ *    $collection is list            ? Either<non-empty-list<E>, list<TVI>>                     :
+ *    $collection is non-empty-array ? Either<non-empty-array<TK, E>, non-empty-array<TK, TVI>> :
+ *    Either<non-empty-array<TK, E>, array<TK, TVI>>
+ * )
+ */
+function sequenceEitherAcc(iterable $collection): Either
+{
+    return TraverseEitherAccOperation::id($collection)
+        ->mapLeft(function($gen) use ($collection) {
+            /** @var non-empty-array<TK, E> */
+            return is_array($collection) && array_is_list($collection)
+                ? asList($gen)
+                : asArray($gen);
+        })
+        ->map(asArray(...));
 }

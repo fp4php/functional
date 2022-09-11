@@ -7,6 +7,7 @@ namespace Tests\Runtime\Functions\Collection;
 use Fp\Functional\Either\Either;
 use PHPUnit\Framework\TestCase;
 use function Fp\Collection\sequenceEither;
+use function Fp\Collection\sequenceEitherAcc;
 use function Fp\Collection\traverseEither;
 use function Fp\Collection\traverseEitherKV;
 
@@ -87,6 +88,13 @@ final class EitherTraverseTest extends TestCase
                 Either::left('error'),
                 Either::right(1),
             ])
+        );
+
+        $this->assertEquals(
+            Either::left(['err1', 'err2']),
+            sequenceEitherAcc([
+                Either::left('err1'), Either::right('val'), Either::left('err2'),
+            ]),
         );
     }
 }
