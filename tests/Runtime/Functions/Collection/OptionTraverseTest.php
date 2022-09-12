@@ -66,6 +66,11 @@ final class OptionTraverseTest extends TestCase
     public function testSequence(): void
     {
         $this->assertEquals(
+            Option::some([]),
+            sequenceOption([])
+        );
+
+        $this->assertEquals(
             Option::some([1, 2]),
             sequenceOption([
                 Option::some(1),
