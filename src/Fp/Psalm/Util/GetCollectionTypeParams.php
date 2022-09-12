@@ -14,6 +14,7 @@ use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Generator;
 use Psalm\Type;
 use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TArray;
@@ -22,6 +23,7 @@ use Psalm\Type\Atomic\TIterable;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
+
 use function Fp\classOf;
 
 final class GetCollectionTypeParams
@@ -39,7 +41,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     public static function key(Union $union): Option
     {
@@ -47,6 +49,7 @@ final class GetCollectionTypeParams
             $atomic = yield PsalmApi::$types->asSingleAtomic($union);
 
             return yield self::keyFromIterable($atomic)
+                ->orElse(fn() => self::keyFromGenerator($atomic))
                 ->orElse(fn() => self::keyFromArray($atomic))
                 ->orElse(fn() => self::keyFromGenericObject($atomic))
                 ->orElse(fn() => self::keyFromKeyedArray($atomic));
@@ -54,7 +57,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function keyFromIterable(Atomic $atomic): Option
     {
@@ -64,7 +67,18 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
+     */
+    private static function keyFromGenerator(Atomic $atomic): Option
+    {
+        return Option::some($atomic)
+            ->filterOf(TGenericObject::class)
+            ->filter(fn(TGenericObject $generic) => $generic->value === Generator::class)
+            ->map(fn(TGenericObject $generic) => $generic->type_params[0]);
+    }
+
+    /**
+     * @return Option<Union>
      */
     private static function keyFromArray(Atomic $atomic): Option
     {
@@ -74,7 +88,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function keyFromKeyedArray(Atomic $atomic): Option
     {
@@ -84,7 +98,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function keyFromGenericObject(Atomic $atomic): Option
     {
@@ -98,7 +112,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     public static function value(Union $union): Option
     {
@@ -106,6 +120,7 @@ final class GetCollectionTypeParams
             $atomic = yield PsalmApi::$types->asSingleAtomic($union);
 
             return yield self::valueFromIterable($atomic)
+                ->orElse(fn() => self::valueFromGenerator($atomic))
                 ->orElse(fn() => self::valueFromArray($atomic))
                 ->orElse(fn() => self::valueFromList($atomic))
                 ->orElse(fn() => self::valueFromGenericObject($atomic))
@@ -114,7 +129,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function valueFromIterable(Atomic $atomic): Option
     {
@@ -124,7 +139,18 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
+     */
+    private static function valueFromGenerator(Atomic $atomic): Option
+    {
+        return Option::some($atomic)
+            ->filterOf(TGenericObject::class)
+            ->filter(fn(TGenericObject $generic) => $generic->value === Generator::class)
+            ->map(fn(TGenericObject $generic) => $generic->type_params[1]);
+    }
+
+    /**
+     * @return Option<Union>
      */
     private static function valueFromArray(Atomic $atomic): Option
     {
@@ -134,7 +160,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function valueFromList(Atomic $atomic): Option
     {
@@ -144,7 +170,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function valueFromKeyedArray(Atomic $atomic): Option
     {
@@ -154,7 +180,7 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @psalm-return Option<Union>
+     * @return Option<Union>
      */
     private static function valueFromGenericObject(Atomic $atomic): Option
     {
