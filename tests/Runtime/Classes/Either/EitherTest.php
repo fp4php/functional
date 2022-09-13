@@ -15,6 +15,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tests\Mock\Foo;
+use Throwable;
 
 final class EitherTest extends TestCase
 {
@@ -264,6 +265,17 @@ final class EitherTest extends TestCase
 
         $this->assertInstanceOf(Left::class, Either::try(fn() => throw new Exception()));
         $this->assertInstanceOf(Exception::class, Either::try(fn() => throw new Exception())->get());
+    }
+
+    public function testTryWithFallback(): void
+    {
+        $this->assertEquals(
+            Either::left('Error'),
+            Either::try(
+                fn() => throw new Exception('Error'),
+                fn(Throwable $e) => $e->getMessage(),
+            ),
+        );
     }
 
     public function testFold(): void

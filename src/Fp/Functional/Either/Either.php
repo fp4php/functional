@@ -82,19 +82,31 @@ abstract class Either
      *
      * >>> Either::try(fn() => throw new Exception('handled and converted to Left'));
      * => Left(Exception('handled and converted to Left'))
+     *
+     * >>> Either::try(fn() => throw new Exception('handled and converted to Left'), fn(Throwable $e) => $e->getMessage());
+     * => Left('handled and converted to Left')
+     *
+     * >>> Either::try(fn() => throw new Exception(), fn() => 'handled and converted to Left');
+     * => Left('handled and converted to Left')
      * ```
      *
      * @template RO
+     * @template LO
      *
      * @param callable(): RO $callback
-     * @return Either<Throwable, RO>
+     * @param null|(callable(Throwable): LO) $mapLeft
+     * @psalm-return ($mapLeft is null ? Either<Throwable, RO> : Either<LO, RO>)
      */
-    public static function try(callable $callback): Either
+    public static function try(callable $callback, null|callable $mapLeft = null): Either
     {
         try {
             return Either::right($callback());
         } catch (Throwable $exception) {
-            return Either::left($exception);
+            if (null === $mapLeft) {
+                return Either::left($exception);
+            }
+
+            return Either::left($mapLeft($exception));
         }
     }
 
