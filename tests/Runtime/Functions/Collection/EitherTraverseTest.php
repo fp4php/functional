@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use function Fp\Collection\sequenceEither;
 use function Fp\Collection\sequenceEitherAcc;
 use function Fp\Collection\traverseEither;
+use function Fp\Collection\traverseEitherAcc;
 use function Fp\Collection\traverseEitherKV;
 
 final class EitherTraverseTest extends TestCase
@@ -31,6 +32,26 @@ final class EitherTraverseTest extends TestCase
             traverseEither($c, fn(int $v) => $v < 2
                 ? Either::right($v)
                 : Either::left('Is too high'))
+        );
+    }
+
+    public function testTraverseAcc(): void
+    {
+        /** @psalm-var list<int> $c */
+        $c = [1, 2, 3];
+
+        $this->assertEquals(
+            Either::right($c),
+            traverseEitherAcc($c, fn(int $v) => $v <= 3
+                ? Either::right($v)
+                : Either::left('Is too high'))
+        );
+
+        $this->assertEquals(
+            Either::left(['2 is too high', '3 is too high']),
+            traverseEitherAcc($c, fn(int $v) => $v < 2
+                ? Either::right($v)
+                : Either::left("{$v} is too high"))
         );
     }
 
