@@ -261,4 +261,10 @@ final class OptionTest extends TestCase
         $this->assertEquals(ArrayList::collect([1]), Option::some(1)->toArrayList());
         $this->assertEquals(ArrayList::collect([]), Option::none()->toArrayList());
     }
+
+    public function testWhen(): void
+    {
+        $this->assertEquals(Option::some(42), Option::when(true, fn() => 42));
+        $this->assertEquals(Option::none(), Option::when(false, fn() => 42));
+    }
 }

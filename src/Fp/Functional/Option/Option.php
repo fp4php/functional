@@ -85,6 +85,32 @@ abstract class Option
     }
 
     /**
+     * Fabric method.
+     *
+     * ```php
+     * >>> Option::when(true, fn() => 1);
+     * => Some(1)
+     *
+     * >>> Option::when(false, fn() => 1);
+     * => None
+     * ```
+     *
+     * Create {@see Some} from value if given condition is true
+     * Create {@see None} if given condition is false
+     *
+     * @template AI
+     *
+     * @param callable(): AI $callback
+     * @return Option<AI>
+     */
+    public static function when(bool $condition, callable $callback): Option
+    {
+        return $condition
+            ? self::some($callback())
+            : self::none();
+    }
+
+    /**
      * Fabric method which creates Option.
      *
      * Try/catch replacement.

@@ -365,4 +365,10 @@ final class EitherTest extends TestCase
             $num->filterOrElse(fn($i) => $i >= 10, fn() => 'Less than 10'),
         );
     }
+
+    public function testWhen(): void
+    {
+        $this->assertEquals(Either::right(42), Either::when(true, fn() => 42, fn() => 'err'));
+        $this->assertEquals(Either::left('err'), Either::when(false, fn() => 42, fn() => 'err'));
+    }
 }

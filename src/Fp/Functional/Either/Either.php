@@ -72,6 +72,33 @@ abstract class Either
     }
 
     /**
+     * Fabric method.
+     *
+     * ```php
+     * >>> Either::when(true, fn() => 1, fn() => 'err');
+     * => Right(1)
+     *
+     * >>> Either::when(false, fn() => 1, fn() => 'err');
+     * => Left('err')
+     * ```
+     *
+     * Create {@see Right} from value if given condition is true
+     * Create {@see Left} if given condition is false
+     *
+     * @template RO
+     * @template LO
+     *
+     * @param callable(): RO $callback
+     * @return Either<LO, RO>
+     */
+    public static function when(bool $condition, callable $callback, callable $left): Either
+    {
+        return $condition
+            ? self::right($callback())
+            : self::left($left());
+    }
+
+    /**
      * Fabric method which creates Either.
      *
      * Try/catch replacement.
