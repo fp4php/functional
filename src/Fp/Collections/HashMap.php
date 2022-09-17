@@ -778,9 +778,9 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
-     * @return Seq<TK>
+     * @return ArrayList<TK>
      */
-    public function keys(): Seq
+    public function keys(): ArrayList
     {
         return ArrayList::collect(Ops\KeysOperation::of($this->getKeyValueIterator())());
     }
@@ -788,9 +788,9 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
-     * @return Seq<TV>
+     * @return ArrayList<TV>
      */
-    public function values(): Seq
+    public function values(): ArrayList
     {
         return ArrayList::collect(Ops\ValuesOperation::of($this->getKeyValueIterator())());
     }
