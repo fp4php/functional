@@ -7,6 +7,8 @@ namespace Tests\Runtime\Functions\Cast;
 use Fp\Functional\Option\None;
 use PHPUnit\Framework\TestCase;
 
+use Tests\Mock\Baz;
+use Tests\Mock\Foo;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asBool;
@@ -17,6 +19,7 @@ use function Fp\Cast\asNonEmptyArray;
 use function Fp\Cast\asNonEmptyList;
 use function Fp\Cast\asPairs;
 use function Fp\Cast\asPairsGenerator;
+use function Fp\Cast\asString;
 use function Fp\Cast\fromPairs;
 
 final class CastTest extends TestCase
@@ -92,5 +95,13 @@ final class CastTest extends TestCase
         $this->assertEquals([['a', 1], ['b', 2]], asList(asPairsGenerator(['a' => 1, 'b' => 2])));
         $this->assertEquals([['a', 1], ['b', 2]], asPairs(['a' => 1, 'b' => 2]));
         $this->assertEquals(['a' => 1, 'b' => 2], fromPairs([['a', 1], ['b', 2]]));
+    }
+
+    public function testAsString(): void
+    {
+        $this->assertEquals('1', asString('1')->get());
+        $this->assertEquals('1', asString(1)->get());
+        $this->assertEquals('Baz()', asString(new Baz())->get());
+        $this->assertEquals(null, asString(new Foo(a: 42))->get());
     }
 }
