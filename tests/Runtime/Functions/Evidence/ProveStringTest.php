@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Functions\Evidence;
 
+use Fp\Collections\ArrayList;
+use Fp\Collections\Collection;
 use Fp\Functional\Option\None;
+use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use PHPUnit\Framework\TestCase;
 
@@ -12,6 +15,7 @@ use Tests\Mock\Foo;
 
 use function Fp\Evidence\proveCallableString;
 use function Fp\Evidence\proveClassString;
+use function Fp\Evidence\proveClassStringOf;
 use function Fp\Evidence\proveNonEmptyString;
 use function Fp\Evidence\proveString;
 
@@ -48,5 +52,11 @@ final class ProveStringTest extends TestCase
     {
         $this->assertInstanceOf(Some::class, proveNonEmptyString('string'));
         $this->assertInstanceOf(None::class, proveNonEmptyString(''));
+    }
+
+    public function testProveClassStringOf(): void
+    {
+        $this->assertInstanceOf(Some::class, proveClassStringOf(ArrayList::class, Collection::class));
+        $this->assertInstanceOf(None::class, proveClassStringOf(Option::class, Collection::class));
     }
 }

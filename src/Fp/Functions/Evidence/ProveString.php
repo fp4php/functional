@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Evidence;
 
 use Fp\Functional\Option\Option;
+use function Fp\classOf;
 
 /**
  * Prove that subject is of string type
@@ -40,6 +41,27 @@ function proveString(mixed $potential): Option
 function proveClassString(mixed $potential): Option
 {
     return proveString($potential)->filter(fn($fqcn) => class_exists($fqcn) || interface_exists($fqcn));
+}
+
+/**
+ * Prove that subject is of class-string<TVO> type
+ *
+ * ```php
+ * >>> proveClassStringOf(ArrayList::class, Collection::class)
+ * => Some(ArrayList::class)
+ * >>> proveClassStringOf(Option::class, Collection::class)
+ * => None
+ *
+ * ```
+ *
+ * @template TVO
+ *
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+ * @return Option<class-string<TVO>>
+ */
+function proveClassStringOf(mixed $potential, string|array $fqcn, bool $invariant = false): Option
+{
+    return proveClassString($potential)->filter(fn($class) => classOf($class, $fqcn, $invariant));
 }
 
 /**
