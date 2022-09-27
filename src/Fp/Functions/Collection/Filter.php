@@ -25,12 +25,12 @@ use function Fp\Cast\asList;
  *
  * @template TK of array-key
  * @template TV
- * @template TP of bool
  *
  * @param iterable<TK, TV> $collection
  * @param callable(TV): bool $predicate
- * @param TP $preserveKeys
- * @return (TP is true ? array<TK, TV> : list<TV>)
+ * @return array<TK, TV>
+ *
+ * @psalm-return ($preserveKeys is true ? array<TK, TV> : list<TV>)
  */
 function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
@@ -47,12 +47,12 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  *
  * @template TK of array-key
  * @template TV
- * @template TP of bool
  *
  * @param iterable<TK, TV> $collection
  * @param callable(TK, TV): bool $predicate
- * @param TP $preserveKeys
- * @return (TP is true ? array<TK, TV> : list<TV>)
+ * @return array<TK, TV>
+ *
+ * @psalm-return ($preserveKeys is true ? array<TK, TV> : list<TV>)
  */
 function filterKV(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
@@ -76,8 +76,9 @@ function filterKV(iterable $collection, callable $predicate, bool $preserveKeys 
  * @template TP of bool
  *
  * @param iterable<TK, TV|null> $collection
- * @param TP $preserveKeys
- * @return (TP is true ? array<TK, TV> : list<TV>)
+ * @return array<TK, TV>
+ *
+ * @psalm-return ($preserveKeys is true ? array<TK, TV> : list<TV>)
  */
 function filterNotNull(iterable $collection, bool $preserveKeys = false): array
 {
@@ -98,13 +99,13 @@ function filterNotNull(iterable $collection, bool $preserveKeys = false): array
  *
  * @template TK of array-key
  * @template TV
- * @template TP of bool
  * @template TVO
  *
  * @param iterable<TK, TV> $collection
  * @param class-string<TVO>|list<class-string<TVO>> $fqcn
- * @param TP $preserveKeys
- * @return (TP is true ? array<TK, TVO> : list<TVO>)
+ * @return array<TK, TVO>
+ *
+ * @psalm-return ($preserveKeys is true ? array<TK, TVO> : list<TVO>)
  */
 function filterOf(iterable $collection, string|array $fqcn, bool $preserveKeys = false, bool $invariant = false): array
 {
@@ -128,13 +129,13 @@ function filterOf(iterable $collection, string|array $fqcn, bool $preserveKeys =
  *
  * @template TK of array-key
  * @template TV
- * @template TP of bool
  * @template TVO
  *
  * @param iterable<TK, TV> $collection
  * @param callable(TV): Option<TVO> $predicate
- * @param TP $preserveKeys
- * @return (TP is true ? array<TK, TVO> : list<TVO>)
+ * @return array<TK, TVO>
+ *
+ * @psalm-return ($preserveKeys is true ? array<TK, TVO> : list<TVO>)
  */
 function filterMap(iterable $collection, callable $predicate, bool $preserveKeys = false): array
 {
