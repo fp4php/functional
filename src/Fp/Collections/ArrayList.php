@@ -888,6 +888,17 @@ final class ArrayList implements Seq
 
     /**
      * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return ArrayList<TV>
+     */
+    public function uniqueBy(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\UniqueByOperation::of($this->getIterator())($callback));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {

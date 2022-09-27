@@ -1061,4 +1061,26 @@ final class SeqOpsTest extends TestCase
     {
         $this->assertEquals($option, $seq->minBy(fn(Foo $foo) => $foo->a));
     }
+
+    public function provideUniqBy(): Generator
+    {
+        yield ArrayList::class => [
+            ArrayList::collect([['n' => 1], ['n' => 1], ['n' => 2]]),
+            ArrayList::collect([['n' => 1], ['n' => 2]]),
+        ];
+        yield LinkedList::class => [
+            LinkedList::collect([['n' => 1], ['n' => 1], ['n' => 2]]),
+            LinkedList::collect([['n' => 1], ['n' => 2]]),
+        ];
+    }
+
+    /**
+     * @param Seq<array{n: int}> $actual
+     * @param Seq<array{n: int}> $expected
+     * @dataProvider provideUniqBy
+     */
+    public function testUniqBy(Seq $actual, Seq $expected): void
+    {
+        $this->assertEquals($expected, $actual->uniqueBy(fn(array $x) => $x['n']));
+    }
 }

@@ -899,6 +899,17 @@ abstract class LinkedList implements Seq
 
     /**
      * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return LinkedList<TV>
+     */
+    public function uniqueBy(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\UniqueByOperation::of($this->getIterator())($callback));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {

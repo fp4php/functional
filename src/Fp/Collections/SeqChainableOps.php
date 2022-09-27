@@ -396,4 +396,15 @@ interface SeqChainableOps
      * @return Seq<array{int, TV}>
      */
     public function zipWithKeys(): Seq;
+
+    /**
+     * ```php
+     * >>> ArrayList::collect([['n' => 1], ['n' => 1], ['n' => 2]])->uniqueBy(fn($x) => $x['n'])
+     * => ArrayList(['n' => 1], ['n' => 2])
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Seq<TV>
+     */
+    public function uniqueBy(callable $callback): Seq;
 }
