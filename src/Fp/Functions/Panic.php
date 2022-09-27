@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Fp;
 
-use Closure;
 use RuntimeException;
 
 /**
- * @return Closure(): never
+ * @return empty
  */
-function panic(string $message, float|int|string ...$args): Closure
+function panic(string $message, float|int|string ...$args): mixed
 {
-    return fn() => throw new RuntimeException(sprintf($message, ...$args));
+    throw new RuntimeException(sprintf($message, ...$args));
 }

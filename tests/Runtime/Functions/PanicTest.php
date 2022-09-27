@@ -16,7 +16,7 @@ final class PanicTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Critical system error');
 
-        panic('Critical system error')();
+        panic('Critical system error');
     }
 
     public function testPanicInterpolation(): void
@@ -24,6 +24,6 @@ final class PanicTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Critical system error: 42');
 
-        panic('Critical system error: %s', 42)();
+        panic('Critical system error: %s', 42);
     }
 }
