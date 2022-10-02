@@ -10,6 +10,7 @@ use Fp\Operations\FilterNotNullOperation;
 use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
 
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterNotNullFunctionReturnTypeProvider;
 use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
@@ -63,8 +64,7 @@ function filterKV(iterable $collection, callable $predicate, bool $preserveKeys 
 }
 
 /**
- * Filter not null elements
- * Do not preserve keys by default
+ * Filter not null elements.
  *
  * ```php
  * >>> filterNotNull([1, null, 2]);
@@ -73,19 +73,20 @@ function filterKV(iterable $collection, callable $predicate, bool $preserveKeys 
  *
  * @template TK of array-key
  * @template TV
- * @template TP of bool
  *
  * @param iterable<TK, TV|null> $collection
  * @return array<TK, TV>
  *
- * @psalm-return ($preserveKeys is true ? array<TK, TV> : list<TV>)
+ * @psalm-return ($collection is list<TV|null> ? list<TV> : array<TK, TV>)
+ * @see FilterNotNullFunctionReturnTypeProvider
  */
-function filterNotNull(iterable $collection, bool $preserveKeys = false): array
+function filterNotNull(iterable $collection): array
 {
     $gen = FilterNotNullOperation::of($collection)();
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
+
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }
 
 /**

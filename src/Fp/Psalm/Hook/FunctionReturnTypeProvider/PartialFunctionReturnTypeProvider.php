@@ -18,6 +18,7 @@ use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
 
+use function Fp\Cast\asList;
 use function Fp\Collection\filterNotNull;
 use function Fp\Collection\head;
 use function Fp\Collection\map;
@@ -42,7 +43,7 @@ final class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProvi
                 $head_arg_type->getClosureTypes(),
                 $head_arg_type->getCallableTypes(),
                 filterNotNull(map(
-                    collection: $head_arg_type->getAtomicTypes(),
+                    collection: asList($head_arg_type->getAtomicTypes()),
                     callback: fn(Atomic $atomic) => CallableTypeComparator::getCallableFromAtomic(
                         codebase: $event->getStatementsSource()->getCodebase(),
                         input_type_part: $atomic

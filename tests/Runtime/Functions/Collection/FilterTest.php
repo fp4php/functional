@@ -57,13 +57,13 @@ final class FilterTest extends TestCase
     public function testFilterNotNull(): void
     {
         $this->assertEquals(
-            [0 => 1, 1 => 2, 2 => 3, 4 => 4, 5 => 5, 7 => 6],
-            filterNotNull([1, 2, 3, null, 4, 5, null, 6], true)
+            [1, 2, 3, 4, 5, 6],
+            filterNotNull([1, 2, 3, null, 4, 5, null, 6])
         );
 
         $this->assertEquals(
-            [1, 2, 3, 4, 5, 6],
-            filterNotNull([1, 2, 3, null, 4, 5, null, 6], false)
+            ['fst' => 1, 'snd' => 2],
+            filterNotNull(['fst' => 1, 'snd' => 2, 'thr' => null]),
         );
     }
 

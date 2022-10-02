@@ -7,6 +7,7 @@ namespace Fp\Psalm;
 use Fp\Psalm\Hook\AfterExpressionAnalysis\ProveTrueExpressionAnalyzer;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\CtorFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterNotNullFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FoldFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider;
@@ -57,6 +58,7 @@ final class FunctionalPlugin implements PluginEntryPointInterface
         $register(SequenceEitherFunctionReturnTypeProvider::class);
         $register(SequenceEitherAccFunctionReturnTypeProvider::class);
 
+        $register(FilterNotNullFunctionReturnTypeProvider::class);
         $register(FoldFunctionReturnTypeProvider::class);
         $register(FoldMethodReturnTypeProvider::class);
         $register(MapTapNMethodReturnTypeProvider::class);
