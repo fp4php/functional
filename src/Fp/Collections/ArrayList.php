@@ -77,7 +77,7 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @return ArrayList<never>
+     * @return ArrayList<empty>
      */
     public static function empty(): ArrayList
     {

@@ -41,7 +41,7 @@ interface SeqCollector
      * => []
      * ```
      *
-     * @return Seq<never>
+     * @return Seq<empty>
      */
     public static function empty(): Seq;
 

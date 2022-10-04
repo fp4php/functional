@@ -72,7 +72,7 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @return LinkedList<never>
+     * @return LinkedList<empty>
      */
     public static function empty(): LinkedList
     {
