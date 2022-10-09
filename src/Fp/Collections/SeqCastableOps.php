@@ -185,10 +185,9 @@ interface SeqCastableOps
      *
      * @template TKO of array-key
      * @template TVO
-     * @template TArray of array<TKO, TVO>
-     * @psalm-if-this-is Seq<TArray>
+     * @psalm-if-this-is Seq<array<TKO, TVO>>
      *
-     * @return TArray
+     * @return array<TKO, TVO>
      */
     public function toMergedArray(): array;
 }

@@ -922,14 +922,12 @@ abstract class LinkedList implements Seq
      *
      * @template TKO of array-key
      * @template TVO
-     * @template TArray of array<TKO, TVO>
-     * @psalm-if-this-is LinkedList<TArray>
+     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
      *
-     * @return TArray
+     * @return array<TKO, TVO>
      */
     public function toMergedArray(): array
     {
-        /** @var TArray */
         return array_merge(...$this->toList());
     }
 
