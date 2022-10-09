@@ -14,6 +14,7 @@ use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
+use Psalm\Type\Atomic\TArray;
 use function Fp\Callable\dropFirstArg;
 use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\fromPairs;
@@ -903,6 +904,22 @@ final class ArrayList implements Seq
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
         return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is ArrayList<TArray>
+     *
+     * @return TArray
+     */
+    public function toMergedArray(): array
+    {
+        /** @var TArray */
+        return array_merge(...$this->toList());
     }
 
     /**

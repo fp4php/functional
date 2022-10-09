@@ -174,4 +174,21 @@ interface SeqCastableOps
      * @return Stream<TV>
      */
     public function toStream(): Stream;
+
+    /**
+     * If each element of ArrayList is array then call of this method will fold all to the one array.
+     *
+     * ```php
+     * >>> ArrayList::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is Seq<TArray>
+     *
+     * @return TArray
+     */
+    public function toMergedArray(): array;
 }

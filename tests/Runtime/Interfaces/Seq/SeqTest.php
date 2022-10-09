@@ -223,6 +223,37 @@ final class SeqTest extends TestCase
     }
 
     /**
+     * @param Seq<array<array-key, mixed>> $seq
+     * @param array<array-key, mixed> $expected
+     *
+     * @dataProvider provideTestDataForCastToMergedArray
+     */
+    public function testCastToMergedArray(Seq $seq, array $expected): void
+    {
+        $this->assertEquals($expected, $seq->toMergedArray());
+    }
+
+    public function provideTestDataForCastToMergedArray(): array
+    {
+        $shapes = [
+            ['fst' => 1],
+            ['snd' => 2],
+            ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        return [
+            ArrayList::class => [ArrayList::collect($shapes), $expected],
+            LinkedList::class => [LinkedList::collect($shapes), $expected],
+        ];
+    }
+
+    /**
      * @dataProvider provideTestCastsData
      */
     public function testCount(Seq $seq): void
