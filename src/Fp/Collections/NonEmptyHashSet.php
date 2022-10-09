@@ -256,6 +256,21 @@ final class NonEmptyHashSet implements NonEmptySet
 
     /**
      * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashSet<array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toMergedArray(): array
+    {
+        /** @var non-empty-array<TKO, TVO> */
+        return array_merge(...$this->toNonEmptyList());
+    }
+
+    /**
+     * {@inheritDoc}
      * @param TV $element
      */
     public function __invoke(mixed $element): bool

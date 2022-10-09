@@ -148,4 +148,21 @@ final class SetTest extends TestCase
     {
         $this->assertCount(3, HashSet::collect([1, 2, 3]));
     }
+
+    public function testToMergedArray(): void
+    {
+        $shapes = [
+            ['fst' => 1],
+            ['snd' => 2],
+            ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        $this->assertEquals($expected, HashSet::collect($shapes)->toMergedArray());
+    }
 }

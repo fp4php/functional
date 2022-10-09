@@ -161,4 +161,20 @@ interface NonEmptySeqCastableOps
      * @return Stream<TV>
      */
     public function toStream(): Stream;
+
+    /**
+     * If each element of NonEmptySeq is array then call of this method will fold all to the one array.
+     *
+     * ```php
+     * >>> NonEmptyArrayList::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySeq<array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toMergedArray(): array;
 }

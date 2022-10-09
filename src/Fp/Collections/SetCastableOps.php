@@ -174,4 +174,20 @@ interface SetCastableOps
      * @return Stream<TV>
      */
     public function toStream(): Stream;
+
+    /**
+     * If each element of Set is array then call of this method will fold all to the one array.
+     *
+     * ```php
+     * >>> HashSet::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Set<array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array;
 }

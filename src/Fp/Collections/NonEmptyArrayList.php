@@ -856,6 +856,21 @@ final class NonEmptyArrayList implements NonEmptySeq
         return Stream::emits($this);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyArrayList<array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toMergedArray(): array
+    {
+        /** @var non-empty-array<TKO, TVO> */
+        return array_merge(...$this->toNonEmptyList());
+    }
+
     public function toString(): string
     {
         return (string) $this;

@@ -176,7 +176,7 @@ interface SeqCastableOps
     public function toStream(): Stream;
 
     /**
-     * If each element of ArrayList is array then call of this method will fold all to the one array.
+     * If each element of Seq is array then call of this method will fold all to the one array.
      *
      * ```php
      * >>> ArrayList::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()

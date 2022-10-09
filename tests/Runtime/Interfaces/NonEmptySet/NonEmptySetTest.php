@@ -182,4 +182,21 @@ final class NonEmptySetTest extends TestCase
             $neSet->minBy(fn(Foo $obj) => $obj->a),
         );
     }
+
+    public function testToMergedArray(): void
+    {
+        $shapes = [
+            ['fst' => 1],
+            ['snd' => 2],
+            ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        $this->assertEquals($expected, NonEmptyHashSet::collectNonEmpty($shapes)->toMergedArray());
+    }
 }
