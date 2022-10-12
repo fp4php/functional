@@ -23,6 +23,12 @@ final class FirstTest extends TestCase
         $this->assertEquals(2, first($c, fn(int $v) => $v === 2)->get());
     }
 
+    public function testFirstNull(): void
+    {
+        $c = [null, 2, 3];
+        $this->assertEquals(Option::some(null), first($c));
+    }
+
     public function testFirstKV(): void
     {
         /** @var array<string, int> $c */

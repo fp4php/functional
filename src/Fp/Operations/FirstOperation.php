@@ -24,15 +24,12 @@ final class FirstOperation extends AbstractOperation
             $f = fn(mixed $_key, mixed $value): bool => true;
         }
 
-        $first = null;
-
         foreach ($this->gen as $key => $value) {
             if ($f($key, $value)) {
-                $first = $value;
-                break;
+                return Option::some($value);
             }
         }
 
-        return Option::fromNullable($first);
+        return Option::none();
     }
 }
