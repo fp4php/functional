@@ -863,12 +863,25 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TVO
      * @psalm-if-this-is NonEmptyArrayList<array<TKO, TVO>>
      *
-     * @return non-empty-array<TKO, TVO>
+     * @return array<TKO, TVO>
      */
     public function toMergedArray(): array
     {
-        /** @var non-empty-array<TKO, TVO> */
-        return array_merge(...$this->toNonEmptyList());
+        return $this->arrayList->toMergedArray();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyArrayList<array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyMergedArray(): array
+    {
+        return $this->arrayList->toNonEmptyMergedArray()->getUnsafe();
     }
 
     public function toString(): string

@@ -165,4 +165,22 @@ final class SetTest extends TestCase
 
         $this->assertEquals($expected, HashSet::collect($shapes)->toMergedArray());
     }
+
+    public function testToNonEmptyMergedArray(): void
+    {
+        $shapes = [
+            ['fst' => 1],
+            ['snd' => 2],
+            ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        $this->assertEquals(Option::some($expected), HashSet::collect($shapes)->toNonEmptyMergedArray());
+        $this->assertEquals(Option::none(), HashSet::empty()->toNonEmptyMergedArray());
+    }
 }

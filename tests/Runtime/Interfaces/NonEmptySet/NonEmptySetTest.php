@@ -199,4 +199,21 @@ final class NonEmptySetTest extends TestCase
 
         $this->assertEquals($expected, NonEmptyHashSet::collectNonEmpty($shapes)->toMergedArray());
     }
+
+    public function testToNonEmptyMergedArray(): void
+    {
+        $shapes = [
+            ['fst' => 1],
+            ['snd' => 2],
+            ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        $this->assertEquals($expected, NonEmptyHashSet::collectNonEmpty($shapes)->toNonEmptyMergedArray());
+    }
 }

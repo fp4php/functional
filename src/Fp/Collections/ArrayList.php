@@ -14,7 +14,6 @@ use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use Psalm\Type\Atomic\TArray;
 use function Fp\Callable\dropFirstArg;
 use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\fromPairs;
@@ -918,6 +917,20 @@ final class ArrayList implements Seq
     public function toMergedArray(): array
     {
         return array_merge(...$this->toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is ArrayList<array<TKO, TVO>>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyMergedArray(): Option
+    {
+        return proveNonEmptyArray($this->toMergedArray());
     }
 
     /**

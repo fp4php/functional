@@ -163,7 +163,23 @@ interface NonEmptySetCastableOps
     public function toStream(): Stream;
 
     /**
-     * If each element of NonEmptySet is array then call of this method will fold all to the one array.
+     * If each element of the collection is an associative array then call of this method will fold all elements to one associative array.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array;
+
+    /**
+     * Non-empty version of {@see NonEmptySetCastableOps::toMergedArray()}.
      *
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
@@ -176,5 +192,5 @@ interface NonEmptySetCastableOps
      *
      * @return non-empty-array<TKO, TVO>
      */
-    public function toMergedArray(): array;
+    public function toNonEmptyMergedArray(): array;
 }

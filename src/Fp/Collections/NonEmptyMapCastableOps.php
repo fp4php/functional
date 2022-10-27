@@ -143,6 +143,38 @@ interface NonEmptyMapCastableOps
     public function toNonEmptyHashMap(): NonEmptyHashMap;
 
     /**
+     * If each element of the collection is an associative array then call of this method will fold all elements to one associative array.
+     *
+     * ```php
+     * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TK, array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array;
+
+    /**
+     * Non-empty version of {@see NonEmptyMapCastableOps::toMergedArray()}.
+     *
+     * ```php
+     * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toNonEmptyMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TK, array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyMergedArray(): array;
+
+    /**
      * ```php
      * >>> NonEmptyHashMap::collectPairsNonEmpty([['fst', 1], ['snd', 2], ['thr', 3]])
      * >>>     ->toStream()

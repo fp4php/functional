@@ -208,4 +208,39 @@ final class MapTest extends TestCase
     {
         $this->assertEquals(2, HashMap::collectPairs([[1, 1], [2, 2]])->count());
     }
+
+    public function testToMergedArray(): void
+    {
+        $shapes = [
+            'f' => ['fst' => 1],
+            's' => ['snd' => 2],
+            't' => ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        $this->assertEquals($expected, HashMap::collect($shapes)->toMergedArray());
+    }
+
+    public function testToNonEmptyMergedArray(): void
+    {
+        $shapes = [
+            'f' => ['fst' => 1],
+            's' => ['snd' => 2],
+            't' => ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        $this->assertEquals(Option::some($expected), HashMap::collect($shapes)->toNonEmptyMergedArray());
+        $this->assertEquals(Option::none(), HashMap::empty()->toNonEmptyMergedArray());
+    }
 }

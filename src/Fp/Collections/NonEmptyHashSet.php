@@ -261,12 +261,25 @@ final class NonEmptyHashSet implements NonEmptySet
      * @template TVO
      * @psalm-if-this-is NonEmptyHashSet<array<TKO, TVO>>
      *
-     * @return non-empty-array<TKO, TVO>
+     * @return array<TKO, TVO>
      */
     public function toMergedArray(): array
     {
-        /** @var non-empty-array<TKO, TVO> */
-        return array_merge(...$this->toNonEmptyList());
+        return $this->set->toMergedArray();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashSet<array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyMergedArray(): array
+    {
+        return $this->set->toNonEmptyMergedArray()->getUnsafe();
     }
 
     /**

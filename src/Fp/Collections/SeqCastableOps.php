@@ -176,7 +176,7 @@ interface SeqCastableOps
     public function toStream(): Stream;
 
     /**
-     * If each element of Seq is array then call of this method will fold all to the one array.
+     * If each element of the collection is an associative array then call of this method will fold all elements to one associative array.
      *
      * ```php
      * >>> ArrayList::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
@@ -190,4 +190,22 @@ interface SeqCastableOps
      * @return array<TKO, TVO>
      */
     public function toMergedArray(): array;
+
+    /**
+     * Non-empty version of {@see SeqCastableOps::toMergedArray()}.
+     *
+     * ```php
+     * >>> ArrayList::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toNonEmptyMergedArray()
+     * => Some(['fst' => 1, 'snd' => 2, 'thr' => 3])
+     * >>> ArrayList::collect([])->toNonEmptyMergedArray()
+     * => None
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Seq<array<TKO, TVO>>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyMergedArray(): Option;
 }

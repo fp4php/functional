@@ -261,6 +261,34 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is HashMap<TK, array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array
+    {
+        return array_merge(...$this->values()->toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is HashMap<TK, array<TKO, TVO>>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyMergedArray(): Option
+    {
+        return proveNonEmptyArray($this->toMergedArray());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return Stream<array{TK, TV}>
      */
     public function toStream(): Stream

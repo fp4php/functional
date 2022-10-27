@@ -253,6 +253,39 @@ final class SeqTest extends TestCase
         ];
     }
 
+    public function provideTestDataForCastToNonEmptyMergedArray(): array
+    {
+        $shapes = [
+            ['fst' => 1],
+            ['snd' => 2],
+            ['thr' => 3],
+        ];
+
+        $expected = [
+            'fst' => 1,
+            'snd' => 2,
+            'thr' => 3,
+        ];
+
+        return [
+            ArrayList::class . '-empty' => [ArrayList::empty(), Option::none()],
+            ArrayList::class . '-non-empty' => [ArrayList::collect($shapes), Option::some($expected)],
+            LinkedList::class . '-empty' => [LinkedList::empty(), Option::none()],
+            LinkedList::class . '-non-empty' => [LinkedList::collect($shapes), Option::some($expected)],
+        ];
+    }
+
+    /**
+     * @param Seq<array<array-key, mixed>> $seq
+     * @param Option<array<array-key, mixed>> $expected
+     *
+     * @dataProvider provideTestDataForCastToNonEmptyMergedArray
+     */
+    public function testCastToNonEmptyMergedArray(Seq $seq, Option $expected): void
+    {
+        $this->assertEquals($expected, $seq->toNonEmptyMergedArray());
+    }
+
     /**
      * @dataProvider provideTestCastsData
      */

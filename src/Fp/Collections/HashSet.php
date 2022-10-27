@@ -257,6 +257,20 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is HashSet<array<TKO, TVO>>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyMergedArray(): Option
+    {
+        return proveNonEmptyArray($this->toMergedArray());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param TV $element
      */
     public function __invoke(mixed $element): bool

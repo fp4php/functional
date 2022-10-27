@@ -295,6 +295,34 @@ final class NonEmptyHashMap implements NonEmptyMap
     /**
      * {@inheritDoc}
      *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array
+    {
+        return $this->hashMap->toMergedArray();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyMergedArray(): array
+    {
+        return $this->hashMap->toNonEmptyMergedArray()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return Stream<array{TK, TV}>
      */
     public function toStream(): Stream

@@ -934,6 +934,20 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyMergedArray(): Option
+    {
+        return proveNonEmptyArray($this->toMergedArray());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return Option<TV>
      */
     public function max(): Option
