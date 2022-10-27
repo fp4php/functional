@@ -586,6 +586,18 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
+     * @template TKO
+     * @template TVO
+     *
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @return NonEmptyHashMap<TK|TKO, TV|TVO>
+     */
+    public function merge(Map|NonEmptyMap $map): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->merge($map));
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param callable(TV): bool $predicate

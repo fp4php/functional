@@ -335,4 +335,12 @@ final class NonEmptyMapOpsTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testMerge(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2, 'c' => 3]),
+            NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 3])->merge(HashMap::collect(['b' => 2, 'c' => 3])),
+        );
+    }
 }

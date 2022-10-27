@@ -157,7 +157,7 @@ final class MapOpsTest extends TestCase
         $this->assertEquals(
             [['b', 1], ['c', 2]],
             HashMap::collectPairs([['a', 'zero'], ['b', '1'], ['c', '2']])
-                ->filterMap(fn($val) => is_numeric($val) ? Option::some((int) $val) : Option::none())
+                ->filterMap(fn($val) => is_numeric($val) ? Option::some((int)$val) : Option::none())
                 ->toList()
         );
     }
@@ -201,7 +201,7 @@ final class MapOpsTest extends TestCase
 
         $this->assertEquals(
             [['2', 20], ['5', 5]],
-            $hm->flatMap(fn($val) => [['2', 20], [(string) $val, $val]])->toList()
+            $hm->flatMap(fn($val) => [['2', 20], [(string)$val, $val]])->toList()
         );
     }
 
@@ -368,6 +368,14 @@ final class MapOpsTest extends TestCase
         $this->assertEquals(
             [22, 33],
             $hm->values()->toList()
+        );
+    }
+
+    public function testMerge(): void
+    {
+        $this->assertEquals(
+            HashMap::collect(['a' => 1, 'b' => 2, 'c' => 3]),
+            HashMap::collect(['a' => 1, 'b' => 3])->merge(HashMap::collect(['b' => 2, 'c' => 3])),
         );
     }
 }

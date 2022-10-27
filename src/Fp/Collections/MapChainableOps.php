@@ -47,6 +47,22 @@ interface MapChainableOps
     public function removed(mixed $key): Map;
 
     /**
+     * Fold two maps into one.
+     *
+     * ```php
+     *  >>> HashMap::collect(['a' => 1, 'b' => 3])->merge(HashMap::collect(['b' => 2, 'c' => 3]));
+     * => HashMap('a' => 1, 'b' => 2, 'c' => 3)
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @return HashMap<TK|TKO, TV|TVO>
+     */
+    public function merge(Map|NonEmptyMap $map): HashMap;
+
+    /**
      * Filter collection by condition
      *
      * ```php

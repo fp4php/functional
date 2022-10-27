@@ -306,6 +306,22 @@ interface NonEmptyMapTerminalOps
     public function removed(mixed $key): Map;
 
     /**
+     * Fold two maps into one.
+     *
+     * ```php
+     *  >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 3])->merge(HashMap::collect(['b' => 2, 'c' => 3]));
+     * => HashMap('a' => 1, 'b' => 2, 'c' => 3)
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @return NonEmptyHashMap<TK|TKO, TV|TVO>
+     */
+    public function merge(Map|NonEmptyMap $map): NonEmptyMap;
+
+    /**
      * Filter collection by condition
      *
      * ```php
