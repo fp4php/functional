@@ -9,6 +9,7 @@ use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
 use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 use function Fp\id;
 
 /**
@@ -63,6 +64,15 @@ interface SeqTerminalOps
     public function every(callable $predicate): bool;
 
     /**
+     * Same as {@see SeqTerminalOps::every()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): bool $predicate
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function everyN(callable $predicate): bool;
+
+    /**
      * Returns true if every collection element is of given class
      * false otherwise
      *
@@ -100,6 +110,18 @@ interface SeqTerminalOps
      * @return Option<Seq<TVO>>
      */
     public function traverseOption(callable $callback): Option;
+
+    /**
+     * Same as {@see SeqTerminalOps::traverseOption()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<Seq<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseOptionN(callable $callback): Option;
 
     /**
      * Same as {@see SeqTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.
@@ -141,6 +163,19 @@ interface SeqTerminalOps
     public function traverseEither(callable $callback): Either;
 
     /**
+     * Same as {@see SeqTerminalOps::traverseEither()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, Seq<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseEitherN(callable $callback): Either;
+
+    /**
      * Same as {@see SeqTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
      *
      * ```php
@@ -175,6 +210,16 @@ interface SeqTerminalOps
     public function partition(callable $predicate): Separated;
 
     /**
+     * Same as {@see SeqTerminalOps::partition()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<Seq<TV>, Seq<TV>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function partitionN(callable $predicate): Separated;
+
+    /**
      * Similar to {@see SeqTerminalOps::partition()} but uses {@see Either} instead of bool.
      * So the output types LO/RO can be different from the input type TV.
      * If $callback returns Right then item gonna to right.
@@ -193,6 +238,19 @@ interface SeqTerminalOps
      * @return Separated<Seq<LO>, Seq<RO>>
      */
     public function partitionMap(callable $callback): Separated;
+
+    /**
+     * Same as {@see SeqTerminalOps::partitionMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<Seq<LO>, Seq<RO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function partitionMapN(callable $callback): Separated;
 
     /**
      * Group elements
@@ -292,6 +350,18 @@ interface SeqTerminalOps
     public function reindex(callable $callback): Map;
 
     /**
+     * Same as {@see SeqTerminalOps::reindex()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return HashMap<TKO, TV>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function reindexN(callable $callback): HashMap;
+
+    /**
      * Find if there is element which satisfies the condition
      *
      * ```php
@@ -305,6 +375,15 @@ interface SeqTerminalOps
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
+
+    /**
+     * Same as {@see SeqTerminalOps::exists()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): bool $predicate
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function existsN(callable $predicate): bool;
 
     /**
      * Returns true if there is collection element of given class
@@ -336,6 +415,16 @@ interface SeqTerminalOps
      * @return Option<TV>
      */
     public function first(callable $predicate): Option;
+
+    /**
+     * Same as {@see SeqTerminalOps::first()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function firstN(callable $predicate): Option;
 
     /**
      * Find first element of given class
@@ -408,6 +497,16 @@ interface SeqTerminalOps
      * @return Option<TV>
      */
     public function last(callable $predicate): Option;
+
+    /**
+     * Same as {@see SeqTerminalOps::last()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function lastN(callable $predicate): Option;
 
     /**
      * Returns first collection element

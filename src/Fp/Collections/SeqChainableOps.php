@@ -93,6 +93,14 @@ interface SeqChainableOps
     public function filter(callable $predicate): Seq;
 
     /**
+     * Same as {@see SeqChainableOps::filter()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Seq<TV>
+     */
+    public function filterN(callable $predicate): Seq;
+
+    /**
      * Exclude null elements
      *
      * ```php
@@ -140,6 +148,16 @@ interface SeqChainableOps
     public function filterMap(callable $callback): Seq;
 
     /**
+     * Same as {@see SeqChainableOps::filterMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Seq<TVO>
+     */
+    public function filterMapN(callable $callback): Seq;
+
+    /**
      * Converts this Seq<iterable<TVO>> into a Seq<TVO>.
      *
      * ```php
@@ -172,6 +190,16 @@ interface SeqChainableOps
      * @return Seq<TVO>
      */
     public function flatMap(callable $callback): Seq;
+
+    /**
+     * Same as {@see SeqChainableOps::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @return Seq<TVO>
+     */
+    public function flatMapN(callable $callback): Seq;
 
     /**
      * Produces a new collection of elements by mapping each element in collection
@@ -354,6 +382,14 @@ interface SeqChainableOps
      * @return Seq<TV>
      */
     public function tap(callable $callback): Seq;
+
+    /**
+     * Same as {@see SeqChainableOps::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): void $callback
+     * @return Seq<TV>
+     */
+    public function tapN(callable $callback): Seq;
 
     /**
      * Add specified separator between every pair of elements in the source collection.

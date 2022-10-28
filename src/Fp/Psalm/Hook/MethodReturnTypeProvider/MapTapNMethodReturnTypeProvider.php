@@ -29,18 +29,18 @@ use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Storage\FunctionLikeParameter;
 use Psalm\Type;
-use Psalm\Type\Atomic;
 use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
+use function Fp\Callable\ctor;
 use function Fp\Collection\every;
+use function Fp\Collection\exists;
 use function Fp\Collection\keys;
 use function Fp\Collection\last;
 use function Fp\Evidence\proveFalse;
 use function Fp\Evidence\proveNonEmptyList;
-use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
 final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
@@ -69,7 +69,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
-        $return_type = Option::do(function() use ($event) {
+        Option::do(function() use ($event) {
             $templates = yield proveTrue(self::isSupportedMethod($event))
                 ->flatMap(fn() => proveNonEmptyList($event->getTemplateTypeParameters() ?? []));
 
@@ -92,24 +92,22 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                 ->flatMap(fn(ArrayList $args) => $args->firstElement())
                 ->pluck('type')
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                ->flatMap(fn(Atomic $atomic) => proveOf($atomic, [TCallable::class, TClosure::class]));
+                ->filterOf([TCallable::class, TClosure::class]);
 
             // Input tuple type inferred by $callback argument
             $func_args = yield Option::some($map_callback)
                 ->flatMap(fn(TCallable|TClosure $func) => ArrayList::collect($func->params ?? [])
                     ->zipWithKeys()
-                    ->reindex(function(array $kv) use ($current_args_kind) {
-                        return $current_args_kind === MapTapNContextEnum::Shape ? $kv[1]->name : $kv[0];
-                    })
-                    ->map(function(array $kv) use ($current_args_kind) {
-                        $param_type = $kv[1]->type ?? Type::getMixed();
+                    ->reindexN(fn(int $idx, FunctionLikeParameter $param) => $current_args_kind === MapTapNContextEnum::Shape ? $param->name : $idx)
+                    ->mapN(function(int $_, FunctionLikeParameter $param) use ($current_args_kind) {
+                        $param_type = $param->type ?? Type::getMixed();
 
-                        return $current_args_kind === MapTapNContextEnum::Shape && $kv[1]->is_optional
+                        return $current_args_kind === MapTapNContextEnum::Shape && $param->is_optional
                             ? PsalmApi::$types->asPossiblyUndefined($param_type)
                             : $param_type;
                     })
                     ->toNonEmptyArray())
-                ->map(fn(array $types) => new TKeyedArray($types));
+                ->map(ctor(TKeyedArray::class));
 
             $ctx = new MapTapNContext(
                 event: $event,
@@ -140,10 +138,25 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
 
     private static function isSupportedMethod(MethodReturnTypeProviderEvent $event): bool
     {
-        return self::isMapN($event)
-            || self::isTapN($event)
-            || self::isFlatMapN($event)
-            || self::isFlatTapN($event);
+        $methods = [
+            'mapN',
+            'tapN',
+            'flatMapN',
+            'flatTapN',
+            'reindexN',
+            'filterN',
+            'filterMapN',
+            'everyN',
+            'existsN',
+            'traverseOptionN',
+            'traverseEitherN',
+            'partitionN',
+            'partitionMapN',
+            'firstN',
+            'lastN',
+        ];
+
+        return exists($methods, fn($method) => $event->getMethodNameLowercase() === strtolower($method));
     }
 
     private static function isTuple(TKeyedArray $keyed): bool
@@ -154,26 +167,6 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
     private static function isAssoc(TKeyedArray $keyed): bool
     {
         return every(keys($keyed->properties), is_string(...));
-    }
-
-    private static function isMapN(MethodReturnTypeProviderEvent $event): bool
-    {
-        return $event->getMethodNameLowercase() === strtolower('mapN');
-    }
-
-    private static function isFlatMapN(MethodReturnTypeProviderEvent $event): bool
-    {
-        return $event->getMethodNameLowercase() === strtolower('flatMapN');
-    }
-
-    private static function isTapN(MethodReturnTypeProviderEvent $event): bool
-    {
-        return $event->getMethodNameLowercase() === strtolower('tapN');
-    }
-
-    private static function isFlatTapN(MethodReturnTypeProviderEvent $event): bool
-    {
-        return $event->getMethodNameLowercase() === strtolower('flatTapN');
     }
 
     /**

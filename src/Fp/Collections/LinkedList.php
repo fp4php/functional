@@ -13,7 +13,6 @@ use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use Psalm\Type\Atomic\TArray;
 use function Fp\Callable\dropFirstArg;
 use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\asList;
@@ -21,6 +20,7 @@ use function Fp\Cast\fromPairs;
 use function Fp\Collection\keys;
 use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveNonEmptyList;
+use function Fp\Evidence\proveOf;
 
 /**
  * O(1) {@see Seq::prepended} operation
@@ -37,6 +37,8 @@ use function Fp\Evidence\proveNonEmptyList;
 abstract class LinkedList implements Seq
 {
     use WithExtensions;
+
+    #region SeqCollector
 
     /**
      * {@inheritDoc}
@@ -91,13 +93,9 @@ abstract class LinkedList implements Seq
         return Stream::range($start, $stopExclusive, $by)->toLinkedList();
     }
 
-    /**
-     * @return Iterator<int, TV>
-     */
-    public function getIterator(): Iterator
-    {
-        return new LinkedListIterator($this);
-    }
+    #endregion SeqCollector
+
+    #region SeqCastableOps
 
     /**
      * {@inheritDoc}
@@ -248,6 +246,422 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array
+    {
+        return array_merge(...$this->toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyMergedArray(): Option
+    {
+        return proveNonEmptyArray($this->toMergedArray());
+    }
+
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
+    #endregion SeqCastableOps
+
+    #region SeqChainableOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function tail(): LinkedList
+    {
+        return match (true) {
+            $this instanceof Cons => $this->tail,
+            $this instanceof Nil => $this,
+        };
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function init(): LinkedList
+    {
+        return LinkedList::collect(Ops\InitOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): TVO $callback
+     * @return LinkedList<TVO>
+     */
+    public function map(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return LinkedList<TVO>
+     */
+    public function mapN(callable $callback): LinkedList
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $elem
+     * @return LinkedList<TV|TVI>
+     */
+    public function appended(mixed $elem): LinkedList
+    {
+        return LinkedList::collect(Ops\AppendedOperation::of($this->getIterator())($elem));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param (iterable<TVI>|Collection<TVI>) $suffix
+     * @return LinkedList<TV|TVI>
+     */
+    public function appendedAll(iterable $suffix): LinkedList
+    {
+        return LinkedList::collect(Ops\AppendedAllOperation::of($this->getIterator())($suffix));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $elem
+     * @return LinkedList<TV|TVI>
+     */
+    public function prepended(mixed $elem): LinkedList
+    {
+        return new Cons($elem, $this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param (iterable<TVI>|Collection<TVI>) $prefix
+     * @return LinkedList<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): LinkedList
+    {
+        return LinkedList::collect(Ops\PrependedAllOperation::of($this->getIterator())($prefix));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function filter(callable $predicate): LinkedList
+    {
+        return LinkedList::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function filterN(callable $predicate): LinkedList
+    {
+        return $this->filter(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return LinkedList<TVO>
+     */
+    public function filterMap(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\FilterMapOperation::of($this->getIterator())(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return LinkedList<TVO>
+     */
+    public function filterMapN(callable $callback): LinkedList
+    {
+        return $this->filterMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     * @return LinkedList<TV>
+     */
+    public function filterNotNull(): LinkedList
+    {
+        return LinkedList::collect(Ops\FilterNotNullOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return LinkedList<TVO>
+     */
+    public function filterOf(string|array $fqcn, bool $invariant = false): LinkedList
+    {
+        return LinkedList::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is LinkedList<iterable<TVO>|Collection<TVO>>
+     *
+     * @return LinkedList<TVO>
+     */
+    public function flatten(): LinkedList
+    {
+        return LinkedList::collect(Ops\FlattenOperation::of($this));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @return LinkedList<TVO>
+     */
+    public function flatMap(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\FlatMapOperation::of($this->getIterator())(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @return LinkedList<TVO>
+     */
+    public function flatMapN(callable $callback): LinkedList
+    {
+        return $this->flatMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function takeWhile(callable $predicate): LinkedList
+    {
+        return LinkedList::collect(Ops\TakeWhileOperation::of($this->getIterator())(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function dropWhile(callable $predicate): LinkedList
+    {
+        return LinkedList::collect(Ops\DropWhileOperation::of($this->getIterator())(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function take(int $length): LinkedList
+    {
+        return LinkedList::collect(Ops\TakeOperation::of($this->getIterator())($length));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function drop(int $length): LinkedList
+    {
+        return LinkedList::collect(Ops\DropOperation::of($this->getIterator())($length));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): void $callback
+     * @return LinkedList<TV>
+     */
+    public function tap(callable $callback): LinkedList
+    {
+        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): void $callback
+     * @return LinkedList<TV>
+     */
+    public function tapN(callable $callback): LinkedList
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function sorted(): LinkedList
+    {
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->asc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return LinkedList<TV>
+     */
+    public function sortedBy(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->ascBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function sortedDesc(): LinkedList
+    {
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->desc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return LinkedList<TV>
+     */
+    public function sortedDescBy(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->descBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $separator
+     * @return LinkedList<TV|TVI>
+     */
+    public function intersperse(mixed $separator): LinkedList
+    {
+        return LinkedList::collect(Ops\IntersperseOperation::of($this->getIterator())($separator));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param (iterable<TVI>|Collection<TVI>) $that
+     * @return LinkedList<array{TV, TVI}>
+     */
+    public function zip(iterable $that): LinkedList
+    {
+        return LinkedList::collect(Ops\ZipOperation::of($this->getIterator())($that));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<array{int, TV}>
+     */
+    public function zipWithKeys(): LinkedList
+    {
+        return LinkedList::collect(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return LinkedList<TV>
+     */
+    public function uniqueBy(callable $callback): LinkedList
+    {
+        return LinkedList::collect(Ops\UniqueByOperation::of($this->getIterator())($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return LinkedList<TV>
      */
     public function reverse(): LinkedList
@@ -261,12 +675,17 @@ abstract class LinkedList implements Seq
         return $list;
     }
 
+    #endregion SeqChainableOps
+
+    #region SeqTerminal
+
+
     /**
-     * @psalm-assert-if-true Cons<TV> $this
+     * @return Iterator<int, TV>
      */
-    public function isCons(): bool
+    public function getIterator(): Iterator
     {
-        return $this instanceof Cons;
+        return new LinkedListIterator($this);
     }
 
     /**
@@ -274,7 +693,7 @@ abstract class LinkedList implements Seq
      */
     public function isEmpty(): bool
     {
-        return !$this->isCons();
+        return !($this instanceof Cons);
     }
 
     /**
@@ -285,6 +704,19 @@ abstract class LinkedList implements Seq
     public function every(callable $predicate): bool
     {
         return Ops\EveryOperation::of($this->getIterator())(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->every(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -312,6 +744,22 @@ abstract class LinkedList implements Seq
     {
         return Ops\TraverseOptionOperation::of($this->getIterator())(dropFirstArg($callback))
             ->map(fn($gen) => LinkedList::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<LinkedList<TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->traverseOption(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -348,6 +796,23 @@ abstract class LinkedList implements Seq
      *
      * @template E
      * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, LinkedList<TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->traverseEither(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
      * @psalm-if-this-is LinkedList<Either<E, TVO>>
      *
      * @return Either<E, LinkedList<TVO>>
@@ -374,6 +839,20 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<LinkedList<TV>, LinkedList<TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->partition(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template LO
      * @template RO
      *
@@ -390,11 +869,41 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<Seq<LO>, Seq<RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->partitionMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
         return Ops\ExistsOperation::of($this->getIterator())(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->exists(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -418,6 +927,20 @@ abstract class LinkedList implements Seq
     public function first(callable $predicate): Option
     {
         return Ops\FirstOperation::of($this->getIterator())(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option
+    {
+        return $this->first(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -466,32 +989,7 @@ abstract class LinkedList implements Seq
      */
     public function head(): Option
     {
-        return $this->isCons()
-            ? Option::some($this)->map(fn(Cons $cons) => $cons->head)
-            : Option::none();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function tail(): LinkedList
-    {
-        return match (true) {
-            $this instanceof Cons => $this->tail,
-            $this instanceof Nil => $this,
-        };
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function init(): LinkedList
-    {
-        return LinkedList::collect(Ops\InitOperation::of($this->getIterator())());
+        return proveOf($this, Cons::class)->map(fn(Cons $cons) => $cons->head);
     }
 
     /**
@@ -503,6 +1001,20 @@ abstract class LinkedList implements Seq
     public function last(callable $predicate): Option
     {
         return Ops\LastOperation::of($this->getIterator())(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option
+    {
+        return $this->last(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -616,297 +1128,17 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TVO
+     * @template TKO
      *
-     * @param callable(TV): TVO $callback
-     * @return LinkedList<TVO>
+     * @param callable(mixed...): TKO $callback
+     * @return HashMap<TKO, TV>
      */
-    public function map(callable $callback): LinkedList
+    public function reindexN(callable $callback): HashMap
     {
-        return LinkedList::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(mixed...): TVO $callback
-     * @return LinkedList<TVO>
-     */
-    public function mapN(callable $callback): LinkedList
-    {
-        return $this->map(function($tuple) use ($callback) {
+        return $this->reindex(function($tuple) use ($callback) {
             /** @var array $tuple */;
             return toSafeClosure($callback)(...$tuple);
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param TVI $elem
-     * @return LinkedList<TV|TVI>
-     */
-    public function appended(mixed $elem): LinkedList
-    {
-        return LinkedList::collect(Ops\AppendedOperation::of($this->getIterator())($elem));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param (iterable<TVI>|Collection<TVI>) $suffix
-     * @return LinkedList<TV|TVI>
-     */
-    public function appendedAll(iterable $suffix): LinkedList
-    {
-        return LinkedList::collect(Ops\AppendedAllOperation::of($this->getIterator())($suffix));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param TVI $elem
-     * @return LinkedList<TV|TVI>
-     */
-    public function prepended(mixed $elem): LinkedList
-    {
-        return new Cons($elem, $this);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param (iterable<TVI>|Collection<TVI>) $prefix
-     * @return LinkedList<TV|TVI>
-     */
-    public function prependedAll(iterable $prefix): LinkedList
-    {
-        return LinkedList::collect(Ops\PrependedAllOperation::of($this->getIterator())($prefix));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return LinkedList<TV>
-     */
-    public function filter(callable $predicate): LinkedList
-    {
-        return LinkedList::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return LinkedList<TVO>
-     */
-    public function filterMap(callable $callback): LinkedList
-    {
-        return LinkedList::collect(Ops\FilterMapOperation::of($this->getIterator())(dropFirstArg($callback)));
-    }
-
-    /**
-     * {@inheritDoc}
-     * @return LinkedList<TV>
-     */
-    public function filterNotNull(): LinkedList
-    {
-        return LinkedList::collect(Ops\FilterNotNullOperation::of($this->getIterator())());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return LinkedList<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): LinkedList
-    {
-        return LinkedList::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-if-this-is LinkedList<iterable<TVO>|Collection<TVO>>
-     *
-     * @return LinkedList<TVO>
-     */
-    public function flatten(): LinkedList
-    {
-        return LinkedList::collect(Ops\FlattenOperation::of($this));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
-     * @return LinkedList<TVO>
-     */
-    public function flatMap(callable $callback): LinkedList
-    {
-        return LinkedList::collect(Ops\FlatMapOperation::of($this->getIterator())(dropFirstArg($callback)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return LinkedList<TV>
-     */
-    public function takeWhile(callable $predicate): LinkedList
-    {
-        return LinkedList::collect(Ops\TakeWhileOperation::of($this->getIterator())(dropFirstArg($predicate)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return LinkedList<TV>
-     */
-    public function dropWhile(callable $predicate): LinkedList
-    {
-        return LinkedList::collect(Ops\DropWhileOperation::of($this->getIterator())(dropFirstArg($predicate)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function take(int $length): LinkedList
-    {
-        return LinkedList::collect(Ops\TakeOperation::of($this->getIterator())($length));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function drop(int $length): LinkedList
-    {
-        return LinkedList::collect(Ops\DropOperation::of($this->getIterator())($length));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): void $callback
-     * @return LinkedList<TV>
-     */
-    public function tap(callable $callback): LinkedList
-    {
-        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function sorted(): LinkedList
-    {
-        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->asc());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return LinkedList<TV>
-     */
-    public function sortedBy(callable $callback): LinkedList
-    {
-        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->ascBy($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function sortedDesc(): LinkedList
-    {
-        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->desc());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return LinkedList<TV>
-     */
-    public function sortedDescBy(callable $callback): LinkedList
-    {
-        return LinkedList::collect(Ops\SortedOperation::of($this->getIterator())->descBy($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param TVI $separator
-     * @return LinkedList<TV|TVI>
-     */
-    public function intersperse(mixed $separator): LinkedList
-    {
-        return LinkedList::collect(Ops\IntersperseOperation::of($this->getIterator())($separator));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param (iterable<TVI>|Collection<TVI>) $that
-     * @return LinkedList<array{TV, TVI}>
-     */
-    public function zip(iterable $that): LinkedList
-    {
-        return LinkedList::collect(Ops\ZipOperation::of($this->getIterator())($that));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<array{int, TV}>
-     */
-    public function zipWithKeys(): LinkedList
-    {
-        return LinkedList::collect(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return LinkedList<TV>
-     */
-    public function uniqueBy(callable $callback): LinkedList
-    {
-        return LinkedList::collect(Ops\UniqueByOperation::of($this->getIterator())($callback));
     }
 
     /**
@@ -915,34 +1147,6 @@ abstract class LinkedList implements Seq
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
         return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TKO of array-key
-     * @template TVO
-     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
-     *
-     * @return array<TKO, TVO>
-     */
-    public function toMergedArray(): array
-    {
-        return array_merge(...$this->toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TKO of array-key
-     * @template TVO
-     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
-     *
-     * @return Option<non-empty-array<TKO, TVO>>
-     */
-    public function toNonEmptyMergedArray(): Option
-    {
-        return proveNonEmptyArray($this->toMergedArray());
     }
 
     /**
@@ -987,15 +1191,12 @@ abstract class LinkedList implements Seq
         return Ops\MinByElementOperation::of($this->getIterator())($callback);
     }
 
-    public function toString(): string
-    {
-        return (string) $this;
-    }
-
     public function __toString(): string
     {
         return $this
             ->map(fn($value) => Ops\ToStringOperation::of($value))
             ->mkString('LinkedList(', ', ', ')');
     }
+
+    #endregion SeqTerminal
 }

@@ -1062,25 +1062,331 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals($option, $seq->minBy(fn(Foo $foo) => $foo->a));
     }
 
-    public function provideUniqBy(): Generator
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testUniqBy(string $seq): void
     {
-        yield ArrayList::class => [
-            ArrayList::collect([['n' => 1], ['n' => 1], ['n' => 2]]),
-            ArrayList::collect([['n' => 1], ['n' => 2]]),
-        ];
-        yield LinkedList::class => [
-            LinkedList::collect([['n' => 1], ['n' => 1], ['n' => 2]]),
-            LinkedList::collect([['n' => 1], ['n' => 2]]),
-        ];
+        $expected = $seq::collect([['n' => 1], ['n' => 2]]);
+        $actual = $seq::collect([['n' => 1], ['n' => 1], ['n' => 2]])->uniqueBy(fn(array $x) => $x['n']);
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
-     * @param Seq<array{n: int}> $actual
-     * @param Seq<array{n: int}> $expected
-     * @dataProvider provideUniqBy
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testUniqBy(Seq $actual, Seq $expected): void
+    public function testTapN(string $seq): void
     {
-        $this->assertEquals($expected, $actual->uniqueBy(fn(array $x) => $x['n']));
+        $collection = $seq::collect([
+            [new Foo(a: 1, b: true, c: false), 2, false, true],
+            [new Foo(a: 2, b: false, c: true), 1, true, false],
+        ]);
+
+        $expected = $seq::collect([
+            new Foo(a: 2, b: false, c: true),
+            new Foo(a: 1, b: true, c: false),
+        ]);
+
+        $actual = $collection
+            ->tapN(function(Foo $value, int $a, bool $b, bool $c): void {
+                $value->a = $a;
+                $value->b = $b;
+                $value->c = $c;
+            })
+            ->mapN(fn(Foo $value) => $value);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testEveryN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertTrue($collection->everyN(fn(int $a, int $b) => ($a + $b) <= 6));
+        $this->assertFalse($collection->everyN(fn(int $a, int $b) => ($a + $b) < 6));
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testExistsN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertTrue($collection->existsN(fn(int $a, int $b) => ($a + $b) === 6));
+        $this->assertFalse($collection->existsN(fn(int $a, int $b) => ($a + $b) === 7));
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFlatMapN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = $seq::collect([1, 1, 2, 2, 3, 3]);
+        $actual = $collection->flatMapN(fn(int $a, int $b) => [$a, $b]);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFilterMapN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = $seq::collect([3]);
+        $actual = $collection->filterMapN(fn(int $a, int $b) => Option::when($a + $b >= 6, fn() => $a));
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFilterN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = $seq::collect([[3, 3]]);
+        $actual = $collection->filterN(fn(int $a, int $b) => $a + $b >= 6);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testReindexN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = HashMap::collect([
+            2 => [1, 1],
+            4 => [2, 2],
+            6 => [3, 3],
+        ]);
+        $actual = $collection->reindexN(fn(int $a, int $b) => $a + $b);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testLastN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1, 'fst'],
+            [1, 1, 'lst'],
+            [2, 2, 'fst'],
+            [2, 2, 'lst'],
+            [3, 3, 'fst'],
+            [3, 3, 'lst'],
+        ]);
+
+        $this->assertEquals(Option::some([1, 1, 'lst']), $collection->lastN(fn(int $a, int $b) => $a + $b === 2));
+        $this->assertEquals(Option::some([2, 2, 'lst']), $collection->lastN(fn(int $a, int $b) => $a + $b === 4));
+        $this->assertEquals(Option::some([3, 3, 'lst']), $collection->lastN(fn(int $a, int $b) => $a + $b === 6));
+        $this->assertEquals(Option::none(), $collection->lastN(fn(int $a, int $b) => $a + $b === 9));
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFirstN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1, 'fst'],
+            [1, 1, 'lst'],
+            [2, 2, 'fst'],
+            [2, 2, 'lst'],
+            [3, 3, 'fst'],
+            [3, 3, 'lst'],
+        ]);
+
+        $this->assertEquals(Option::some([1, 1, 'fst']), $collection->firstN(fn(int $a, int $b) => $a + $b === 2));
+        $this->assertEquals(Option::some([2, 2, 'fst']), $collection->firstN(fn(int $a, int $b) => $a + $b === 4));
+        $this->assertEquals(Option::some([3, 3, 'fst']), $collection->firstN(fn(int $a, int $b) => $a + $b === 6));
+        $this->assertEquals(Option::none(), $collection->firstN(fn(int $a, int $b) => $a + $b === 9));
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testPartitionN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: $seq::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: $seq::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionN(fn(int $a, int $b) => ($a + $b) >= 4);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testPartitionMapN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: $seq::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: $seq::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionMapN(fn(int $a, int $b, string $mark) => Either::when(
+            cond: ($a + $b) >= 4,
+            right: fn() => [$a, $b, $mark],
+            left: fn() => [$a, $b, $mark],
+        ));
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testTraverseEitherN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Either::right($seq::collect([2, 4, 6])),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+        $this->assertEquals(
+            Either::left('invalid'),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testTraverseOptionN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Option::some($seq::collect([2, 4, 6])),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b < 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+    }
+
+    /**
+     * @return list<array{class-string<Seq>}>
+     */
+    public function seqClassDataProvider(): array
+    {
+        return [
+            [ArrayList::class],
+            [LinkedList::class],
+        ];
     }
 }
