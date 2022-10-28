@@ -88,13 +88,13 @@ abstract class Either
      * @template RO
      * @template LO
      *
-     * @param callable(): RO $callback
+     * @param callable(): RO $right
      * @return Either<LO, RO>
      */
-    public static function when(bool $condition, callable $callback, callable $left): Either
+    public static function when(bool $cond, callable $right, callable $left): Either
     {
-        return $condition
-            ? self::right($callback())
+        return $cond
+            ? self::right($right())
             : self::left($left());
     }
 

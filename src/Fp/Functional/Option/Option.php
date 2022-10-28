@@ -100,13 +100,13 @@ abstract class Option
      *
      * @template AI
      *
-     * @param callable(): AI $callback
+     * @param callable(): AI $some
      * @return Option<AI>
      */
-    public static function when(bool $condition, callable $callback): Option
+    public static function when(bool $cond, callable $some): Option
     {
-        return $condition
-            ? self::some($callback())
+        return $cond
+            ? self::some($some())
             : self::none();
     }
 
