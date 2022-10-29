@@ -32,6 +32,13 @@ interface StreamTerminalOps
     public function every(callable $predicate): bool;
 
     /**
+     * Same as {@see StreamTerminalOps::every()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool;
+
+    /**
      * Returns true if every stream element is of given class
      * false otherwise
      *
@@ -63,6 +70,13 @@ interface StreamTerminalOps
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
+
+    /**
+     * Same as {@see StreamTerminalOps::exists()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool;
 
     /**
      * Returns true if there is stream element of given class
@@ -98,6 +112,16 @@ interface StreamTerminalOps
     public function reindex(callable $callback): Map;
 
     /**
+     * Same as {@see StreamTerminalOps::reindex()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return Map<TKO, TV>
+     */
+    public function reindexN(callable $callback): Map;
+
+    /**
      * Find first element which satisfies the condition
      *
      * ```php
@@ -109,6 +133,14 @@ interface StreamTerminalOps
      * @return Option<TV>
      */
     public function first(callable $predicate): Option;
+
+    /**
+     * Same as {@see StreamTerminalOps::first()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option;
 
     /**
      * Find first element of given class
@@ -166,6 +198,29 @@ interface StreamTerminalOps
      * @return Option<TV>
      */
     public function last(callable $predicate): Option;
+
+    /**
+     * Same as {@see StreamTerminalOps::last()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option;
+
+    /**
+     * Find last element of given class
+     *
+     * ```php
+     * >>> Stream::emits([new Bar(1), new Foo(2), new Foo(3)])->lastOf(Foo::class)->get();
+     * => Foo(3)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return Option<TVO>
+     */
+    public function lastOf(string|array $fqcn, bool $invariant = false): Option;
 
     /**
      * Returns first stream element

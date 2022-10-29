@@ -10,6 +10,7 @@ use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
+use Tests\Mock\Baz;
 use Tests\Mock\Foo;
 
 final class StreamOpsTest extends TestCase
@@ -21,6 +22,12 @@ final class StreamOpsTest extends TestCase
 
         $this->assertTrue($every->every(fn($i) => $i >= 0));
         $this->assertFalse($some->every(fn($i) => $i > 0));
+    }
+
+    public function testEveryN(): void
+    {
+        $this->assertTrue(Stream::emits([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) <= 6));
+        $this->assertFalse(Stream::emits([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) < 6));
     }
 
     public function testEveryOf(): void
@@ -41,6 +48,12 @@ final class StreamOpsTest extends TestCase
         $this->assertFalse($hasNotTwo->exists(fn($i) => $i === 2));
     }
 
+    public function testExistsN(): void
+    {
+        $this->assertTrue(Stream::emits([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 6));
+        $this->assertFalse(Stream::emits([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 7));
+    }
+
     public function testExistsOf(): void
     {
         $hasFoo = Stream::emits([new Foo(1), 1, 1, new Foo(1)]);
@@ -56,6 +69,15 @@ final class StreamOpsTest extends TestCase
 
         $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toList());
         $this->assertEquals([1], Stream::emits([1, null])->filterNotNull()->toList());
+    }
+
+    public function testFilterN(): void
+    {
+        $actual = Stream::emits([[1, 1], [2, 2], [3, 3]])
+            ->filterN(fn(int $a, int $b) => $a + $b >= 6)
+            ->toList();
+
+        $this->assertEquals([[3, 3]], $actual);
     }
 
     public function testFilterOf(): void
@@ -74,16 +96,67 @@ final class StreamOpsTest extends TestCase
         );
     }
 
-    public function testFirstsAndLasts(): void
+    public function testFilterMapN(): void
     {
-        $this->assertEquals('1', Stream::emits(['1', 2, '3'])->first(fn($i) => is_string($i))->get());
-        $this->assertEquals('1', Stream::emits(['1', 2, '3'])->firstElement()->get());
+        $actual = Stream::emits([[1, 1], [2, 2], [3, 3]])
+            ->filterMapN(fn(int $a, int $b) => Option::when($a + $b >= 6, fn() => $a))
+            ->toList();
 
-        $this->assertEquals('3', Stream::emits(['1', 2, '3'])->last(fn($i) => is_string($i))->get());
-        $this->assertEquals('3', Stream::emits(['1', 2, '3'])->lastElement()->get());
+        $this->assertEquals([3], $actual);
+    }
 
-        $s = Stream::emits([$f1 = new Foo(1), 2, new Foo(2)]);
-        $this->assertEquals($f1, $s->firstOf(Foo::class)->get());
+    public function testFirst(): void
+    {
+        $this->assertEquals(Option::some('1'), Stream::emits(['1', 2, '3'])->first(is_string(...)));
+        $this->assertEquals(Option::none(), Stream::emits([])->first(is_string(...)));
+    }
+
+    public function testFirstElement(): void
+    {
+        $this->assertEquals(Option::some('1'), Stream::emits(['1', 2, '3'])->firstElement());
+        $this->assertEquals(Option::none(), Stream::emits([])->firstElement());
+    }
+
+    public function testFirstOf(): void
+    {
+        $this->assertEquals(Option::some(new Foo(1)), Stream::emits([new Foo(1), 2, new Foo(2)])->firstOf(Foo::class));
+        $this->assertEquals(Option::none(), Stream::emits([])->firstOf(Baz::class));
+    }
+
+    public function testFirstN(): void
+    {
+        $this->assertEquals(
+            Option::some([2, 2, 'm3']),
+            Stream::emits([[1, 1, 'm1'], [1, 1, 'm2'], [2, 2, 'm3'], [2, 2, 'm4']])
+                ->firstN(fn(int $a, int $b) => ($a + $b) === 4),
+        );
+    }
+
+    public function testLast(): void
+    {
+        $this->assertEquals(Option::some('3'), Stream::emits(['1', 2, '3'])->last(is_string(...)));
+        $this->assertEquals(Option::none(), Stream::emits([])->last(is_string(...)));
+    }
+
+    public function testLastElement(): void
+    {
+        $this->assertEquals(Option::some('3'), Stream::emits(['1', 2, '3'])->lastElement());
+        $this->assertEquals(Option::none(), Stream::emits([])->lastElement());
+    }
+
+    public function testLastOf(): void
+    {
+        $this->assertEquals(Option::some(new Foo(2)), Stream::emits([new Foo(1), 2, new Foo(2)])->lastOf(Foo::class));
+        $this->assertEquals(Option::none(), Stream::emits([])->lastOf(Foo::class));
+    }
+
+    public function testLastN(): void
+    {
+        $this->assertEquals(
+            Option::some([2, 2, 'm4']),
+            Stream::emits([[1, 1, 'm1'], [1, 1, 'm2'], [2, 2, 'm3'], [2, 2, 'm4']])
+                ->lastN(fn(int $a, int $b) => ($a + $b) === 4),
+        );
     }
 
     public function testFlatMap(): void
@@ -91,6 +164,16 @@ final class StreamOpsTest extends TestCase
         $this->assertEquals(
             [1, 2, 3, 4, 5, 6],
             Stream::emits([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList()
+        );
+    }
+
+    public function testFlatMapN(): void
+    {
+        $this->assertEquals(
+            [2, 3, 4, 5, 6, 7],
+            Stream::emits([[1, 2], [3, 4], [5, 6]])
+                ->flatMapN(fn(int $a, int $b) => [$a + 1, $b + 1])
+                ->toList(),
         );
     }
 
@@ -103,7 +186,19 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(
             ['2', '3', '4'],
-            Stream::emits([1, 2, 3])->map(fn($e) => (string) ($e + 1))->toList()
+            Stream::emits([1, 2, 3])
+                ->map(fn($e) => (string) ($e + 1))
+                ->toList(),
+        );
+    }
+
+    public function testMapN(): void
+    {
+        $this->assertEquals(
+            ['2', '4', '6'],
+            Stream::emits([[1, 1], [2, 2], [3, 3]])
+                ->mapN(fn(int $a, int $b) => (string) ($a + $b))
+                ->toList(),
         );
     }
 
@@ -115,6 +210,17 @@ final class StreamOpsTest extends TestCase
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
                 ->toList()
+        );
+    }
+
+    public function testTapN(): void
+    {
+        $this->assertEquals(
+            [2, 3],
+            Stream::emits([[new Foo(1), 2], [new Foo(2), 3]])
+                ->tapN(fn(Foo $foo, int $new) => $foo->a = $new)
+                ->mapN(fn(Foo $foo) => $foo->a)
+                ->toList(),
         );
     }
 
@@ -238,6 +344,19 @@ final class StreamOpsTest extends TestCase
             ]),
             Stream::emits([1, 2, 3])
                 ->reindex(fn($value) => "key-{$value}"),
+        );
+    }
+
+    public function testReindexN(): void
+    {
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['x-1', ['x', 1]],
+                ['y-2', ['y', 2]],
+                ['z-3', ['z', 3]],
+            ]),
+            Stream::emits([['x', 1], ['y', 2], ['z', 3]])
+                ->reindexN(fn(string $a, int $b) => "{$a}-{$b}"),
         );
     }
 }

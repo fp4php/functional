@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Streams;
 
 use Fp\Collections\Collection;
-use Fp\Collections\NonEmptyCollection;
 use Fp\Collections\Seq;
 use Fp\Functional\Option\Option;
 
@@ -41,7 +40,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $suffix
+     * @param Collection<TVI> | iterable<mixed, TVI> $suffix
      * @return Stream<TV|TVI>
      */
     public function appendedAll(iterable $suffix): Stream;
@@ -71,7 +70,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $prefix
+     * @param Collection<TVI> | iterable<mixed, TVI> $prefix
      * @return Stream<TV|TVI>
      */
     public function prependedAll(iterable $prefix): Stream;
@@ -90,6 +89,14 @@ interface StreamChainableOps
      * @return Stream<TV>
      */
     public function filter(callable $predicate): Stream;
+
+    /**
+     * Same as {@see StreamChainableOps::filter()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Stream<TV>
+     */
+    public function filterN(callable $predicate): Stream;
 
     /**
      * Exclude null elements
@@ -139,6 +146,16 @@ interface StreamChainableOps
     public function filterMap(callable $callback): Stream;
 
     /**
+     * Same as {@see StreamChainableOps::filterMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Stream<TVO>
+     */
+    public function filterMapN(callable $callback): Stream;
+
+    /**
      * Map stream and then flatten the result
      *
      * ```php
@@ -148,10 +165,20 @@ interface StreamChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (NonEmptyCollection<TVO> | Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @param callable(TV): (Collection<TVO> | iterable<mixed, TVO>) $callback
      * @return Stream<TVO>
      */
     public function flatMap(callable $callback): Stream;
+
+    /**
+     * Same as {@see StreamChainableOps::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @return Stream<TVO>
+     */
+    public function flatMapN(callable $callback): Stream;
 
     /**
      * Produces a new stream of elements by mapping each element in stream
@@ -168,6 +195,16 @@ interface StreamChainableOps
      * @return Stream<TVO>
      */
     public function map(callable $callback): Stream;
+
+    /**
+     * Same as {@see StreamChainableOps::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return Stream<TVO>
+     */
+    public function mapN(callable $callback): Stream;
 
     /**
      * Returns every stream element except first
@@ -248,6 +285,14 @@ interface StreamChainableOps
     public function tap(callable $callback): Stream;
 
     /**
+     * Same as {@see StreamChainableOps::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): void $callback
+     * @return Stream<TV>
+     */
+    public function tapN(callable $callback): Stream;
+
+    /**
      * Emits the specified separator between every pair of elements in the source stream.
      *
      * ```php
@@ -285,7 +330,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $that
+     * @param Collection<TVI> | iterable<mixed, TVI> $that
      * @return Stream<array{TV, TVI}>
      */
     public function zip(iterable $that): Stream;
@@ -300,7 +345,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param NonEmptyCollection<TVI> | Collection<TVI> | iterable<mixed, TVI> $that
+     * @param Collection<TVI> | iterable<mixed, TVI> $that
      * @return Stream<TV|TVI>
      */
     public function interleave(iterable $that): Stream;

@@ -24,6 +24,7 @@ use LogicException;
 use SplFileObject;
 
 use function Fp\Callable\dropFirstArg;
+use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\asGenerator;
 use function Fp\Cast\asList;
 use function Fp\Cast\asNonEmptyArray;
@@ -105,6 +106,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
         return Stream::emits($gen);
     }
+
+    #region StreamEmitter
 
     /**
      * {@inheritDoc}
@@ -200,7 +203,13 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
         }));
     }
 
+    #endregion StreamEmitter
+
+    #region StreamChainableOps
+
     /**
+     * {@inheritDoc}
+     *
      * @template TVO
      *
      * @param callable(TV): TVO $callback
@@ -209,6 +218,22 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function map(callable $callback): Stream
     {
         return $this->fork(Ops\MapOperation::of($this->emitter)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return Stream<TVO>
+     */
+    public function mapN(callable $callback): Stream
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -277,6 +302,20 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return Stream<TV>
+     */
+    public function filterN(callable $predicate): Stream
+    {
+        return $this->filter(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
@@ -285,6 +324,22 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function filterMap(callable $callback): Stream
     {
         return $this->fork(Ops\FilterMapOperation::of($this->emitter)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Stream<TVO>
+     */
+    public function filterMapN(callable $callback): Stream
+    {
+        return $this->filterMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -321,6 +376,22 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function flatMap(callable $callback): Stream
     {
         return $this->fork(Ops\FlatMapOperation::of($this->emitter)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @return Stream<TVO>
+     */
+    public function flatMapN(callable $callback): Stream
+    {
+        return $this->flatMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -389,6 +460,20 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): void $callback
+     * @return Stream<TV>
+     */
+    public function tapN(callable $callback): Stream
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return Stream<TV>
      */
     public function repeat(null|int $times = null): Stream
@@ -420,9 +505,11 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function lines(): Stream
     {
-        return $this->fork(Ops\TapOperation::of($this->emitter)(function ($_key, $elem) {
-            print_r($elem) . PHP_EOL;
-        }));
+        return $this->fork(Ops\TapOperation::of($this->emitter)(
+            function ($_key, $elem) {
+                print_r($elem) . PHP_EOL;
+            }),
+        );
     }
 
     /**
@@ -486,6 +573,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
         );
     }
 
+    #endregion StreamChainableOps
+
+    #region StreamTerminalOps
+
     /**
      * {@inheritDoc}
      *
@@ -494,6 +585,19 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function every(callable $predicate): bool
     {
         return $this->leaf(Ops\EveryOperation::of($this->emitter)(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->every(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -516,6 +620,19 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     public function exists(callable $predicate): bool
     {
         return $this->leaf(Ops\ExistsOperation::of($this->emitter)(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->exists(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -546,12 +663,42 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): HashMap
+    {
+        return $this->reindex(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
     public function first(callable $predicate): Option
     {
         return $this->leaf(Ops\FirstOperation::of($this->emitter)(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option
+    {
+        return $this->first(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -604,6 +751,33 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option
+    {
+        return $this->last(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return Option<TVO>
+     */
+    public function lastOf(string|array $fqcn, bool $invariant = false): Option
+    {
+        return $this->leaf(Ops\LastOfOperation::of($this->emitter)($fqcn, $invariant));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return Option<TV>
      */
     public function firstElement(): Option
@@ -637,6 +811,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
         /** @noinspection PhpStatementHasEmptyBodyInspection */
         foreach ($this as $ignored) { }
     }
+
+    #endregion StreamTerminalOps
+
+    #region StreamCastableOps
 
     /**
      * {@inheritDoc}
@@ -787,4 +965,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 
         $file = null;
     }
+
+    #endregion StreamCastableOps
 }
