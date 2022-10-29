@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fp\Streams;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\Collection;
 use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
@@ -24,10 +25,10 @@ use SplFileObject;
 
 use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asGenerator;
-use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 use function Fp\Cast\asNonEmptyArray;
 use function Fp\Cast\asNonEmptyList;
+use function Fp\Cast\fromPairs;
 
 /**
  * Note: stream iteration via foreach is terminal operation
@@ -90,6 +91,22 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     /**
+     * @template TKO
+     * @template TVO
+     *
+     * @param Generator<TVO> $gen
+     * @return Stream<TVO>
+     */
+    private function fork(Generator $gen): Stream
+    {
+        $this->forked = $this->forked
+            ? throw new LogicException('multiple stream forks detected')
+            : true;
+
+        return Stream::emits($gen);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @template TVI
@@ -109,7 +126,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return Stream<TVI>
      */
     public static function emits(iterable $source): Stream
@@ -181,22 +198,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
                 yield $i;
             }
         }));
-    }
-
-    /**
-     * @template TKO
-     * @template TVO
-     *
-     * @param Generator<TVO> $gen
-     * @return Stream<TVO>
-     */
-    private function fork(Generator $gen): Stream
-    {
-        $this->forked = $this->forked
-            ? throw new LogicException('multiple stream forks detected')
-            : true;
-
-        return Stream::emits($gen);
     }
 
     /**
@@ -390,19 +391,13 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @return Stream<TV>
      */
-    public function repeat(): Stream
+    public function repeat(null|int $times = null): Stream
     {
-        return $this->fork(Ops\RepeatOperation::of($this->emitter)());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return Stream<TV>
-     */
-    public function repeatN(int $times): Stream
-    {
-        return $this->fork(Ops\RepeatNOperation::of($this->emitter)($times));
+        return $this->fork(
+            null !== $times
+                ? Ops\RepeatNOperation::of($this->emitter)($times)
+                : Ops\RepeatOperation::of($this->emitter)(),
+        );
     }
 
     /**
@@ -483,84 +478,12 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     {
         $adjacent = Ops\GroupAdjacentByOperation::of($this->emitter)($discriminator);
 
-        return $this->fork(Ops\MapOperation::of($adjacent)(function (mixed $_, array $pair) {
-            $pair[1] = new ArrayList($pair[1]);
-            return $pair;
-        }));
-    }
-
-    /**
-     * Ascending sort
-     *
-     * ```php
-     * >>> Stream::emits([2, 1, 3])->sorted()->toList();
-     * => [1, 2, 3]
-     * ```
-     *
-     * @return Stream<TV>
-     */
-    public function sorted(): Stream
-    {
-        return $this->fork(asGenerator(function() {
-            yield from Ops\SortedOperation::of($this->emitter)->asc();
-        }));
-    }
-
-    /**
-     * Ascending sort by specific value
-     *
-     * ```php
-     * >>> Stream::emits([new Foo(2), new Foo(1), new Foo(3)])
-     *         ->sortedBy(fn(Foo $obj) => $obj->a)
-     *         ->toList();
-     * => [Foo(1), Foo(2), Foo(3)]
-     * ```
-     *
-     * @param callable(TV): mixed $callback
-     * @return Stream<TV>
-     */
-    public function sortedBy(callable $callback): Stream
-    {
-        return $this->fork(asGenerator(function() use ($callback) {
-            yield from Ops\SortedOperation::of($this->emitter)->ascBy($callback);
-        }));
-    }
-
-    /**
-     * Descending sort
-     *
-     * ```php
-     * >>> Stream::emits([2, 1, 3])->sorted()->toList();
-     * => [3, 2, 1]
-     * ```
-     *
-     * @return Stream<TV>
-     */
-    public function sortedDesc(): Stream
-    {
-        return $this->fork(asGenerator(function() {
-            yield from Ops\SortedOperation::of($this->emitter)->desc();
-        }));
-    }
-
-    /**
-     * Descending sort by specific value
-     *
-     * ```php
-     * >>> Stream::emits([new Foo(2), new Foo(1), new Foo(3)])
-     *         ->sortedBy(fn(Foo $obj) => $obj->a)
-     *         ->toList();
-     * => [Foo(3), Foo(2), Foo(1)]
-     * ```
-     *
-     * @param callable(TV): mixed $callback
-     * @return Stream<TV>
-     */
-    public function sortedDescBy(callable $callback): Stream
-    {
-        return $this->fork(asGenerator(function() use ($callback) {
-            yield from Ops\SortedOperation::of($this->emitter)->descBy($callback);
-        }));
+        return $this->fork(
+            Ops\MapOperation::of($adjacent)(fn(mixed $_, array $pair) => [
+                $pair[0],
+                new ArrayList($pair[1]),
+            ]),
+        );
     }
 
     /**
@@ -732,7 +655,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toNonEmptyList(): Option
     {
-        return $this->leaf(asNonEmptyList($this->emitter));
+        return asNonEmptyList($this->toList());
     }
 
     /**
@@ -746,16 +669,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toArray(): array
     {
-        return $this->leaf(asArray(
-            asGenerator(function() {
-                /** @var Generator<int, array{TKO, TVO}> $emitter */
-                $emitter = $this->emitter;
-
-                foreach ($emitter as [$key, $value]) {
-                    yield $key => $value;
-                }
-            }),
-        ));
+        return fromPairs($this);
     }
 
     /**
@@ -769,16 +683,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toNonEmptyArray(): Option
     {
-        return $this->leaf(asNonEmptyArray(
-            asGenerator(function() {
-                /** @var Generator<int, array{TKO, TVO}> $emitter */
-                $emitter = $this->emitter;
-
-                foreach ($emitter as [$key, $value]) {
-                    yield $key => $value;
-                }
-            }),
-        ));
+        return asNonEmptyArray($this->toArray());
     }
 
     /**
@@ -798,7 +703,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toNonEmptyLinkedList(): Option
     {
-        return $this->leaf(NonEmptyLinkedList::collect($this->emitter));
+        return $this->toLinkedList()->toNonEmptyLinkedList();
     }
 
     /**
@@ -818,11 +723,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toNonEmptyArrayList(): Option
     {
-        $arrayList = $this->leaf(ArrayList::collect($this->emitter));
-
-        return Option::some($arrayList)
-            ->filter(fn($list) => !$list->isEmpty())
-            ->map(fn($list) => new NonEmptyArrayList($list));
+        return $this->toArrayList()->toNonEmptyArrayList();
     }
 
     /**
@@ -842,7 +743,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toNonEmptyHashSet(): Option
     {
-        return $this->leaf(NonEmptyHashSet::collect($this->emitter));
+        return $this->toHashSet()->toNonEmptyHashSet();
     }
 
     /**
@@ -870,7 +771,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function toNonEmptyHashMap(): Option
     {
-        return $this->leaf(NonEmptyHashMap::collectPairs($this->emitter));
+        return $this->toHashMap()->toNonEmptyHashMap();
     }
 
     /**

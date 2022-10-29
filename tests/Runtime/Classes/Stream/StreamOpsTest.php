@@ -121,8 +121,8 @@ final class StreamOpsTest extends TestCase
     public function testRepeat(): void
     {
         $this->assertEquals([1, 2, 1, 2, 1], Stream::emits([1,2])->repeat()->take(5)->toList());
-        $this->assertEquals([1], Stream::emit(1)->repeatN(1)->toList());
-        $this->assertEquals([1, 1, 1], Stream::emit(1)->repeatN(3)->toList());
+        $this->assertEquals([1], Stream::emit(1)->repeat(1)->toList());
+        $this->assertEquals([1, 1, 1], Stream::emit(1)->repeat(3)->toList());
     }
 
     public function testAppendedAndPrepended(): void
@@ -226,36 +226,6 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals('(0,1,2)', Stream::emits([0, 1, 2])->mkString('(', ',', ')'));
         $this->assertEquals('()', Stream::emits([])->mkString('(', ',', ')'));
-    }
-
-    public function testSorted(): void
-    {
-        $this->assertEquals(
-            [1, 2, 3],
-            Stream::emits([1, 3, 2])->sorted()->toList()
-        );
-
-        $this->assertEquals(
-            [3, 2, 1],
-            Stream::emits([1, 3, 2])->sortedDesc()->toList()
-        );
-    }
-
-    public function testSortedBy(): void
-    {
-        $this->assertEquals(
-            [new Foo(1), new Foo(2), new Foo(3)],
-            Stream::emits([new Foo(1), new Foo(3), new Foo(2)])
-                ->sortedBy(fn(Foo $obj) => $obj->a)
-                ->toList(),
-        );
-
-        $this->assertEquals(
-            [new Foo(3), new Foo(2), new Foo(1)],
-            Stream::emits([new Foo(1), new Foo(3), new Foo(2)])
-                ->sortedDescBy(fn(Foo $obj) => $obj->a)
-                ->toList(),
-        );
     }
 
     public function testReindex(): void

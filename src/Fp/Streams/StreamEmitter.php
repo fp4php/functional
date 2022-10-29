@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Streams;
 
+use Fp\Collections\Collection;
 use Fp\Functional\Unit;
 
 /**
@@ -38,7 +39,7 @@ interface StreamEmitter
      *
      * @template TVI
      *
-     * @param iterable<TVI> $source
+     * @param (iterable<TVI>|Collection<TVI>) $source
      * @return Stream<TVI>
      */
     public static function emits(iterable $source): Stream;
@@ -51,12 +52,7 @@ interface StreamEmitter
      * => [1, 2, 3, 1, 2, 3, 1, 2]
      * ```
      *
-     * @return Stream<TV>
-     */
-    public function repeat(): Stream;
-
-    /**
-     * Repeat this stream N times
+     * If you pass $times stream repeats N times.
      *
      * ```php
      * >>> Stream::emit(1)->repeatN(3)->toList();
@@ -65,7 +61,7 @@ interface StreamEmitter
      *
      * @return Stream<TV>
      */
-    public function repeatN(int $times): Stream;
+    public function repeat(null|int $times = null): Stream;
 
     /**
      * Discrete stream that emits elapsed duration since the start time of stream consumption.
