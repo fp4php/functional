@@ -989,7 +989,7 @@ abstract class LinkedList implements Seq
      */
     public function head(): Option
     {
-        return proveOf($this, Cons::class)->map(fn(Cons $cons) => $cons->head);
+        return proveOf($this, Cons::class)->map(fn(Cons $cons): mixed => $cons->head);
     }
 
     /**
@@ -1087,12 +1087,12 @@ abstract class LinkedList implements Seq
      *
      * @param callable(TV): TKO $group
      * @param callable(TV): TVO $map
-     * @return HashMap<TKO, NonEmptyArrayList<TVO>>
+     * @return HashMap<TKO, NonEmptyLinkedList<TVO>>
      */
     public function groupMap(callable $group, callable $map): HashMap
     {
         return Ops\GroupMapOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map))
-            ->map(fn(NonEmptyHashMap $hs) => $hs->values()->toNonEmptyArrayList());
+            ->map(fn(NonEmptyHashMap $hs) => $hs->values()->toNonEmptyLinkedList());
     }
 
     /**

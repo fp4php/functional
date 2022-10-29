@@ -23,6 +23,17 @@ use function Fp\Cast\asPairs;
 
 final class SeqTest extends TestCase
 {
+    /**
+     * @return list<array{class-string<Seq>}>
+     */
+    public function seqClassDataProvider(): array
+    {
+        return [
+            [ArrayList::class],
+            [LinkedList::class],
+        ];
+    }
+
     public function provideToStringData(): Generator
     {
         yield 'ArrayList<int>' => [
@@ -72,7 +83,7 @@ final class SeqTest extends TestCase
      */
     public function testToString(Seq $seq, string $expected): void
     {
-        $this->assertEquals($expected, (string)$seq);
+        $this->assertEquals($expected, (string) $seq);
         $this->assertEquals($expected, $seq->toString());
     }
 
@@ -82,63 +93,21 @@ final class SeqTest extends TestCase
         yield LinkedList::class => [LinkedList::collect([1, 2, 3]), LinkedList::collect([])];
     }
 
-    public function provideTestCastsToHashMapData(): Generator
-    {
-        $pairs = [
-            ['fst', 1],
-            ['snd', 2],
-            ['trd', 3],
-        ];
-        yield ArrayList::class => [$pairs, ArrayList::collect($pairs), ArrayList::empty()];
-        yield LinkedList::class => [$pairs, LinkedList::collect($pairs), LinkedList::empty()];
-    }
-
-    public function provideTestCastsToArrayData(): Generator
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testCastToArray(string $seq): void
     {
         $expected = [
             'fst' => 1,
             'snd' => 2,
             'thr' => 3,
         ];
-        yield ArrayList::class => [$expected, ArrayList::collect(asPairs($expected)), ArrayList::empty()];
-        yield LinkedList::class => [$expected, LinkedList::collect(asPairs($expected)), LinkedList::empty()];
-    }
 
-    /**
-     * @param array<string, int> $expected
-     * @param Seq<array{string, int}> $seq
-     * @param Seq<array{string, int}> $emptySeq
-     * @dataProvider provideTestCastsToArrayData
-     */
-    public function testCastToArray(array $expected, Seq $seq, Seq $emptySeq): void
-    {
-        $this->assertEquals($expected, $seq->toArray());
-        $this->assertEquals(Option::some($expected), $seq->toNonEmptyArray());
-        $this->assertEquals(Option::none(), $emptySeq->toNonEmptyArray());
-    }
-
-    /**
-     * @param list<array{string, int}> $expected
-     * @param Seq<array{string, int}> $seq
-     * @param Seq<array{string, int}> $emptySeq
-     * @dataProvider provideTestCastsToHashMapData
-     */
-    public function testCastsToHashMap(array $expected, Seq $seq, Seq $emptySeq): void
-    {
-        $this->assertEquals(
-            HashMap::collectPairs($expected),
-            $seq->toHashMap(),
-        );
-
-        $this->assertEquals(
-            Option::some(NonEmptyHashMap::collectPairsUnsafe($expected)),
-            $seq->toNonEmptyHashMap(),
-        );
-
-        $this->assertEquals(
-            Option::none(),
-            $emptySeq->toNonEmptyHashMap(),
-        );
+        $this->assertEquals($expected, $seq::collect(asPairs($expected))->toArray());
+        $this->assertEquals(Option::some($expected), $seq::collect(asPairs($expected))->toNonEmptyArray());
+        $this->assertEquals(Option::none(), $seq::empty()->toNonEmptyArray());
     }
 
     /**
@@ -223,75 +192,51 @@ final class SeqTest extends TestCase
     }
 
     /**
-     * @param Seq<array<array-key, mixed>> $seq
-     * @param array<array-key, mixed> $expected
-     *
-     * @dataProvider provideTestDataForCastToMergedArray
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testCastToMergedArray(Seq $seq, array $expected): void
+    public function testCastsToHashMap(string $seq): void
     {
-        $this->assertEquals($expected, $seq->toMergedArray());
-    }
+        $this->assertEquals(
+            HashMap::collect(['fst' => 1, 'snd' => 2, 'trd' => 3]),
+            $seq::collect([['fst', 1], ['snd', 2], ['trd', 3]])->toHashMap(),
+        );
 
-    public function provideTestDataForCastToMergedArray(): array
-    {
-        $shapes = [
-            ['fst' => 1],
-            ['snd' => 2],
-            ['thr' => 3],
-        ];
-
-        $expected = [
-            'fst' => 1,
-            'snd' => 2,
-            'thr' => 3,
-        ];
-
-        return [
-            ArrayList::class => [ArrayList::collect($shapes), $expected],
-            LinkedList::class => [LinkedList::collect($shapes), $expected],
-        ];
-    }
-
-    public function provideTestDataForCastToNonEmptyMergedArray(): array
-    {
-        $shapes = [
-            ['fst' => 1],
-            ['snd' => 2],
-            ['thr' => 3],
-        ];
-
-        $expected = [
-            'fst' => 1,
-            'snd' => 2,
-            'thr' => 3,
-        ];
-
-        return [
-            ArrayList::class . '-empty' => [ArrayList::empty(), Option::none()],
-            ArrayList::class . '-non-empty' => [ArrayList::collect($shapes), Option::some($expected)],
-            LinkedList::class . '-empty' => [LinkedList::empty(), Option::none()],
-            LinkedList::class . '-non-empty' => [LinkedList::collect($shapes), Option::some($expected)],
-        ];
+        $this->assertEquals(
+            Option::some(NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'trd' => 3])),
+            $seq::collect([['fst', 1], ['snd', 2], ['trd', 3]])->toNonEmptyHashMap(),
+        );
     }
 
     /**
-     * @param Seq<array<array-key, mixed>> $seq
-     * @param Option<array<array-key, mixed>> $expected
-     *
-     * @dataProvider provideTestDataForCastToNonEmptyMergedArray
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testCastToNonEmptyMergedArray(Seq $seq, Option $expected): void
+    public function testCastToMergedArray(string $seq): void
     {
-        $this->assertEquals($expected, $seq->toNonEmptyMergedArray());
+        $this->assertEquals(
+            [],
+            $seq::empty()->toMergedArray(),
+        );
+        $this->assertEquals(
+            ['fst' => 1, 'snd' => 2, 'thr' => 3],
+            $seq::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray(),
+        );
     }
 
     /**
-     * @dataProvider provideTestCastsData
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testCount(Seq $seq): void
+    public function testCastToNonEmptyMergedArray(string $seq): void
     {
-        $this->assertEquals(3, $seq->count());
-        $this->assertEquals(3, $seq->count());
+        $this->assertEquals(
+            Option::none(),
+            $seq::empty()->toNonEmptyMergedArray(),
+        );
+        $this->assertEquals(
+            Option::some(['fst' => 1, 'snd' => 2, 'thr' => 3]),
+            $seq::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toNonEmptyMergedArray(),
+        );
     }
 }
