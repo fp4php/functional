@@ -158,11 +158,11 @@ interface NonEmptySeqTerminalOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptySeq<iterable<mixed, TVO>|Collection<mixed, TVO>>
+     * @psalm-if-this-is NonEmptySeq<non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>>
      *
-     * @return Seq<TVO>
+     * @return NonEmptySeq<TVO>
      */
-    public function flatten(): Seq;
+    public function flatten(): NonEmptySeq;
 
     /**
      * ```php
@@ -172,10 +172,10 @@ interface NonEmptySeqTerminalOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
-     * @return Seq<TVO>
+     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptySeq<TVO>
      */
-    public function flatMap(callable $callback): Seq;
+    public function flatMap(callable $callback): NonEmptySeq;
 
     /**
      * Suppose you have an NonEmptyArrayList<TV> and you want to format each element with a function that returns an Option<TVO>.

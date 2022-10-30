@@ -157,13 +157,13 @@ final class NonEmptyArrayList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptyArrayList<iterable<mixed, TVO>|Collection<mixed, TVO>>
+     * @psalm-if-this-is NonEmptyArrayList<non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>>
      *
-     * @return ArrayList<TVO>
+     * @return NonEmptyArrayList<TVO>
      */
-    public function flatten(): ArrayList
+    public function flatten(): NonEmptyArrayList
     {
-        return $this->arrayList->flatten();
+        return new NonEmptyArrayList($this->arrayList->flatten());
     }
 
     /**
@@ -171,12 +171,12 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
-     * @return ArrayList<TVO>
+     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptyArrayList<TVO>
      */
-    public function flatMap(callable $callback): ArrayList
+    public function flatMap(callable $callback): NonEmptyArrayList
     {
-        return $this->arrayList->flatMap($callback);
+        return new NonEmptyArrayList($this->arrayList->flatMap($callback));
     }
 
     /**

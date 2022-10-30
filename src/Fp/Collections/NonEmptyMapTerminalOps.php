@@ -384,20 +384,20 @@ interface NonEmptyMapTerminalOps
      *
      * ```php
      * >>> NonEmptyHashMap::collectNonEmpty([
-     * >>>     'fst' => HashMap::collect(['k1' => 1, 'k2' => 2]),
-     * >>>     'snd' => HashMap::collect(['k3' => 3, 'k4' => 4]),
-     * >>>     'thr' => HashMap::collect(['k5' => 5, 'k6' => 6]),
+     * >>>     'fst' => NonEmptyHashMap::collectNonEmpty(['k1' => 1, 'k2' => 2]),
+     * >>>     'snd' => NonEmptyHashMap::collectNonEmpty(['k3' => 3, 'k4' => 4]),
+     * >>>     'thr' => NonEmptyHashMap::collectNonEmpty(['k5' => 5, 'k6' => 6]),
      * >>> ])->flatten();
-     * => HashMap('k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5, 'k6' => 6)
+     * => NonEmptyHashMap('k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5, 'k6' => 6)
      * ```
      *
      * @template TKO
      * @template TVO
-     * @psalm-if-this-is NonEmptyMap<TK, iterable<TKO, TVO>|Collection<TKO, TVO>>
+     * @psalm-if-this-is NonEmptyMap<TK, non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>>
      *
-     * @return Map<TKO, TVO>
+     * @return NonEmptyMap<TKO, TVO>
      */
-    public function flatten(): Map;
+    public function flatten(): NonEmptyMap;
 
     /**
      * Map collection and flatten the result
@@ -408,9 +408,9 @@ interface NonEmptyMapTerminalOps
      *
      * >>> $collection
      * >>>     ->flatMap(fn(int $val) => [
-     * >>>         [$val - 1, $val - 1],
-     * >>>         [$val, $val],
-     * >>>         [$val + 1, $val + 1]
+     * >>>         ($val - 1) => $val - 1,
+     * >>>         ($val) => $val,
+     * >>>         ($val + 1) => $val + 1,
      * >>>     ])
      * >>>     ->toList();
      * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
@@ -419,10 +419,10 @@ interface NonEmptyMapTerminalOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
-     * @return Map<TKO, TVO>
+     * @param callable(TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyMap<TKO, TVO>
      */
-    public function flatMap(callable $callback): Map;
+    public function flatMap(callable $callback): NonEmptyMap;
 
     /**
      * Same as {@see NonEmptyMapChainableOps::flatMap()}, but passing also the key to the $callback function.
@@ -430,10 +430,10 @@ interface NonEmptyMapTerminalOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
-     * @return Map<TKO, TVO>
+     * @param callable(TK, TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyMap<TKO, TVO>
      */
-    public function flatMapKV(callable $callback): Map;
+    public function flatMapKV(callable $callback): NonEmptyMap;
 
     /**
      * Returns sequence of collection keys

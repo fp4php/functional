@@ -639,13 +639,13 @@ final class NonEmptyHashMap implements NonEmptyMap
      *
      * @template TKO
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, iterable<TKO, TVO>|Collection<TKO, TVO>>
+     * @psalm-if-this-is NonEmptyHashMap<TK, non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>>
      *
-     * @return HashMap<TKO, TVO>
+     * @return NonEmptyHashMap<TKO, TVO>
      */
-    public function flatten(): HashMap
+    public function flatten(): NonEmptyHashMap
     {
-        return $this->hashMap->flatten();
+        return new NonEmptyHashMap($this->hashMap->flatten());
     }
 
     /**
@@ -654,10 +654,10 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
-     * @return HashMap<TKO, TVO>
+     * @param callable(TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyHashMap<TKO, TVO>
      */
-    public function flatMap(callable $callback): HashMap
+    public function flatMap(callable $callback): NonEmptyHashMap
     {
         return $this->flatMapKV(dropFirstArg($callback));
     }
@@ -668,12 +668,12 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
-     * @return HashMap<TKO, TVO>
+     * @param callable(TK, TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyHashMap<TKO, TVO>
      */
-    public function flatMapKV(callable $callback): HashMap
+    public function flatMapKV(callable $callback): NonEmptyHashMap
     {
-        return $this->hashMap->flatMapKV($callback);
+        return new NonEmptyHashMap($this->hashMap->flatMapKV($callback));
     }
 
     /**

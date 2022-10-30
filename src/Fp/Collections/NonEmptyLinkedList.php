@@ -157,13 +157,15 @@ final class NonEmptyLinkedList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptyLinkedList<iterable<mixed, TVO>|Collection<mixed, TVO>>
+     * @psalm-if-this-is NonEmptyLinkedList<non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>>
      *
-     * @return LinkedList<TVO>
+     * @return NonEmptyLinkedList<TVO>
      */
-    public function flatten(): LinkedList
+    public function flatten(): NonEmptyLinkedList
     {
-        return $this->toLinkedList()->flatten();
+        return $this->toLinkedList()->flatten()
+            ->toNonEmptyLinkedList()
+            ->getUnsafe();
     }
 
     /**
@@ -171,12 +173,14 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
-     * @return LinkedList<TVO>
+     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptyLinkedList<TVO>
      */
-    public function flatMap(callable $callback): LinkedList
+    public function flatMap(callable $callback): NonEmptyLinkedList
     {
-        return $this->toLinkedList()->flatMap($callback);
+        return $this->toLinkedList()->flatMap($callback)
+            ->toNonEmptyLinkedList()
+            ->getUnsafe();
     }
 
     /**

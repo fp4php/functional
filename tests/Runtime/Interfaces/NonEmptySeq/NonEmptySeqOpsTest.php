@@ -469,19 +469,14 @@ final class NonEmptySeqOpsTest extends TestCase
     public function testFlatMap(NonEmptySeq $seq): void
     {
         $this->assertEquals(
-            [1, 2, 3, 4, 5, 6],
-            $seq->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList()
+            $seq::collectNonEmpty([1, 2, 3, 4, 5, 6]),
+            $seq->flatMap(fn($e) => [$e - 1, $e, $e + 1]),
         );
     }
 
     public function provideTestFlattenData(): Generator
     {
         yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([
-                ArrayList::empty(),
-                ArrayList::empty(),
-                ArrayList::empty(),
-            ]),
             NonEmptyArrayList::collectNonEmpty([
                 ArrayList::collect([1, 2]),
                 ArrayList::collect([3, 4]),
@@ -490,11 +485,6 @@ final class NonEmptySeqOpsTest extends TestCase
         ];
 
         yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([
-                LinkedList::empty(),
-                LinkedList::empty(),
-                LinkedList::empty(),
-            ]),
             NonEmptyLinkedList::collectNonEmpty([
                 LinkedList::collect([1, 2]),
                 LinkedList::collect([3, 4]),
@@ -509,9 +499,8 @@ final class NonEmptySeqOpsTest extends TestCase
      *
      * @dataProvider provideTestFlattenData
      */
-    public function testFlatten(NonEmptySeq $emptySeq, NonEmptySeq $nonEmptySeq): void
+    public function testFlatten(NonEmptySeq $nonEmptySeq): void
     {
-        $this->assertEquals([], $emptySeq->flatten()->toList());
         $this->assertEquals([1, 2, 3, 4, 5, 6], $nonEmptySeq->flatten()->toList());
     }
 

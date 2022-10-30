@@ -74,9 +74,7 @@ final class Psalm8124WorkaroundTest
      * @param HashSet<string> $set
      * @return array{
      *     Option<NonEmptyArrayList<string>>,
-     *     ArrayList<string>,
      *     Option<NonEmptyArrayList<string>>,
-     *     ArrayList<string>,
      *     NonEmptyArrayList<array{int, string}>,
      *     NonEmptyArrayList<int|string>,
      *     NonEmptyArrayList<int|string>,
@@ -89,9 +87,7 @@ final class Psalm8124WorkaroundTest
     {
         return [
             NonEmptyArrayList::collect($list),
-            $neList->flatMap(fn() => $list),
             NonEmptyArrayList::collect($set),
-            $neList->flatMap(fn() => $set),
             $neList->zip($otherNeList),
             $neList->prependedAll($list),
             $neList->prependedAll($set),

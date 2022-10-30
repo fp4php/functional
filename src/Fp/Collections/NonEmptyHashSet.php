@@ -635,13 +635,13 @@ final class NonEmptyHashSet implements NonEmptySet
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashSet<iterable<mixed, TVO>|Collection<mixed, TVO>>
+     * @psalm-if-this-is NonEmptyHashSet<non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>>
      *
-     * @return Set<TVO>
+     * @return NonEmptyHashSet<TVO>
      */
-    public function flatten(): Set
+    public function flatten(): NonEmptyHashSet
     {
-        return $this->set->flatten();
+        return new NonEmptyHashSet($this->set->flatten());
     }
 
     /**
@@ -678,12 +678,12 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
-     * @return HashSet<TVO>
+     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptyHashSet<TVO>
      */
-    public function flatMap(callable $callback): HashSet
+    public function flatMap(callable $callback): NonEmptyHashSet
     {
-        return $this->set->flatMap($callback);
+        return new NonEmptyHashSet($this->set->flatMap($callback));
     }
 
     /**

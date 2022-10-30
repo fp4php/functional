@@ -162,23 +162,15 @@ final class NonEmptyMapOpsTest extends TestCase
     public function testFlatten(): void
     {
         $this->assertEquals(
-            HashMap::collect([]),
             NonEmptyHashMap::collectNonEmpty([
-                HashMap::collect([]),
-                HashMap::collect([]),
-                HashMap::collect([]),
-            ])->flatten(),
-        );
-        $this->assertEquals(
-            HashMap::collect([
                 'fst' => 1,
                 'snd' => 2,
                 'thr' => 3,
             ]),
             NonEmptyHashMap::collectNonEmpty([
-                HashMap::collect(['fst' => 1]),
-                HashMap::collect(['snd' => 2]),
-                HashMap::collect(['thr' => 3]),
+                NonEmptyHashMap::collectNonEmpty(['fst' => 1]),
+                NonEmptyHashMap::collectNonEmpty(['snd' => 2]),
+                NonEmptyHashMap::collectNonEmpty(['thr' => 3]),
             ])->flatten(),
         );
     }
@@ -186,7 +178,7 @@ final class NonEmptyMapOpsTest extends TestCase
     public function testFlatMap(): void
     {
         $this->assertEquals(
-            HashMap::collect([
+            NonEmptyHashMap::collectNonEmpty([
                 1 => 1,
                 2 => 2,
                 3 => 3,

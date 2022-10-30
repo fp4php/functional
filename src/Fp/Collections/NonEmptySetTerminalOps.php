@@ -475,11 +475,11 @@ interface NonEmptySetTerminalOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptySet<iterable<mixed, TVO>|Collection<mixed, TVO>>
+     * @psalm-if-this-is NonEmptySet<non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>>
      *
-     * @return Set<TVO>
+     * @return NonEmptySet<TVO>
      */
-    public function flatten(): Set;
+    public function flatten(): NonEmptySet;
 
     /**
      * ```php
@@ -491,10 +491,10 @@ interface NonEmptySetTerminalOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
-     * @return Set<TVO>
+     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptySet<TVO>
      */
-    public function flatMap(callable $callback): Set;
+    public function flatMap(callable $callback): NonEmptySet;
 
     /**
      * Returns every collection element except first
