@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Classes;
 
 use Fp\Collections\ArrayList;
+use Fp\Collections\ArrayListExtensions;
 use PHPUnit\Framework\TestCase;
 
 final class ExtensionTest extends TestCase
@@ -17,20 +18,20 @@ final class ExtensionTest extends TestCase
 
     protected function setUp(): void
     {
-        ArrayList::addInstanceExtension($this->testMethodName, function(ArrayList $list) {
+        ArrayListExtensions::addInstanceExtension($this->testMethodName, function(ArrayList $list) {
             /** @var ArrayList<int> $list */;
             return $list->fold(0)(fn($acc, $cur) => $acc + $cur);
         });
 
-        ArrayList::addStaticExtension($this->testStaticMethodName, function(string $string): ArrayList {
+        ArrayListExtensions::addStaticExtension($this->testStaticMethodName, function(string $string): ArrayList {
             return ArrayList::collect(str_split($string));
         });
     }
 
     protected function tearDown(): void
     {
-        ArrayList::removeInstanceExtension($this->testMethodName);
-        ArrayList::removeStaticExtension($this->testStaticMethodName);
+        ArrayListExtensions::removeInstanceExtension($this->testMethodName);
+        ArrayListExtensions::removeStaticExtension($this->testStaticMethodName);
     }
 
     public function testAddInstanceMethod(): void
@@ -39,14 +40,14 @@ final class ExtensionTest extends TestCase
         $actual = ArrayList::collect([1, 2, 3])->{$this->testMethodName}();
 
         $this->assertEquals(6, $actual);
-        $this->assertArrayHasKey($this->testMethodName, ArrayList::getAllInstanceExtensions());
+        $this->assertArrayHasKey($this->testMethodName, ArrayListExtensions::getAllInstanceExtensions());
     }
 
     public function testAddInstanceMethodTwice(): void
     {
         $this->expectErrorMessage("Instance extension method '{$this->testMethodName}' is already defined!");
 
-        ArrayList::addInstanceExtension($this->testMethodName, function(ArrayList $list): int {
+        ArrayListExtensions::addInstanceExtension($this->testMethodName, function(ArrayList $list): int {
             /** @var ArrayList<int> $list */;
             return $list->fold(0)(fn($acc, $cur) => $acc + $cur);
         });
@@ -57,7 +58,7 @@ final class ExtensionTest extends TestCase
         /** @psalm-suppress MixedAssignment */
         $actual = ArrayList::{$this->testStaticMethodName}('abc');
 
-        $this->assertArrayHasKey($this->testStaticMethodName, ArrayList::getAllStaticExtensions());
+        $this->assertArrayHasKey($this->testStaticMethodName, ArrayListExtensions::getAllStaticExtensions());
         $this->assertEquals(ArrayList::collect(['a', 'b', 'c']), $actual);
     }
 
@@ -65,7 +66,7 @@ final class ExtensionTest extends TestCase
     {
         $this->expectErrorMessage("Static extension method '{$this->testStaticMethodName}' is already defined!");
 
-        ArrayList::addStaticExtension($this->testStaticMethodName, function(string $string): ArrayList {
+        ArrayListExtensions::addStaticExtension($this->testStaticMethodName, function(string $string): ArrayList {
             return ArrayList::collect(str_split($string));
         });
     }

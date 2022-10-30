@@ -8,7 +8,6 @@ use Throwable;
 use Generator;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-use Fp\Functional\WithExtensions;
 use Fp\Operations\ToStringOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\EitherGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
@@ -27,8 +26,6 @@ use function Fp\Callable\toSafeClosure;
  */
 abstract class Either
 {
-    use WithExtensions;
-
     #region Constructors
 
     /**
@@ -699,4 +696,26 @@ abstract class Either
     }
 
     # endregion Chainable
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return EitherExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return EitherExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

@@ -791,4 +791,22 @@ final class NonEmptyHashSet implements NonEmptySet
             ->toArrayList()
             ->mkString('NonEmptyHashSet(', ', ', ')');
     }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return NonEmptyHashSetExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return NonEmptyHashSetExtensions::callStatic($name, $arguments);
+    }
 }

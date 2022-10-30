@@ -41,14 +41,12 @@ use function Fp\Evidence\proveOf;
  * @psalm-yield A
  *
  * @psalm-seal-methods
- * @mixin OptionExtensions
+ * @mixin OptionExtensions<A>
  *
  * @psalm-suppress InvalidTemplateParam
  */
 abstract class Option
 {
-    use WithExtensions;
-
     # region Constructors
 
     /**
@@ -791,4 +789,26 @@ abstract class Option
     }
 
     # endregion Chainable
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return OptionExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return OptionExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

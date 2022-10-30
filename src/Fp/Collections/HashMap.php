@@ -9,7 +9,6 @@ use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Separated\Separated;
-use Fp\Functional\WithExtensions;
 use Fp\Streams\Stream;
 
 use function Fp\Callable\toSafeClosure;
@@ -32,8 +31,6 @@ use function Fp\Callable\dropFirstArg;
  */
 final class HashMap implements Map
 {
-    use WithExtensions;
-
     private bool $empty;
 
     /**
@@ -874,4 +871,26 @@ final class HashMap implements Map
             ->values()
             ->mkString('HashMap(', ', ', ')');
     }
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return HashMapExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return HashMapExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

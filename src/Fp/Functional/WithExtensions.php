@@ -95,15 +95,15 @@ trait WithExtensions
     /**
      * @param non-empty-string $name
      */
-    public function __call(string $name, array $arguments): mixed
+    public static function call(object $instance, string $name, array $arguments): mixed
     {
-        return self::getInstanceExtension($name)($this, ...$arguments);
+        return self::getInstanceExtension($name)($instance, ...$arguments);
     }
 
     /**
      * @param non-empty-string $name
      */
-    public static function __callStatic(string $name, array $arguments)
+    public static function callStatic(string $name, array $arguments): mixed
     {
         return self::getStaticExtension($name)(...$arguments);
     }

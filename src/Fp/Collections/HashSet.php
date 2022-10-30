@@ -6,7 +6,6 @@ namespace Fp\Collections;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Separated\Separated;
-use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
@@ -31,8 +30,6 @@ use function Fp\Evidence\proveNonEmptyList;
  */
 final class HashSet implements Set
 {
-    use WithExtensions;
-
     /**
      * @param HashMap<TV, TV> $map
      */
@@ -834,4 +831,26 @@ final class HashSet implements Set
             ->map(fn($value) => Ops\ToStringOperation::of($value))
             ->mkString('HashSet(', ', ', ')');
     }
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return HashSetExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return HashSetExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

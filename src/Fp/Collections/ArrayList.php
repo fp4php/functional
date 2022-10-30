@@ -8,7 +8,6 @@ use ArrayIterator;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
-use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
@@ -35,8 +34,6 @@ use function Fp\Evidence\proveNonEmptyList;
  */
 final class ArrayList implements Seq
 {
-    use WithExtensions;
-
     /**
      * @param list<TV> $elements
      */
@@ -1196,4 +1193,26 @@ final class ArrayList implements Seq
     }
 
     #endregion SeqTerminalOps
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return ArrayListExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return ArrayListExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

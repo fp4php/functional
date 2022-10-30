@@ -46,8 +46,6 @@ use function Fp\Cast\fromPairs;
  */
 final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
 {
-    use WithExtensions;
-
     /** @var Generator<int, TV> */
     private Generator $emitter;
 
@@ -967,4 +965,26 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     }
 
     #endregion StreamCastableOps
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return StreamExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return StreamExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

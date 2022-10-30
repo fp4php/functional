@@ -6,7 +6,6 @@ namespace Fp\Collections;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Separated\Separated;
-use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldOperation;
@@ -36,8 +35,6 @@ use function Fp\Evidence\proveOf;
  */
 abstract class LinkedList implements Seq
 {
-    use WithExtensions;
-
     #region SeqCollector
 
     /**
@@ -1199,4 +1196,28 @@ abstract class LinkedList implements Seq
     }
 
     #endregion SeqTerminal
+
+    #endregion SeqTerminalOps
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return LinkedListExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return LinkedListExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

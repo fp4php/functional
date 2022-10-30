@@ -7,7 +7,6 @@ namespace Fp\Collections;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
-use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
@@ -29,8 +28,6 @@ use function Fp\Collection\keys;
  */
 final class NonEmptyLinkedList implements NonEmptySeq
 {
-    use WithExtensions;
-
     /**
      * @param TV $head
      * @param LinkedList<TV> $tail
@@ -950,4 +947,26 @@ final class NonEmptyLinkedList implements NonEmptySeq
             ->toLinkedList()
             ->mkString('NonEmptyLinkedList(', ', ', ')');
     }
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return NonEmptyLinkedListExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return NonEmptyLinkedListExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }
