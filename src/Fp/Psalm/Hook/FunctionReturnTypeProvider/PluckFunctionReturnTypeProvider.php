@@ -9,7 +9,6 @@ use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\Psalm\Util\Pluck\PluckPropertyTypeResolver;
 use Fp\Psalm\Util\Pluck\PluckResolveContext;
-use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;

@@ -30,7 +30,6 @@ final class PluckPropertyTypeResolver
     }
 
     /**
-     * @param PluckArgs $args
      * @return Option<Union>
      * @todo: Templated properties are not supported
      */
@@ -71,7 +70,6 @@ final class PluckPropertyTypeResolver
     }
 
     /**
-     * @param PluckArgs $args
      * @return Option<Union>
      */
     private static function getTypesForObjectLikeArray(PluckResolveContext $context): Option
