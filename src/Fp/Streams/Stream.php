@@ -126,7 +126,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return Stream<TVI>
      */
     public static function emits(iterable $source): Stream
@@ -380,7 +380,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVO
      *
-     * @param callable(mixed...): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @param callable(mixed...): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Stream<TVO>
      */
     public function flatMapN(callable $callback): Stream

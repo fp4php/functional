@@ -40,7 +40,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $suffix
+     * @param iterable<mixed, TVI>|Collection<mixed, TVI> $suffix
      * @return Stream<TV|TVI>
      */
     public function appendedAll(iterable $suffix): Stream;
@@ -70,7 +70,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $prefix
+     * @param iterable<mixed, TVI>|Collection<mixed, TVI> $prefix
      * @return Stream<TV|TVI>
      */
     public function prependedAll(iterable $prefix): Stream;
@@ -165,7 +165,7 @@ interface StreamChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Stream<TVO>
      */
     public function flatMap(callable $callback): Stream;
@@ -175,7 +175,7 @@ interface StreamChainableOps
      *
      * @template TVO
      *
-     * @param callable(mixed...): (Collection<TVO> | iterable<mixed, TVO>) $callback
+     * @param callable(mixed...): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Stream<TVO>
      */
     public function flatMapN(callable $callback): Stream;
@@ -330,7 +330,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $that
+     * @param iterable<mixed, TVI>|Collection<mixed, TVI> $that
      * @return Stream<array{TV, TVI}>
      */
     public function zip(iterable $that): Stream;
@@ -345,7 +345,7 @@ interface StreamChainableOps
      *
      * @template TVI
      *
-     * @param Collection<TVI> | iterable<mixed, TVI> $that
+     * @param iterable<mixed, TVI>|Collection<mixed, TVI> $that
      * @return Stream<TV|TVI>
      */
     public function interleave(iterable $that): Stream;

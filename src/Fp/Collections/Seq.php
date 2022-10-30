@@ -10,7 +10,7 @@ use Iterator;
  * Ordered list of elements
  *
  * @template-covariant TV
- * @extends Collection<TV>
+ * @extends Collection<int, TV>
  * @extends SeqOps<TV>
  * @extends SeqCollector<TV>
  */
@@ -19,7 +19,7 @@ interface Seq extends Collection, SeqOps, SeqCollector
     /**
      * {@inheritDoc}
      *
-     * @return Iterator<TV>
+     * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator;
 }

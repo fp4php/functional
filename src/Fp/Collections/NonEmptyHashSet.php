@@ -41,7 +41,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return Option<NonEmptyHashSet<TVI>>
      */
     public static function collect(iterable $source): Option
@@ -69,7 +69,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return NonEmptyHashSet<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptyHashSet
@@ -82,7 +82,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVI
      *
-     * @param non-empty-array<array-key, TVI>|NonEmptyCollection<TVI> $source
+     * @param non-empty-array<array-key, TVI>|NonEmptyCollection<mixed, TVI> $source
      * @return NonEmptyHashSet<TVI>
      */
     public static function collectNonEmpty(array|NonEmptyCollection $source): NonEmptyHashSet
@@ -635,7 +635,7 @@ final class NonEmptyHashSet implements NonEmptySet
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashSet<iterable<TVO>|Collection<TVO>>
+     * @psalm-if-this-is NonEmptyHashSet<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return Set<TVO>
      */
@@ -678,7 +678,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return HashSet<TVO>
      */
     public function flatMap(callable $callback): HashSet

@@ -9,15 +9,16 @@ use Iterator;
 use IteratorAggregate;
 
 /**
+ * @template-covariant TK
  * @template-covariant TV
- * @extends IteratorAggregate<int, TV>
+ * @extends IteratorAggregate<TK, TV>
  */
 interface Collection extends IteratorAggregate, Countable
 {
     /**
      * {@inheritDoc}
      *
-     * @return Iterator<TV>
+     * @return Iterator<TK, TV>
      */
     public function getIterator(): Iterator;
 

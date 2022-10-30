@@ -158,7 +158,7 @@ interface NonEmptySeqTerminalOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptySeq<iterable<TVO>|Collection<TVO>>
+     * @psalm-if-this-is NonEmptySeq<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return Seq<TVO>
      */
@@ -172,7 +172,7 @@ interface NonEmptySeqTerminalOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Seq<TVO>
      */
     public function flatMap(callable $callback): Seq;

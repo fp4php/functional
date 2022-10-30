@@ -131,7 +131,7 @@ interface MapChainableOps
      *
      * @template TKO
      * @template TVO
-     * @psalm-if-this-is Map<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>>
+     * @psalm-if-this-is Map<TK, iterable<TKO, TVO>|Collection<TKO, TVO>>
      *
      * @return Map<TKO, TVO>
      */
@@ -157,7 +157,7 @@ interface MapChainableOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
+     * @param callable(TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
      * @return Map<TKO, TVO>
      */
     public function flatMap(callable $callback): Map;
@@ -168,7 +168,7 @@ interface MapChainableOps
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
+     * @param callable(TK, TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
      * @return Map<TKO, TVO>
      */
     public function flatMapKV(callable $callback): Map;

@@ -46,7 +46,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return ArrayList<TVI>
      */
     public static function collect(iterable $source): ArrayList
@@ -358,7 +358,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $suffix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $suffix
      * @return ArrayList<TV | TVI>
      */
     public function appendedAll(iterable $suffix): ArrayList
@@ -384,7 +384,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $prefix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $prefix
      * @return ArrayList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): ArrayList
@@ -473,7 +473,7 @@ final class ArrayList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is ArrayList<iterable<TVO>|Collection<TVO>>
+     * @psalm-if-this-is ArrayList<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return ArrayList<TVO>
      */
@@ -487,7 +487,7 @@ final class ArrayList implements Seq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return ArrayList<TVO>
      */
     public function flatMap(callable $callback): ArrayList
@@ -500,7 +500,7 @@ final class ArrayList implements Seq
      *
      * @template TVO
      *
-     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(mixed...): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return ArrayList<TVO>
      */
     public function flatMapN(callable $callback): ArrayList
@@ -639,7 +639,7 @@ final class ArrayList implements Seq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $that
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $that
      * @return ArrayList<array{TV, TVI}>
      */
     public function zip(iterable $that): ArrayList

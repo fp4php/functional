@@ -40,7 +40,7 @@ interface SetChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $that
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $that
      * @return Set<TV|TVI>
      */
     public function appendedAll(iterable $that): Set;
@@ -147,7 +147,7 @@ interface SetChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is Set<iterable<TVO>|Collection<TVO>>
+     * @psalm-if-this-is Set<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return Set<TVO>
      */
@@ -161,7 +161,7 @@ interface SetChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;
@@ -169,7 +169,7 @@ interface SetChainableOps
     /**
      * @template TVO
      *
-     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(mixed...): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Set<TVO>
      */
     public function flatMapN(callable $callback): Set;

@@ -19,10 +19,11 @@ use function Fp\Cast\asGenerator;
 final class FlatMapOperation extends AbstractOperation
 {
     /**
+     * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (NonEmptyCollection<TVO> | Collection<TVO> | iterable<mixed, TVO>) $f
-     * @return Generator<int, TVO>
+     * @param callable(TK, TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $f
+     * @return Generator<TKO, TVO>
      */
     public function __invoke(callable $f): Generator
     {
@@ -30,8 +31,8 @@ final class FlatMapOperation extends AbstractOperation
             foreach ($this->gen as $key => $value) {
                 $xs = $f($key, $value);
 
-                foreach ($xs as $x) {
-                    yield $x;
+                foreach ($xs as $k => $x) {
+                    yield $k => $x;
                 }
             }
         });

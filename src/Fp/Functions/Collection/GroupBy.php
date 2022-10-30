@@ -23,7 +23,7 @@ use function Fp\Callable\dropFirstArg;
  * @template TV
  * @template TKO of array-key
  *
- * @param Collection<TV> | iterable<TV> $collection
+ * @param iterable<mixed, TV>|Collection<mixed, TV> $collection
  * @param callable(TV): TKO $callback
  * @return (
  *     $collection is non-empty-array

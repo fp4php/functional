@@ -88,7 +88,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKI
      * @template TVI
      *
-     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>) $source
+     * @param (iterable<mixed, array{TKI, TVI}>|Collection<mixed, array{TKI, TVI}>) $source
      * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
     public static function collectPairs(iterable $source): Option
@@ -114,7 +114,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKI
      * @template TVI
      *
-     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>) $source
+     * @param (iterable<mixed, array{TKI, TVI}>|Collection<mixed, array{TKI, TVI}>) $source
      * @return NonEmptyHashMap<TKI, TVI>
      */
     public static function collectPairsUnsafe(iterable $source): NonEmptyHashMap
@@ -128,7 +128,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKI
      * @template TVI
      *
-     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
+     * @param non-empty-array<array-key, array{TKI, TVI}>|NonEmptyCollection<mixed, array{TKI, TVI}> $source
      * @return NonEmptyHashMap<TKI, TVI>
      */
     public static function collectPairsNonEmpty(array|NonEmptyCollection $source): NonEmptyHashMap
@@ -137,19 +137,11 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @return Generator<int, array{TK, TV}>
+     * @return Generator<TK, TV>
      */
     public function getIterator(): Generator
     {
         return $this->hashMap->getIterator();
-    }
-
-    /**
-     * @return Generator<TK, TV>
-     */
-    public function getKeyValueIterator(): Generator
-    {
-        return $this->hashMap->getKeyValueIterator();
     }
 
     /**
@@ -471,7 +463,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function partitionKV(callable $predicate): Separated
     {
-        return Ops\PartitionOperation::of($this->getKeyValueIterator())($predicate)
+        return Ops\PartitionOperation::of($this)($predicate)
             ->mapLeft(fn($left) => HashMap::collect($left))
             ->map(fn($right) => HashMap::collect($right));
     }
@@ -501,7 +493,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function partitionMapKV(callable $callback): Separated
     {
-        return Ops\PartitionMapOperation::of($this->getKeyValueIterator())($callback)
+        return Ops\PartitionMapOperation::of($this)($callback)
             ->mapLeft(fn($left) => HashMap::collect($left))
             ->map(fn($right) => HashMap::collect($right));
     }
@@ -531,7 +523,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function fold(mixed $init): FoldOperation
     {
-        return new FoldOperation($this->getKeyValueIterator(), $init);
+        return new FoldOperation($this, $init);
     }
 
     /**
@@ -647,7 +639,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      *
      * @template TKO
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>>
+     * @psalm-if-this-is NonEmptyHashMap<TK, iterable<TKO, TVO>|Collection<TKO, TVO>>
      *
      * @return HashMap<TKO, TVO>
      */
@@ -662,7 +654,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
+     * @param callable(TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMap(callable $callback): HashMap
@@ -676,7 +668,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
+     * @param callable(TK, TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMapKV(callable $callback): HashMap

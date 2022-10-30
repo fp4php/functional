@@ -191,17 +191,30 @@ final class MapOpsTest extends TestCase
         $hm = HashMap::collectPairs([['2', 2], ['5', 5]]);
 
         $this->assertEquals(
-            [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]],
+            HashMap::collect([
+                1 => 1,
+                2 => 2,
+                3 => 3,
+                4 => 4,
+                5 => 5,
+                6 => 6,
+            ]),
             $hm->flatMap(fn($val) => [
-                [$val - 1, $val - 1],
-                [$val, $val],
-                [$val + 1, $val + 1]
-            ])->toList()
+                ($val - 1) => $val - 1,
+                ($val) => $val,
+                ($val + 1) => $val + 1,
+            ]),
         );
 
         $this->assertEquals(
-            [['2', 20], ['5', 5]],
-            $hm->flatMap(fn($val) => [['2', 20], [(string)$val, $val]])->toList()
+            HashMap::collect([
+                '2' => 20,
+                '5' => 5,
+            ]),
+            $hm->flatMap(fn($val) => [
+                '2' => 20,
+                (string) $val => $val,
+            ]),
         );
     }
 

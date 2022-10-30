@@ -42,7 +42,7 @@ final class HashSet implements Set
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return HashSet<TVI>
      */
     public static function collect(iterable $source): HashSet
@@ -278,7 +278,7 @@ final class HashSet implements Set
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $that
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $that
      * @return HashSet<TV|TVI>
      */
     public function appendedAll(iterable $that): HashSet
@@ -398,7 +398,7 @@ final class HashSet implements Set
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is HashSet<iterable<TVO>|Collection<TVO>>
+     * @psalm-if-this-is HashSet<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return HashSet<TVO>
      */
@@ -412,7 +412,7 @@ final class HashSet implements Set
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return HashSet<TVO>
      */
     public function flatMap(callable $callback): HashSet
@@ -425,7 +425,7 @@ final class HashSet implements Set
      *
      * @template TVO
      *
-     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(mixed...): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return HashSet<TVO>
      */
     public function flatMapN(callable $callback): HashSet
@@ -1066,7 +1066,7 @@ final class HashSet implements Set
     {
         return asGenerator(function () {
             foreach ($this->map as $pair) {
-                yield $pair[1];
+                yield $pair;
             }
         });
     }

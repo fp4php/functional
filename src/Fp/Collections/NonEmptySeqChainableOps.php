@@ -40,7 +40,7 @@ interface NonEmptySeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $suffix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $suffix
      * @return NonEmptySeq<TV|TVI>
      */
     public function appendedAll(iterable $suffix): NonEmptySeq;
@@ -70,7 +70,7 @@ interface NonEmptySeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $prefix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $prefix
      * @return NonEmptySeq<TV|TVI>
      */
     public function prependedAll(iterable $prefix): NonEmptySeq;
@@ -157,7 +157,7 @@ interface NonEmptySeqChainableOps
      *
      * @template TVI
      *
-     * @param non-empty-array<TVI> | NonEmptyCollection<TVI> $that
+     * @param non-empty-array<array-key, TVI> | NonEmptyCollection<mixed, TVI> $that
      * @return NonEmptySeq<array{TV, TVI}>
      */
     public function zip(iterable $that): NonEmptySeq;

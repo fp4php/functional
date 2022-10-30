@@ -8,7 +8,7 @@ use Iterator;
 
 /**
  * @template-covariant TV
- * @extends Collection<TV>
+ * @extends Collection<int, TV>
  * @extends SetOps<TV>
  * @extends SetCollector<TV>
  */
@@ -17,7 +17,7 @@ interface Set extends Collection, SetOps, SetCollector
     /**
      * {@inheritDoc}
      *
-     * @return Iterator<TV>
+     * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator;
 }

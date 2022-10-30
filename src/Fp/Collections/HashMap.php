@@ -56,7 +56,7 @@ final class HashMap implements Map
      * @template TKI
      * @template TVI
      *
-     * @param iterable<TKI, TVI> $source
+     * @param iterable<TKI, TVI> | Collection<TKI, TVI> $source
      * @return HashMap<TKI, TVI>
      */
     public static function collect(iterable $source): HashMap
@@ -76,7 +76,7 @@ final class HashMap implements Map
      * @template TKI
      * @template TVI
      *
-     * @param (iterable<array{TKI, TVI}>|Collection<array{TKI, TVI}>) $source
+     * @param (iterable<mixed, array{TKI, TVI}>|Collection<mixed, array{TKI, TVI}>) $source
      * @return HashMap<TKI, TVI>
      */
     public static function collectPairs(iterable $source): HashMap
@@ -94,17 +94,9 @@ final class HashMap implements Map
     }
 
     /**
-     * @return Generator<int, array{TK, TV}>
-     */
-    public function getIterator(): Generator
-    {
-        return $this->hashTable->getPairsGenerator();
-    }
-
-    /**
      * @return Generator<TK, TV>
      */
-    public function getKeyValueIterator(): Generator
+    public function getIterator(): Generator
     {
         return $this->hashTable->getKeyValueIterator();
     }
@@ -114,7 +106,7 @@ final class HashMap implements Map
      */
     public function count(): int
     {
-        return Ops\CountOperation::of($this->getIterator())();
+        return Ops\CountOperation::of($this)();
     }
 
     /**
@@ -124,7 +116,7 @@ final class HashMap implements Map
      */
     public function toList(): array
     {
-        return asList($this->getIterator());
+        return asList($this->hashTable->getPairsGenerator());
     }
 
     /**
@@ -148,7 +140,7 @@ final class HashMap implements Map
      */
     public function toArray(): array
     {
-        return asArray($this->getKeyValueIterator());
+        return asArray($this);
     }
 
     /**
@@ -172,7 +164,7 @@ final class HashMap implements Map
      */
     public function toLinkedList(): LinkedList
     {
-        return LinkedList::collect($this->getIterator());
+        return LinkedList::collect($this->hashTable->getPairsGenerator());
     }
 
     /**
@@ -196,7 +188,7 @@ final class HashMap implements Map
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect($this->getIterator());
+        return ArrayList::collect($this->hashTable->getPairsGenerator());
     }
 
     /**
@@ -218,7 +210,7 @@ final class HashMap implements Map
      */
     public function toHashSet(): HashSet
     {
-        return HashSet::collect($this->getIterator());
+        return HashSet::collect($this->hashTable->getPairsGenerator());
     }
 
     /**
@@ -290,7 +282,7 @@ final class HashMap implements Map
      */
     public function toStream(): Stream
     {
-        return Stream::emits($this->getIterator());
+        return Stream::emits($this->hashTable->getPairsGenerator());
     }
 
     /**
@@ -310,7 +302,7 @@ final class HashMap implements Map
      */
     public function everyKV(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getKeyValueIterator())($predicate);
+        return Ops\EveryOperation::of($this)($predicate);
     }
 
     /**
@@ -323,7 +315,7 @@ final class HashMap implements Map
      */
     public function everyOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\EveryOfOperation::of($this->getKeyValueIterator())($fqcn, $invariant);
+        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -343,7 +335,7 @@ final class HashMap implements Map
      */
     public function existsKV(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this->getKeyValueIterator())($predicate);
+        return Ops\ExistsOperation::of($this)($predicate);
     }
 
     /**
@@ -369,7 +361,7 @@ final class HashMap implements Map
      */
     public function traverseOptionKV(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getKeyValueIterator())($callback)
+        return Ops\TraverseOptionOperation::of($this)($callback)
             ->map(fn($gen) => HashMap::collect($gen));
     }
 
@@ -383,10 +375,7 @@ final class HashMap implements Map
      */
     public function sequenceOption(): Option
     {
-        $iterator = $this->getKeyValueIterator();
-
-        return Ops\TraverseOptionOperation::id($iterator)
-            ->map(fn($gen) => HashMap::collect($gen));
+        return Ops\TraverseOptionOperation::id($this)->map(fn($gen) => HashMap::collect($gen));
     }
 
     /**
@@ -414,8 +403,7 @@ final class HashMap implements Map
      */
     public function traverseEitherKV(callable $callback): Either
     {
-        return Ops\TraverseEitherOperation::of($this->getKeyValueIterator())($callback)
-            ->map(fn($gen) => HashMap::collect($gen));
+        return Ops\TraverseEitherOperation::of($this)($callback)->map(fn($gen) => HashMap::collect($gen));
     }
 
     /**
@@ -429,8 +417,7 @@ final class HashMap implements Map
      */
     public function sequenceEither(): Either
     {
-        return Ops\TraverseEitherOperation::id($this->getKeyValueIterator())
-            ->map(fn($gen) => HashMap::collect($gen));
+        return Ops\TraverseEitherOperation::id($this)->map(fn($gen) => HashMap::collect($gen));
     }
 
     /**
@@ -452,7 +439,7 @@ final class HashMap implements Map
      */
     public function partitionKV(callable $predicate): Separated
     {
-        return Ops\PartitionOperation::of($this->getKeyValueIterator())($predicate)
+        return Ops\PartitionOperation::of($this)($predicate)
             ->mapLeft(fn($left) => HashMap::collect($left))
             ->map(fn($right) => HashMap::collect($right));
     }
@@ -482,7 +469,7 @@ final class HashMap implements Map
      */
     public function partitionMapKV(callable $callback): Separated
     {
-        return Ops\PartitionMapOperation::of($this->getKeyValueIterator())($callback)
+        return Ops\PartitionMapOperation::of($this)($callback)
             ->mapLeft(fn($left) => HashMap::collect($left))
             ->map(fn($right) => HashMap::collect($right));
     }
@@ -497,7 +484,7 @@ final class HashMap implements Map
      */
     public function fold(mixed $init): Ops\FoldOperation
     {
-        return new Ops\FoldOperation($this->getKeyValueIterator(), $init);
+        return new Ops\FoldOperation($this, $init);
     }
 
     /**
@@ -535,7 +522,7 @@ final class HashMap implements Map
      */
     public function merge(Map|NonEmptyMap $map): HashMap
     {
-        return HashMap::collect(Ops\MergeMapOperation::of($this->getKeyValueIterator())($map));
+        return HashMap::collect(Ops\MergeMapOperation::of($this)($map));
     }
 
     /**
@@ -557,7 +544,7 @@ final class HashMap implements Map
      */
     public function filterKV(callable $predicate): HashMap
     {
-        return HashMap::collect(Ops\FilterOperation::of($this->getKeyValueIterator())($predicate));
+        return HashMap::collect(Ops\FilterOperation::of($this)($predicate));
     }
 
     /**
@@ -583,7 +570,7 @@ final class HashMap implements Map
      */
     public function filterMapKV(callable $callback): HashMap
     {
-        return HashMap::collect(Ops\FilterMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\FilterMapOperation::of($this)($callback));
     }
 
     /**
@@ -591,16 +578,13 @@ final class HashMap implements Map
      *
      * @template TKO
      * @template TVO
-     * @psalm-if-this-is HashMap<TK, iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>>
+     * @psalm-if-this-is HashMap<TK, iterable<TKO, TVO>|Collection<TKO, TVO>>
      *
      * @return HashMap<TKO, TVO>
      */
     public function flatten(): HashMap
     {
-        /** @var Generator<TK, iterable<array{TKO, TVO}>> */
-        $gen = $this->getKeyValueIterator();
-
-        return HashMap::collectPairs(Ops\FlattenOperation::of($gen));
+        return HashMap::collect(Ops\FlattenOperation::of($this));
     }
 
     /**
@@ -609,7 +593,7 @@ final class HashMap implements Map
      * @template TKO
      * @template TVO
      *
-     * @param callable(TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
+     * @param callable(TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMap(callable $callback): HashMap
@@ -623,12 +607,12 @@ final class HashMap implements Map
      * @template TKO
      * @template TVO
      *
-     * @param callable(TK, TV): (iterable<array{TKO, TVO}>|Collection<array{TKO, TVO}>) $callback
+     * @param callable(TK, TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
      * @return HashMap<TKO, TVO>
      */
     public function flatMapKV(callable $callback): HashMap
     {
-        return HashMap::collectPairs(Ops\FlatMapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\FlatMapOperation::of($this)($callback));
     }
 
     /**
@@ -654,7 +638,7 @@ final class HashMap implements Map
      */
     public function mapKV(callable $callback): HashMap
     {
-        return HashMap::collect(Ops\MapOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\MapOperation::of($this)($callback));
     }
 
     /**
@@ -692,7 +676,7 @@ final class HashMap implements Map
      */
     public function tapKV(callable $callback): HashMap
     {
-        Stream::emits(Ops\TapOperation::of($this->getKeyValueIterator())($callback))->drain();
+        Stream::emits(Ops\TapOperation::of($this)($callback))->drain();
         return $this;
     }
 
@@ -719,7 +703,7 @@ final class HashMap implements Map
      */
     public function reindexKV(callable $callback): HashMap
     {
-        return HashMap::collect(Ops\ReindexOperation::of($this->getKeyValueIterator())($callback));
+        return HashMap::collect(Ops\ReindexOperation::of($this)($callback));
     }
 
     /**
@@ -745,7 +729,7 @@ final class HashMap implements Map
      */
     public function groupByKV(callable $callback): HashMap
     {
-        return Ops\GroupByOperation::of($this->getKeyValueIterator())($callback);
+        return Ops\GroupByOperation::of($this)($callback);
     }
 
     /**
@@ -775,7 +759,7 @@ final class HashMap implements Map
      */
     public function groupMapKV(callable $group, callable $map): HashMap
     {
-        return Ops\GroupMapOperation::of($this->getKeyValueIterator())($group, $map);
+        return Ops\GroupMapOperation::of($this)($group, $map);
     }
 
     /**
@@ -809,7 +793,7 @@ final class HashMap implements Map
      */
     public function groupMapReduceKV(callable $group, callable $map, callable $reduce): HashMap
     {
-        return Ops\GroupMapReduceOperation::of($this->getKeyValueIterator())($group, $map, $reduce);
+        return Ops\GroupMapReduceOperation::of($this)($group, $map, $reduce);
     }
 
     /**
@@ -819,7 +803,7 @@ final class HashMap implements Map
      */
     public function keys(): ArrayList
     {
-        return ArrayList::collect(Ops\KeysOperation::of($this->getKeyValueIterator())());
+        return ArrayList::collect(Ops\KeysOperation::of($this)());
     }
 
     /**
@@ -829,7 +813,7 @@ final class HashMap implements Map
      */
     public function values(): ArrayList
     {
-        return ArrayList::collect(Ops\ValuesOperation::of($this->getKeyValueIterator())());
+        return ArrayList::collect(Ops\ValuesOperation::of($this)());
     }
 
     public function isEmpty(): bool

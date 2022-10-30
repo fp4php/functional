@@ -7,9 +7,9 @@ namespace Fp\Collections;
 use Iterator;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
- * @extends NonEmptyCollection<array{TK, TV}>
+ * @extends NonEmptyCollection<TK, TV>
  * @extends NonEmptyMapOps<TK, TV>
  * @extends NonEmptyMapCollector<TK, TV>
  */
@@ -17,7 +17,7 @@ interface NonEmptyMap extends NonEmptyCollection, NonEmptyMapOps, NonEmptyMapCol
 {
     /**
      * {@inheritDoc}
-     * @return Iterator<array{TK, TV}>
+     * @return Iterator<TK, TV>
      */
     public function getIterator(): Iterator;
 }

@@ -27,7 +27,7 @@ final class MergeMapOperation extends AbstractOperation
         foreach ($this->gen as $key => $value) {
             yield $key => $value;
         }
-        foreach ($map as [$key, $value]) {
+        foreach ($map as $key => $value) {
             yield $key => $value;
         }
     }

@@ -141,9 +141,9 @@ final class Separated
      *
      * @template LO
      * @template RO
-     * @psalm-if-this-is Separated<Collection<LO>, Collection<RO>>
+     * @psalm-if-this-is Separated<Collection<mixed, LO>, Collection<mixed, RO>>
      *
-     * @return Either<Collection<LO>, Collection<RO>>
+     * @return Either<Collection<mixed, LO>, Collection<mixed, RO>>
      *
      * @see SeparatedToEitherMethodReturnTypeProvider
      */

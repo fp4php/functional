@@ -54,7 +54,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return Option<NonEmptyArrayList<TVI>>
      */
     public static function collect(iterable $source): Option
@@ -69,7 +69,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return NonEmptyArrayList<TVI>
      */
     public static function collectUnsafe(iterable $source): NonEmptyArrayList
@@ -82,7 +82,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param non-empty-array<array-key, TVI> | NonEmptyCollection<TVI> $source
+     * @param non-empty-array<array-key, TVI> | NonEmptyCollection<mixed, TVI> $source
      * @return NonEmptyArrayList<TVI>
      */
     public static function collectNonEmpty(array|NonEmptyCollection $source): NonEmptyArrayList
@@ -157,7 +157,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-if-this-is NonEmptyArrayList<iterable<TVO>|Collection<TVO>>
+     * @psalm-if-this-is NonEmptyArrayList<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return ArrayList<TVO>
      */
@@ -171,7 +171,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return ArrayList<TVO>
      */
     public function flatMap(callable $callback): ArrayList
@@ -298,7 +298,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $suffix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $suffix
      * @return NonEmptyArrayList<TV|TVI>
      */
     public function appendedAll(iterable $suffix): NonEmptyArrayList
@@ -324,7 +324,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $prefix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $prefix
      * @return NonEmptyArrayList<TV|TVI>
      */
     public function prependedAll(iterable $prefix): NonEmptyArrayList
@@ -349,7 +349,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TVI
      *
-     * @param non-empty-array<TVI> | NonEmptyCollection<TVI> $that
+     * @param non-empty-array<array-key, TVI> | NonEmptyCollection<mixed, TVI> $that
      * @return NonEmptyArrayList<array{TV, TVI}>
      */
     public function zip(iterable $that): NonEmptyArrayList

@@ -39,7 +39,7 @@ interface StreamEmitter
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $source
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return Stream<TVI>
      */
     public static function emits(iterable $source): Stream;

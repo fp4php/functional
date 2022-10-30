@@ -40,7 +40,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $suffix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $suffix
      * @return Seq<TV|TVI>
      */
     public function appendedAll(iterable $suffix): Seq;
@@ -70,7 +70,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $prefix
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $prefix
      * @return Seq<TV|TVI>
      */
     public function prependedAll(iterable $prefix): Seq;
@@ -170,7 +170,7 @@ interface SeqChainableOps
      * ```
      *
      * @template TVO
-     * @psalm-if-this-is Seq<iterable<TVO>|Collection<TVO>>
+     * @psalm-if-this-is Seq<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return Seq<TVO>
      */
@@ -186,7 +186,7 @@ interface SeqChainableOps
      *
      * @template TVO
      *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Seq<TVO>
      */
     public function flatMap(callable $callback): Seq;
@@ -196,7 +196,7 @@ interface SeqChainableOps
      *
      * @template TVO
      *
-     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @param callable(mixed...): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
      * @return Seq<TVO>
      */
     public function flatMapN(callable $callback): Seq;
@@ -416,7 +416,7 @@ interface SeqChainableOps
      *
      * @template TVI
      *
-     * @param (iterable<TVI>|Collection<TVI>) $that
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $that
      * @return Seq<array{TV, TVI}>
      */
     public function zip(iterable $that): Seq;

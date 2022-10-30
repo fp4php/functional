@@ -8,7 +8,7 @@ use Iterator;
 
 /**
  * @template-covariant TV
- * @extends NonEmptyCollection<TV>
+ * @extends NonEmptyCollection<int, TV>
  * @extends NonEmptySetOps<TV>
  * @extends NonEmptySetCollector<TV>
  */
@@ -16,7 +16,7 @@ interface NonEmptySet extends NonEmptyCollection, NonEmptySetOps, NonEmptySetCol
 {
     /**
      * {@inheritDoc}
-     * @return Iterator<TV>
+     * @return Iterator<int, TV>
      */
     public function getIterator(): Iterator;
 }

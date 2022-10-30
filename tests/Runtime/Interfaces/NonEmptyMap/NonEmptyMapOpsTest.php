@@ -186,14 +186,20 @@ final class NonEmptyMapOpsTest extends TestCase
     public function testFlatMap(): void
     {
         $this->assertEquals(
-            [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]],
+            HashMap::collect([
+                1 => 1,
+                2 => 2,
+                3 => 3,
+                4 => 4,
+                5 => 5,
+                6 => 6,
+            ]),
             NonEmptyHashMap::collectPairsNonEmpty([['2', 2], ['5', 5]])
                 ->flatMap(fn(int $val) => [
-                    [$val - 1, $val - 1],
-                    [$val, $val],
-                    [$val + 1, $val + 1],
-                ])
-                ->toList(),
+                    ($val - 1) => $val - 1,
+                    ($val) => $val,
+                    ($val + 1) => $val + 1,
+                ]),
         );
     }
 
@@ -322,14 +328,12 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
-    public function testGetKeyValueIterator(): void
+    public function testForeach(): void
     {
         $expected = ['fst' => 1, 'snd' => 2, 'thr' => 3];
         $actual = [];
 
-        $iterator = NonEmptyHashMap::collectNonEmpty($expected)->getKeyValueIterator();
-
-        foreach ($iterator as $key => $value) {
+        foreach (NonEmptyHashMap::collectNonEmpty($expected) as $key => $value) {
             $actual[$key] = $value;
         }
 
