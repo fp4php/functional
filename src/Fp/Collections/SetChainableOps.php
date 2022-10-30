@@ -74,6 +74,12 @@ interface SetChainableOps
     public function filter(callable $predicate): Set;
 
     /**
+     * @param callable(mixed...): bool $predicate
+     * @return Set<TV>
+     */
+    public function filterN(callable $predicate): Set;
+
+    /**
      * Filter elements of given class
      *
      * ```php
@@ -121,6 +127,14 @@ interface SetChainableOps
     public function filterMap(callable $callback): Set;
 
     /**
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Set<TVO>
+     */
+    public function filterMapN(callable $callback): Set;
+
+    /**
      * Converts this Set<iterable<TVO>> into a Set<TVO>.
      *
      * ```php
@@ -151,6 +165,14 @@ interface SetChainableOps
      * @return Set<TVO>
      */
     public function flatMap(callable $callback): Set;
+
+    /**
+     * @template TVO
+     *
+     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @return Set<TVO>
+     */
+    public function flatMapN(callable $callback): Set;
 
     /**
      * Produces a new collection of elements by mapping each element in collection
@@ -195,6 +217,12 @@ interface SetChainableOps
      * @return Set<TV>
      */
     public function tap(callable $callback): Set;
+
+    /**
+     * @param callable(mixed...): void $callback
+     * @return Set<TV>
+     */
+    public function tapN(callable $callback): Set;
 
     /**
      * Returns every collection element except first

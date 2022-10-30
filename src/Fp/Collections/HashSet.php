@@ -35,6 +35,8 @@ final class HashSet implements Set
      */
     private function __construct(private readonly HashMap $map) { }
 
+    #region SetCollector
+
     /**
      * {@inheritDoc}
      *
@@ -71,25 +73,9 @@ final class HashSet implements Set
         return HashSet::collect([]);
     }
 
-    /**
-     * @return Iterator<int, TV>
-     */
-    public function getIterator(): Iterator
-    {
-        return asGenerator(function () {
-            foreach ($this->map as $pair) {
-                yield $pair[1];
-            }
-        });
-    }
+    #endregion SetCollector
 
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return Ops\CountOperation::of($this->getIterator())();
-    }
+    #region SetCastableOps
 
     /**
      * {@inheritDoc}
@@ -265,15 +251,271 @@ final class HashSet implements Set
         return proveNonEmptyArray($this->toMergedArray());
     }
 
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
+    #endregion SetCastableOps
+
+    #region SetChainableOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $element
+     * @return HashSet<TV|TVI>
+     */
+    public function appended(mixed $element): HashSet
+    {
+        return new HashSet($this->map->updated($element, $element));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param (iterable<TVI>|Collection<TVI>) $that
+     * @return HashSet<TV|TVI>
+     */
+    public function appendedAll(iterable $that): HashSet
+    {
+        return HashSet::collect(Ops\AppendedAllOperation::of($this->getIterator())($that));
+    }
+
     /**
      * {@inheritDoc}
      *
      * @param TV $element
+     * @return HashSet<TV>
      */
-    public function __invoke(mixed $element): bool
+    public function removed(mixed $element): HashSet
     {
-        return $this->contains($element);
+        return new HashSet($this->map->removed($element));
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
+     */
+    public function tail(): HashSet
+    {
+        return HashSet::collect(Ops\TailOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
+     */
+    public function init(): HashSet
+    {
+        return HashSet::collect(Ops\InitOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return HashSet<TV>
+     */
+    public function filter(callable $predicate): HashSet
+    {
+        return HashSet::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return HashSet<TV>
+     */
+    public function filterN(callable $predicate): HashSet
+    {
+        return $this->filter(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return HashSet<TVO>
+     */
+    public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
+    {
+        return HashSet::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
+     */
+    public function filterNotNull(): HashSet
+    {
+        return HashSet::collect(Ops\FilterNotNullOperation::of($this->getIterator())());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return HashSet<TVO>
+     */
+    public function filterMap(callable $callback): HashSet
+    {
+        return HashSet::collect(Ops\FilterMapOperation::of($this->getIterator())(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return HashSet<TVO>
+     */
+    public function filterMapN(callable $callback): HashSet
+    {
+        return $this->filterMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is HashSet<iterable<TVO>|Collection<TVO>>
+     *
+     * @return HashSet<TVO>
+     */
+    public function flatten(): HashSet
+    {
+        return HashSet::collect(Ops\FlattenOperation::of($this));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
+     * @return HashSet<TVO>
+     */
+    public function flatMap(callable $callback): HashSet
+    {
+        return HashSet::collect(Ops\FlatMapOperation::of($this->getIterator())(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (iterable<TVO>|Collection<TVO>) $callback
+     * @return HashSet<TVO>
+     */
+    public function flatMapN(callable $callback): HashSet
+    {
+        return $this->flatMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): TVO $callback
+     * @return HashSet<TVO>
+     */
+    public function map(callable $callback): HashSet
+    {
+        return HashSet::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return HashSet<TVO>
+     */
+    public function mapN(callable $callback): HashSet
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): void $callback
+     * @return HashSet<TV>
+     */
+    public function tap(callable $callback): HashSet
+    {
+        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): void $callback
+     * @return HashSet<TV>
+     */
+    public function tapN(callable $callback): HashSet
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param Set<TV>|NonEmptySet<TV> $that
+     * @return HashSet<TV>
+     */
+    public function intersect(Set|NonEmptySet $that): HashSet
+    {
+        return $this->filter(fn($elem) => /** @var TV $elem */ $that($elem));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param Set<TV>|NonEmptySet<TV> $that
+     * @return HashSet<TV>
+     */
+    public function diff(Set|NonEmptySet $that): HashSet
+    {
+        return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
+    }
+
+    #endregion SetChainableOps
+
+    #region SetTerminalOps
 
     /**
      * {@inheritDoc}
@@ -283,6 +525,19 @@ final class HashSet implements Set
     public function every(callable $predicate): bool
     {
         return Ops\EveryOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->every(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -310,6 +565,22 @@ final class HashSet implements Set
     {
         return Ops\TraverseOptionOperation::of($this->getIterator())(dropFirstArg($callback))
             ->map(fn($gen) => HashSet::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<Set<TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->traverseOption(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -346,6 +617,23 @@ final class HashSet implements Set
      *
      * @template E
      * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, Set<TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->traverseEither(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
      * @psalm-if-this-is HashSet<Either<E, TVO>>
      *
      * @return Either<E, HashSet<TVO>>
@@ -372,6 +660,20 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<Set<TV>, Set<TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->partition(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template LO
      * @template RO
      *
@@ -383,6 +685,23 @@ final class HashSet implements Set
         return Ops\PartitionMapOperation::of($this->getIterator())(dropFirstArg($callback))
             ->mapLeft(fn($left) => HashSet::collect($left))
             ->map(fn($right) => HashSet::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<Set<LO>, Set<RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->partitionMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -401,11 +720,40 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return Map<TKO, TV>
+     */
+    public function reindexN(callable $callback): Map
+    {
+        return $this->reindex(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
         return Ops\ExistsOperation::of($this->getIterator())(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->exists(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -481,6 +829,20 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option
+    {
+        return $this->first(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVO
      *
      * @param class-string<TVO>|list<class-string<TVO>> $fqcn
@@ -528,6 +890,33 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return Option<TVO>
+     */
+    public function lastOf(string|array $fqcn, bool $invariant = false): Option
+    {
+        return Ops\LastOfOperation::of($this->getIterator())($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option
+    {
+        return $this->last(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return Option<TV>
      */
     public function firstElement(): Option
@@ -557,182 +946,6 @@ final class HashSet implements Set
 
     /**
      * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param TVI $element
-     * @return HashSet<TV|TVI>
-     */
-    public function appended(mixed $element): HashSet
-    {
-        return new HashSet($this->map->updated($element, $element));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param (iterable<TVI>|Collection<TVI>) $that
-     * @return HashSet<TV|TVI>
-     */
-    public function appendedAll(iterable $that): HashSet
-    {
-        return HashSet::collect(Ops\AppendedAllOperation::of($this->getIterator())($that));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param TV $element
-     * @return HashSet<TV>
-     */
-    public function removed(mixed $element): HashSet
-    {
-        return new HashSet($this->map->removed($element));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return HashSet<TV>
-     */
-    public function tail(): HashSet
-    {
-        return HashSet::collect(Ops\TailOperation::of($this->getIterator())());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return HashSet<TV>
-     */
-    public function init(): HashSet
-    {
-        return HashSet::collect(Ops\InitOperation::of($this->getIterator())());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return HashSet<TV>
-     */
-    public function filter(callable $predicate): HashSet
-    {
-        return HashSet::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return HashSet<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
-    {
-        return HashSet::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return HashSet<TV>
-     */
-    public function filterNotNull(): HashSet
-    {
-        return HashSet::collect(Ops\FilterNotNullOperation::of($this->getIterator())());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return HashSet<TVO>
-     */
-    public function filterMap(callable $callback): HashSet
-    {
-        return HashSet::collect(Ops\FilterMapOperation::of($this->getIterator())(dropFirstArg($callback)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-if-this-is HashSet<iterable<TVO>|Collection<TVO>>
-     *
-     * @return HashSet<TVO>
-     */
-    public function flatten(): HashSet
-    {
-        return HashSet::collect(Ops\FlattenOperation::of($this));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): (iterable<TVO>|Collection<TVO>) $callback
-     * @return HashSet<TVO>
-     */
-    public function flatMap(callable $callback): HashSet
-    {
-        return HashSet::collect(Ops\FlatMapOperation::of($this->getIterator())(dropFirstArg($callback)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): TVO $callback
-     * @return HashSet<TVO>
-     */
-    public function map(callable $callback): HashSet
-    {
-        return HashSet::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(mixed...): TVO $callback
-     * @return HashSet<TVO>
-     */
-    public function mapN(callable $callback): HashSet
-    {
-        return $this->map(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): void $callback
-     * @return HashSet<TV>
-     */
-    public function tap(callable $callback): HashSet
-    {
-        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
-        return $this;
-    }
-
-    public function isEmpty(): bool
-    {
-        return $this->map->isEmpty();
-    }
-
-    /**
-     * {@inheritDoc}
      */
     public function subsetOf(Set|NonEmptySet $superset): bool
     {
@@ -748,26 +961,9 @@ final class HashSet implements Set
         return $isSubset;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param Set<TV>|NonEmptySet<TV> $that
-     * @return HashSet<TV>
-     */
-    public function intersect(Set|NonEmptySet $that): HashSet
+    public function isEmpty(): bool
     {
-        return $this->filter(fn($elem) => /** @var TV $elem */ $that($elem));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param Set<TV>|NonEmptySet<TV> $that
-     * @return HashSet<TV>
-     */
-    public function diff(Set|NonEmptySet $that): HashSet
-    {
-        return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
+        return $this->map->isEmpty();
     }
 
     /**
@@ -820,10 +1016,9 @@ final class HashSet implements Set
         return Ops\MinByElementOperation::of($this->getIterator())($callback);
     }
 
-    public function toString(): string
-    {
-        return (string) $this;
-    }
+    #endregion SetTerminalOps
+
+    #region MagicMethods
 
     public function __toString(): string
     {
@@ -832,7 +1027,15 @@ final class HashSet implements Set
             ->mkString('HashSet(', ', ', ')');
     }
 
-    #region Extension
+    /**
+     * {@inheritDoc}
+     *
+     * @param TV $element
+     */
+    public function __invoke(mixed $element): bool
+    {
+        return $this->contains($element);
+    }
 
     /**
      * @param non-empty-string $name
@@ -852,5 +1055,29 @@ final class HashSet implements Set
         return HashSetExtensions::callStatic($name, $arguments);
     }
 
-    #endregion Extension
+    #endregion MagicMethods
+
+    #region Traversable
+
+    /**
+     * @return Iterator<int, TV>
+     */
+    public function getIterator(): Iterator
+    {
+        return asGenerator(function () {
+            foreach ($this->map as $pair) {
+                yield $pair[1];
+            }
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function count(): int
+    {
+        return Ops\CountOperation::of($this->getIterator())();
+    }
+
+    #endregion Traversable
 }

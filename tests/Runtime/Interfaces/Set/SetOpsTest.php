@@ -14,6 +14,7 @@ use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
+use Tests\Mock\Baz;
 use Tests\Mock\Foo;
 
 final class SetOpsTest extends TestCase
@@ -52,6 +53,12 @@ final class SetOpsTest extends TestCase
 
         $this->assertTrue($hs->every(fn($i) => $i >= 0));
         $this->assertFalse($hs->every(fn($i) => $i > 0));
+    }
+
+    public function testEveryN(): void
+    {
+        $this->assertTrue(HashSet::collect([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) <= 6));
+        $this->assertFalse(HashSet::collect([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) < 6));
     }
 
     public function testEveryOf(): void
@@ -94,6 +101,28 @@ final class SetOpsTest extends TestCase
         );
     }
 
+    public function testTraverseOptionN(): void
+    {
+        $collection = HashSet::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Option::some(HashSet::collect([2, 4, 6])),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b < 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+    }
+
     /**
      * @param Set<int> $set1
      * @param Set<int> $set2
@@ -120,6 +149,28 @@ final class SetOpsTest extends TestCase
         );
     }
 
+    public function testTraverseEitherN(): void
+    {
+        $collection = HashSet::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Either::right(HashSet::collect([2, 4, 6])),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+        $this->assertEquals(
+            Either::left('invalid'),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+    }
+
     public function testPartition(): void
     {
         $this->assertEquals(
@@ -129,6 +180,38 @@ final class SetOpsTest extends TestCase
             ),
             HashSet::collect([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3),
         );
+    }
+
+    public function testPartitionN(): void
+    {
+        $collection = HashSet::collect([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: HashSet::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: HashSet::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionN(fn(int $a, int $b) => ($a + $b) >= 4);
+
+        $this->assertEquals($expected, $actual);
     }
 
     public function testPartitionMap(): void
@@ -143,6 +226,42 @@ final class SetOpsTest extends TestCase
         );
     }
 
+    public function testPartitionMapN(): void
+    {
+        $collection = HashSet::collect([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: HashSet::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: HashSet::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionMapN(fn(int $a, int $b, string $mark) => Either::when(
+            cond: ($a + $b) >= 4,
+            right: fn() => [$a, $b, $mark],
+            left: fn() => [$a, $b, $mark],
+        ));
+
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testExists(): void
     {
         /** @psalm-var HashSet<object|scalar> $hs */
@@ -150,6 +269,12 @@ final class SetOpsTest extends TestCase
 
         $this->assertTrue($hs->exists(fn($i) => $i === 1));
         $this->assertFalse($hs->exists(fn($i) => $i === 2));
+    }
+
+    public function testExistsN(): void
+    {
+        $this->assertTrue(HashSet::collect([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 6));
+        $this->assertFalse(HashSet::collect([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 7));
     }
 
     public function testExistsOf(): void
@@ -214,6 +339,14 @@ final class SetOpsTest extends TestCase
         $this->assertEquals([1], HashSet::collect([1, null])->filterNotNull()->toList());
     }
 
+    public function testFilterN(): void
+    {
+        $actual = HashSet::collect([[1, 1], [2, 2], [3, 3]])
+            ->filterN(fn(int $a, int $b) => $a + $b >= 6);
+
+        $this->assertEquals(HashSet::collect([[3, 3]]), $actual);
+    }
+
     public function testFilterOf(): void
     {
         $hs = HashSet::collect([new Foo(1), 1, 2, new Foo(1)]);
@@ -230,18 +363,66 @@ final class SetOpsTest extends TestCase
         );
     }
 
-    public function testFirstsAndLasts(): void
+    public function testFilterMapN(): void
     {
-        $hs = HashSet::collect(['1', 2, '3']);
-        $this->assertEquals('1', $hs->first(fn($i) => is_string($i))->get());
-        $this->assertEquals('1', $hs->firstElement()->get());
+        $actual = HashSet::collect([[1, 1], [2, 2], [3, 3]])
+            ->filterMapN(fn(int $a, int $b) => Option::when($a + $b >= 6, fn() => $a));
 
-        $hs = HashSet::collect(['1', 2, '3']);
-        $this->assertEquals('3', $hs->last(fn($i) => is_string($i))->get());
-        $this->assertEquals('3', $hs->lastElement()->get());
+        $this->assertEquals(HashSet::collect([3]), $actual);
+    }
 
-        $hs = HashSet::collect([$f1 = new Foo(1), 2, new Foo(2)]);
-        $this->assertEquals($f1, $hs->firstOf(Foo::class)->get());
+    public function testFirst(): void
+    {
+        $this->assertEquals(Option::some('1'), HashSet::collect(['1', 2, '3'])->first(is_string(...)));
+        $this->assertEquals(Option::none(), HashSet::collect([])->first(is_string(...)));
+    }
+
+    public function testFirstElement(): void
+    {
+        $this->assertEquals(Option::some('1'), HashSet::collect(['1', 2, '3'])->firstElement());
+        $this->assertEquals(Option::none(), HashSet::collect([])->firstElement());
+    }
+
+    public function testFirstOf(): void
+    {
+        $this->assertEquals(Option::some(new Foo(1)), HashSet::collect([new Foo(1), 2, new Foo(2)])->firstOf(Foo::class));
+        $this->assertEquals(Option::none(), HashSet::collect([])->firstOf(Baz::class));
+    }
+
+    public function testFirstN(): void
+    {
+        $this->assertEquals(
+            Option::some([2, 2, 'm3']),
+            HashSet::collect([[1, 1, 'm1'], [1, 1, 'm2'], [2, 2, 'm3'], [2, 2, 'm4']])
+                ->firstN(fn(int $a, int $b) => ($a + $b) === 4),
+        );
+    }
+
+    public function testLast(): void
+    {
+        $this->assertEquals(Option::some('3'), HashSet::collect(['1', 2, '3'])->last(is_string(...)));
+        $this->assertEquals(Option::none(), HashSet::collect([])->last(is_string(...)));
+    }
+
+    public function testLastElement(): void
+    {
+        $this->assertEquals(Option::some('3'), HashSet::collect(['1', 2, '3'])->lastElement());
+        $this->assertEquals(Option::none(), HashSet::collect([])->lastElement());
+    }
+
+    public function testLastOf(): void
+    {
+        $this->assertEquals(Option::some(new Foo(2)), HashSet::collect([new Foo(1), 2, new Foo(2)])->lastOf(Foo::class));
+        $this->assertEquals(Option::none(), HashSet::collect([])->lastOf(Foo::class));
+    }
+
+    public function testLastN(): void
+    {
+        $this->assertEquals(
+            Option::some([2, 2, 'm4']),
+            HashSet::collect([[1, 1, 'm1'], [1, 1, 'm2'], [2, 2, 'm3'], [2, 2, 'm4']])
+                ->lastN(fn(int $a, int $b) => ($a + $b) === 4),
+        );
     }
 
     public function testFlatten(): void
@@ -265,6 +446,15 @@ final class SetOpsTest extends TestCase
         $this->assertEquals(
             [1, 2, 3, 4, 5, 6],
             HashSet::collect([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList()
+        );
+    }
+
+    public function testFlatMapN(): void
+    {
+        $this->assertEquals(
+            HashSet::collect([2, 3, 4, 5, 6, 7]),
+            HashSet::collect([[1, 2], [3, 4], [5, 6]])
+                ->flatMapN(fn(int $a, int $b) => [$a + 1, $b + 1]),
         );
     }
 
@@ -307,6 +497,16 @@ final class SetOpsTest extends TestCase
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
                 ->toList()
+        );
+    }
+
+    public function testTapN(): void
+    {
+        $this->assertEquals(
+            HashSet::collect([2, 3]),
+            HashSet::collect([[new Foo(1), 2], [new Foo(2), 3]])
+                ->tapN(fn(Foo $foo, int $new) => $foo->a = $new)
+                ->mapN(fn(Foo $foo) => $foo->a),
         );
     }
 
@@ -369,6 +569,19 @@ final class SetOpsTest extends TestCase
             ]),
             HashSet::collect([1, 2, 2])
                 ->reindex(fn($value) => "key-{$value}"),
+        );
+    }
+
+    public function testReindexN(): void
+    {
+        $this->assertEquals(
+            HashMap::collectPairs([
+                ['x-1', ['x', 1]],
+                ['y-2', ['y', 2]],
+                ['z-3', ['z', 3]],
+            ]),
+            HashSet::collect([['x', 1], ['y', 2], ['z', 3]])
+                ->reindexN(fn(string $a, int $b) => "{$a}-{$b}"),
         );
     }
 
