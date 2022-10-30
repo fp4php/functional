@@ -359,4 +359,34 @@ final class StreamOpsTest extends TestCase
                 ->reindexN(fn(string $a, int $b) => "{$a}-{$b}"),
         );
     }
+
+    public function testSorted(): void
+    {
+        $this->assertEquals(
+            [1, 2, 3],
+            Stream::emits([1, 3, 2])->sorted()->toList()
+        );
+
+        $this->assertEquals(
+            [3, 2, 1],
+            Stream::emits([1, 3, 2])->sortedDesc()->toList()
+        );
+    }
+
+    public function testSortedBy(): void
+    {
+        $this->assertEquals(
+            [new Foo(1), new Foo(2), new Foo(3)],
+            Stream::emits([new Foo(1), new Foo(3), new Foo(2)])
+                ->sortedBy(fn(Foo $obj) => $obj->a)
+                ->toList(),
+        );
+
+        $this->assertEquals(
+            [new Foo(3), new Foo(2), new Foo(1)],
+            Stream::emits([new Foo(1), new Foo(3), new Foo(2)])
+                ->sortedDescBy(fn(Foo $obj) => $obj->a)
+                ->toList(),
+        );
+    }
 }

@@ -15,7 +15,6 @@ use Fp\Collections\NonEmptyHashSet;
 use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Unit;
-use Fp\Functional\WithExtensions;
 use Fp\Operations as Ops;
 use Fp\Operations\FoldOperation;
 use Generator;
@@ -569,6 +568,56 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
                 new ArrayList($pair[1]),
             ]),
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
+     */
+    public function sorted(): Stream
+    {
+        return $this->fork(asGenerator(function() {
+            yield from Ops\SortedOperation::of($this->emitter)->asc();
+        }));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Stream<TV>
+     */
+    public function sortedBy(callable $callback): Stream
+    {
+        return $this->fork(asGenerator(function() use ($callback) {
+            yield from Ops\SortedOperation::of($this->emitter)->ascBy($callback);
+        }));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
+     */
+    public function sortedDesc(): Stream
+    {
+        return $this->fork(asGenerator(function() {
+            yield from Ops\SortedOperation::of($this->emitter)->desc();
+        }));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Stream<TV>
+     */
+    public function sortedDescBy(callable $callback): Stream
+    {
+        return $this->fork(asGenerator(function() use ($callback) {
+            yield from Ops\SortedOperation::of($this->emitter)->descBy($callback);
+        }));
     }
 
     #endregion StreamChainableOps
