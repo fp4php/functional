@@ -92,10 +92,10 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      * @template TKO
      * @template TVO
      *
-     * @param Generator<TVO> $gen
+     * @param iterable<TVO> $gen
      * @return Stream<TVO>
      */
-    private function fork(Generator $gen): Stream
+    private function fork(iterable $gen): Stream
     {
         $this->forked = $this->forked
             ? throw new LogicException('multiple stream forks detected')
@@ -577,9 +577,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function sorted(): Stream
     {
-        return $this->fork(asGenerator(function() {
-            yield from Ops\SortedOperation::of($this->emitter)->asc();
-        }));
+        return $this->fork(Ops\SortedOperation::of($this->emitter)->asc());
     }
 
     /**
@@ -590,9 +588,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function sortedBy(callable $callback): Stream
     {
-        return $this->fork(asGenerator(function() use ($callback) {
-            yield from Ops\SortedOperation::of($this->emitter)->ascBy($callback);
-        }));
+        return $this->fork(Ops\SortedOperation::of($this->emitter)->ascBy($callback));
     }
 
     /**
@@ -602,9 +598,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function sortedDesc(): Stream
     {
-        return $this->fork(asGenerator(function() {
-            yield from Ops\SortedOperation::of($this->emitter)->desc();
-        }));
+        return $this->fork(Ops\SortedOperation::of($this->emitter)->desc());
     }
 
     /**
@@ -615,9 +609,7 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      */
     public function sortedDescBy(callable $callback): Stream
     {
-        return $this->fork(asGenerator(function() use ($callback) {
-            yield from Ops\SortedOperation::of($this->emitter)->descBy($callback);
-        }));
+        return $this->fork(Ops\SortedOperation::of($this->emitter)->descBy($callback));
     }
 
     #endregion StreamChainableOps
