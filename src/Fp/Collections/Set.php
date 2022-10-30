@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Iterator;
-
 /**
  * @template-covariant TV
  * @extends Collection<int, TV>
@@ -14,10 +12,4 @@ use Iterator;
  */
 interface Set extends Collection, SetOps, SetCollector
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @return Iterator<int, TV>
-     */
-    public function getIterator(): Iterator;
 }

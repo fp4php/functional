@@ -149,7 +149,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function count(): int
     {
-        return Ops\CountOperation::of($this->getIterator())();
+        return Ops\CountOperation::of($this)();
     }
 
     /**

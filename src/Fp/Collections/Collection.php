@@ -15,13 +15,6 @@ use IteratorAggregate;
  */
 interface Collection extends IteratorAggregate, Countable
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @return Iterator<TK, TV>
-     */
-    public function getIterator(): Iterator;
-
     public function toString(): string;
 
     public function __toString(): string;

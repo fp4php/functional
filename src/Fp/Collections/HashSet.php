@@ -283,7 +283,7 @@ final class HashSet implements Set
      */
     public function appendedAll(iterable $that): HashSet
     {
-        return HashSet::collect(Ops\AppendedAllOperation::of($this->getIterator())($that));
+        return HashSet::collect(Ops\AppendedAllOperation::of($this)($that));
     }
 
     /**
@@ -304,7 +304,7 @@ final class HashSet implements Set
      */
     public function tail(): HashSet
     {
-        return HashSet::collect(Ops\TailOperation::of($this->getIterator())());
+        return HashSet::collect(Ops\TailOperation::of($this)());
     }
 
     /**
@@ -314,7 +314,7 @@ final class HashSet implements Set
      */
     public function init(): HashSet
     {
-        return HashSet::collect(Ops\InitOperation::of($this->getIterator())());
+        return HashSet::collect(Ops\InitOperation::of($this)());
     }
 
     /**
@@ -325,7 +325,7 @@ final class HashSet implements Set
      */
     public function filter(callable $predicate): HashSet
     {
-        return HashSet::collect(Ops\FilterOperation::of($this->getIterator())(dropFirstArg($predicate)));
+        return HashSet::collect(Ops\FilterOperation::of($this)(dropFirstArg($predicate)));
     }
 
     /**
@@ -352,7 +352,7 @@ final class HashSet implements Set
      */
     public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
     {
-        return HashSet::collect(Ops\FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
+        return HashSet::collect(Ops\FilterOfOperation::of($this)($fqcn, $invariant));
     }
 
     /**
@@ -362,7 +362,7 @@ final class HashSet implements Set
      */
     public function filterNotNull(): HashSet
     {
-        return HashSet::collect(Ops\FilterNotNullOperation::of($this->getIterator())());
+        return HashSet::collect(Ops\FilterNotNullOperation::of($this)());
     }
 
     /**
@@ -375,7 +375,7 @@ final class HashSet implements Set
      */
     public function filterMap(callable $callback): HashSet
     {
-        return HashSet::collect(Ops\FilterMapOperation::of($this->getIterator())(dropFirstArg($callback)));
+        return HashSet::collect(Ops\FilterMapOperation::of($this)(dropFirstArg($callback)));
     }
 
     /**
@@ -417,7 +417,7 @@ final class HashSet implements Set
      */
     public function flatMap(callable $callback): HashSet
     {
-        return HashSet::collect(Ops\FlatMapOperation::of($this->getIterator())(dropFirstArg($callback)));
+        return HashSet::collect(Ops\FlatMapOperation::of($this)(dropFirstArg($callback)));
     }
 
     /**
@@ -446,7 +446,7 @@ final class HashSet implements Set
      */
     public function map(callable $callback): HashSet
     {
-        return HashSet::collect(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
+        return HashSet::collect(Ops\MapOperation::of($this)(dropFirstArg($callback)));
     }
 
     /**
@@ -473,7 +473,7 @@ final class HashSet implements Set
      */
     public function tap(callable $callback): HashSet
     {
-        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
+        Stream::emits(Ops\TapOperation::of($this)(dropFirstArg($callback)))->drain();
         return $this;
     }
 
@@ -550,7 +550,7 @@ final class HashSet implements Set
      */
     public function everyOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -563,7 +563,7 @@ final class HashSet implements Set
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getIterator())(dropFirstArg($callback))
+        return Ops\TraverseOptionOperation::of($this)(dropFirstArg($callback))
             ->map(fn($gen) => HashSet::collect($gen));
     }
 
@@ -608,7 +608,7 @@ final class HashSet implements Set
      */
     public function traverseEither(callable $callback): Either
     {
-        return Ops\TraverseEitherOperation::of($this->getIterator())(dropFirstArg($callback))
+        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))
             ->map(fn($gen) => HashSet::collect($gen));
     }
 
@@ -652,7 +652,7 @@ final class HashSet implements Set
      */
     public function partition(callable $predicate): Separated
     {
-        return Ops\PartitionOperation::of($this->getIterator())(dropFirstArg($predicate))
+        return Ops\PartitionOperation::of($this)(dropFirstArg($predicate))
             ->mapLeft(fn($left) => HashSet::collect($left))
             ->map(fn($right) => HashSet::collect($right));
     }
@@ -682,7 +682,7 @@ final class HashSet implements Set
      */
     public function partitionMap(callable $callback): Separated
     {
-        return Ops\PartitionMapOperation::of($this->getIterator())(dropFirstArg($callback))
+        return Ops\PartitionMapOperation::of($this)(dropFirstArg($callback))
             ->mapLeft(fn($left) => HashSet::collect($left))
             ->map(fn($right) => HashSet::collect($right));
     }
@@ -714,7 +714,7 @@ final class HashSet implements Set
      */
     public function reindex(callable $callback): HashMap
     {
-        return HashMap::collect(Ops\ReindexOperation::of($this->getIterator())(dropFirstArg($callback)));
+        return HashMap::collect(Ops\ReindexOperation::of($this)(dropFirstArg($callback)));
     }
 
     /**
@@ -740,7 +740,7 @@ final class HashSet implements Set
      */
     public function exists(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this->getIterator())(dropFirstArg($predicate));
+        return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
     }
 
     /**
@@ -765,7 +765,7 @@ final class HashSet implements Set
      */
     public function existsOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -778,7 +778,7 @@ final class HashSet implements Set
      */
     public function groupBy(callable $callback): Map
     {
-        return Ops\GroupByOperation::of($this->getIterator())(dropFirstArg($callback))
+        return Ops\GroupByOperation::of($this)(dropFirstArg($callback))
             ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());
     }
 
@@ -794,7 +794,7 @@ final class HashSet implements Set
      */
     public function groupMap(callable $group, callable $map): HashMap
     {
-        return Ops\GroupMapOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map))
+        return Ops\GroupMapOperation::of($this)(dropFirstArg($group), dropFirstArg($map))
             ->map(fn(NonEmptyHashMap $hs) => $hs->values()->toNonEmptyHashSet());
     }
 
@@ -812,7 +812,7 @@ final class HashSet implements Set
      */
     public function groupMapReduce(callable $group, callable $map, callable $reduce): HashMap
     {
-        return Ops\GroupMapReduceOperation::of($this->getIterator())(dropFirstArg($group), dropFirstArg($map), $reduce);
+        return Ops\GroupMapReduceOperation::of($this)(dropFirstArg($group), dropFirstArg($map), $reduce);
     }
 
     /**
@@ -823,7 +823,7 @@ final class HashSet implements Set
      */
     public function first(callable $predicate): Option
     {
-        return Ops\FirstOperation::of($this->getIterator())(dropFirstArg($predicate));
+        return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
     }
 
     /**
@@ -850,7 +850,7 @@ final class HashSet implements Set
      */
     public function firstOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return Ops\FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -873,7 +873,7 @@ final class HashSet implements Set
      */
     public function head(): Option
     {
-        return Ops\HeadOperation::of($this->getIterator())();
+        return Ops\HeadOperation::of($this)();
     }
 
     /**
@@ -884,7 +884,7 @@ final class HashSet implements Set
      */
     public function last(callable $predicate): Option
     {
-        return Ops\LastOperation::of($this->getIterator())(dropFirstArg($predicate));
+        return Ops\LastOperation::of($this)(dropFirstArg($predicate));
     }
 
     /**
@@ -897,7 +897,7 @@ final class HashSet implements Set
      */
     public function lastOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return Ops\LastOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\LastOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -921,7 +921,7 @@ final class HashSet implements Set
      */
     public function firstElement(): Option
     {
-        return Ops\FirstOperation::of($this->getIterator())();
+        return Ops\FirstOperation::of($this)();
     }
 
     /**
@@ -931,7 +931,7 @@ final class HashSet implements Set
      */
     public function lastElement(): Option
     {
-        return Ops\LastOperation::of($this->getIterator())();
+        return Ops\LastOperation::of($this)();
     }
 
     /**
@@ -971,7 +971,7 @@ final class HashSet implements Set
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
-        return Ops\MkStringOperation::of($this->getIterator())($start, $sep, $end);
+        return Ops\MkStringOperation::of($this)($start, $sep, $end);
     }
 
     /**
@@ -981,7 +981,7 @@ final class HashSet implements Set
      */
     public function max(): Option
     {
-        return Ops\MaxElementOperation::of($this->getIterator())();
+        return Ops\MaxElementOperation::of($this)();
     }
 
     /**
@@ -992,7 +992,7 @@ final class HashSet implements Set
      */
     public function maxBy(callable $callback): Option
     {
-        return Ops\MaxByElementOperation::of($this->getIterator())($callback);
+        return Ops\MaxByElementOperation::of($this)($callback);
     }
 
     /**
@@ -1002,7 +1002,7 @@ final class HashSet implements Set
      */
     public function min(): Option
     {
-        return Ops\MinElementOperation::of($this->getIterator())();
+        return Ops\MinElementOperation::of($this)();
     }
 
     /**
@@ -1013,7 +1013,7 @@ final class HashSet implements Set
      */
     public function minBy(callable $callback): Option
     {
-        return Ops\MinByElementOperation::of($this->getIterator())($callback);
+        return Ops\MinByElementOperation::of($this)($callback);
     }
 
     #endregion SetTerminalOps
@@ -1076,7 +1076,7 @@ final class HashSet implements Set
      */
     public function count(): int
     {
-        return Ops\CountOperation::of($this->getIterator())();
+        return Ops\CountOperation::of($this)();
     }
 
     #endregion Traversable

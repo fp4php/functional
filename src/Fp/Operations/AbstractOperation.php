@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
+use Fp\Collections\Collection;
 use Generator;
 
 use function Fp\Cast\asGenerator;
@@ -34,7 +35,7 @@ abstract class AbstractOperation
      * @template TKI
      * @template TVI
      *
-     * @param iterable<TKI, TVI> $input
+     * @param iterable<TKI, TVI>|Collection<TKI, TVI> $input
      * @return static<TKI, TVI>
      */
     public static function of(iterable $input): static

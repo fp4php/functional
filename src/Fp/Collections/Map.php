@@ -15,9 +15,4 @@ use Iterator;
  */
 interface Map extends Collection, MapOps, MapCollector
 {
-    /**
-     * {@inheritDoc}
-     * @return Iterator<TK, TV>
-     */
-    public function getIterator(): Iterator;
 }

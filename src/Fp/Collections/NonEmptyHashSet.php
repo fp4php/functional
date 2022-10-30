@@ -103,7 +103,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function count(): int
     {
-        return Ops\CountOperation::of($this->getIterator())();
+        return Ops\CountOperation::of($this)();
     }
 
     /**
@@ -297,7 +297,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this->getIterator())(dropFirstArg($predicate));
+        return Ops\EveryOperation::of($this)(dropFirstArg($predicate));
     }
 
     /**
@@ -310,7 +310,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function everyOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -323,7 +323,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this->getIterator())(dropFirstArg($callback))
+        return Ops\TraverseOptionOperation::of($this)(dropFirstArg($callback))
             ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
     }
 
@@ -352,7 +352,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function traverseEither(callable $callback): Either
     {
-        return Ops\TraverseEitherOperation::of($this->getIterator())(dropFirstArg($callback))
+        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))
             ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
     }
 
@@ -379,7 +379,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function partition(callable $predicate): Separated
     {
-        return Ops\PartitionOperation::of($this->getIterator())(dropFirstArg($predicate))
+        return Ops\PartitionOperation::of($this)(dropFirstArg($predicate))
             ->mapLeft(fn($left) => HashSet::collect($left))
             ->map(fn($right) => HashSet::collect($right));
     }
@@ -395,7 +395,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function partitionMap(callable $callback): Separated
     {
-        return Ops\PartitionMapOperation::of($this->getIterator())(dropFirstArg($callback))
+        return Ops\PartitionMapOperation::of($this)(dropFirstArg($callback))
             ->mapLeft(fn($left) => HashSet::collect($left))
             ->map(fn($right) => HashSet::collect($right));
     }
@@ -411,7 +411,7 @@ final class NonEmptyHashSet implements NonEmptySet
     public function reindex(callable $callback): NonEmptyHashMap
     {
         return new NonEmptyHashMap(
-            HashMap::collect(Ops\ReindexOperation::of($this->getIterator())(dropFirstArg($callback))),
+            HashMap::collect(Ops\ReindexOperation::of($this)(dropFirstArg($callback))),
         );
     }
 
@@ -421,7 +421,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function exists(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this->getIterator())(dropFirstArg($predicate));
+        return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
     }
 
     /**
@@ -433,7 +433,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function existsOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -446,7 +446,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        $groups = Ops\GroupByOperation::of($this->getIterator())(dropFirstArg($callback));
+        $groups = Ops\GroupByOperation::of($this)(dropFirstArg($callback));
 
         return (new NonEmptyHashMap($groups))
             ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());
@@ -460,7 +460,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function first(callable $predicate): Option
     {
-        return Ops\FirstOperation::of($this->getIterator())(dropFirstArg($predicate));
+        return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
     }
 
     /**
@@ -471,7 +471,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function last(callable $predicate): Option
     {
-        return Ops\LastOperation::of($this->getIterator())(dropFirstArg($predicate));
+        return Ops\LastOperation::of($this)(dropFirstArg($predicate));
     }
 
     /**
@@ -484,7 +484,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function firstOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return Ops\FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
+        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -507,7 +507,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function head(): mixed
     {
-        return Ops\HeadOperation::of($this->getIterator())()->getUnsafe();
+        return Ops\HeadOperation::of($this)()->getUnsafe();
     }
 
     /**
@@ -517,7 +517,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function firstElement(): mixed
     {
-        return Ops\FirstOperation::of($this->getIterator())()->getUnsafe();
+        return Ops\FirstOperation::of($this)()->getUnsafe();
     }
 
     /**
@@ -527,7 +527,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function lastElement(): mixed
     {
-        return Ops\LastOperation::of($this->getIterator())()->getUnsafe();
+        return Ops\LastOperation::of($this)()->getUnsafe();
     }
 
     /**
@@ -557,7 +557,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function init(): HashSet
     {
-        return HashSet::collect(Ops\InitOperation::of($this->getIterator())());
+        return HashSet::collect(Ops\InitOperation::of($this)());
     }
 
     /**
@@ -654,7 +654,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function map(callable $callback): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(Ops\MapOperation::of($this->getIterator())(dropFirstArg($callback)));
+        return NonEmptyHashSet::collectUnsafe(Ops\MapOperation::of($this)(dropFirstArg($callback)));
     }
 
     /**
@@ -694,7 +694,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function tap(callable $callback): NonEmptyHashSet
     {
-        Stream::emits(Ops\TapOperation::of($this->getIterator())(dropFirstArg($callback)))->drain();
+        Stream::emits(Ops\TapOperation::of($this)(dropFirstArg($callback)))->drain();
         return $this;
     }
 
