@@ -19,15 +19,13 @@ use function Fp\Collection\reindex;
  */
 function toSafeClosure(callable $callable): callable
 {
-    $closure = $callable(...);
-
     /** @var TCallable */
-    return function(mixed ...$args) use ($closure): mixed {
+    return function(mixed ...$args) use ($callable): mixed {
         if (array_is_list($args)) {
-            return $closure(...$args);
+            return $callable(...$args);
         }
 
-        $params = reindex((new ReflectionFunction($closure))->getParameters(), fn(ReflectionParameter $p) => $p->name);
+        $params = reindex((new ReflectionFunction($callable(...)))->getParameters(), fn(ReflectionParameter $p) => $p->name);
         $hasVariadic = exists($params, fn(ReflectionParameter $p) => $p->isVariadic());
 
         $withoutExtraArgs = filterKV(
@@ -36,6 +34,6 @@ function toSafeClosure(callable $callable): callable
             preserveKeys: true,
         );
 
-        return $closure(...$withoutExtraArgs);
+        return $callable(...$withoutExtraArgs);
     };
 }
