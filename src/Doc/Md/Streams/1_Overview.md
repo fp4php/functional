@@ -123,8 +123,7 @@ function parseJsonLinesFile(string $path): array
  */
 function parseFoo(string $json): Option
 {
-    return jsonDecode($json)
-        ->toOption()
+    return Option::try(fn() => json_decode($json, associative: true, flags: JSON_THROW_ON_ERROR))
         ->filter(fn($candidate) => is_array($candidate))
         ->filter(fn($candidate) => array_key_exists(0, $candidate) && is_int($candidate[0]))
         ->filter(fn($candidate) => array_key_exists(1, $candidate) && is_bool($candidate[1]))

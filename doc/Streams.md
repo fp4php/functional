@@ -23,7 +23,7 @@ Stream::emit(1)
     ->repeat() // [1, 1, ...] infinite stream
     ->map(fn(int $i) => $i + 1) // [2, 2, ...] infinite stream
     ->take(5) // [2, 2, 2, 2, 2]
-    ->toArray(); // [2, 2, 2, 2, 2]
+    ->toList(); // [2, 2, 2, 2, 2]
 ```
 
 ``` php
@@ -126,7 +126,7 @@ function parseJsonLinesFile(string $path): array
         ->map(fn(array $pair) => $pair[1])
         ->map(fn(Seq $line) => $line->mkString(sep: ''))
         ->filterMap(parseFoo(...))
-        ->toArray();
+        ->toList();
 }
 
 /**
@@ -134,8 +134,7 @@ function parseJsonLinesFile(string $path): array
  */
 function parseFoo(string $json): Option
 {
-    return jsonDecode($json)
-        ->toOption()
+    return Option::try(fn() => json_decode($json, associative: true, flags: JSON_THROW_ON_ERROR))
         ->filter(fn($candidate) => is_array($candidate))
         ->filter(fn($candidate) => array_key_exists(0, $candidate) && is_int($candidate[0]))
         ->filter(fn($candidate) => array_key_exists(1, $candidate) && is_bool($candidate[1]))
