@@ -31,16 +31,14 @@ use function Fp\Callable\dropFirstArg;
  */
 final class HashMap implements Map
 {
-    private bool $empty;
-
     /**
-     * @internal
      * @param HashTable<TK, TV> $hashTable
      */
     public function __construct(private readonly HashTable $hashTable)
     {
-        $this->empty = $this->hashTable->isEmpty();
     }
+
+    #region MapCollectorOps
 
     /**
      * @return HashMap<empty, empty>
@@ -93,21 +91,9 @@ final class HashMap implements Map
         return new HashMap($hashTable);
     }
 
-    /**
-     * @return Generator<TK, TV>
-     */
-    public function getIterator(): Generator
-    {
-        return $this->hashTable->getKeyValueIterator();
-    }
+    #endregion MapCollectorOps
 
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return Ops\CountOperation::of($this)();
-    }
+    #region MapCastableOps
 
     /**
      * {@inheritDoc}
@@ -285,207 +271,14 @@ final class HashMap implements Map
         return Stream::emits($this->hashTable->getPairsGenerator());
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     */
-    public function every(callable $predicate): bool
+    public function toString(): string
     {
-        return $this->everyKV(dropFirstArg($predicate));
+        return (string) $this;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TK, TV): bool $predicate
-     */
-    public function everyKV(callable $predicate): bool
-    {
-        return Ops\EveryOperation::of($this)($predicate);
-    }
+    #endregion MapCastableOps
 
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-assert-if-true HashMap<TK, TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return $this->existsKV(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TK, TV): bool $predicate
-     */
-    public function existsKV(callable $predicate): bool
-    {
-        return Ops\ExistsOperation::of($this)($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return Option<HashMap<TK, TVO>>
-     */
-    public function traverseOption(callable $callback): Option
-    {
-        return $this->traverseOptionKV(dropFirstArg($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TK, TV): Option<TVO> $callback
-     * @return Option<HashMap<TK, TVO>>
-     */
-    public function traverseOptionKV(callable $callback): Option
-    {
-        return Ops\TraverseOptionOperation::of($this)($callback)
-            ->map(fn($gen) => HashMap::collect($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-if-this-is HashMap<TK, Option<TVO>>
-     *
-     * @return Option<HashMap<TK, TVO>>
-     */
-    public function sequenceOption(): Option
-    {
-        return Ops\TraverseOptionOperation::id($this)->map(fn($gen) => HashMap::collect($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     *
-     * @param callable(TV): Either<E, TVO> $callback
-     * @return Either<E, HashMap<TK, TVO>>
-     */
-    public function traverseEither(callable $callback): Either
-    {
-        return $this->traverseEitherKV(dropFirstArg($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     *
-     * @param callable(TK, TV): Either<E, TVO> $callback
-     * @return Either<E, HashMap<TK, TVO>>
-     */
-    public function traverseEitherKV(callable $callback): Either
-    {
-        return Ops\TraverseEitherOperation::of($this)($callback)->map(fn($gen) => HashMap::collect($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     * @psalm-if-this-is HashMap<TK, Either<E, TVO>>
-     *
-     * @return Either<E, HashMap<TK, TVO>>
-     */
-    public function sequenceEither(): Either
-    {
-        return Ops\TraverseEitherOperation::id($this)->map(fn($gen) => HashMap::collect($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
-     */
-    public function partition(callable $predicate): Separated
-    {
-        return $this->partitionKV(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TK, TV): bool $predicate
-     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
-     */
-    public function partitionKV(callable $predicate): Separated
-    {
-        return Ops\PartitionOperation::of($this)($predicate)
-            ->mapLeft(fn($left) => HashMap::collect($left))
-            ->map(fn($right) => HashMap::collect($right));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template LO
-     * @template RO
-     *
-     * @param callable(TV): Either<LO, RO> $callback
-     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
-     */
-    public function partitionMap(callable $callback): Separated
-    {
-        return $this->partitionMapKV(dropFirstArg($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template LO
-     * @template RO
-     *
-     * @param callable(TK, TV): Either<LO, RO> $callback
-     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
-     */
-    public function partitionMapKV(callable $callback): Separated
-    {
-        return Ops\PartitionMapOperation::of($this)($callback)
-            ->mapLeft(fn($left) => HashMap::collect($left))
-            ->map(fn($right) => HashMap::collect($right));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param TVO $init
-     * @return Ops\FoldOperation<TV, TVO>
-     */
-    public function fold(mixed $init): Ops\FoldOperation
-    {
-        return new Ops\FoldOperation($this, $init);
-    }
+    #region MapChainableOps
 
     /**
      * {@inheritDoc}
@@ -796,6 +589,212 @@ final class HashMap implements Map
         return Ops\GroupMapReduceOperation::of($this)($group, $map, $reduce);
     }
 
+    #endregion MapChainableOps
+
+    #region MapTerminalOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return $this->everyKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function everyKV(callable $predicate): bool
+    {
+        return Ops\EveryOperation::of($this)($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-assert-if-true HashMap<TK, TVO> $this
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     */
+    public function everyOf(string|array $fqcn, bool $invariant = false): bool
+    {
+        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return $this->existsKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function existsKV(callable $predicate): bool
+    {
+        return Ops\ExistsOperation::of($this)($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<HashMap<TK, TVO>>
+     */
+    public function traverseOption(callable $callback): Option
+    {
+        return $this->traverseOptionKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return Option<HashMap<TK, TVO>>
+     */
+    public function traverseOptionKV(callable $callback): Option
+    {
+        return Ops\TraverseOptionOperation::of($this)($callback)
+            ->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is HashMap<TK, Option<TVO>>
+     *
+     * @return Option<HashMap<TK, TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return Ops\TraverseOptionOperation::id($this)->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, HashMap<TK, TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return $this->traverseEitherKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<E, TVO> $callback
+     * @return Either<E, HashMap<TK, TVO>>
+     */
+    public function traverseEitherKV(callable $callback): Either
+    {
+        return Ops\TraverseEitherOperation::of($this)($callback)->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is HashMap<TK, Either<E, TVO>>
+     *
+     * @return Either<E, HashMap<TK, TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return Ops\TraverseEitherOperation::id($this)->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return $this->partitionKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionKV(callable $predicate): Separated
+    {
+        return Ops\PartitionOperation::of($this)($predicate)
+            ->mapLeft(fn($left) => HashMap::collect($left))
+            ->map(fn($right) => HashMap::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return $this->partitionMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TK, TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapKV(callable $callback): Separated
+    {
+        return Ops\PartitionMapOperation::of($this)($callback)
+            ->mapLeft(fn($left) => HashMap::collect($left))
+            ->map(fn($right) => HashMap::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return Ops\FoldOperation<TV, TVO>
+     */
+    public function fold(mixed $init): Ops\FoldOperation
+    {
+        return new Ops\FoldOperation($this, $init);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -818,18 +817,7 @@ final class HashMap implements Map
 
     public function isEmpty(): bool
     {
-        return $this->empty;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param TK $key
-     * @return Option<TV>
-     */
-    public function __invoke(mixed $key): Option
-    {
-        return $this->get($key);
+        return $this->hashTable->isEmpty();
     }
 
     /**
@@ -843,9 +831,39 @@ final class HashMap implements Map
         return $this->hashTable->get($key);
     }
 
-    public function toString(): string
+    #endregion MapTerminalOps
+
+    #region Traversable
+
+    /**
+     * @return Generator<TK, TV>
+     */
+    public function getIterator(): Generator
     {
-        return (string) $this;
+        return $this->hashTable->getKeyValueIterator();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function count(): int
+    {
+        return Ops\CountOperation::of($this)();
+    }
+
+    #endregion Traversable
+
+    #region Magic methods
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
     }
 
     public function __toString(): string
@@ -855,8 +873,6 @@ final class HashMap implements Map
             ->values()
             ->mkString('HashMap(', ', ', ')');
     }
-
-    #region Extension
 
     /**
      * @param non-empty-string $name
@@ -876,5 +892,5 @@ final class HashMap implements Map
         return HashMapExtensions::callStatic($name, $arguments);
     }
 
-    #endregion Extension
+    #endregion Magic methods
 }
