@@ -161,7 +161,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
 
     private static function isTuple(TKeyedArray $keyed): bool
     {
-        return array_is_list($keyed->properties) && $keyed->is_list && $keyed->sealed;
+        return array_is_list($keyed->properties);
     }
 
     private static function isAssoc(TKeyedArray $keyed): bool
