@@ -25,7 +25,7 @@ use Fp\Functional\Option\Option;
 
 use function Fp\Callable\ctor;
 use function Fp\Collection\at;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 
 final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
@@ -45,7 +45,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return PsalmApi::$args->getCallArgs($event)
-            ->flatMap(fn(ArrayList $args) => sequenceOption([
+            ->flatMap(fn(ArrayList $args) => sequenceOptionT(
                 fn() => Option::some($event->getFunctionId() === 'fp\collection\filterkv'
                     ? RefineForEnum::KeyValue
                     : RefineForEnum::Value),
@@ -57,7 +57,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
                 fn() => $args->at(self::COLLECTION_IDX)
                     ->map(fn(CallArg $arg) => $arg->type)
                     ->flatMap(GetCollectionTypeParams::keyValue(...)),
-            ]))
+            ))
             ->mapN(ctor(RefinementContext::class))
             ->map(RefineByPredicate::for(...))
             ->map(fn(CollectionTypeParams $result) => self::getReturnType($event, $result))

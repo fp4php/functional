@@ -25,7 +25,7 @@ use function Fp\Callable\ctor;
 use function Fp\Cast\asNonEmptyArray;
 use function Fp\Collection\at;
 use function Fp\Collection\head;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Collection\tail;
 use function Fp\Evidence\proveOf;
 
@@ -48,13 +48,13 @@ final class PartitionFunctionReturnTypeProvider implements FunctionReturnTypePro
             ->flatMap(GetCollectionTypeParams::keyValue(...))
             ->flatMap(
                 fn(CollectionTypeParams $type_params) => ArrayList::range(1, $partition_count + 1)
-                    ->traverseOption(fn(int $offset) => sequenceOption([
+                    ->traverseOption(fn(int $offset) => sequenceOptionT(
                         fn() => Option::some(RefineForEnum::Value),
                         fn() => at($args, $offset)->pluck('value')->filterOf(FunctionLike::class),
                         fn() => Option::some($event->getContext()),
                         fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
                         fn() => Option::some($type_params),
-                    ]))
+                    ))
                     ->map(fn(ArrayList $args) => $args
                         ->mapN(ctor(RefinementContext::class))
                         ->map(RefineByPredicate::for(...))

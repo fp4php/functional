@@ -39,7 +39,7 @@ use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
 use function Fp\Collection\first;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 use function Fp\classOf;
@@ -79,7 +79,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         return proveTrue(in_array($event->getMethodNameLowercase(), self::getMethodNames()))
-            ->flatMap(fn() => sequenceOption([
+            ->flatMap(fn() => sequenceOptionT(
                 fn() => Option::some($event->getMethodNameLowercase() === 'filterkv'
                     ? RefineForEnum::KeyValue
                     : RefineForEnum::Value),
@@ -92,7 +92,7 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
                     ->map(fn($template_params) => 2 === count($template_params)
                         ? new CollectionTypeParams($template_params[0], $template_params[1])
                         : new CollectionTypeParams(Type::getArrayKey(), $template_params[0])),
-            ]))
+            ))
             ->mapN(ctor(RefinementContext::class))
             ->map(RefineByPredicate::for(...))
             ->map(fn(CollectionTypeParams $result) => self::getReturnType($event, $result))

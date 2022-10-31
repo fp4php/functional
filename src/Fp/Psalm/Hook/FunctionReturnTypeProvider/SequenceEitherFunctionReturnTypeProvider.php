@@ -17,7 +17,7 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 
 final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
@@ -33,7 +33,7 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
         return PsalmApi::$args->getCallArgs($event)
             ->flatMap(fn($args) => $args->head())
             ->flatMap(fn(CallArg $arg) => PsalmApi::$types->asSingleAtomicOf(TKeyedArray::class, $arg->type))
-            ->flatMap(fn(TKeyedArray $types) => sequenceOption([
+            ->flatMap(fn(TKeyedArray $types) => sequenceOptionT(
                 fn() => NonEmptyHashMap::collectNonEmpty($types->properties)
                     ->traverseOption(GetEitherTypeParam::left(...))
                     ->map(fn(NonEmptyHashMap $props) => $props->values()->toNonEmptyList())
@@ -49,7 +49,7 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
 
                         return new Union([$keyed]);
                     }),
-            ]))
+            ))
             ->map(fn(array $type_params) => [
                 new TGenericObject(Either::class, $type_params),
             ])

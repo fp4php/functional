@@ -35,6 +35,21 @@ function sequenceOption(iterable $collection): Option
 }
 
 /**
+ * Varargs version of {@see sequenceOption()}.
+ *
+ * @template TVI
+ *
+ * @param (Option<TVI> | Closure(): Option<TVI>) ...$items
+ * @return Option<list<TVI>>
+ *
+ * @no-named-arguments
+ */
+function sequenceOptionT(Option|Closure ...$items): Option
+{
+    return TraverseOptionOperation::id($items)->map(asList(...));
+}
+
+/**
  * Same as {@see traverseEither()} but use {@see id()} implicitly for $callback.
  *
  * @template E

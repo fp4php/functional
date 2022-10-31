@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
+use Fp\Collections\ArrayList;
+use Fp\Collections\NonEmptyArrayList;
 use Fp\Functional\Option\Option;
+use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -16,6 +19,7 @@ use Psalm\Type\Atomic;
 
 use function Fp\Collection\first;
 use function Fp\Collection\traverseOption;
+use function Fp\Evidence\proveTrue;
 
 final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
@@ -23,16 +27,14 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
     {
         return [
             strtolower('Fp\Collection\sequenceOption'),
+            strtolower('Fp\Collection\sequenceOptionT'),
         ];
     }
 
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
-        return PsalmApi::$args->getCallArgs($event)
-            ->flatMap(fn($args) => $args->head())
-            ->pluck('type')
-            ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->filterOf(TKeyedArray::class)
+        return self::getInputTypeFromSequenceOption($event)
+            ->orElse(fn() => self::getInputTypeFromSequenceOptionT($event))
             ->flatMap(fn(TKeyedArray $types) => traverseOption($types->properties, self::getOptionTypeParam(...)))
             ->map(function(array $mapped) {
                 $is_list = array_is_list($mapped);
@@ -48,6 +50,32 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
                 ]);
             })
             ->get();
+    }
+
+    /**
+     * @return Option<TKeyedArray>
+     */
+    private static function getInputTypeFromSequenceOption(FunctionReturnTypeProviderEvent $event): Option
+    {
+        return proveTrue(strtolower('Fp\Collection\sequenceOption') === $event->getFunctionId())
+            ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
+            ->flatMap(fn(ArrayList $args) => $args->head())
+            ->map(fn(CallArg $arg) => $arg->type)
+            ->flatMap(PsalmApi::$types->asSingleAtomic(...))
+            ->filterOf(TKeyedArray::class);
+    }
+
+    /**
+     * @return Option<TKeyedArray>
+     */
+    private static function getInputTypeFromSequenceOptionT(FunctionReturnTypeProviderEvent $event): Option
+    {
+        return proveTrue(strtolower('Fp\Collection\sequenceOptionT') === $event->getFunctionId())
+            ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
+            ->flatMap(fn(ArrayList $args) => $args->toNonEmptyArrayList())
+            ->map(fn(NonEmptyArrayList $args) => new TKeyedArray(
+                $args->map(fn(CallArg $arg) => $arg->type)->toNonEmptyList(),
+            ));
     }
 
     /**

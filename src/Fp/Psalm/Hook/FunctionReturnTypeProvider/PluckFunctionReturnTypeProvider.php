@@ -23,7 +23,7 @@ use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 
 final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
@@ -36,7 +36,7 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return PsalmApi::$args->getCallArgs($event)
-            ->flatMap(fn(ArrayList $args) => sequenceOption([
+            ->flatMap(fn(ArrayList $args) => sequenceOptionT(
                 fn() => $args->lastElement()
                     ->pluck('type')
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
@@ -48,7 +48,7 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
                     ->flatMap(fn($atomic) => proveOf($atomic, [TNamedObject::class, TKeyedArray::class])),
                 fn() => Option::some($event->getStatementsSource()),
                 fn() => Option::some($event->getCodeLocation()),
-            ]))
+            ))
             ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))
             ->map(fn(Union $result) => [

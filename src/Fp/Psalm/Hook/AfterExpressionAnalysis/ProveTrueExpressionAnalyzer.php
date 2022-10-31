@@ -18,7 +18,7 @@ use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveOf;
 
@@ -31,14 +31,14 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
 
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {
-        sequenceOption([
+        sequenceOptionT(
             fn() => Option::some($event->getExpr())
                 ->filterOf(Yield_::class)
                 ->flatMap(self::getProveTrueArgsFromYield(...)),
             fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class)
                 ->filter(fn(StatementsAnalyzer $source) => $source->getSource() instanceof ClosureAnalyzer),
             fn() => Option::some($event),
-        ])->tapN(self::assert(...));
+        )->tapN(self::assert(...));
 
         return null;
     }

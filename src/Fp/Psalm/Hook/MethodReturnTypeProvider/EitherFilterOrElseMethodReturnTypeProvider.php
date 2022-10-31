@@ -25,7 +25,7 @@ use Psalm\Type\Union;
 use function Fp\Callable\ctor;
 use function Fp\Collection\first;
 use function Fp\Collection\second;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
@@ -39,7 +39,7 @@ final class EitherFilterOrElseMethodReturnTypeProvider implements MethodReturnTy
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         return proveTrue(strtolower('filterOrElse') === $event->getMethodNameLowercase())
-            ->flatMap(fn() => sequenceOption([
+            ->flatMap(fn() => sequenceOptionT(
                 fn() => Option::some(RefineForEnum::Value),
                 fn() => first($event->getCallArgs())->pluck('value')->filterOf(FunctionLike::class),
                 fn() => Option::some($event->getContext()),
@@ -47,7 +47,7 @@ final class EitherFilterOrElseMethodReturnTypeProvider implements MethodReturnTy
                 fn() => second($event->getTemplateTypeParameters() ?? [])
                     ->map(fn($value_type) => [Type::getArrayKey(), $value_type])
                     ->mapN(ctor(CollectionTypeParams::class)),
-            ]))
+            ))
             ->mapN(ctor(RefinementContext::class))
             ->map(RefineByPredicate::for(...))
             ->map(fn(CollectionTypeParams $result) => new TGenericObject(Either::class, [

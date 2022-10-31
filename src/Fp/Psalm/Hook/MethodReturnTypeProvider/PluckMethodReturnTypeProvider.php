@@ -20,7 +20,7 @@ use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
 use function Fp\Collection\last;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
@@ -34,7 +34,7 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         return proveTrue('pluck' === $event->getMethodNameLowercase())
-            ->flatMap(fn() => sequenceOption([
+            ->flatMap(fn() => sequenceOptionT(
                 fn() => PsalmApi::$args->getCallArgs($event)
                     ->flatMap(fn(ArrayList $args) => $args->lastElement()
                         ->pluck('type')
@@ -46,7 +46,7 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
                     ->flatMap(fn(Atomic $atomic) => proveOf($atomic, [TNamedObject::class, TKeyedArray::class])),
                 fn() => Option::some($event->getSource()),
                 fn() => Option::some($event->getCodeLocation()),
-            ]))
+            ))
             ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))
             ->map(fn(Union $result) => [

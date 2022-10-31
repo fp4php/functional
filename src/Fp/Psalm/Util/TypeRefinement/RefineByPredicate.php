@@ -21,7 +21,7 @@ use function Fp\Collection\at;
 use function Fp\Collection\first;
 use function Fp\Collection\firstOf;
 use function Fp\Collection\second;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
@@ -52,12 +52,12 @@ final class RefineByPredicate
      */
     private static function forKey(RefinementContext $context): Option
     {
-        return sequenceOption([
+        return sequenceOptionT(
             fn() => self::getPredicateKeyArgumentName($context),
             fn() => self::getPredicateSingleReturn($context),
             fn() => Option::some($context),
             fn() => Option::some($context->type_params->key_type),
-        ])->flatMapN(self::refine(...));
+        )->flatMapN(self::refine(...));
     }
 
     /**
@@ -67,12 +67,12 @@ final class RefineByPredicate
      */
     private static function forValue(RefinementContext $context): Option
     {
-        return sequenceOption([
+        return sequenceOptionT(
             fn() => self::getPredicateValueArgumentName($context),
             fn() => self::getPredicateSingleReturn($context),
             fn() => Option::some($context),
             fn() => Option::some($context->type_params->val_type),
-        ])->flatMapN(self::refine(...));
+        )->flatMapN(self::refine(...));
     }
 
     /**

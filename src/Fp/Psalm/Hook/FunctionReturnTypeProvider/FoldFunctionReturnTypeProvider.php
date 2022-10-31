@@ -15,7 +15,7 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 
 final class FoldFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
@@ -27,7 +27,7 @@ final class FoldFunctionReturnTypeProvider implements FunctionReturnTypeProvider
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return Option::some($event)
-            ->flatMap(fn() => sequenceOption([
+            ->flatMap(fn() => sequenceOptionT(
                 fn() => PsalmApi::$args->getCallArgs($event)
                     ->flatMap(fn(ArrayList $args) => $args->lastElement())
                     ->pluck('type')
@@ -36,7 +36,7 @@ final class FoldFunctionReturnTypeProvider implements FunctionReturnTypeProvider
                     ->flatMap(fn(ArrayList $args) => $args->firstElement())
                     ->pluck('type')
                     ->map(PsalmApi::$types->asNonLiteralType(...)),
-            ]))
+            ))
             ->mapN(fn(Union $A, Union $TInit) => [
                 new TGenericObject(FoldOperation::class, [$A, $TInit]),
             ])

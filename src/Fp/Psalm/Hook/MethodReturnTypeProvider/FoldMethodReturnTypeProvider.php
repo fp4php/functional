@@ -48,7 +48,7 @@ use function Fp\Collection\first;
 use function Fp\Collection\last;
 use function Fp\Collection\map;
 use function Fp\Collection\second;
-use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
@@ -96,20 +96,18 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
         return proveTrue(FoldOperation::class === $event->getFqClasslikeName())
 
             // Get TInit and TFold
-            ->flatMap(
-                fn() => sequenceOption([
-                    fn() => second($event->getTemplateTypeParameters() ?? []),
-                    fn() => proveOf($event->getStmt(), MethodCall::class)
-                        ->map(fn(MethodCall $call) => $call->getArgs())
-                        ->flatMap(fn(array $args) => first($args))
-                        ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
-                        ->flatMap(fn(Union $type) => PsalmApi::$types->asSingleAtomicOf(TClosure::class, $type))
-                        ->flatMap(fn(TClosure $closure) => Option::fromNullable($closure->return_type))
-                        ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))
-                        ->flatMap(fn(Union $type) => PsalmApi::$types->asSingleAtomic($type))
-                        ->map(fn(Atomic $atomic) => new Union([$atomic]))
-                ])
-            )
+            ->flatMap(fn() => sequenceOptionT(
+                fn() => second($event->getTemplateTypeParameters() ?? []),
+                fn() => proveOf($event->getStmt(), MethodCall::class)
+                    ->map(fn(MethodCall $call) => $call->getArgs())
+                    ->flatMap(fn(array $args) => first($args))
+                    ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
+                    ->flatMap(fn(Union $type) => PsalmApi::$types->asSingleAtomicOf(TClosure::class, $type))
+                    ->flatMap(fn(TClosure $closure) => Option::fromNullable($closure->return_type))
+                    ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))
+                    ->flatMap(fn(Union $type) => PsalmApi::$types->asSingleAtomic($type))
+                    ->map(fn(Atomic $atomic) => new Union([$atomic]))
+            ))
 
             // TFold must be assignable to TInit
             ->tapN(function(Union $TInit, Union $TFold) use ($event) {
@@ -163,13 +161,13 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
         // Next code maps any literal types to non-literal analog.
         // Then $integers->fold(0) will be FoldingOperation<int, int>
         return proveTrue('fold' === $event->getMethodNameLowercase())
-            ->flatMap(fn() => sequenceOption([
+            ->flatMap(fn() => sequenceOptionT(
                 fn() => last($event->getTemplateTypeParameters() ?? []),
                 fn() => proveOf($event->getStmt(), MethodCall::class)
                     ->flatMap(fn(MethodCall $call) => first($call->getArgs()))
                     ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
                     ->map(fn(Union $type) => PsalmApi::$types->asNonLiteralType($type))
-            ]))
+            ))
             ->mapN(fn(Union $A, Union $TInit) => [
                 new TGenericObject(FoldOperation::class, [$A, $TInit]),
             ])
