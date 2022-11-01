@@ -10,6 +10,7 @@ PHP Functional Programming library. Monads and common use functions.
 - ### [Streams](doc/Streams.md)
 - ### [Monads](doc/Monads.md)
 - ### [Functions](doc/Functions.md)
+- ### [Combinators](doc/Combinators.md)
 
 
 ## Installation
@@ -24,11 +25,12 @@ $ composer require fp4php/functional
 To improve type inference
 
 ```console
+$ composer require --dev fp4php/psalm-toolkit
 $ vendor/bin/psalm-plugin enable fp4php/functional
 ```
 
 ## Overview
-Type safe and concise. 
+Typesafe and concise.
 
 Powerful combination: Collections + Option monad.
 ```php
@@ -157,10 +159,6 @@ $mappedCollection = $prependedCollection->map(fn(int $elem) => $elem + 1);
  */
 $emptyCollection = getEmptyCollection();
 
-$resultWithDefaultValue = $emptyCollection
-    ->reduce(fn(int $accumulator, int $element) => $accumulator + $element)
-    ->getOrElse(0);
-
 /**
  * @return Option<float>
  */
@@ -215,7 +213,6 @@ $foo = $maybeFooMaybeNot->getOrCall(fn() => new Foo(0))
   ```console
   $ sudo apt install pandoc
   ```
-
 2) Generate **doc** from **src**
   ```console
   $ make
