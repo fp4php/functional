@@ -32,11 +32,6 @@
   - [shift](#shift)
   - [tail](#tail)
   - [zip](#zip)
-- [Reflection](#Reflection)
-  - [getReflectionClass](#getReflectionClass)
-  - [getReflectionProperty](#getReflectionProperty)
-- [Json](#Json)
-  - [jsonDecode](#jsonDecode)
 - [Cast](#Cast)
   - [asArray](#asArray)
   - [asBool](#asBool)
@@ -400,36 +395,6 @@
     zip([1, 2, 3], ['a', 'b']); // [[1, 'a'], [2, 'b']]
     ```
 
-# Reflection
-
-  - #### getReflectionClass
-    
-    Returns class reflection or Left on exception
-    
-    ``` php
-    /** @var Either<ReflectionException, ReflectionClass> $result */
-    $result = getReflectionClass(Foo::class); 
-    ```
-
-  - #### getReflectionProperty
-    
-    Returns property reflection or Left on exception
-    
-    ``` php
-    /** @var Either<ReflectionException, ReflectionProperty> $result */
-    $result = getReflectionProperty(Foo::class, 'a'); 
-    ```
-
-# Json
-
-  - #### jsonDecode
-    
-    Decode json string into associative array. Returns Left on error
-    
-    ``` php
-    jsonDecode('{"a": [{"b": true}]}')->get(); // ['a' => [['b' => true]]] 
-    ```
-
 # Cast
 
   - #### asArray
@@ -509,14 +474,33 @@
 
   - #### proveArray
     
-    Prove that given collection is of array type
+    Prove that given value is of array type
+    
+    ``` php
+    function getMixed(): mixed { return []; }
+    
+    // inferred as Option<array<array-key, mixed>>
+    $result = proveArray(getMixed());
+    ```
+    
+    Type params from any iterable type will be preserved:
     
     ``` php
     /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    function getCollection(): iterable { return []; }
     
-    /** @var Option<array<string, int>> $result */
+    // inferred as Option<array<string, int>>
     $result = proveArray(getCollection());
+    ```
+    
+    Key and value type can be proved separately:
+    
+    ``` php
+    /** @psalm-return iterable<mixed, mixed> */
+    function getCollection(): iterable { return []; }
+    
+    // inferred as Option<array<string, int>>
+    $result = proveArray(getCollection(), proveString(...), proveInt(...));
     ```
 
   - #### proveNonEmptyArray

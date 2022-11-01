@@ -64,7 +64,7 @@ function fooFromJson(string $json): Option
 It can be described point by point as follows:
 
 1)  Decode input json
-2)  Prove that value is `array<array-key, mixed>`
+2)  Prove `array<array-key, mixed>` from `mixed`
 3)  Prove `array{int, bool, bool}` from `array<array-key, mixed>`
 4)  Use `mapN` deconstruct tuple and crate `Foo`
 
@@ -87,7 +87,7 @@ use Tests\Mock\Foo;
  * @param Option<array{int, bool, bool, string, float}> $maybeData
  * @return Option<Foo>
  */
-function omitMostLeftValue(Option $maybeData): Option
+function omitLeftValues(Option $maybeData): Option
 {
     return $maybeData->mapN(fn(int $a, bool $b) => new Foo($a, $b, c: false));
 }
