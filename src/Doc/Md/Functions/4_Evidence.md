@@ -1,13 +1,32 @@
 # Evidence
 - #### proveArray
-  Prove that given collection is of array type
+  Prove that given value is of array type
+
+  ```php
+  function getMixed(): mixed { return []; }
+  
+  // inferred as Option<array<array-key, mixed>>
+  $result = proveArray(getMixed());
+  ```
+
+  Type params from any iterable type will be preserved:
 
   ```php
   /** @psalm-return iterable<string, int> */
-  function getCollection(): array { return []; }
-  
-  /** @var Option<array<string, int>> $result */
+  function getCollection(): iterable { return []; }
+
+  // inferred as Option<array<string, int>>
   $result = proveArray(getCollection());
+  ```
+
+  Key and value type can be proved separately:
+
+  ```php
+  /** @psalm-return iterable<mixed, mixed> */
+  function getCollection(): iterable { return []; }
+
+  // inferred as Option<array<string, int>>
+  $result = proveArray(getCollection(), proveString(...), proveInt(...));
   ```
 
 - #### proveNonEmptyArray
