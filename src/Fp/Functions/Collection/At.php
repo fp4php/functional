@@ -38,11 +38,10 @@ function at(iterable $collection, int|string $key): Option
 
 /**
  * @template TK of array-key
- * @template TV
  * @template TVO
  *
- * @param Closure(TV): Option<TVO> $evidence
- * @param iterable<TK, TV> $collection
+ * @param Closure(mixed): Option<TVO> $evidence
+ * @param iterable<TK, mixed> $collection
  * @param TK $key
  * @return Option<TVO>
  */
@@ -50,4 +49,3 @@ function atOf(Closure $evidence, iterable $collection, int|string $key): Option
 {
     return at($collection, $key)->flatMap($evidence);
 }
-
