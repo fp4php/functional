@@ -120,7 +120,6 @@ function omitAnyValueFromShape(Option $maybeData): Option
 }
 ```
 
-  - 
   - #### Psalm issues
 
 Psalm will prevent calling \*N combinator in non-valid cases:
@@ -151,7 +150,6 @@ function test(Option $maybeData): Option
 In the example above tuple contains only two values. But `mapN` waits
 three parameters. This is non-valid case and Psalm tells about it.
 
-  - 
   - #### Ctor function
 
 There is useful function `Fp\Callable\ctor` that is friend of \*N
