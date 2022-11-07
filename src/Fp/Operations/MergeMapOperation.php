@@ -19,10 +19,10 @@ final class MergeMapOperation extends AbstractOperation
      * @template TKO
      * @template TVO
      *
-     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return Generator<TK|TKO, TV|TVO>
      */
-    public function __invoke(Map|NonEmptyMap $map): Generator
+    public function __invoke(iterable $map): Generator
     {
         foreach ($this->gen as $key => $value) {
             yield $key => $value;

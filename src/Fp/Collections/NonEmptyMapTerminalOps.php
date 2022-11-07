@@ -316,10 +316,10 @@ interface NonEmptyMapTerminalOps
      * @template TKO
      * @template TVO
      *
-     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return NonEmptyHashMap<TK|TKO, TV|TVO>
      */
-    public function merge(Map|NonEmptyMap $map): NonEmptyMap;
+    public function merge(iterable $map): NonEmptyMap;
 
     /**
      * Filter collection by condition

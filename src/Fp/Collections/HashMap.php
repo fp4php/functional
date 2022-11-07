@@ -310,10 +310,10 @@ final class HashMap implements Map
      * @template TKO
      * @template TVO
      *
-     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return HashMap<TK|TKO, TV|TVO>
      */
-    public function merge(Map|NonEmptyMap $map): HashMap
+    public function merge(iterable $map): HashMap
     {
         return HashMap::collect(Ops\MergeMapOperation::of($this)($map));
     }

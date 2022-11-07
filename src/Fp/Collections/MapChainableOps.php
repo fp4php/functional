@@ -57,10 +57,10 @@ interface MapChainableOps
      * @template TKO
      * @template TVO
      *
-     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return HashMap<TK|TKO, TV|TVO>
      */
-    public function merge(Map|NonEmptyMap $map): HashMap;
+    public function merge(iterable $map): HashMap;
 
     /**
      * Filter collection by condition

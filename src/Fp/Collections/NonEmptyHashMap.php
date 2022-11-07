@@ -578,10 +578,10 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @template TKO
      * @template TVO
      *
-     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO> $map
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return NonEmptyHashMap<TK|TKO, TV|TVO>
      */
-    public function merge(Map|NonEmptyMap $map): NonEmptyHashMap
+    public function merge(iterable $map): NonEmptyHashMap
     {
         return new NonEmptyHashMap($this->hashMap->merge($map));
     }
