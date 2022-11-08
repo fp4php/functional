@@ -160,11 +160,7 @@ final class HashMap implements Map
      */
     public function toNonEmptyLinkedList(): Option
     {
-        $list = $this->toLinkedList();
-
-        return $list->head()->map(
-            fn($head) => new NonEmptyLinkedList($head, $list->tail()),
-        );
+        return NonEmptyLinkedList::collect($this->toList());
     }
 
     /**
@@ -184,9 +180,11 @@ final class HashMap implements Map
      */
     public function toNonEmptyArrayList(): Option
     {
-        return Option::some($this->toArrayList())
-            ->filter(fn($list) => !$list->isEmpty())
-            ->map(fn($list) => new NonEmptyArrayList($list));
+        return Option::some($this->toArrayList())->flatMap(
+            fn($list) => !$list->isEmpty()
+                ? Option::some(new NonEmptyArrayList($list))
+                : Option::none(),
+        );
     }
 
     /**

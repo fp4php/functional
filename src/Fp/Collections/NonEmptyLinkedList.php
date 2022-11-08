@@ -15,7 +15,6 @@ use Iterator;
 use function Fp\Callable\dropFirstArg;
 use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\fromPairs;
-use function Fp\Collection\keys;
 
 /**
  * @template-covariant TV
@@ -29,12 +28,13 @@ use function Fp\Collection\keys;
 final class NonEmptyLinkedList implements NonEmptySeq
 {
     /**
-     * @param TV $head
-     * @param LinkedList<TV> $tail
+     * @param LinkedList<TV> $linkedList
      */
-    public function __construct(public mixed $head, public LinkedList $tail)
+    public function __construct(private readonly LinkedList $linkedList)
     {
     }
+
+    #region NonEmptySeqCollector
 
     /**
      * {@inheritDoc}
@@ -59,9 +59,11 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public static function collect(iterable $source): Option
     {
-        return Option::some(LinkedList::collect($source))
-            ->filter(fn($list) => $list instanceof Cons)
-            ->map(fn(Cons $cons) => new NonEmptyLinkedList($cons->head, $cons->tail));
+        $list = LinkedList::collect($source);
+
+        return !$list->isEmpty()
+            ? Option::some(new NonEmptyLinkedList($list))
+            : Option::none();
     }
 
     /**
@@ -90,68 +92,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
         return NonEmptyLinkedList::collectUnsafe($source);
     }
 
-    /**
-     * @return Iterator<int, TV>
-     */
-    public function getIterator(): Iterator
-    {
-        return new LinkedListIterator($this->toLinkedList());
-    }
+    #endregion NonEmptySeqCollector
 
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return $this->tail->count() + 1;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return LinkedList<TV>
-     */
-    public function filter(callable $predicate): LinkedList
-    {
-        return $this->toLinkedList()->filter($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return LinkedList<TVO>
-     */
-    public function filterMap(callable $callback): LinkedList
-    {
-        return $this->toLinkedList()->filterMap($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function filterNotNull(): LinkedList
-    {
-        return $this->toLinkedList()->filterNotNull();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return LinkedList<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): LinkedList
-    {
-        return $this->toLinkedList()->filterOf($fqcn, $invariant);
-    }
+    #region NonEmptySeqChainableOps
 
     /**
      * {@inheritDoc}
@@ -163,9 +106,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function flatten(): NonEmptyLinkedList
     {
-        return $this->toLinkedList()->flatten()
-            ->toNonEmptyLinkedList()
-            ->getUnsafe();
+        return new NonEmptyLinkedList($this->linkedList->flatten());
     }
 
     /**
@@ -178,9 +119,23 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function flatMap(callable $callback): NonEmptyLinkedList
     {
-        return $this->toLinkedList()->flatMap($callback)
-            ->toNonEmptyLinkedList()
-            ->getUnsafe();
+        return new NonEmptyLinkedList($this->linkedList->flatMap($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptyLinkedList<TVO>
+     */
+    public function flatMapN(callable $callback): NonEmptyLinkedList
+    {
+        return $this->flatMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -190,69 +145,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function reverse(): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe($this->toLinkedList()->reverse());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function tail(): LinkedList
-    {
-        return $this->tail;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return ArrayList<TV>
-     */
-    public function init(): ArrayList
-    {
-        return ArrayList::collect(Ops\InitOperation::of($this)());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return LinkedList<TV>
-     */
-    public function takeWhile(callable $predicate): LinkedList
-    {
-        return $this->toLinkedList()->takeWhile($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return LinkedList<TV>
-     */
-    public function dropWhile(callable $predicate): LinkedList
-    {
-        return $this->toLinkedList()->dropWhile($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function take(int $length): LinkedList
-    {
-        return $this->toLinkedList()->take($length);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return LinkedList<TV>
-     */
-    public function drop(int $length): LinkedList
-    {
-        return $this->toLinkedList()->drop($length);
+        return new NonEmptyLinkedList($this->linkedList->reverse());
     }
 
     /**
@@ -265,7 +158,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function map(callable $callback): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\MapOperation::of($this)(dropFirstArg($callback)));
+        return new NonEmptyLinkedList($this->linkedList->map($callback));
     }
 
     /**
@@ -294,7 +187,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function appended(mixed $elem): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\AppendedOperation::of($this)($elem));
+        return new NonEmptyLinkedList($this->linkedList->appended($elem));
     }
 
     /**
@@ -307,7 +200,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function appendedAll(iterable $suffix): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\AppendedAllOperation::of($this)($suffix));
+        return new NonEmptyLinkedList($this->linkedList->appendedAll($suffix));
     }
 
     /**
@@ -320,7 +213,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function prepended(mixed $elem): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\PrependedOperation::of($this)($elem));
+        return new NonEmptyLinkedList($this->linkedList->prepended($elem));
     }
 
     /**
@@ -333,7 +226,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function prependedAll(iterable $prefix): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\PrependedAllOperation::of($this)($prefix));
+        return new NonEmptyLinkedList($this->linkedList->prependedAll($prefix));
     }
 
     /**
@@ -351,6 +244,20 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function tapN(callable $callback): NonEmptyLinkedList
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVI
      *
      * @param non-empty-array<array-key, TVI> | NonEmptyCollection<mixed, TVI> $that
@@ -358,7 +265,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function zip(iterable $that): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\ZipOperation::of($this)($that));
+        return new NonEmptyLinkedList($this->linkedList->zip($that));
     }
 
     /**
@@ -368,28 +275,216 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function zipWithKeys(): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
+        return new NonEmptyLinkedList($this->linkedList->zipWithKeys());
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param callable(TV, TV): int $cmp
      * @return NonEmptyLinkedList<TV>
      */
-    public function sorted(callable $cmp): NonEmptyLinkedList
+    public function sorted(): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\SortedOperation::of($this)($cmp));
+        return new NonEmptyLinkedList($this->linkedList->sorted());
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Option<TV>
+     * @param callable(TV): mixed $callback
+     * @return NonEmptyLinkedList<TV>
      */
-    public function __invoke(int $index): Option
+    public function sortedBy(callable $callback): NonEmptyLinkedList
     {
-        return $this->at($index);
+        return new NonEmptyLinkedList($this->linkedList->sortedBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function sortedDesc(): NonEmptyLinkedList
+    {
+        return new NonEmptyLinkedList($this->linkedList->sortedDesc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function sortedDescBy(callable $callback): NonEmptyLinkedList
+    {
+        return new NonEmptyLinkedList($this->linkedList->sortedDescBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $separator
+     * @return NonEmptyLinkedList<TV | TVI>
+     */
+    public function intersperse(mixed $separator): NonEmptyLinkedList
+    {
+        return new NonEmptyLinkedList($this->linkedList->intersperse($separator));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return NonEmptyLinkedList<TV>
+     */
+    public function uniqueBy(callable $callback): NonEmptyLinkedList
+    {
+        return new NonEmptyLinkedList($this->linkedList->uniqueBy($callback));
+    }
+
+    #endregion NonEmptySeqChainableOps
+
+    #region NonEmptySeqTerminalOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function filter(callable $predicate): LinkedList
+    {
+        return $this->linkedList->filter($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function filterN(callable $predicate): LinkedList
+    {
+        return $this->filter(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return LinkedList<TVO>
+     */
+    public function filterMap(callable $callback): LinkedList
+    {
+        return $this->linkedList->filterMap($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return LinkedList<TVO>
+     */
+    public function filterMapN(callable $callback): LinkedList
+    {
+        return $this->filterMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function filterNotNull(): LinkedList
+    {
+        return $this->linkedList->filterNotNull();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return LinkedList<TVO>
+     */
+    public function filterOf(string|array $fqcn, bool $invariant = false): LinkedList
+    {
+        return $this->linkedList->filterOf($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function tail(): LinkedList
+    {
+        return $this->linkedList->tail();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function init(): LinkedList
+    {
+        return $this->linkedList->init();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function takeWhile(callable $predicate): LinkedList
+    {
+        return $this->linkedList->takeWhile($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return LinkedList<TV>
+     */
+    public function dropWhile(callable $predicate): LinkedList
+    {
+        return $this->linkedList->dropWhile($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function take(int $length): LinkedList
+    {
+        return $this->linkedList->take($length);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function drop(int $length): LinkedList
+    {
+        return $this->linkedList->drop($length);
     }
 
     /**
@@ -415,8 +510,21 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->every(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVO
-     * @psalm-assert-if-true NonEmptySeq<TVO> $this
+     * @psalm-assert-if-true NonEmptyLinkedList<TVO> $this
      *
      * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
@@ -435,8 +543,25 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this)(dropFirstArg($callback))
-            ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+        return $this->linkedList
+            ->traverseOption($callback)
+            ->map(fn($list) => new NonEmptyLinkedList($list));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<NonEmptyLinkedList<TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->traverseOption(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -449,8 +574,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function sequenceOption(): Option
     {
-        return Ops\TraverseOptionOperation::id($this->getIterator())
-            ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+        return $this->linkedList
+            ->sequenceOption()
+            ->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -464,8 +590,26 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function traverseEither(callable $callback): Either
     {
-        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))
-            ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+        return $this->linkedList
+            ->traverseEither($callback)
+            ->map(fn($list) => new NonEmptyLinkedList($list));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyLinkedList<TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->traverseEither(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -479,6 +623,20 @@ final class NonEmptyLinkedList implements NonEmptySeq
         return Ops\PartitionOperation::of($this)(dropFirstArg($predicate))
             ->mapLeft(fn($left) => LinkedList::collect($left))
             ->map(fn($right) => LinkedList::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<LinkedList<TV>, LinkedList<TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->partition(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -500,6 +658,23 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<LinkedList<LO>, LinkedList<RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->partitionMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template E
      * @template TVO
      * @psalm-if-this-is NonEmptyLinkedList<Either<E, TVO>>
@@ -508,8 +683,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function sequenceEither(): Either
     {
-        return Ops\TraverseEitherOperation::id($this->getIterator())
-            ->map(fn($gen) => NonEmptyLinkedList::collectUnsafe($gen));
+        return $this->linkedList
+            ->sequenceEither()
+            ->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -547,11 +723,40 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): NonEmptyMap
+    {
+        return $this->reindex(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
         return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->exists(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -575,6 +780,20 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function first(callable $predicate): Option
     {
         return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option
+    {
+        return $this->first(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -610,7 +829,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function head(): mixed
     {
-        return $this->head;
+        return $this->linkedList->head()->getUnsafe();
     }
 
     /**
@@ -622,6 +841,20 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function last(callable $predicate): Option
     {
         return Ops\LastOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option
+    {
+        return $this->last(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -681,28 +914,69 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @param callable(TV): TKO $group
      * @param callable(TV): TVO $map
-     * @return NonEmptyMap<TKO, NonEmptyArrayList<TVO>>
+     * @return NonEmptyMap<TKO, NonEmptyLinkedList<TVO>>
      */
     public function groupMap(callable $group, callable $map): NonEmptyMap
     {
         $groups = Ops\GroupMapOperation::of($this)(dropFirstArg($group), dropFirstArg($map));
 
         return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyArrayList());
+            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyLinkedList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
+    {
+        return Ops\MkStringOperation::of($this)($start, $sep, $end);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @template TVI
-     *
-     * @param TVI $separator
-     * @return NonEmptyLinkedList<TV | TVI>
+     * @return TV
      */
-    public function intersperse(mixed $separator): NonEmptyLinkedList
+    public function max(): mixed
     {
-        return NonEmptyLinkedList::collectUnsafe(Ops\IntersperseOperation::of($this)($separator));
+        return $this->linkedList->max()->getUnsafe();
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function maxBy(callable $callback): mixed
+    {
+        return $this->linkedList->maxBy($callback)->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function min(): mixed
+    {
+        return $this->linkedList->min()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function minBy(callable $callback): mixed
+    {
+        return $this->linkedList->minBy($callback)->getUnsafe();
+    }
+
+    #endregion NonEmptySeqTerminalOps
+
+    #region NonEmptySeqCastableOps
 
     /**
      * {@inheritDoc}
@@ -770,7 +1044,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toLinkedList(): LinkedList
     {
-        return new Cons($this->head, $this->tail);
+        return $this->linkedList;
     }
 
     /**
@@ -800,7 +1074,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe($this);
+        return new NonEmptyArrayList($this->toArrayList());
     }
 
     /**
@@ -872,7 +1146,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toMergedArray(): array
     {
-        return $this->toLinkedList()->toMergedArray();
+        return $this->linkedList->toMergedArray();
     }
 
     /**
@@ -886,7 +1160,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toNonEmptyMergedArray(): array
     {
-        return $this->toLinkedList()->toNonEmptyMergedArray()->getUnsafe();
+        return $this->linkedList->toNonEmptyMergedArray()->getUnsafe();
     }
 
     public function toString(): string
@@ -894,65 +1168,29 @@ final class NonEmptyLinkedList implements NonEmptySeq
         return (string) $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
-    {
-        return Ops\MkStringOperation::of($this)($start, $sep, $end);
-    }
+    #endregion NonEmptySeqCastableOps
+
+    #region Traversable
 
     /**
-     * {@inheritDoc}
-     *
-     * @return TV
+     * @return Iterator<int, TV>
      */
-    public function max(): mixed
+    public function getIterator(): Iterator
     {
-        return $this->toLinkedList()->max()->getUnsafe();
+        return new LinkedListIterator($this->linkedList);
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return TV
      */
-    public function maxBy(callable $callback): mixed
+    public function count(): int
     {
-        return $this->toLinkedList()->maxBy($callback)->getUnsafe();
+        return $this->linkedList->count();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return TV
-     */
-    public function min(): mixed
-    {
-        return $this->toLinkedList()->min()->getUnsafe();
-    }
+    #endregion Traversable
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return TV
-     */
-    public function minBy(callable $callback): mixed
-    {
-        return $this->toLinkedList()->minBy($callback)->getUnsafe();
-    }
-
-    public function __toString(): string
-    {
-        return $this
-            ->map(fn($value) => Ops\ToStringOperation::of($value))
-            ->toLinkedList()
-            ->mkString('NonEmptyLinkedList(', ', ', ')');
-    }
-
-    #region Extension
+    #region Magic methods
 
     /**
      * @param non-empty-string $name
@@ -972,5 +1210,23 @@ final class NonEmptyLinkedList implements NonEmptySeq
         return NonEmptyLinkedListExtensions::callStatic($name, $arguments);
     }
 
-    #endregion Extension
+    public function __toString(): string
+    {
+        return $this
+            ->map(fn($value) => Ops\ToStringOperation::of($value))
+            ->toLinkedList()
+            ->mkString('NonEmptyLinkedList(', ', ', ')');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
+    }
+
+    #endregion Magic methods
 }

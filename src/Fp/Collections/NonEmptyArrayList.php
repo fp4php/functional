@@ -36,6 +36,8 @@ final class NonEmptyArrayList implements NonEmptySeq
     {
     }
 
+    #region NonEmptySeqCollector
+
     /**
      * {@inheritDoc}
      *
@@ -90,68 +92,9 @@ final class NonEmptyArrayList implements NonEmptySeq
         return NonEmptyArrayList::collectUnsafe($source);
     }
 
-    /**
-     * @return Iterator<int, TV>
-     */
-    public function getIterator(): Iterator
-    {
-        return $this->arrayList->getIterator();
-    }
+    #endregion NonEmptySeqCollector
 
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return $this->arrayList->count();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return ArrayList<TV>
-     */
-    public function filter(callable $predicate): ArrayList
-    {
-        return $this->arrayList->filter($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return ArrayList<TVO>
-     */
-    public function filterMap(callable $callback): ArrayList
-    {
-        return $this->arrayList->filterMap($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return ArrayList<TV>
-     */
-    public function filterNotNull(): ArrayList
-    {
-        return $this->arrayList->filterNotNull();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return ArrayList<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): ArrayList
-    {
-        return $this->arrayList->filterOf($fqcn, $invariant);
-    }
+    #region NonEmptySeqChainableOps
 
     /**
      * {@inheritDoc}
@@ -182,21 +125,17 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
-     * @return ArrayList<TV>
-     */
-    public function tail(): ArrayList
-    {
-        return $this->arrayList->tail();
-    }
-
-    /**
-     * {@inheritDoc}
+     * @template TVO
      *
-     * @return ArrayList<TV>
+     * @param callable(mixed...): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptyArrayList<TVO>
      */
-    public function init(): ArrayList
+    public function flatMapN(callable $callback): NonEmptyArrayList
     {
-        return $this->arrayList->init();
+        return $this->flatMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -207,48 +146,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function reverse(): NonEmptyArrayList
     {
         return new NonEmptyArrayList($this->arrayList->reverse());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return ArrayList<TV>
-     */
-    public function takeWhile(callable $predicate): ArrayList
-    {
-        return $this->arrayList->takeWhile($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return ArrayList<TV>
-     */
-    public function dropWhile(callable $predicate): ArrayList
-    {
-        return $this->arrayList->dropWhile($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return ArrayList<TV>
-     */
-    public function take(int $length): ArrayList
-    {
-        return $this->arrayList->take($length);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return ArrayList<TV>
-     */
-    public function drop(int $length): ArrayList
-    {
-        return $this->arrayList->drop($length);
     }
 
     /**
@@ -347,6 +244,20 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptyArrayList<TV>
+     */
+    public function tapN(callable $callback): NonEmptyArrayList
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVI
      *
      * @param non-empty-array<array-key, TVI> | NonEmptyCollection<mixed, TVI> $that
@@ -370,22 +281,210 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
-     * @param callable(TV, TV): int $cmp
      * @return NonEmptyArrayList<TV>
      */
-    public function sorted(callable $cmp): NonEmptyArrayList
+    public function sorted(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\SortedOperation::of($this)($cmp));
+        return new NonEmptyArrayList($this->arrayList->sorted());
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return Option<TV>
+     * @param callable(TV): mixed $callback
+     * @return NonEmptyArrayList<TV>
      */
-    public function __invoke(int $index): Option
+    public function sortedBy(callable $callback): NonEmptyArrayList
     {
-        return $this->at($index);
+        return new NonEmptyArrayList($this->arrayList->sortedBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return NonEmptyArrayList<TV>
+     */
+    public function sortedDesc(): NonEmptyArrayList
+    {
+        return new NonEmptyArrayList($this->arrayList->sortedDesc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return NonEmptyArrayList<TV>
+     */
+    public function sortedDescBy(callable $callback): NonEmptyArrayList
+    {
+        return new NonEmptyArrayList($this->arrayList->sortedDescBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $separator
+     * @return NonEmptyArrayList<TV | TVI>
+     */
+    public function intersperse(mixed $separator): NonEmptyArrayList
+    {
+        return NonEmptyArrayList::collectUnsafe(Ops\IntersperseOperation::of($this)($separator));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return NonEmptyArrayList<TV>
+     */
+    public function uniqueBy(callable $callback): NonEmptyArrayList
+    {
+        return new NonEmptyArrayList($this->arrayList->uniqueBy($callback));
+    }
+
+    #endregion NonEmptySeqChainableOps
+
+    #region NonEmptySeqTerminalOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function filter(callable $predicate): ArrayList
+    {
+        return $this->arrayList->filter($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function filterN(callable $predicate): ArrayList
+    {
+        return $this->filter(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return ArrayList<TVO>
+     */
+    public function filterMap(callable $callback): ArrayList
+    {
+        return $this->arrayList->filterMap($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return ArrayList<TVO>
+     */
+    public function filterMapN(callable $callback): ArrayList
+    {
+        return $this->filterMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function filterNotNull(): ArrayList
+    {
+        return $this->arrayList->filterNotNull();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return ArrayList<TVO>
+     */
+    public function filterOf(string|array $fqcn, bool $invariant = false): ArrayList
+    {
+        return $this->arrayList->filterOf($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function tail(): ArrayList
+    {
+        return $this->arrayList->tail();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function init(): ArrayList
+    {
+        return $this->arrayList->init();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function takeWhile(callable $predicate): ArrayList
+    {
+        return $this->arrayList->takeWhile($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function dropWhile(callable $predicate): ArrayList
+    {
+        return $this->arrayList->dropWhile($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function take(int $length): ArrayList
+    {
+        return $this->arrayList->take($length);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function drop(int $length): ArrayList
+    {
+        return $this->arrayList->drop($length);
     }
 
     /**
@@ -411,8 +510,21 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->every(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVO
-     * @psalm-assert-if-true NonEmptySeq<TVO> $this
+     * @psalm-assert-if-true NonEmptyArrayList<TVO> $this
      *
      * @param class-string<TVO>|list<class-string<TVO>> $fqcn
      */
@@ -433,6 +545,22 @@ final class NonEmptyArrayList implements NonEmptySeq
     {
         return Ops\TraverseOptionOperation::of($this)(dropFirstArg($callback))
             ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<NonEmptyArrayList<TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->traverseOption(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -469,6 +597,23 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template E
      * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyArrayList<TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->traverseEither(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
      * @psalm-if-this-is NonEmptyArrayList<Either<E, TVO>>
      *
      * @return Either<E, NonEmptyArrayList<TVO>>
@@ -495,6 +640,20 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<ArrayList<TV>, ArrayList<TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->partition(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template LO
      * @template RO
      *
@@ -506,6 +665,23 @@ final class NonEmptyArrayList implements NonEmptySeq
         return Ops\PartitionMapOperation::of($this)(dropFirstArg($callback))
             ->mapLeft(fn($left) => ArrayList::collect($left))
             ->map(fn($right) => ArrayList::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<ArrayList<LO>, ArrayList<RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->partitionMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -543,11 +719,40 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): NonEmptyMap
+    {
+        return $this->reindex(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
     {
         return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->exists(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -571,6 +776,20 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function first(callable $predicate): Option
     {
         return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option
+    {
+        return $this->first(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -619,6 +838,20 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function last(callable $predicate): Option
     {
         return Ops\LastOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option
+    {
+        return $this->last(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
     }
 
     /**
@@ -690,16 +923,57 @@ final class NonEmptyArrayList implements NonEmptySeq
 
     /**
      * {@inheritDoc}
-     *
-     * @template TVI
-     *
-     * @param TVI $separator
-     * @return NonEmptyArrayList<TV | TVI>
      */
-    public function intersperse(mixed $separator): NonEmptyArrayList
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\IntersperseOperation::of($this)($separator));
+        return Ops\MkStringOperation::of($this)($start, $sep, $end);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function max(): mixed
+    {
+        return $this->arrayList->max()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function maxBy(callable $callback): mixed
+    {
+        return $this->arrayList->maxBy($callback)->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function min(): mixed
+    {
+        return $this->arrayList->min()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return TV
+     */
+    public function minBy(callable $callback): mixed
+    {
+        return $this->arrayList->minBy($callback)->getUnsafe();
+    }
+
+    #endregion NonEmptySeqTerminalOps
+
+    #region NonEmptySeqCastableOps
 
     /**
      * {@inheritDoc}
@@ -886,55 +1160,29 @@ final class NonEmptyArrayList implements NonEmptySeq
         return (string) $this;
     }
 
+    #endregion NonEmptySeqCastableOps
+
+    #region Traversable
+
     /**
-     * {@inheritDoc}
+     * @return Iterator<int, TV>
      */
-    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
+    public function getIterator(): Iterator
     {
-        return Ops\MkStringOperation::of($this)($start, $sep, $end);
+        return $this->arrayList->getIterator();
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @return TV
      */
-    public function max(): mixed
+    public function count(): int
     {
-        return $this->arrayList->max()->getUnsafe();
+        return $this->arrayList->count();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return TV
-     */
-    public function maxBy(callable $callback): mixed
-    {
-        return $this->arrayList->maxBy($callback)->getUnsafe();
-    }
+    #endregion Traversable
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return TV
-     */
-    public function min(): mixed
-    {
-        return $this->arrayList->min()->getUnsafe();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return TV
-     */
-    public function minBy(callable $callback): mixed
-    {
-        return $this->arrayList->minBy($callback)->getUnsafe();
-    }
+    #region Magic methods
 
     public function __toString(): string
     {
@@ -944,7 +1192,15 @@ final class NonEmptyArrayList implements NonEmptySeq
             ->mkString('NonEmptyArrayList(', ', ', ')');
     }
 
-    #region Extension
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
+    }
 
     /**
      * @param non-empty-string $name
@@ -964,5 +1220,5 @@ final class NonEmptyArrayList implements NonEmptySeq
         return NonEmptyArrayListExtensions::callStatic($name, $arguments);
     }
 
-    #endregion Extension
+    #endregion Magic methods
 }

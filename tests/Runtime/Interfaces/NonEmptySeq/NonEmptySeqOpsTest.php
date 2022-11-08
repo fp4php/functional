@@ -14,228 +14,118 @@ use Fp\Collections\Seq;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
-use Generator;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
+use Tests\Mock\Baz;
 use Tests\Mock\Foo;
 use Tests\Mock\SubBar;
 
 final class NonEmptySeqOpsTest extends TestCase
 {
-    public function provideAppendAndPrependData(): Generator
+    /**
+     * @return list<array{class-string<NonEmptySeq>}>
+     */
+    public function seqClassDataProvider(): array
     {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
-    }
-
-    public function testGroupMapReduce(): void
-    {
-        $this->assertEquals(
-            NonEmptyHashMap::collectNonEmpty([
-                10 => [10, 15, 20],
-                20 => [10, 15],
-                30 => [20],
-            ]),
-            NonEmptyArrayList::collectNonEmpty([
-                ['id' => 10, 'sum' => 10],
-                ['id' => 10, 'sum' => 15],
-                ['id' => 10, 'sum' => 20],
-                ['id' => 20, 'sum' => 10],
-                ['id' => 20, 'sum' => 15],
-                ['id' => 30, 'sum' => 20],
-            ])->groupMapReduce(
-                fn(array $a) => $a['id'],
-                fn(array $a) => [$a['sum']],
-                fn(array $old, array $new) => array_merge($old, $new),
-            )
-        );
-
-        $this->assertEquals(
-            NonEmptyHashMap::collectNonEmpty([
-                10 => [10, 15, 20],
-                20 => [10, 15],
-                30 => [20],
-            ]),
-            NonEmptyLinkedList::collectNonEmpty([
-                ['id' => 10, 'sum' => 10],
-                ['id' => 10, 'sum' => 15],
-                ['id' => 10, 'sum' => 20],
-                ['id' => 20, 'sum' => 10],
-                ['id' => 20, 'sum' => 15],
-                ['id' => 30, 'sum' => 20],
-            ])->groupMapReduce(
-                fn(array $a) => $a['id'],
-                fn(array $a) => [$a['sum']],
-                fn(array $old, array $new) => array_merge($old, $new),
-            )
-        );
-    }
-
-    public function provideTestGroupMapData(): Generator
-    {
-        $foo1 = new Foo(1);
-        $foo2 = new Foo(2);
-        $foo3 = new Foo(1);
-        $foo4 = new Foo(3);
-
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([$foo1, $foo2, $foo3, $foo4]),
-            NonEmptyHashMap::collectPairsNonEmpty([
-                [$foo1, NonEmptyArrayList::collectNonEmpty(['2', '2'])],
-                [$foo2, NonEmptyArrayList::collectNonEmpty(['3'])],
-                [$foo4, NonEmptyArrayList::collectNonEmpty(['4'])],
-            ]),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([$foo1, $foo2, $foo3, $foo4]),
-            NonEmptyHashMap::collectPairsNonEmpty([
-                [$foo1, NonEmptyArrayList::collectNonEmpty(['2', '2'])],
-                [$foo2, NonEmptyArrayList::collectNonEmpty(['3'])],
-                [$foo4, NonEmptyArrayList::collectNonEmpty(['4'])],
-            ]),
+        return [
+            [NonEmptyArrayList::class, ArrayList::class],
+            [NonEmptyLinkedList::class, LinkedList::class],
         ];
     }
 
     /**
-     * @param NonEmptySeq<Foo> $seq
-     * @param NonEmptyHashMap<Foo, NonEmptyArrayList<string>> $expected
-     * @dataProvider provideTestGroupMapData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testGroupMap(NonEmptySeq $seq, NonEmptyHashMap $expected): void
+    public function testAppendAndPrepend(string $seq): void
     {
         $this->assertEquals(
-            $expected,
-            $seq->groupMap(fn(Foo $v) => $v, fn(Foo $v) => (string)($v->a + 1)),
-        );
-    }
-
-    /**
-     * @dataProvider provideAppendAndPrependData
-     */
-    public function testAppendAndPrepend(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(
-            [-2, -1, 0, 1, 2, 3, 4, 5, 6],
-            $seq->prepended(0)
+            $seq::collectNonEmpty([-2, -1, 0, 1, 2, 3, 4, 5, 6]),
+            $seq::collectNonEmpty([1, 2, 3])
+                ->prepended(0)
                 ->appended(4)
                 ->appendedAll([5, 6])
-                ->prependedAll([-2, -1])
-                ->toList(),
+                ->prependedAll([-2, -1]),
         );
     }
 
-    public function provideTestAtData(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testAt(string $seq): void
     {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([0, 1, 2, 3, 4, 5])];
+        $collection = $seq::collectNonEmpty([0, 1, 2, 3, 4, 5]);
+
+        $this->assertEquals(Option::some(0), $collection->at(0));
+        $this->assertEquals(Option::some(3), $collection->at(3));
+        $this->assertEquals(Option::some(5), $collection->at(5));
+        $this->assertEquals(Option::none(), $collection->at(6));
+        $this->assertEquals(Option::some(0), $collection(0));
+        $this->assertEquals(Option::some(3), $collection(3));
+        $this->assertEquals(Option::some(5), $collection(5));
+        $this->assertEquals(Option::none(), $collection(6));
     }
 
     /**
-     * @dataProvider provideTestAtData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testAt(NonEmptySeq $seq): void
+    public function testEvery(string $seq): void
     {
-        $this->assertEquals(0, $seq->at(0)->getUnsafe());
-        $this->assertEquals(3, $seq->at(3)->getUnsafe());
-        $this->assertEquals(5, $seq->at(5)->getUnsafe());
-        $this->assertEquals(0, $seq(0)->getUnsafe());
-        $this->assertEquals(3, $seq(3)->getUnsafe());
-        $this->assertEquals(5, $seq(5)->getUnsafe());
-    }
+        $collection = $seq::collectNonEmpty([0, 1, 2, 3, 4, 5]);
 
-    public function provideTestEveryData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([0, 1, 2, 3, 4, 5])];
+        $this->assertTrue($collection->every(fn($i) => $i >= 0));
+        $this->assertFalse($collection->every(fn($i) => $i > 0));
     }
 
     /**
-     * @dataProvider provideTestEveryData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testEvery(NonEmptySeq $seq): void
+    public function testEveryOf(string $seq): void
     {
-        $this->assertTrue($seq->every(fn($i) => $i >= 0));
-        $this->assertFalse($seq->every(fn($i) => $i > 0));
-    }
-
-    public function provideTestEveryOfData(): Generator
-    {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([new Foo(1), new Foo(1)]),
-            NonEmptyArrayList::collectNonEmpty([new Bar(true), new Foo(1)]),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([new Foo(1), new Foo(1)]),
-            NonEmptyLinkedList::collectNonEmpty([new Bar(true), new Foo(1)]),
-        ];
+        $this->assertTrue($seq::collectNonEmpty([new Foo(1), new Foo(1)])->everyOf(Foo::class));
+        $this->assertFalse($seq::collectNonEmpty([new Bar(true), new Foo(1)])->everyOf(Foo::class));
     }
 
     /**
-     * @dataProvider provideTestEveryOfData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testEveryOf(NonEmptySeq $seq1, NonEmptySeq $seq2): void
+    public function testExists(string $seq): void
     {
-        $this->assertTrue($seq1->everyOf(Foo::class));
-        $this->assertFalse($seq2->everyOf(Foo::class));
-    }
+        /** @var Seq<int|Foo> $collection */
+        $collection = $seq::collectNonEmpty([new Foo(1), 1, new Foo(1)]);
 
-    public function provideTestExistsData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([new Foo(1), 1, new Foo(1)])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([new Foo(1), 1, new Foo(1)])];
-    }
-
-    public function provideTestZipData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([0, 1, 2])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([0, 1, 2])];
+        $this->assertTrue($collection->exists(fn($i) => $i === 1));
+        $this->assertFalse($collection->exists(fn($i) => $i === 2));
     }
 
     /**
-     * @dataProvider provideTestZipData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testZip(NonEmptySeq $seq): void
+    public function testTraverseOption(string $seq): void
     {
-        $this->assertEquals([[0, 'a'], [1, 'b']], $seq->zip(['a', 'b'])->toList());
-    }
+        /** @var Seq<int> $seq1 */
+        $seq1 = $seq::collectNonEmpty([1, 2, 3]);
 
-    public function testZipWithKeys(): void
-    {
-        $this->assertEquals([[0, 1], [1, 2]], NonEmptyArrayList::collectNonEmpty([1, 2])->zipWithKeys()->toList());
-        $this->assertEquals([[0, 1], [1, 2]], NonEmptyLinkedList::collectNonEmpty([1, 2])->zipWithKeys()->toList());
-    }
-
-    public function provideTestTraverseData(): Generator
-    {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([1, 2, 3]),
-            NonEmptyArrayList::collectNonEmpty([0, 1, 2]),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([1, 2, 3]),
-            NonEmptyLinkedList::collectNonEmpty([0, 1, 2]),
-        ];
-    }
-
-    /**
-     * @param NonEmptySeq<int> $seq1
-     * @param NonEmptySeq<int> $seq2
-     *
-     * @dataProvider provideTestTraverseData
-     */
-    public function testTraverseOption(NonEmptySeq $seq1, NonEmptySeq $seq2): void
-    {
         $this->assertEquals(
             Option::some($seq1),
             $seq1->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
-            Option::none(),
-            $seq2->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
-        );
-        $this->assertEquals(
             Option::some($seq1),
             $seq1->map(fn($x) => $x >= 1 ? Option::some($x) : Option::none())->sequenceOption(),
+        );
+
+        /** @var Seq<int> $seq2 */
+        $seq2 = $seq::collectNonEmpty([0, 1, 2]);
+
+        $this->assertEquals(
+            Option::none(),
+            $seq2->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none()),
         );
         $this->assertEquals(
             Option::none(),
@@ -244,24 +134,29 @@ final class NonEmptySeqOpsTest extends TestCase
     }
 
     /**
-     * @param NonEmptySeq<int> $seq1
-     * @param NonEmptySeq<int> $seq2
-     *
-     * @dataProvider provideTestTraverseData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testTraverseEither(NonEmptySeq $seq1, NonEmptySeq $seq2): void
+    public function testTraverseEither(string $seq): void
     {
+        /** @var Seq<int> $seq1 */
+        $seq1 = $seq::collectNonEmpty([1, 2, 3]);
+
         $this->assertEquals(
             Either::right($seq1),
             $seq1->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
         );
         $this->assertEquals(
-            Either::left('err'),
-            $seq2->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
-        );
-        $this->assertEquals(
             Either::right($seq1),
             $seq1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEither(),
+        );
+
+        /** @var Seq<int> $seq2 */
+        $seq2 = $seq::collectNonEmpty([0, 1, 2]);
+
+        $this->assertEquals(
+            Either::left('err'),
+            $seq2->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
         );
         $this->assertEquals(
             Either::left('err'),
@@ -269,309 +164,242 @@ final class NonEmptySeqOpsTest extends TestCase
         );
     }
 
-    public function provideTestPartition(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testPartition(string $seq, string $emptySeq): void
     {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
-            Separated::create(
-                ArrayList::collect([3, 4, 5]),
-                ArrayList::collect([0, 1, 2]),
-            ),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
-            Separated::create(
-                LinkedList::collect([3, 4, 5]),
-                LinkedList::collect([0, 1, 2]),
-            ),
-        ];
+        $actual = $seq::collectNonEmpty([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3);
+
+        $expected = Separated::create(
+            $emptySeq::collect([3, 4, 5]),
+            $emptySeq::collect([0, 1, 2]),
+        );
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
-     * @param NonEmptySeq<int> $seq
-     * @param Separated<Seq<int>, Seq<int>> $expected
-     *
-     * @dataProvider provideTestPartition
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
      */
-    public function testPartition(NonEmptySeq $seq, Separated $expected): void
-    {
-        $this->assertEquals($seq->partition(fn($i) => $i < 3), $expected);
-    }
-
-    public function provideTestPartitionMap(): Generator
-    {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
-            Separated::create(
-                ArrayList::collect(['L: 5']),
-                ArrayList::collect(['R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4']),
-            ),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([0, 1, 2, 3, 4, 5]),
-            Separated::create(
-                LinkedList::collect(['L: 5']),
-                LinkedList::collect(['R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4']),
-            ),
-        ];
-    }
-
-    /**
-     * @param NonEmptySeq<int> $seq
-     * @param Separated<Seq<string>, Seq<string>> $expected
-     *
-     * @dataProvider provideTestPartitionMap
-     */
-    public function testPartitionMap(NonEmptySeq $seq, Separated $expected): void
+    public function testPartitionMap(string $seq, string $emptySeq): void
     {
         $this->assertEquals(
-            $expected,
-            $seq->partitionMap(fn($i) => $i >= 5
+            Separated::create(
+                $emptySeq::collect(['L: 5']),
+                $emptySeq::collect(['R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4']),
+            ),
+            $seq::collectNonEmpty([0, 1, 2, 3, 4, 5])->partitionMap(fn($i) => $i >= 5
                 ? Either::left("L: {$i}")
                 : Either::right("R: {$i}")),
         );
     }
 
     /**
-     * @dataProvider provideTestExistsData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testExists(NonEmptySeq $seq): void
+    public function testExistsOf(string $seq): void
     {
-        $this->assertTrue($seq->exists(fn($i) => $i === 1));
-        $this->assertFalse($seq->exists(fn($i) => $i === 2));
-    }
-
-    public function provideTestExistsOfData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, new Foo(1)])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, new Foo(1)])];
+        $this->assertTrue($seq::collectNonEmpty([1, new Foo(1)])->existsOf(Foo::class));
+        $this->assertFalse($seq::collectNonEmpty([1, new Foo(1)])->existsOf(Bar::class));
     }
 
     /**
-     * @dataProvider provideTestExistsOfData
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
      */
-    public function testExistsOf(NonEmptySeq $seq): void
-    {
-        $this->assertTrue($seq->existsOf(Foo::class));
-        $this->assertFalse($seq->existsOf(Bar::class));
-    }
-
-    public function provideTestFilterData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([new Foo(1), 1, new Foo(1)])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([new Foo(1), 1, new Foo(1)])];
-    }
-
-    /**
-     * @dataProvider provideTestFilterData
-     */
-    public function testFilter(NonEmptySeq $seq): void
-    {
-        $this->assertEquals([1], $seq->filter(fn($i) => $i === 1)->toList());
-    }
-
-    public function provideTestFilterMapData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['zero', '1', '2'])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty(['zero', '1', '2'])];
-    }
-
-    /**
-     * @dataProvider provideTestFilterMapData
-     */
-    public function testFilterMap(NonEmptySeq $seq): void
+    public function testFilter(string $seq, string $emptySeq): void
     {
         $this->assertEquals(
-            [1, 2],
-            $seq->filterMap(fn($e) => is_numeric($e) ? Option::some((int) $e) : Option::none())
-                ->toList()
+            $emptySeq::collect([1]),
+            $emptySeq::collect([new Foo(1), 1, new Foo(1)])->filter(fn($i) => $i === 1),
         );
     }
 
-    public function provideTestFilterNotNullData(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFilterMap(string $seq, string $emptySeq): void
     {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, null, 3])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, null, 3])];
+        $this->assertEquals(
+            $emptySeq::collect([1, 2]),
+            $seq::collectNonEmpty(['zero', '1', '2'])->filterMap(fn($e) => Option::when(is_numeric($e), fn() => (int) $e)),
+        );
     }
 
     /**
-     * @dataProvider provideTestFilterNotNullData
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
      */
-    public function testFilterNotNull(NonEmptySeq $seq): void
+    public function testFilterNotNull(string $seq, string $emptySeq): void
     {
-        $this->assertEquals([1, 3], $seq->filterNotNull()->toList());
+        $this->assertEquals($emptySeq::collect([1, 3]), $seq::collectNonEmpty([1, null, 3])->filterNotNull());
     }
 
-    public function provideTestFilterOfData(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFilterOf(string $seq, string $emptySeq): void
     {
+        $collection = $seq::collectNonEmpty([new Foo(1), new Bar(1), new SubBar(1)]);
+
+        $this->assertEquals(
+            $emptySeq::collect([new Bar(1), new SubBar(1)]),
+            $collection->filterOf(Bar::class),
+        );
+        $this->assertEquals(
+            $emptySeq::collect([new Bar(1)]),
+            $collection->filterOf(Bar::class, invariant: true),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFilterOfWithMultipleFqcn(string $seq, string $emptySeq): void
+    {
+        $this->assertEquals(
+            $emptySeq::collect([new Bar(2), new Baz()]),
+            $seq::collectNonEmpty([new Foo(1), new Bar(2), new Baz()])->filterOf([Bar::class, Baz::class]),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFirstOfWithMultipleFqcn(string $seq): void
+    {
+        $foo = new Foo(1);
+        $bar = new Bar(2);
+        $baz = new Baz();
+
+        $fqcn = [$foo::class, $bar::class, $baz::class];
+
+        $this->assertEquals(Option::some($foo), $seq::collectNonEmpty([$foo, $bar, $baz])->firstOf($fqcn));
+        $this->assertEquals(Option::some($bar), $seq::collectNonEmpty([$bar, $foo, $baz])->firstOf($fqcn));
+        $this->assertEquals(Option::some($baz), $seq::collectNonEmpty([$baz, $bar, $foo])->firstOf($fqcn));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFirst(string $seq): void
+    {
+        /** @var Seq<Foo|int> */
+        $collection = $seq::collectNonEmpty([new Foo(1), 2, 1, 3]);
+
+        $this->assertEquals(Option::some(1), $collection->first(fn($e) => 1 === $e));
+        $this->assertEquals(Option::none(), $collection->first(fn($e) => 5 === $e));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFirstOfAndLastOf(string $seq): void
+    {
+        $foo = new Foo(1);
         $bar = new Bar(1);
         $subBar = new SubBar(1);
 
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([new Foo(1), $bar, $subBar]), $bar, $subBar];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([new Foo(1), $bar, $subBar]), $bar, $subBar];
+        $collection = $seq::collectNonEmpty([$foo, $subBar, $bar]);
+
+        $this->assertEquals(Option::some($subBar), $collection->firstOf(Bar::class));
+        $this->assertEquals(Option::some($bar), $collection->firstOf(Bar::class, invariant: true));
+        $this->assertEquals(Option::none(), $collection->firstOf(Baz::class));
+        $this->assertEquals(Option::none(), $collection->firstOf(Baz::class, invariant: true));
+
+        $this->assertEquals(Option::some($bar), $collection->lastOf(Bar::class));
+        $this->assertEquals(Option::some($subBar), $collection->lastOf(SubBar::class, invariant: true));
+        $this->assertEquals(Option::none(), $collection->lastOf(Baz::class));
+        $this->assertEquals(Option::none(), $collection->lastOf(Baz::class, invariant: true));
     }
 
     /**
-     * @dataProvider provideTestFilterOfData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testFilterOf(NonEmptySeq $seq, Bar $bar, SubBar $subBar): void
-    {
-        $this->assertEquals([$bar, $subBar], $seq->filterOf(Bar::class, false)->toList());
-        $this->assertEquals([$bar], $seq->filterOf(Bar::class, true)->toList());
-    }
-
-    public function provideTestFirstData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([new Foo(1), 2, 1, 3])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([new Foo(1), 2, 1, 3])];
-    }
-
-    /**
-     * @dataProvider provideTestFirstData
-     */
-    public function testFirst(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(1, $seq->first(fn($e) => 1 === $e)->get());
-        $this->assertNull($seq->first(fn($e) => 5 === $e)->get());
-    }
-
-    public function provideTestFirstOfAndLastOfData(): Generator
-    {
-        $bar = new Bar(1);
-        $subBar = new SubBar(1);
-
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([new Foo(1), $subBar, $bar]), $bar, $subBar];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([new Foo(1), $subBar, $bar]), $bar, $subBar];
-    }
-
-    /**
-     * @dataProvider provideTestFirstOfAndLastOfData
-     */
-    public function testFirstOfAndLastOf(NonEmptySeq $seq, Bar $bar, SubBar $subBar): void
-    {
-        $this->assertEquals($subBar, $seq->firstOf(Bar::class, false)->get());
-        $this->assertEquals($bar, $seq->firstOf(Bar::class, true)->get());
-
-        $this->assertEquals($bar, $seq->lastOf(Bar::class, false)->get());
-        $this->assertEquals($subBar, $seq->lastOf(SubBar::class, true)->get());
-    }
-
-    public function provideTestFlatMapData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([2, 5])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([2, 5])];
-    }
-
-    /**
-     * @dataProvider provideTestFlatMapData
-     * @param NonEmptySeq<int> $seq
-     */
-    public function testFlatMap(NonEmptySeq $seq): void
+    public function testFlatMap(string $seq): void
     {
         $this->assertEquals(
             $seq::collectNonEmpty([1, 2, 3, 4, 5, 6]),
-            $seq->flatMap(fn($e) => [$e - 1, $e, $e + 1]),
+            $seq::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1]),
         );
     }
 
-    public function provideTestFlattenData(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFlatten(string $seq): void
     {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([
-                ArrayList::collect([1, 2]),
-                ArrayList::collect([3, 4]),
-                ArrayList::collect([5, 6]),
-            ]),
-        ];
-
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([
-                LinkedList::collect([1, 2]),
-                LinkedList::collect([3, 4]),
-                LinkedList::collect([5, 6]),
-            ]),
-        ];
+        $this->assertEquals($seq::collectNonEmpty([1, 2, 3, 4, 5, 6]), $seq::collectNonEmpty([
+            NonEmptyArrayList::collectNonEmpty([1, 2]),
+            NonEmptyArrayList::collectNonEmpty([3, 4]),
+            NonEmptyArrayList::collectNonEmpty([5, 6]),
+        ])->flatten());
     }
 
     /**
-     * @param NonEmptySeq<NonEmptySeq<int>> $emptySeq
-     * @param NonEmptySeq<NonEmptySeq<int>> $nonEmptySeq
-     *
-     * @dataProvider provideTestFlattenData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testFlatten(NonEmptySeq $nonEmptySeq): void
+    public function testHead(string $seq): void
     {
-        $this->assertEquals([1, 2, 3, 4, 5, 6], $nonEmptySeq->flatten()->toList());
-    }
-
-    public function provideTestHeadData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([2, 5])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([2, 5])];
+        $this->assertEquals(2, $seq::collectNonEmpty([2, 5])->head());
     }
 
     /**
-     * @dataProvider provideTestHeadData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testHead(NonEmptySeq $seq): void
+    public function testLast(string $seq): void
+    {
+        $this->assertEquals(Option::some(3), $seq::collectNonEmpty([2, 3, 0])->last(fn($e) => $e > 0));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFirstAndLastElement(string $seq): void
+    {
+        $this->assertEquals(1, $seq::collectNonEmpty([1, 2, 3])->firstElement());
+        $this->assertEquals(3, $seq::collectNonEmpty([1, 2, 3])->lastElement());
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testMap(string $seq): void
     {
         $this->assertEquals(
-            2,
-            $seq->head()
+            $seq::collectNonEmpty(['2', '3', '4']),
+            $seq::collectNonEmpty([1, 2, 3])->map(fn($e) => (string) ($e + 1)),
         );
     }
 
-    public function provideTestLastData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([2, 3, 0])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([2, 3, 0])];
-    }
-
     /**
-     * @dataProvider provideTestLastData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testLast(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(
-            3,
-            $seq->last(fn($e) => $e > 0)->get()
-        );
-    }
-
-    public function provideTestFirstAndLastElementData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
-    }
-
-    /**
-     * @dataProvider provideTestFirstAndLastElementData
-     */
-    public function testFirstAndLastElement(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(1, $seq->firstElement());
-        $this->assertEquals(3, $seq->lastElement());
-    }
-
-    public function provideTestMapData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
-    }
-
-    /**
-     * @dataProvider provideTestMapData
-     * @param NonEmptySeq<int> $seq
-     */
-    public function testMap(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(
-            ['2', '3', '4'],
-            $seq->map(fn($e) => (string) ($e + 1))->toList()
-        );
-    }
-
-    public function provideTestMapNData(): Generator
+    public function testMapN(string $seq): void
     {
         $tuples = [
             [1, true, true],
@@ -579,289 +407,613 @@ final class NonEmptySeqOpsTest extends TestCase
             [3, false, false],
         ];
         $expected = [
-            new Foo(1, true, true),
-            new Foo(2, true, false),
-            new Foo(3, false, false),
+            new Foo(a: 1, b: true, c: true),
+            new Foo(a: 2, b: true, c: false),
+            new Foo(a: 3, b: false, c: false),
         ];
 
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty($tuples),
-            NonEmptyArrayList::collectNonEmpty($expected),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty($tuples),
-            NonEmptyLinkedList::collectNonEmpty($expected),
-        ];
-    }
-
-    /**
-     * @param NonEmptySeq<array{int, bool, bool}> $seq
-     * @param NonEmptySeq<Foo> $expected
-     * @dataProvider provideTestMapNData
-     */
-    public function testMapN(NonEmptySeq $seq, NonEmptySeq $expected): void
-    {
-        $this->assertEquals($expected, $seq->mapN(Foo::create(...)));
-    }
-
-    public function provideTestFoldData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty(['1', '2', '3'])];
-    }
-
-    /**
-     * @dataProvider provideTestFoldData
-     * @param NonEmptySeq<string> $seq
-     */
-    public function testFold(NonEmptySeq $seq): void
-    {
         $this->assertEquals(
-            '0123',
-            $seq->fold('0')(fn($acc, $e) => $acc . $e),
+            $seq::collectNonEmpty($expected),
+            $seq::collectNonEmpty($tuples)->mapN(Foo::create(...)),
         );
     }
 
-    public function provideTestReverseData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty(['1', '2', '3'])];
-    }
-
     /**
-     * @dataProvider provideTestReverseData
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testReverse(NonEmptySeq $seq): void
+    public function testFold(string $seq): void
     {
         $this->assertEquals(
-            ['3', '2', '1'],
-            $seq->reverse()->toList()
+            '123',
+            $seq::collectNonEmpty(['1', '2', '3'])->fold('')(fn($acc, $e) => $acc . $e)
         );
     }
 
-    public function provideTestTailData(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testReverse(string $seq): void
     {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty(['1', '2', '3'])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty(['1', '2', '3'])];
+        $this->assertEquals(
+            $seq::collectNonEmpty(['3', '2', '1']),
+            $seq::collectNonEmpty(['1', '2', '3'])->reverse(),
+        );
     }
 
     /**
-     * @dataProvider provideTestTailData
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
      */
-    public function testTail(NonEmptySeq $seq): void
+    public function testTail(string $seq, string $emptySeq): void
     {
-        $this->assertEquals(['2', '3'], $seq->tail()->toList());
+        $this->assertEquals($emptySeq::collect(['2', '3']), $seq::collectNonEmpty(['1', '2', '3'])->tail());
     }
 
     /**
-     * @dataProvider provideTestTailData
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
      */
-    public function testInit(NonEmptySeq $seq): void
+    public function testInit(string $seq, string $emptySeq): void
     {
-        $this->assertEquals(['1', '2'], $seq->init()->toList());
+        $this->assertEquals($emptySeq::collect(['1', '2']), $seq::collectNonEmpty(['1', '2', '3'])->init());
     }
 
-    public function provideTestGroupByData(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testGroupMap(string $seq): void
     {
         $foo1 = new Foo(1);
         $foo2 = new Foo(2);
         $foo3 = new Foo(1);
         $foo4 = new Foo(3);
 
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([$foo1, $foo2, $foo3, $foo4]),
-            $foo1,
-            $foo2,
-            $foo3,
-            $foo4
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([$foo1, $foo2, $foo3, $foo4]),
-            $foo1,
-            $foo2,
-            $foo3,
-            $foo4
-        ];
-    }
-
-    /**
-     * @param NonEmptySeq<Foo> $seq
-     * @dataProvider provideTestGroupByData
-     */
-    public function testGroupBy(NonEmptySeq $seq, Foo $f1, Foo $f2, Foo $f3, Foo $f4): void
-    {
-        $res1 = $seq->groupBy(fn(Foo $foo) => $foo)
-            ->map(fn($entry) => $entry->toList())
-            ->toList();
-
-        $res2 = $seq->groupBy(fn(Foo $foo) => $foo->a)
-            ->map(fn($entry) => $entry->toList())
-            ->toList();
-
-        $res3 = $seq->map(fn(Foo $foo) => $foo->a)
-            ->groupBy(fn(int $a) => $a)
-            ->map(fn($entry) => $entry->toList())
-            ->toList();
-
-        $this->assertEquals([[$f1, [$f1, $f3]], [$f2, [$f2]], [$f4, [$f4]]], $res1);
-        $this->assertEquals([[1, [$f1, $f3]], [2, [$f2]], [3, [$f4]]], $res2);
-        $this->assertEquals([[1, [1, 1]], [2, [2]], [3, [3]]], $res3);
-    }
-
-    public function provideTestTapData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([new Foo(1), new Foo(2)])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([new Foo(1), new Foo(2)])];
-    }
-
-    /**
-     * @dataProvider provideTestTapData
-     */
-    public function testTap(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(
-            [2, 3],
-            $seq->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
-                ->map(fn(Foo $foo) => $foo->a)
-                ->toList()
-        );
-    }
-
-    public function provideTestSortedData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([1, 2, 3])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([1, 2, 3])];
-    }
-
-    /**
-     * @dataProvider provideTestSortedData
-     * @param NonEmptySeq<int> $seq
-     */
-    public function testSorted(NonEmptySeq $seq): void
-    {
-        $this->assertEquals(
-            [1, 2, 3],
-            $seq->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList()
-        );
-
-        $this->assertEquals(
-            [3, 2, 1],
-            $seq->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList()
-        );
-    }
-
-    public function provideTestTakeAndDropData(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([0, 1, 2])];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([0, 1, 2])];
-    }
-
-    /**
-     * @dataProvider provideTestTakeAndDropData
-     */
-    public function testTakeAndDrop(NonEmptySeq $seq): void
-    {
-        $this->assertEquals([0, 1], $seq->takeWhile(fn($e) => $e < 2)->toList());
-        $this->assertEquals([2], $seq->dropWhile(fn($e) => $e < 2)->toList());
-        $this->assertEquals([0, 1], $seq->take(2)->toList());
-        $this->assertEquals([2], $seq->drop(2)->toList());
-    }
-
-    public function testArrayListReindex(): void
-    {
         $this->assertEquals(
             NonEmptyHashMap::collectPairsNonEmpty([
-                ['key-1', 1],
-                ['key-2', 2],
-                ['key-3', 3],
+                [$foo1, $seq::collectNonEmpty(['2', '2'])],
+                [$foo2, $seq::collectNonEmpty(['3'])],
+                [$foo4, $seq::collectNonEmpty(['4'])],
             ]),
-            NonEmptyArrayList::collectNonEmpty([1, 2, 3])
-                ->reindex(fn($value) => "key-{$value}"),
+            $seq::collectNonEmpty([$foo1, $foo2, $foo3, $foo4])->groupMap(
+                fn(Foo $v) => $v,
+                fn(Foo $v) => (string)($v->a + 1),
+            ),
         );
     }
 
-    public function testLinkedListReindex(): void
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testGroupBy(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            $v1 = new Foo(a: 100),
+            $v2 = new Foo(a: 100),
+            $v3 = new Foo(a: 200),
+            $v4 = new Foo(a: 300),
+            $v5 = new Foo(a: 300),
+        ]);
+
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                100 => $seq::collectNonEmpty([$v1, $v2]),
+                200 => $seq::collectNonEmpty([$v3]),
+                300 => $seq::collectNonEmpty([$v4, $v5]),
+            ]),
+            $collection->groupBy(fn(Foo $v) => $v->a),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testGroupMapReduce(string $seq): void
     {
         $this->assertEquals(
-            NonEmptyHashMap::collectPairsNonEmpty([
-                ['key-1', 1],
-                ['key-2', 2],
-                ['key-3', 3],
+            NonEmptyHashMap::collectNonEmpty([
+                10 => [10, 15, 20],
+                20 => [10, 15],
+                30 => [20],
             ]),
-            NonEmptyLinkedList::collectNonEmpty([1, 2, 3])
-                ->reindex(fn($value) => "key-{$value}"),
+            $seq::collectNonEmpty([
+                ['id' => 10, 'sum' => 10],
+                ['id' => 10, 'sum' => 15],
+                ['id' => 10, 'sum' => 20],
+                ['id' => 20, 'sum' => 10],
+                ['id' => 20, 'sum' => 15],
+                ['id' => 30, 'sum' => 20],
+            ])->groupMapReduce(
+                fn(array $a) => $a['id'],
+                fn(array $a) => [$a['sum']],
+                fn(array $old, array $new) => [...$old, ...$new],
+            )
         );
     }
 
-    public function provideTestMaxNotEmptyCollections(): Generator
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testTap(string $seq): void
     {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([3, 7, 2]), 7];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([9, 1, 2]), 9];
+        $this->assertEquals(
+            $seq::collectNonEmpty([2, 3]),
+            $seq::collectNonEmpty([new Foo(1), new Foo(2)])
+                ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
+                ->map(fn(Foo $foo) => $foo->a),
+        );
     }
 
     /**
-     * @dataProvider provideTestMaxNotEmptyCollections
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testMaxInNotEmptyCollection(NonEmptySeq $seq, int $expected): void
+    public function testSorted(string $seq): void
     {
-        $this->assertEquals($expected, $seq->max());
-    }
+        $this->assertEquals(
+            $seq::collectNonEmpty([1, 2, 3]),
+            $seq::collectNonEmpty([3, 2, 1])->sorted(),
+        );
 
-    public function provideTestMaxByNotEmptyCollections(): Generator
-    {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([new Foo(1), new Foo(5), new Foo(2)]),
-            new Foo(5),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([new Foo(9), new Foo(1), new Foo(2)]),
-            new Foo(9),
-        ];
+        $this->assertEquals(
+            $seq::collectNonEmpty([3, 2, 1]),
+            $seq::collectNonEmpty([1, 2, 3])->sortedDesc(),
+        );
     }
 
     /**
-     * @param NonEmptySeq<Foo> $seq
-     *
-     * @dataProvider provideTestMaxByNotEmptyCollections
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testMaxByInNotEmptyCollection(NonEmptySeq $seq, Foo $expected): void
+    public function testSortedBy(string $seq): void
     {
-        $this->assertEquals($expected, $seq->maxBy(fn(Foo $foo) => $foo->a));
-    }
+        $this->assertEquals(
+            $seq::collectNonEmpty([new Foo(1), new Foo(2), new Foo(3)]),
+            $seq::collectNonEmpty([new Foo(3), new Foo(2), new Foo(1)])->sortedBy(fn(Foo $obj) => $obj->a),
+        );
 
-    public function provideTestMinNotEmptyCollections(): Generator
-    {
-        yield NonEmptyArrayList::class => [NonEmptyArrayList::collectNonEmpty([3, 7, 2]), 2];
-        yield NonEmptyLinkedList::class => [NonEmptyLinkedList::collectNonEmpty([9, 1, 2]), 1];
+        $this->assertEquals(
+            $seq::collectNonEmpty([new Foo(3), new Foo(2), new Foo(1)]),
+            $seq::collectNonEmpty([new Foo(1), new Foo(2), new Foo(3)])->sortedDescBy(fn(Foo $obj) => $obj->a),
+        );
     }
 
     /**
-     * @dataProvider provideTestMinNotEmptyCollections
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
      */
-    public function testMinInNotEmptyCollection(NonEmptySeq $seq, int $expected): void
+    public function testTakeAndDrop(string $seq, string $emptySeq): void
     {
-        $this->assertEquals($expected, $seq->min());
-    }
-
-    public function provideTestMinByNotEmptyCollections(): Generator
-    {
-        yield NonEmptyArrayList::class => [
-            NonEmptyArrayList::collectNonEmpty([new Foo(1), new Foo(5), new Foo(2)]),
-            new Foo(1),
-        ];
-        yield NonEmptyLinkedList::class => [
-            NonEmptyLinkedList::collectNonEmpty([new Foo(9), new Foo(4), new Foo(2)]),
-            new Foo(2),
-        ];
+        $collection = $seq::collectNonEmpty([0, 1, 2]);
+        $this->assertEquals($emptySeq::collect([0, 1]), $collection->takeWhile(fn($e) => $e < 2));
+        $this->assertEquals($emptySeq::collect([2]), $collection->dropWhile(fn($e) => $e < 2));
+        $this->assertEquals($emptySeq::collect([0, 1]), $collection->take(2));
+        $this->assertEquals($emptySeq::collect([2]), $collection->drop(2));
     }
 
     /**
-     * @param NonEmptySeq<Foo> $seq
-     *
-     * @dataProvider provideTestMinByNotEmptyCollections
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
      */
-    public function testMinByInNotEmptyCollection(NonEmptySeq $seq, Foo $expected): void
+    public function testIntersperse(string $seq): void
     {
-        $this->assertEquals($expected, $seq->minBy(fn(Foo $foo) => $foo->a));
+        $this->assertEquals(
+            $seq::collectNonEmpty([0 , ',', 1, ',', 2]),
+            $seq::collectNonEmpty([0, 1, 2])->intersperse(','),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testZip(string $seq): void
+    {
+        $this->assertEquals(
+            $seq::collectNonEmpty([[0, 'a'], [1, 'b']]),
+            $seq::collectNonEmpty([0, 1, 2])->zip(['a', 'b']),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testZipWithKeys(string $seq): void
+    {
+        $this->assertEquals(
+            $seq::collectNonEmpty([[0, 1], [1, 2], [2, 3]]),
+            $seq::collectNonEmpty([1, 2, 3])->zipWithKeys(),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testMkString(string $seq): void
+    {
+        $this->assertEquals('(0,1,2)', $seq::collectNonEmpty([0, 1, 2])->mkString('(', ',', ')'));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testReindex(string $seq): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'key-1' => 1,
+                'key-2' => 2,
+                'key-3' => 3,
+            ]),
+            $seq::collectNonEmpty([1, 2, 3])->reindex(fn($value) => "key-{$value}"),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testMax(string $seq): void
+    {
+        $this->assertEquals(7, $seq::collectNonEmpty([3, 7, 2])->max());
+        $this->assertEquals(9, $seq::collectNonEmpty([9, 1, 2])->max());
+
+        $this->assertEquals(new Foo(a: 7), $seq::collectNonEmpty([new Foo(a: 3), new Foo(a: 7), new Foo(a: 2)])->maxBy(fn(Foo $f) => $f->a));
+        $this->assertEquals(new Foo(a: 9), $seq::collectNonEmpty([new Foo(a: 9), new Foo(a: 1), new Foo(a: 2)])->maxBy(fn(Foo $f) => $f->a));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testMin(string $seq): void
+    {
+        $this->assertEquals(2, $seq::collectNonEmpty([3, 7, 2])->min());
+        $this->assertEquals(1, $seq::collectNonEmpty([9, 1, 2])->min());
+
+        $this->assertEquals(new Foo(a: 2), $seq::collectNonEmpty([new Foo(a: 3), new Foo(a: 7), new Foo(a: 2)])->minBy(fn(Foo $f) => $f->a));
+        $this->assertEquals(new Foo(a: 1), $seq::collectNonEmpty([new Foo(a: 9), new Foo(a: 1), new Foo(a: 2)])->minBy(fn(Foo $f) => $f->a));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testUniqBy(string $seq): void
+    {
+        $expected = $seq::collectNonEmpty([['n' => 1], ['n' => 2]]);
+        $actual = $seq::collectNonEmpty([['n' => 1], ['n' => 1], ['n' => 2]])->uniqueBy(fn(array $x) => $x['n']);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testTapN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [new Foo(a: 1, b: true, c: false), 2, false, true],
+            [new Foo(a: 2, b: false, c: true), 1, true, false],
+        ]);
+
+        $expected = $seq::collectNonEmpty([
+            new Foo(a: 2, b: false, c: true),
+            new Foo(a: 1, b: true, c: false),
+        ]);
+
+        $actual = $collection
+            ->tapN(function(Foo $value, int $a, bool $b, bool $c): void {
+                $value->a = $a;
+                $value->b = $b;
+                $value->c = $c;
+            })
+            ->mapN(fn(Foo $value) => $value);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testEveryN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertTrue($collection->everyN(fn(int $a, int $b) => ($a + $b) <= 6));
+        $this->assertFalse($collection->everyN(fn(int $a, int $b) => ($a + $b) < 6));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testExistsN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertTrue($collection->existsN(fn(int $a, int $b) => ($a + $b) === 6));
+        $this->assertFalse($collection->existsN(fn(int $a, int $b) => ($a + $b) === 7));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFlatMapN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = $seq::collectNonEmpty([1, 1, 2, 2, 3, 3]);
+        $actual = $collection->flatMapN(fn(int $a, int $b) => [$a, $b]);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFilterMapN(string $seq, string $emptySeq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = $emptySeq::collect([3]);
+        $actual = $collection->filterMapN(fn(int $a, int $b) => Option::when($a + $b >= 6, fn() => $a));
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFilterN(string $seq, string $emptySeq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = $emptySeq::collect([[3, 3]]);
+        $actual = $collection->filterN(fn(int $a, int $b) => $a + $b >= 6);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testReindexN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $expected = NonEmptyHashMap::collectNonEmpty([
+            2 => [1, 1],
+            4 => [2, 2],
+            6 => [3, 3],
+        ]);
+        $actual = $collection->reindexN(fn(int $a, int $b) => $a + $b);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testLastN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1, 'fst'],
+            [1, 1, 'lst'],
+            [2, 2, 'fst'],
+            [2, 2, 'lst'],
+            [3, 3, 'fst'],
+            [3, 3, 'lst'],
+        ]);
+
+        $this->assertEquals(Option::some([1, 1, 'lst']), $collection->lastN(fn(int $a, int $b) => $a + $b === 2));
+        $this->assertEquals(Option::some([2, 2, 'lst']), $collection->lastN(fn(int $a, int $b) => $a + $b === 4));
+        $this->assertEquals(Option::some([3, 3, 'lst']), $collection->lastN(fn(int $a, int $b) => $a + $b === 6));
+        $this->assertEquals(Option::none(), $collection->lastN(fn(int $a, int $b) => $a + $b === 9));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFirstN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1, 'fst'],
+            [1, 1, 'lst'],
+            [2, 2, 'fst'],
+            [2, 2, 'lst'],
+            [3, 3, 'fst'],
+            [3, 3, 'lst'],
+        ]);
+
+        $this->assertEquals(Option::some([1, 1, 'fst']), $collection->firstN(fn(int $a, int $b) => $a + $b === 2));
+        $this->assertEquals(Option::some([2, 2, 'fst']), $collection->firstN(fn(int $a, int $b) => $a + $b === 4));
+        $this->assertEquals(Option::some([3, 3, 'fst']), $collection->firstN(fn(int $a, int $b) => $a + $b === 6));
+        $this->assertEquals(Option::none(), $collection->firstN(fn(int $a, int $b) => $a + $b === 9));
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testPartitionN(string $seq, string $emptySeq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: $emptySeq::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: $emptySeq::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionN(fn(int $a, int $b) => ($a + $b) >= 4);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @param class-string<Seq> $emptySeq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testPartitionMapN(string $seq, string $emptySeq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: $emptySeq::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: $emptySeq::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionMapN(fn(int $a, int $b, string $mark) => Either::when(
+            cond: ($a + $b) >= 4,
+            right: fn() => [$a, $b, $mark],
+            left: fn() => [$a, $b, $mark],
+        ));
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testTraverseEitherN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Either::right($seq::collectNonEmpty([2, 4, 6])),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+        $this->assertEquals(
+            Either::left('invalid'),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testTraverseOptionN(string $seq): void
+    {
+        $collection = $seq::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Option::some($seq::collectNonEmpty([2, 4, 6])),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b < 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testCount(string $seq): void
+    {
+        $this->assertEquals(3, $seq::collectNonEmpty([1, 2, 3])->count());
+        $this->assertEquals(2, $seq::collectNonEmpty([2, 3])->count());
     }
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Functional\Option\Option;
-use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 
 /**
@@ -104,6 +102,29 @@ interface NonEmptySeqChainableOps
     public function mapN(callable $callback): NonEmptySeq;
 
     /**
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList();
+     * => [1, 2, 3, 4, 5, 6]
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptySeq<TVO>
+     */
+    public function flatMap(callable $callback): NonEmptySeq;
+
+    /**
+     * Same as {@see NonEmptySeqChainableOps::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptySeq<TVO>
+     */
+    public function flatMapN(callable $callback): NonEmptySeq;
+
+    /**
      * Copy collection in reversed order
      *
      * ```php
@@ -116,20 +137,56 @@ interface NonEmptySeqChainableOps
     public function reverse(): NonEmptySeq;
 
     /**
-     * Sort collection
+     * Ascending sort
      *
      * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $lhs - $rhs)->toList();
-     * => [1, 2, 3]
-     *
-     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted(fn($lhs, $rhs) => $rhs - $lhs)->toList();
-     * => [3, 2, 1]
+     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted();
+     * => NonEmptyLinkedList(1, 2, 3)
      * ```
      *
-     * @param callable(TV, TV): int $cmp
      * @return NonEmptySeq<TV>
      */
-    public function sorted(callable $cmp): NonEmptySeq;
+    public function sorted(): NonEmptySeq;
+
+    /**
+     * Ascending sort by specific value
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([new Foo(2), new Foo(1), new Foo(3)])
+     * >>>     ->sortedBy(fn(Foo $obj) => $obj->a);
+     * => NonEmptyLinkedList(Foo(1), Foo(2), Foo(3))
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return NonEmptySeq<TV>
+     */
+    public function sortedBy(callable $callback): NonEmptySeq;
+
+    /**
+     * Descending sort
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([2, 1, 3])->sorted();
+     * => NonEmptyLinkedList(3, 2, 1)
+     * ```
+     *
+     * @return NonEmptySeq<TV>
+     */
+    public function sortedDesc(): NonEmptySeq;
+
+    /**
+     * Descending sort by specific value
+     *
+     * ```php
+     * >>> NonEmptyLinkedList::collectNonEmpty([new Foo(2), new Foo(1), new Foo(3)])
+     * >>>     ->sortedBy(fn(Foo $obj) => $obj->a);
+     * => NonEmptyLinkedList(Foo(3), Foo(2), Foo(1))
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return NonEmptySeq<TV>
+     */
+    public function sortedDescBy(callable $callback): NonEmptySeq;
 
     /**
      * Call a function for every collection element
@@ -146,6 +203,14 @@ interface NonEmptySeqChainableOps
      * @return NonEmptySeq<TV>
      */
     public function tap(callable $callback): NonEmptySeq;
+
+    /**
+     * Same as {@see NonEmptySeqChainableOps::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptySeq<TV>
+     */
+    public function tapN(callable $callback): NonEmptySeq;
 
     /**
      * Deterministically zips elements, terminating when the end of either branch is reached naturally.
@@ -188,4 +253,15 @@ interface NonEmptySeqChainableOps
      * @return NonEmptySeq<TV | TVI>
      */
     public function intersperse(mixed $separator): NonEmptySeq;
+
+    /**
+     * ```php
+     * >>> NonEmptyArrayList::collect([['n' => 1], ['n' => 1], ['n' => 2]])->uniqueBy(fn($x) => $x['n'])
+     * => NonEmptyArrayList(['n' => 1], ['n' => 2])
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return NonEmptySeq<TV>
+     */
+    public function uniqueBy(callable $callback): NonEmptySeq;
 }

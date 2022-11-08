@@ -62,6 +62,15 @@ interface NonEmptySeqTerminalOps
     public function every(callable $predicate): bool;
 
     /**
+     * Same as {@see NonEmptySeqTerminalOps::every()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function everyN(callable $predicate): bool;
+
+    /**
      * Returns true if every collection element is of given class
      * false otherwise
      *
@@ -98,6 +107,14 @@ interface NonEmptySeqTerminalOps
     public function filter(callable $predicate): Seq;
 
     /**
+     * Same as {@see NonEmptySeqTerminalOps::filter()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Seq<TV>
+     */
+    public function filterN(callable $predicate): Seq;
+
+    /**
      * A combined {@see NonEmptySeq::map} and {@see NonEmptySeq::filter}.
      *
      * Filtering is handled via Option instead of Boolean.
@@ -117,6 +134,16 @@ interface NonEmptySeqTerminalOps
      * @return Seq<TVO>
      */
     public function filterMap(callable $callback): Seq;
+
+    /**
+     * Same as {@see NonEmptySeqTerminalOps::filterMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Seq<TVO>
+     */
+    public function filterMapN(callable $callback): Seq;
 
     /**
      * Exclude null elements
@@ -165,19 +192,6 @@ interface NonEmptySeqTerminalOps
     public function flatten(): NonEmptySeq;
 
     /**
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([2, 5])->flatMap(fn($e) => [$e - 1, $e, $e + 1])->toList();
-     * => [1, 2, 3, 4, 5, 6]
-     * ```
-     *
-     * @template TVO
-     *
-     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
-     * @return NonEmptySeq<TVO>
-     */
-    public function flatMap(callable $callback): NonEmptySeq;
-
-    /**
      * Suppose you have an NonEmptyArrayList<TV> and you want to format each element with a function that returns an Option<TVO>.
      * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<NonEmptyArrayList<TVO>>
      * i.e. an Some<NonEmptyArrayList<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
@@ -196,6 +210,18 @@ interface NonEmptySeqTerminalOps
      * @return Option<NonEmptySeq<TVO>>
      */
     public function traverseOption(callable $callback): Option;
+
+    /**
+     * Same as {@see NonEmptySeqTerminalOps::traverseOption()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<NonEmptySeq<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseOptionN(callable $callback): Option;
 
     /**
      * Same as {@see NonEmptySeqTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.
@@ -239,6 +265,19 @@ interface NonEmptySeqTerminalOps
     public function traverseEither(callable $callback): Either;
 
     /**
+     * Same as {@see NonEmptySeqTerminalOps::traverseEither()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, NonEmptySeq<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseEitherN(callable $callback): Either;
+
+    /**
      * Same as {@see NonEmptySeqTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
      *
      * ```php
@@ -268,7 +307,7 @@ interface NonEmptySeqTerminalOps
     /**
      * Split collection to two parts by predicate function.
      * If $predicate returns true then item gonna to right.
-     * Otherwise to left.
+     * Otherwise, to left.
      *
      * ```php
      * >>> NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3);
@@ -281,10 +320,20 @@ interface NonEmptySeqTerminalOps
     public function partition(callable $predicate): Separated;
 
     /**
+     * Same as {@see NonEmptySeqTerminalOps::partition()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<Seq<TV>, Seq<TV>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function partitionN(callable $predicate): Separated;
+
+    /**
      * Similar to {@see NonEmptySeqTerminalOps::partition()} but uses {@see Either} instead of bool.
      * So the output types LO/RO can be different from the input type TV.
      * If $callback returns Right then item gonna to right.
-     * Otherwise to left.
+     * Otherwise, to left.
      *
      * ```php
      * >>> NonEmptyArrayList::collectNonEmpty([0, 1, 2, 3, 4, 5])
@@ -299,6 +348,19 @@ interface NonEmptySeqTerminalOps
      * @return Separated<Seq<LO>, Seq<RO>>
      */
     public function partitionMap(callable $callback): Separated;
+
+    /**
+     * Same as {@see NonEmptySeqTerminalOps::partitionMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<Seq<LO>, Seq<RO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function partitionMapN(callable $callback): Separated;
 
     /**
      * Group elements
@@ -398,6 +460,18 @@ interface NonEmptySeqTerminalOps
     public function reindex(callable $callback): NonEmptyMap;
 
     /**
+     * Same as {@see NonEmptySeqTerminalOps::reindex()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return NonEmptyMap<TKO, TV>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function reindexN(callable $callback): NonEmptyMap;
+
+    /**
      * Find if there is element which satisfies the condition
      *
      * ```php
@@ -411,6 +485,15 @@ interface NonEmptySeqTerminalOps
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
+
+    /**
+     * Same as {@see NonEmptySeqTerminalOps::exists()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function existsN(callable $predicate): bool;
 
     /**
      * Returns true if there is collection element of given class
@@ -442,6 +525,16 @@ interface NonEmptySeqTerminalOps
      * @return Option<TV>
      */
     public function first(callable $predicate): Option;
+
+    /**
+     * Same as {@see NonEmptySeqTerminalOps::first()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function firstN(callable $predicate): Option;
 
     /**
      * Find first element of given class
@@ -575,6 +668,16 @@ interface NonEmptySeqTerminalOps
      * @return Option<TV>
      */
     public function last(callable $predicate): Option;
+
+    /**
+     * Same as {@see NonEmptySeqTerminalOps::last()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function lastN(callable $predicate): Option;
 
     /**
      * Returns first collection element
