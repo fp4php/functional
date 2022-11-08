@@ -68,6 +68,13 @@ interface MapTerminalOps
     public function every(callable $predicate): bool;
 
     /**
+     * Same as {@see MapTerminalOps::every()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool;
+
+    /**
      * Same as {@see MapTerminalOps::every()}, but passing also the key to the $predicate function.
      *
      * @param callable(TK, TV): bool $predicate
@@ -101,6 +108,13 @@ interface MapTerminalOps
     public function exists(callable $predicate): bool;
 
     /**
+     * Same as {@see MapTerminalOps::exists()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool;
+
+    /**
      * Same as {@see MapTerminalOps::exists()}, but passing also the key to the $predicate function.
      *
      * @param callable(TK, TV): bool $predicate
@@ -126,6 +140,16 @@ interface MapTerminalOps
      * @return Option<Map<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option;
+
+    /**
+     * Same as {@see MapTerminalOps::traverseOption()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<Map<TK, TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option;
 
     /**
      * Same as {@see MapTerminalOps::traverseOption()}, but passing also the key to the $predicate function.
@@ -183,6 +207,17 @@ interface MapTerminalOps
     public function traverseEither(callable $callback): Either;
 
     /**
+     * Same as {@see MapTerminalOps::traverseEither()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, Map<TK, TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either;
+
+    /**
      * Same as {@see MapTerminalOps::traverseEither()}, but passing also the key to the $callback function.
      *
      * @template E
@@ -237,6 +272,14 @@ interface MapTerminalOps
     public function partition(callable $predicate): Separated;
 
     /**
+     * Same as {@see MapTerminalOps::partition()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<Map<TK, TV>, Map<TK, TV>>
+     */
+    public function partitionN(callable $predicate): Separated;
+
+    /**
      * Same as {@see MapTerminalOps::partition()}, but passing also the key to the $predicate function.
      *
      * @param callable(TK, TV): bool $predicate
@@ -263,6 +306,17 @@ interface MapTerminalOps
      * @return Separated<Map<TK, LO>, Map<TK, RO>>
      */
     public function partitionMap(callable $callback): Separated;
+
+    /**
+     * Same as {@see MapTerminalOps::partitionMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<Map<TK, LO>, Map<TK, RO>>
+     */
+    public function partitionMapN(callable $callback): Separated;
 
     /**
      * Same as {@see MapTerminalOps::partitionMap()}, but passing also the key to the $callback function.

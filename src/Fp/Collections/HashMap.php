@@ -332,6 +332,20 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return HashMap<TK, TV>
+     */
+    public function filterN(callable $predicate): Map
+    {
+        return $this->filterKV(function($_k, $tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TK, TV): bool $predicate
      * @return HashMap<TK, TV>
      */
@@ -351,6 +365,22 @@ final class HashMap implements Map
     public function filterMap(callable $callback): HashMap
     {
         return $this->filterMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function filterMapN(callable $callback): Map
+    {
+        return $this->filterMapKV(function($_k, $tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -392,6 +422,23 @@ final class HashMap implements Map
     public function flatMap(callable $callback): HashMap
     {
         return $this->flatMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(mixed...): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
+     * @return HashMap<TKO, TVO>
+     */
+    public function flatMapN(callable $callback): Map
+    {
+        return $this->flatMapKV(function($_k, $tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -464,6 +511,20 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): void $callback
+     * @return HashMap<TK, TV>
+     */
+    public function tapN(callable $callback): Map
+    {
+        return $this->tapKV(function($_k, $tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TK, TV): void $callback
      * @return HashMap<TK, TV>
      */
@@ -484,6 +545,22 @@ final class HashMap implements Map
     public function reindex(callable $callback): HashMap
     {
         return $this->reindexKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): Map
+    {
+        return $this->reindexKV(function($_k, $tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -606,6 +683,19 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->everyKV(function($_k, $tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TK, TV): bool $predicate
      */
     public function everyKV(callable $predicate): bool
@@ -639,6 +729,19 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->existsKV(function($_k, $tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TK, TV): bool $predicate
      */
     public function existsKV(callable $predicate): bool
@@ -657,6 +760,22 @@ final class HashMap implements Map
     public function traverseOption(callable $callback): Option
     {
         return $this->traverseOptionKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<HashMap<TK, TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->traverseOptionKV(function($_k, $tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**
@@ -706,6 +825,23 @@ final class HashMap implements Map
      * @template E
      * @template TVO
      *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, HashMap<TK, TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->traverseEitherKV(function($_k, $tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
      * @param callable(TK, TV): Either<E, TVO> $callback
      * @return Either<E, HashMap<TK, TVO>>
      */
@@ -742,6 +878,20 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->partitionKV(function($_k, $tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TK, TV): bool $predicate
      * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
      */
@@ -764,6 +914,23 @@ final class HashMap implements Map
     public function partitionMap(callable $callback): Separated
     {
         return $this->partitionMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->partitionMapKV(function($_k, $tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
     }
 
     /**

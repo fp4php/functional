@@ -78,6 +78,14 @@ interface MapChainableOps
     public function filter(callable $predicate): Map;
 
     /**
+     * Same as {@see MapChainableOps::filter()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Map<TK, TV>
+     */
+    public function filterN(callable $predicate): Map;
+
+    /**
      * Same as {@see MapChainableOps::filter()}, but passing also the key to the $predicate function.
      *
      * @param callable(TK, TV): bool $predicate
@@ -106,6 +114,16 @@ interface MapChainableOps
      * @return Map<TK, TVO>
      */
     public function filterMap(callable $callback): Map;
+
+    /**
+     * Same as {@see MapChainableOps::filterMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Map<TK, TVO>
+     */
+    public function filterMapN(callable $callback): Map;
 
     /**
      * Same as {@see MapChainableOps::filterMap()}, but passing also the key to the $callback function.
@@ -161,6 +179,17 @@ interface MapChainableOps
      * @return Map<TKO, TVO>
      */
     public function flatMap(callable $callback): Map;
+
+    /**
+     * Same as {@see MapChainableOps::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(mixed...): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
+     * @return Map<TKO, TVO>
+     */
+    public function flatMapN(callable $callback): Map;
 
     /**
      * Same as {@see MapChainableOps::flatMap()}, but passing also the key to the $callback function.
@@ -239,6 +268,14 @@ interface MapChainableOps
     public function tap(callable $callback): Map;
 
     /**
+     * Same as {@see MapChainableOps::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): void $callback
+     * @return Map<TK, TV>
+     */
+    public function tapN(callable $callback): Map;
+
+    /**
      * Same as {@see MapChainableOps::tap()}, but passing also the key to the $callback function.
      *
      * @param callable(TK, TV): void $callback
@@ -263,6 +300,16 @@ interface MapChainableOps
      * @return Map<TKO, TV>
      */
     public function reindex(callable $callback): Map;
+
+    /**
+     * Same as {@see MapChainableOps::reindex()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return Map<TKO, TV>
+     */
+    public function reindexN(callable $callback): Map;
 
     /**
      * Same as {@see MapChainableOps::reindex()}, but passing also the key to the $callback function.
