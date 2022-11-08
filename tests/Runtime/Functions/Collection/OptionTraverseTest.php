@@ -7,6 +7,7 @@ namespace Tests\Runtime\Functions\Collection;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
 use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Collection\traverseOption;
 use function Fp\Collection\traverseOptionKV;
 
@@ -92,6 +93,29 @@ final class OptionTraverseTest extends TestCase
                 Option::none(),
                 Option::some(1),
             ])
+        );
+    }
+
+    public function testSequenceT(): void
+    {
+        $this->assertEquals(
+            Option::some([]),
+            sequenceOptionT(),
+        );
+
+        $this->assertEquals(
+            Option::some([1, 2]),
+            sequenceOptionT(Option::some(1), Option::some(2)),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            sequenceOptionT(Option::some(1), Option::none()),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            sequenceOptionT(Option::none(), Option::some(1)),
         );
     }
 
