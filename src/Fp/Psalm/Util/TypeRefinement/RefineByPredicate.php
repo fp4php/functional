@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Util\TypeRefinement;
 
-use Fp\Collections\HashMap;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -31,8 +30,6 @@ use function Fp\Evidence\proveString;
  */
 final class RefineByPredicate
 {
-    private const CONSTANT_ARG_NAME = '$constant_arg_name';
-
     /**
      * Refine collection type-parameters
      * By predicate expression
@@ -123,13 +120,9 @@ final class RefineByPredicate
     /**
      * Collects assertion for $predicate_arg_name from $return_expr.
      *
-     * @psalm-return PsalmAssertions
+     * @return Option<PsalmAssertions>
      */
-    private static function collectAssertions(
-        RefinementContext $context,
-        Expr $return_expr,
-        string $predicate_arg_name,
-    ): array
+    private static function collectAssertions(RefinementContext $context, Expr $return_expr): Option
     {
         $cond_object_id = spl_object_id($return_expr);
 
@@ -145,10 +138,7 @@ final class RefineByPredicate
             creating_conditional_id: $cond_object_id,
         );
 
-        return HashMap::collect($truths)
-            ->filterKV(fn($key) => str_starts_with($key, $predicate_arg_name))
-            ->reindexKV(fn($key) => str_replace($predicate_arg_name, self::CONSTANT_ARG_NAME, $key))
-            ->toArray();
+        return proveNonEmptyArray($truths);
     }
 
     /**
@@ -164,26 +154,20 @@ final class RefineByPredicate
         Union $type,
     ): Option
     {
-        $assertions = self::collectAssertions(
-            context: $context,
-            return_expr: $return_expr,
-            predicate_arg_name: $arg_name,
-        );
-
         // reconcileKeyedTypes takes it by ref
         $changed_var_ids = [];
 
-        return proveNonEmptyArray($assertions)
+        return self::collectAssertions($context, $return_expr)
             ->map(fn($assertions) => Reconciler::reconcileKeyedTypes(
                 new_types: $assertions,
                 active_new_types: $assertions,
-                existing_types: [self::CONSTANT_ARG_NAME => $type],
+                existing_types: [$arg_name => $type],
                 changed_var_ids: $changed_var_ids,
-                referenced_var_ids: [self::CONSTANT_ARG_NAME => true],
+                referenced_var_ids: [$arg_name => true],
                 statements_analyzer: $context->source,
                 template_type_map: $context->source->getTemplateTypeMap() ?: [],
                 code_location: new CodeLocation($context->source, $return_expr)
             ))
-            ->flatMap(fn($reconciled_types) => at($reconciled_types, self::CONSTANT_ARG_NAME));
+            ->flatMap(fn($reconciled_types) => at($reconciled_types, $arg_name));
     }
 }
