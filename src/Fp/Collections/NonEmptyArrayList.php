@@ -12,11 +12,6 @@ use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Callable\dropFirstArg;
-use function Fp\Callable\toSafeClosure;
-use function Fp\Cast\fromPairs;
-use function Fp\Collection\keys;
-
 /**
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
@@ -32,7 +27,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @internal
      * @param ArrayList<TV> $arrayList
      */
-    public function __construct(public ArrayList $arrayList)
+    public function __construct(public readonly ArrayList $arrayList)
     {
     }
 
@@ -61,9 +56,11 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public static function collect(iterable $source): Option
     {
-        return Option::some(ArrayList::collect($source))
-            ->filter(fn($list) => !$list->isEmpty())
-            ->map(fn($list) => new NonEmptyArrayList($list));
+        $collection = ArrayList::collect($source);
+
+        return !$collection->isEmpty()
+            ? Option::some(new NonEmptyArrayList($collection))
+            : Option::none();
     }
 
     /**
@@ -132,10 +129,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function flatMapN(callable $callback): NonEmptyArrayList
     {
-        return $this->flatMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyArrayList($this->arrayList->flatMapN($callback));
     }
 
     /**
@@ -158,7 +152,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function map(callable $callback): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\MapOperation::of($this)(dropFirstArg($callback)));
+        return new NonEmptyArrayList($this->arrayList->map($callback));
     }
 
     /**
@@ -171,10 +165,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function mapN(callable $callback): NonEmptyArrayList
     {
-        return $this->map(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyArrayList($this->arrayList->mapN($callback));
     }
 
     /**
@@ -187,7 +178,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function appended(mixed $elem): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\AppendedOperation::of($this)($elem));
+        return new NonEmptyArrayList($this->arrayList->appended($elem));
     }
 
     /**
@@ -200,7 +191,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function appendedAll(iterable $suffix): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\AppendedAllOperation::of($this)($suffix));
+        return new NonEmptyArrayList($this->arrayList->appendedAll($suffix));
     }
 
     /**
@@ -213,7 +204,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function prepended(mixed $elem): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\PrependedOperation::of($this)($elem));
+        return new NonEmptyArrayList($this->arrayList->prepended($elem));
     }
 
     /**
@@ -226,7 +217,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function prependedAll(iterable $prefix): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\PrependedAllOperation::of($this)($prefix));
+        return new NonEmptyArrayList($this->arrayList->prependedAll($prefix));
     }
 
     /**
@@ -237,8 +228,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function tap(callable $callback): NonEmptyArrayList
     {
-        Stream::emits(Ops\TapOperation::of($this)(dropFirstArg($callback)))->drain();
-        return $this;
+        return new NonEmptyArrayList($this->arrayList->tap($callback));
     }
 
     /**
@@ -249,10 +239,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function tapN(callable $callback): NonEmptyArrayList
     {
-        return $this->tap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyArrayList($this->arrayList->tapN($callback));
     }
 
     /**
@@ -265,7 +252,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function zip(iterable $that): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\ZipOperation::of($this)($that));
+        return new NonEmptyArrayList($this->arrayList->zip($that));
     }
 
     /**
@@ -275,7 +262,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function zipWithKeys(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
+        return new NonEmptyArrayList($this->arrayList->zipWithKeys());
     }
 
     /**
@@ -330,7 +317,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function intersperse(mixed $separator): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(Ops\IntersperseOperation::of($this)($separator));
+        return new NonEmptyArrayList($this->arrayList->intersperse($separator));
     }
 
     /**
@@ -367,10 +354,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function filterN(callable $predicate): ArrayList
     {
-        return $this->filter(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->arrayList->filterN($predicate);
     }
 
     /**
@@ -396,10 +380,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function filterMapN(callable $callback): ArrayList
     {
-        return $this->filterMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->arrayList->filterMapN($callback);
     }
 
     /**
@@ -504,7 +485,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this)(dropFirstArg($predicate));
+        return $this->arrayList->every($predicate);
     }
 
     /**
@@ -514,10 +495,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function everyN(callable $predicate): bool
     {
-        return $this->every(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->arrayList->everyN($predicate);
     }
 
     /**
@@ -530,7 +508,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function everyOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
+        return $this->arrayList->everyOf($fqcn, $invariant);
     }
 
     /**
@@ -543,8 +521,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function traverseOption(callable $callback): Option
     {
-        return Ops\TraverseOptionOperation::of($this)(dropFirstArg($callback))
-            ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
+        return $this->arrayList->traverseOption($callback)->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**
@@ -557,10 +534,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function traverseOptionN(callable $callback): Option
     {
-        return $this->traverseOption(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->arrayList->traverseOptionN($callback)->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**
@@ -573,8 +547,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function sequenceOption(): Option
     {
-        return Ops\TraverseOptionOperation::id($this->getIterator())
-            ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
+        return $this->arrayList->sequenceOption()->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**
@@ -588,8 +561,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function traverseEither(callable $callback): Either
     {
-        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))
-            ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
+        return $this->arrayList->traverseEither($callback)->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**
@@ -603,10 +575,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function traverseEitherN(callable $callback): Either
     {
-        return $this->traverseEither(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->arrayList->traverseEitherN($callback)->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**
@@ -620,8 +589,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function sequenceEither(): Either
     {
-        return Ops\TraverseEitherOperation::id($this->getIterator())
-            ->map(fn($gen) => NonEmptyArrayList::collectUnsafe($gen));
+        return $this->arrayList->sequenceEither()->map(fn($list) => new NonEmptyArrayList($list));
     }
 
     /**
@@ -632,9 +600,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function partition(callable $predicate): Separated
     {
-        return Ops\PartitionOperation::of($this)(dropFirstArg($predicate))
-            ->mapLeft(fn($left) => ArrayList::collect($left))
-            ->map(fn($right) => ArrayList::collect($right));
+        return $this->arrayList->partition($predicate);
     }
 
     /**
@@ -645,10 +611,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function partitionN(callable $predicate): Separated
     {
-        return $this->partition(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->arrayList->partitionN($predicate);
     }
 
     /**
@@ -662,9 +625,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function partitionMap(callable $callback): Separated
     {
-        return Ops\PartitionMapOperation::of($this)(dropFirstArg($callback))
-            ->mapLeft(fn($left) => ArrayList::collect($left))
-            ->map(fn($right) => ArrayList::collect($right));
+        return $this->arrayList->partitionMap($callback);
     }
 
     /**
@@ -678,10 +639,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function partitionMapN(callable $callback): Separated
     {
-        return $this->partitionMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->arrayList->partitionMapN($callback);
     }
 
     /**
@@ -698,7 +656,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(Ops\GroupMapReduceOperation::of($this)(dropFirstArg($group), dropFirstArg($map), $reduce));
+        return new NonEmptyHashMap($this->arrayList->groupMapReduce($group, $map, $reduce));
     }
 
     /**
@@ -711,9 +669,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function reindex(callable $callback): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(
-            HashMap::collect(Ops\ReindexOperation::of($this)(dropFirstArg($callback))),
-        );
+        return new NonEmptyHashMap($this->arrayList->reindex($callback));
     }
 
     /**
@@ -724,12 +680,9 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @param callable(mixed...): TKO $callback
      * @return NonEmptyHashMap<TKO, TV>
      */
-    public function reindexN(callable $callback): NonEmptyMap
+    public function reindexN(callable $callback): NonEmptyHashMap
     {
-        return $this->reindex(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyHashMap($this->arrayList->reindexN($callback));
     }
 
     /**
@@ -739,7 +692,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function exists(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
+        return $this->arrayList->exists($predicate);
     }
 
     /**
@@ -749,10 +702,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function existsN(callable $predicate): bool
     {
-        return $this->exists(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->arrayList->existsN($predicate);
     }
 
     /**
@@ -764,7 +714,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function existsOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
+        return $this->arrayList->existsOf($fqcn, $invariant);
     }
 
     /**
@@ -775,7 +725,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function first(callable $predicate): Option
     {
-        return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
+        return $this->arrayList->first($predicate);
     }
 
     /**
@@ -786,10 +736,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function firstN(callable $predicate): Option
     {
-        return $this->first(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->arrayList->firstN($predicate);
     }
 
     /**
@@ -802,7 +749,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function firstOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
+        return $this->arrayList->firstOf($fqcn, $invariant);
     }
 
     /**
@@ -816,7 +763,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function lastOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return Ops\LastOfOperation::of($this)($fqcn, $invariant);
+        return $this->arrayList->lastOf($fqcn, $invariant);
     }
 
     /**
@@ -837,7 +784,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function last(callable $predicate): Option
     {
-        return Ops\LastOperation::of($this)(dropFirstArg($predicate));
+        return $this->arrayList->last($predicate);
     }
 
     /**
@@ -848,10 +795,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function lastN(callable $predicate): Option
     {
-        return $this->last(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->arrayList->lastN($predicate);
     }
 
     /**
@@ -884,7 +828,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function lastElement(): mixed
     {
-        return Ops\LastOperation::of($this)()->getUnsafe();
+        return $this->arrayList->lastElement()->getUnsafe();
     }
 
     /**
@@ -893,14 +837,11 @@ final class NonEmptyArrayList implements NonEmptySeq
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return NonEmptyMap<TKO, NonEmptyArrayList<TV>>
+     * @return NonEmptyHashMap<TKO, NonEmptyArrayList<TV>>
      */
-    public function groupBy(callable $callback): NonEmptyMap
+    public function groupBy(callable $callback): NonEmptyHashMap
     {
-        $groups = Ops\GroupByOperation::of($this)(dropFirstArg($callback));
-
-        return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyArrayList());
+        return new NonEmptyHashMap($this->arrayList->groupBy($callback));
     }
 
     /**
@@ -915,10 +856,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function groupMap(callable $group, callable $map): NonEmptyMap
     {
-        $groups = Ops\GroupMapOperation::of($this)(dropFirstArg($group), dropFirstArg($map));
-
-        return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyArrayList());
+        return new NonEmptyHashMap($this->arrayList->groupMap($group, $map));
     }
 
     /**
@@ -926,7 +864,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
-        return Ops\MkStringOperation::of($this)($start, $sep, $end);
+        return $this->arrayList->mkString($start, $sep, $end);
     }
 
     /**
@@ -1008,7 +946,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function toArray(): array
     {
-        return fromPairs($this);
+        return $this->arrayList->toArray();
     }
 
     /**
@@ -1025,8 +963,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      */
     public function toNonEmptyArray(): array
     {
-        /** @var non-empty-array<TKO, TVO> */
-        return $this->toArray();
+        return $this->arrayList->toNonEmptyArray()->getUnsafe();
     }
 
     /**

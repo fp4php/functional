@@ -12,10 +12,6 @@ use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Callable\dropFirstArg;
-use function Fp\Callable\toSafeClosure;
-use function Fp\Cast\fromPairs;
-
 /**
  * @template-covariant TV
  * @implements NonEmptySeq<TV>
@@ -132,10 +128,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function flatMapN(callable $callback): NonEmptyLinkedList
     {
-        return $this->flatMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyLinkedList($this->linkedList->flatMapN($callback));
     }
 
     /**
@@ -171,10 +164,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function mapN(callable $callback): NonEmptyLinkedList
     {
-        return $this->map(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyLinkedList($this->linkedList->mapN($callback));
     }
 
     /**
@@ -237,8 +227,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function tap(callable $callback): NonEmptyLinkedList
     {
-        Stream::emits(Ops\TapOperation::of($this)(dropFirstArg($callback)))->drain();
-        return $this;
+        return new NonEmptyLinkedList($this->linkedList->tap($callback));
     }
 
     /**
@@ -249,10 +238,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function tapN(callable $callback): NonEmptyLinkedList
     {
-        return $this->tap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyLinkedList($this->linkedList->tapN($callback));
     }
 
     /**
@@ -367,10 +353,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function filterN(callable $predicate): LinkedList
     {
-        return $this->filter(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->linkedList->filterN($predicate);
     }
 
     /**
@@ -396,10 +379,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function filterMapN(callable $callback): LinkedList
     {
-        return $this->filterMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->linkedList->filterMapN($callback);
     }
 
     /**
@@ -494,7 +474,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function at(int $index): Option
     {
-        return Ops\AtOperation::of($this)($index);
+        return $this->linkedList->at($index);
     }
 
     /**
@@ -504,7 +484,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function every(callable $predicate): bool
     {
-        return Ops\EveryOperation::of($this)(dropFirstArg($predicate));
+        return $this->linkedList->every($predicate);
     }
 
     /**
@@ -514,10 +494,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function everyN(callable $predicate): bool
     {
-        return $this->every(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->linkedList->everyN($predicate);
     }
 
     /**
@@ -530,7 +507,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function everyOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
+        return $this->linkedList->everyOf($fqcn, $invariant);
     }
 
     /**
@@ -543,9 +520,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function traverseOption(callable $callback): Option
     {
-        return $this->linkedList
-            ->traverseOption($callback)
-            ->map(fn($list) => new NonEmptyLinkedList($list));
+        return $this->linkedList->traverseOption($callback)->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -558,10 +533,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function traverseOptionN(callable $callback): Option
     {
-        return $this->traverseOption(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->linkedList->traverseOptionN($callback)->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -574,9 +546,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function sequenceOption(): Option
     {
-        return $this->linkedList
-            ->sequenceOption()
-            ->map(fn($list) => new NonEmptyLinkedList($list));
+        return $this->linkedList->sequenceOption()->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -590,9 +560,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function traverseEither(callable $callback): Either
     {
-        return $this->linkedList
-            ->traverseEither($callback)
-            ->map(fn($list) => new NonEmptyLinkedList($list));
+        return $this->linkedList->traverseEither($callback)->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -606,10 +574,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function traverseEitherN(callable $callback): Either
     {
-        return $this->traverseEither(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->linkedList->traverseEitherN($callback)->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -620,9 +585,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function partition(callable $predicate): Separated
     {
-        return Ops\PartitionOperation::of($this)(dropFirstArg($predicate))
-            ->mapLeft(fn($left) => LinkedList::collect($left))
-            ->map(fn($right) => LinkedList::collect($right));
+        return $this->linkedList->partition($predicate);
     }
 
     /**
@@ -633,10 +596,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function partitionN(callable $predicate): Separated
     {
-        return $this->partition(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->linkedList->partitionN($predicate);
     }
 
     /**
@@ -650,9 +610,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function partitionMap(callable $callback): Separated
     {
-        return Ops\PartitionMapOperation::of($this)(dropFirstArg($callback))
-            ->mapLeft(fn($left) => LinkedList::collect($left))
-            ->map(fn($right) => LinkedList::collect($right));
+        return $this->linkedList->partitionMap($callback);
     }
 
     /**
@@ -666,10 +624,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function partitionMapN(callable $callback): Separated
     {
-        return $this->partitionMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->linkedList->partitionMapN($callback);
     }
 
     /**
@@ -683,9 +638,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function sequenceEither(): Either
     {
-        return $this->linkedList
-            ->sequenceEither()
-            ->map(fn($list) => new NonEmptyLinkedList($list));
+        return $this->linkedList->sequenceEither()->map(fn($list) => new NonEmptyLinkedList($list));
     }
 
     /**
@@ -702,7 +655,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(Ops\GroupMapReduceOperation::of($this)(dropFirstArg($group), dropFirstArg($map), $reduce));
+        return new NonEmptyHashMap($this->linkedList->groupMapReduce($group, $map, $reduce));
     }
 
     /**
@@ -715,9 +668,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function reindex(callable $callback): NonEmptyHashMap
     {
-        return new NonEmptyHashMap(
-            HashMap::collect(Ops\ReindexOperation::of($this)(dropFirstArg($callback))),
-        );
+        return new NonEmptyHashMap($this->linkedList->reindex($callback));
     }
 
     /**
@@ -728,12 +679,9 @@ final class NonEmptyLinkedList implements NonEmptySeq
      * @param callable(mixed...): TKO $callback
      * @return NonEmptyHashMap<TKO, TV>
      */
-    public function reindexN(callable $callback): NonEmptyMap
+    public function reindexN(callable $callback): NonEmptyHashMap
     {
-        return $this->reindex(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyHashMap($this->linkedList->reindexN($callback));
     }
 
     /**
@@ -743,7 +691,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function exists(callable $predicate): bool
     {
-        return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
+        return $this->linkedList->exists($predicate);
     }
 
     /**
@@ -753,10 +701,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function existsN(callable $predicate): bool
     {
-        return $this->exists(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->linkedList->existsN($predicate);
     }
 
     /**
@@ -768,7 +713,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function existsOf(string|array $fqcn, bool $invariant = false): bool
     {
-        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
+        return $this->linkedList->existsOf($fqcn, $invariant);
     }
 
     /**
@@ -779,7 +724,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function first(callable $predicate): Option
     {
-        return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
+        return $this->linkedList->first($predicate);
     }
 
     /**
@@ -790,10 +735,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function firstN(callable $predicate): Option
     {
-        return $this->first(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->linkedList->firstN($predicate);
     }
 
     /**
@@ -806,7 +748,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function firstOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
+        return $this->linkedList->firstOf($fqcn, $invariant);
     }
 
     /**
@@ -819,7 +761,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function lastOf(string|array $fqcn, bool $invariant = false): Option
     {
-        return Ops\LastOfOperation::of($this)($fqcn, $invariant);
+        return $this->linkedList->lastOf($fqcn, $invariant);
     }
 
     /**
@@ -840,7 +782,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function last(callable $predicate): Option
     {
-        return Ops\LastOperation::of($this)(dropFirstArg($predicate));
+        return $this->linkedList->last($predicate);
     }
 
     /**
@@ -851,10 +793,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function lastN(callable $predicate): Option
     {
-        return $this->last(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->linkedList->lastN($predicate);
     }
 
     /**
@@ -867,7 +806,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function fold(mixed $init): FoldOperation
     {
-        return new FoldOperation($this->getIterator(), $init);
+        return $this->linkedList->fold($init);
     }
 
     /**
@@ -887,7 +826,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function lastElement(): mixed
     {
-        return Ops\LastOperation::of($this)()->getUnsafe();
+        return $this->linkedList->lastElement()->getUnsafe();
     }
 
     /**
@@ -900,10 +839,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function groupBy(callable $callback): NonEmptyMap
     {
-        $groups = Ops\GroupByOperation::of($this)(dropFirstArg($callback));
-
-        return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyLinkedList());
+        return new NonEmptyHashMap($this->linkedList->groupBy($callback));
     }
 
     /**
@@ -918,10 +854,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function groupMap(callable $group, callable $map): NonEmptyMap
     {
-        $groups = Ops\GroupMapOperation::of($this)(dropFirstArg($group), dropFirstArg($map));
-
-        return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptyHashMap $elem) => $elem->values()->toNonEmptyLinkedList());
+        return new NonEmptyHashMap($this->linkedList->groupMap($group, $map));
     }
 
     /**
@@ -929,7 +862,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string
     {
-        return Ops\MkStringOperation::of($this)($start, $sep, $end);
+        return $this->linkedList->mkString($start, $sep, $end);
     }
 
     /**
@@ -985,13 +918,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toList(): array
     {
-        $buffer = [$this->head()];
-
-        foreach ($this->tail() as $elem) {
-            $buffer[] = $elem;
-        }
-
-        return $buffer;
+        return $this->linkedList->toList();
     }
 
     /**
@@ -1001,8 +928,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toNonEmptyList(): array
     {
-        /** @var non-empty-list<TV> */
-        return $this->toList();
+        return $this->linkedList->toNonEmptyList()->getUnsafe();
     }
 
     /**
@@ -1016,7 +942,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toArray(): array
     {
-        return fromPairs($this);
+        return $this->linkedList->toArray();
     }
 
     /**
@@ -1033,8 +959,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toNonEmptyArray(): array
     {
-        /** @var non-empty-array<TKO, TVO> */
-        return $this->toArray();
+        return $this->linkedList->toNonEmptyArray()->getUnsafe();
     }
 
     /**
@@ -1054,7 +979,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect($this);
+        return $this->linkedList->toArrayList();
     }
 
     /**
@@ -1074,7 +999,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
     {
-        return new NonEmptyArrayList($this->toArrayList());
+        return new NonEmptyArrayList($this->linkedList->toArrayList());
     }
 
     /**
@@ -1084,7 +1009,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toHashSet(): HashSet
     {
-        return HashSet::collect($this);
+        return $this->linkedList->toHashSet();
     }
 
     /**
@@ -1094,7 +1019,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe($this);
+        return new NonEmptyHashSet($this->toHashSet());
     }
 
     /**
@@ -1108,7 +1033,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toHashMap(): HashMap
     {
-        return HashMap::collectPairs($this);
+        return $this->linkedList->toHashMap();
     }
 
     /**
@@ -1122,7 +1047,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsNonEmpty($this);
+        return new NonEmptyHashMap($this->toHashMap());
     }
 
     /**
@@ -1132,7 +1057,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function toStream(): Stream
     {
-        return Stream::emits($this);
+        return $this->linkedList->toStream();
     }
 
     /**
@@ -1177,7 +1102,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      */
     public function getIterator(): Iterator
     {
-        return new LinkedListIterator($this->linkedList);
+        return $this->linkedList->getIterator();
     }
 
     /**

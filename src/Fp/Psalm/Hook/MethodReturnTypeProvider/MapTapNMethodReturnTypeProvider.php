@@ -73,6 +73,9 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             $templates = yield proveTrue(self::isSupportedMethod($event))
                 ->flatMap(fn() => proveNonEmptyList($event->getTemplateTypeParameters() ?? []));
 
+            // Allows call *N combinators in the origin class without type-check.
+            yield proveFalse(in_array($event->getContext()->self, self::getClassLikeNames()));
+
             // Take the most right template:
             //    Option<A>    -> A
             //    Either<E, A> -> A

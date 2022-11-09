@@ -13,7 +13,6 @@ use Fp\Streams\Stream;
 use Generator;
 
 use function Fp\Callable\dropFirstArg;
-use function Fp\Callable\toSafeClosure;
 use function Fp\Cast\asGenerator;
 
 /**
@@ -149,7 +148,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function count(): int
     {
-        return Ops\CountOperation::of($this)();
+        return $this->hashMap->count();
     }
 
     /**
@@ -463,9 +462,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function partitionKV(callable $predicate): Separated
     {
-        return Ops\PartitionOperation::of($this)($predicate)
-            ->mapLeft(fn($left) => HashMap::collect($left))
-            ->map(fn($right) => HashMap::collect($right));
+        return $this->hashMap->partitionKV($predicate);
     }
 
     /**
@@ -493,9 +490,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function partitionMapKV(callable $callback): Separated
     {
-        return Ops\PartitionMapOperation::of($this)($callback)
-            ->mapLeft(fn($left) => HashMap::collect($left))
-            ->map(fn($right) => HashMap::collect($right));
+        return $this->hashMap->partitionMapKV($callback);
     }
 
     /**
@@ -712,10 +707,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function mapN(callable $callback): NonEmptyHashMap
     {
-        return $this->map(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyHashMap($this->hashMap->mapN($callback));
     }
 
     /**

@@ -218,7 +218,7 @@ final class NonEmptySeqOpsTest extends TestCase
     {
         $this->assertEquals(
             $emptySeq::collect([1]),
-            $emptySeq::collect([new Foo(1), 1, new Foo(1)])->filter(fn($i) => $i === 1),
+            $seq::collectNonEmpty([new Foo(1), 1, new Foo(1)])->filter(fn($i) => $i === 1),
         );
     }
 
@@ -1015,5 +1015,20 @@ final class NonEmptySeqOpsTest extends TestCase
     {
         $this->assertEquals(3, $seq::collectNonEmpty([1, 2, 3])->count());
         $this->assertEquals(2, $seq::collectNonEmpty([2, 3])->count());
+    }
+
+    /**
+     * @param class-string<NonEmptySeq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testIterator(string $seq): void
+    {
+        $agg = [];
+
+        foreach ($seq::collectNonEmpty([1, 2, 3]) as $num) {
+            $agg[] = $num + 1;
+        }
+
+        $this->assertEquals([2, 3, 4], $agg);
     }
 }

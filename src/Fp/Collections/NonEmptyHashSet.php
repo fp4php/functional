@@ -12,8 +12,6 @@ use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Callable\toSafeClosure;
-
 /**
  * @template-covariant TV
  * @implements NonEmptySet<TV>
@@ -43,11 +41,11 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public static function collect(iterable $source): Option
     {
-        return Option::some(HashSet::collect($source))->flatMap(
-            fn($hs) => !$hs->isEmpty()
-                ? Option::some(new NonEmptyHashSet($hs))
-                : Option::none(),
-        );
+        $set = HashSet::collect($source);
+
+        return !$set->isEmpty()
+            ? Option::some(new NonEmptyHashSet($set))
+            : Option::none();
     }
 
     /**
@@ -325,10 +323,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function mapN(callable $callback): NonEmptyHashSet
     {
-        return $this->map(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyHashSet($this->set->mapN($callback));
     }
 
     /**
@@ -354,10 +349,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function flatMapN(callable $callback): NonEmptyHashSet
     {
-        return $this->flatMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyHashSet($this->set->flatMapN($callback));
     }
 
     /**
@@ -379,10 +371,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function tapN(callable $callback): NonEmptyHashSet
     {
-        return $this->tap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyHashSet($this->set->tapN($callback));
     }
 
     #endregion NonEmptySetChainableOps
@@ -406,10 +395,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function everyN(callable $predicate): bool
     {
-        return $this->every(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->set->everyN($predicate);
     }
 
     /**
@@ -448,10 +434,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function traverseOptionN(callable $callback): Option
     {
-        return $this->traverseOption(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->set->traverseOptionN($callback)->map(fn($set) => new NonEmptyHashSet($set));
     }
 
     /**
@@ -492,10 +475,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function traverseEitherN(callable $callback): Either
     {
-        return $this->traverseEither(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->set->traverseEitherN($callback)->map(fn($set) => new NonEmptyHashSet($set));
     }
 
     /**
@@ -531,10 +511,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function partitionN(callable $predicate): Separated
     {
-        return $this->partition(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->set->partitionN($predicate);
     }
 
     /**
@@ -562,10 +539,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function partitionMapN(callable $callback): Separated
     {
-        return $this->partitionMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->set->partitionMapN($callback);
     }
 
     /**
@@ -589,12 +563,9 @@ final class NonEmptyHashSet implements NonEmptySet
      * @param callable(mixed...): TKO $callback
      * @return NonEmptyHashMap<TKO, TV>
      */
-    public function reindexN(callable $callback): NonEmptyMap
+    public function reindexN(callable $callback): NonEmptyHashMap
     {
-        return $this->reindex(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return new NonEmptyHashMap($this->set->reindexN($callback));
     }
 
     /**
@@ -614,10 +585,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function existsN(callable $predicate): bool
     {
-        return $this->exists(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->set->existsN($predicate);
     }
 
     /**
@@ -696,10 +664,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function firstN(callable $predicate): Option
     {
-        return $this->first(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->set->firstN($predicate);
     }
 
     /**
@@ -721,10 +686,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function lastN(callable $predicate): Option
     {
-        return $this->last(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->set->lastN($predicate);
     }
 
     /**
@@ -843,10 +805,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function filterN(callable $predicate): HashSet
     {
-        return $this->filter(function($tuple) use ($predicate) {
-            /** @var array $tuple */;
-            return toSafeClosure($predicate)(...$tuple);
-        });
+        return $this->set->filterN($predicate);
     }
 
     /**
@@ -885,10 +844,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function filterMapN(callable $callback): HashSet
     {
-        return $this->filterMap(function($tuple) use ($callback) {
-            /** @var array $tuple */;
-            return toSafeClosure($callback)(...$tuple);
-        });
+        return $this->set->filterMapN($callback);
     }
 
     /**

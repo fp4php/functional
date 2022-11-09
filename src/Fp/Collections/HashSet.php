@@ -573,7 +573,7 @@ final class HashSet implements Set
      * @template TVO
      *
      * @param callable(mixed...): Option<TVO> $callback
-     * @return Option<Set<TVO>>
+     * @return Option<HashSet<TVO>>
      */
     public function traverseOptionN(callable $callback): Option
     {
@@ -619,7 +619,7 @@ final class HashSet implements Set
      * @template TVO
      *
      * @param callable(mixed...): Either<E, TVO> $callback
-     * @return Either<E, Set<TVO>>
+     * @return Either<E, HashSet<TVO>>
      */
     public function traverseEitherN(callable $callback): Either
     {
@@ -661,7 +661,7 @@ final class HashSet implements Set
      * {@inheritDoc}
      *
      * @param callable(mixed...): bool $predicate
-     * @return Separated<Set<TV>, Set<TV>>
+     * @return Separated<HashSet<TV>, HashSet<TV>>
      */
     public function partitionN(callable $predicate): Separated
     {
@@ -694,7 +694,7 @@ final class HashSet implements Set
      * @template RO
      *
      * @param callable(mixed...): Either<LO, RO> $callback
-     * @return Separated<Set<LO>, Set<RO>>
+     * @return Separated<HashSet<LO>, HashSet<RO>>
      */
     public function partitionMapN(callable $callback): Separated
     {

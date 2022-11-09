@@ -1040,4 +1040,19 @@ final class SeqOpsTest extends TestCase
         $this->assertEquals(0, $seq::collect([])->count());
         $this->assertEquals(2, $seq::collect([2, 3])->count());
     }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testIterator(string $seq): void
+    {
+        $agg = [];
+
+        foreach ($seq::collect([1, 2, 3]) as $num) {
+            $agg[] = $num + 1;
+        }
+
+        $this->assertEquals([2, 3, 4], $agg);
+    }
 }

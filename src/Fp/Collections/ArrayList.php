@@ -880,7 +880,7 @@ final class ArrayList implements Seq
      * @template RO
      *
      * @param callable(mixed...): Either<LO, RO> $callback
-     * @return Separated<Seq<LO>, Seq<RO>>
+     * @return Separated<ArrayList<LO>, ArrayList<RO>>
      */
     public function partitionMapN(callable $callback): Separated
     {
@@ -1041,9 +1041,9 @@ final class ArrayList implements Seq
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return Map<TKO, NonEmptyArrayList<TV>>
+     * @return HashMap<TKO, NonEmptyArrayList<TV>>
      */
-    public function groupBy(callable $callback): Map
+    public function groupBy(callable $callback): HashMap
     {
         return Ops\GroupByOperation::of($this)(dropFirstArg($callback))
             ->map(fn(NonEmptyHashMap $neSeq) => $neSeq->values()->toNonEmptyArrayList());
@@ -1075,9 +1075,9 @@ final class ArrayList implements Seq
      * @param callable(TV): TVO $map
      * @param callable(TVO, TVO): TVO $reduce
      *
-     * @return Map<TKO, TVO>
+     * @return HashMap<TKO, TVO>
      */
-    public function groupMapReduce(callable $group, callable $map, callable $reduce): Map
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): HashMap
     {
         return Ops\GroupMapReduceOperation::of($this)(dropFirstArg($group), dropFirstArg($map), $reduce);
     }

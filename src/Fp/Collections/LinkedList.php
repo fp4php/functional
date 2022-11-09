@@ -870,7 +870,7 @@ abstract class LinkedList implements Seq
      * @template RO
      *
      * @param callable(mixed...): Either<LO, RO> $callback
-     * @return Separated<Seq<LO>, Seq<RO>>
+     * @return Separated<LinkedList<LO>, LinkedList<RO>>
      */
     public function partitionMapN(callable $callback): Separated
     {
@@ -1068,9 +1068,9 @@ abstract class LinkedList implements Seq
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return Map<TKO, NonEmptyLinkedList<TV>>
+     * @return HashMap<TKO, NonEmptyLinkedList<TV>>
      */
-    public function groupBy(callable $callback): Map
+    public function groupBy(callable $callback): HashMap
     {
         return Ops\GroupByOperation::of($this)(dropFirstArg($callback))
             ->map(fn(NonEmptyHashMap $neSeq) => $neSeq->values()->toNonEmptyLinkedList());
@@ -1102,9 +1102,9 @@ abstract class LinkedList implements Seq
      * @param callable(TV): TVO $map
      * @param callable(TVO, TVO): TVO $reduce
      *
-     * @return Map<TKO, TVO>
+     * @return HashMap<TKO, TVO>
      */
-    public function groupMapReduce(callable $group, callable $map, callable $reduce): Map
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): HashMap
     {
         return Ops\GroupMapReduceOperation::of($this)(dropFirstArg($group), dropFirstArg($map), $reduce);
     }
