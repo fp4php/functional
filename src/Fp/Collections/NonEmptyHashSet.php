@@ -12,10 +12,7 @@ use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Callable\dropFirstArg;
 use function Fp\Callable\toSafeClosure;
-use function Fp\Cast\asNonEmptyList;
-use function Fp\Cast\fromPairs;
 
 /**
  * @template-covariant TV
@@ -29,12 +26,12 @@ use function Fp\Cast\fromPairs;
 final class NonEmptyHashSet implements NonEmptySet
 {
     /**
-     * @internal
      * @param HashSet<TV> $set
+     * @internal
      */
-    public function __construct(private readonly HashSet $set)
-    {
-    }
+    public function __construct(private readonly HashSet $set) {}
+
+    #region NonEmptySetCollector
 
     /**
      * {@inheritDoc}
@@ -46,9 +43,11 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public static function collect(iterable $source): Option
     {
-        return Option::some(HashSet::collect($source))
-            ->filter(fn($hs) => !$hs->isEmpty())
-            ->map(fn($hs) => new NonEmptyHashSet($hs));
+        return Option::some(HashSet::collect($source))->flatMap(
+            fn($hs) => !$hs->isEmpty()
+                ? Option::some(new NonEmptyHashSet($hs))
+                : Option::none(),
+        );
     }
 
     /**
@@ -90,21 +89,9 @@ final class NonEmptyHashSet implements NonEmptySet
         return NonEmptyHashSet::collectUnsafe($source);
     }
 
-    /**
-     * @return Iterator<int, TV>
-     */
-    public function getIterator(): Iterator
-    {
-        return $this->set->getIterator();
-    }
+    #endregion NonEmptySetCollector
 
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return Ops\CountOperation::of($this)();
-    }
+    #region NonEmptySetCastableOps
 
     /**
      * {@inheritDoc}
@@ -113,7 +100,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toList(): array
     {
-        return asNonEmptyList($this->getIterator())->getUnsafe();
+        return $this->set->toList();
     }
 
     /**
@@ -123,8 +110,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toNonEmptyList(): array
     {
-        /** @var non-empty-list<TV> */
-        return $this->toList();
+        return $this->set->toNonEmptyList()->getUnsafe();
     }
 
     /**
@@ -132,13 +118,13 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     * @psalm-if-this-is NonEmptyHashSet<array{TKO, TVO}>
      *
      * @return array<TKO, TVO>
      */
     public function toArray(): array
     {
-        return fromPairs($this);
+        return $this->set->toArray();
     }
 
     /**
@@ -146,14 +132,13 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     * @psalm-if-this-is NonEmptyHashSet<array{TKO, TVO}>
      *
      * @return non-empty-array<TKO, TVO>
      */
     public function toNonEmptyArray(): array
     {
-        /** @var non-empty-array<TKO, TVO> */
-        return $this->toArray();
+        return $this->set->toNonEmptyArray()->getUnsafe();
     }
 
     /**
@@ -163,7 +148,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toLinkedList(): LinkedList
     {
-        return LinkedList::collect($this);
+        return $this->set->toLinkedList();
     }
 
     /**
@@ -173,7 +158,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect($this);
+        return $this->set->toArrayList();
     }
 
     /**
@@ -183,7 +168,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe($this);
+        return $this->set->toNonEmptyLinkedList()->getUnsafe();
     }
 
     /**
@@ -193,7 +178,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe($this);
+        return $this->set->toNonEmptyArrayList()->getUnsafe();
     }
 
     /**
@@ -227,7 +212,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toHashMap(): HashMap
     {
-        return HashMap::collectPairs($this);
+        return $this->set->toHashMap();
     }
 
     /**
@@ -241,7 +226,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap
     {
-        return NonEmptyHashMap::collectPairsNonEmpty($this);
+        return $this->set->toNonEmptyHashMap()->getUnsafe();
     }
 
     /**
@@ -251,7 +236,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function toStream(): Stream
     {
-        return Stream::emits($this);
+        return $this->set->toStream();
     }
 
     /**
@@ -282,283 +267,14 @@ final class NonEmptyHashSet implements NonEmptySet
         return $this->set->toNonEmptyMergedArray()->getUnsafe();
     }
 
-    /**
-     * {@inheritDoc}
-     * @param TV $element
-     */
-    public function __invoke(mixed $element): bool
+    public function toString(): string
     {
-        return $this->contains($element);
+        return (string) $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @param callable(TV): bool $predicate
-     */
-    public function every(callable $predicate): bool
-    {
-        return Ops\EveryOperation::of($this)(dropFirstArg($predicate));
-    }
+    #endregion NonEmptySetCastableOps
 
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-assert-if-true Set<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return Option<NonEmptyHashSet<TVO>>
-     */
-    public function traverseOption(callable $callback): Option
-    {
-        return Ops\TraverseOptionOperation::of($this)(dropFirstArg($callback))
-            ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-if-this-is NonEmptyHashSet<Option<TVO>>
-     *
-     * @return Option<NonEmptyHashSet<TVO>>
-     */
-    public function sequenceOption(): Option
-    {
-        return Ops\TraverseOptionOperation::id($this->getIterator())
-            ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     *
-     * @param callable(TV): Either<E, TVO> $callback
-     * @return Either<E, NonEmptyHashSet<TVO>>
-     */
-    public function traverseEither(callable $callback): Either
-    {
-        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))
-            ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     * @psalm-if-this-is NonEmptyHashSet<Either<E, TVO>>
-     *
-     * @return Either<E, NonEmptyHashSet<TVO>>
-     */
-    public function sequenceEither(): Either
-    {
-        return Ops\TraverseEitherOperation::id($this->getIterator())
-            ->map(fn($gen) => NonEmptyHashSet::collectUnsafe($gen));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return Separated<HashSet<TV>, HashSet<TV>>
-     */
-    public function partition(callable $predicate): Separated
-    {
-        return Ops\PartitionOperation::of($this)(dropFirstArg($predicate))
-            ->mapLeft(fn($left) => HashSet::collect($left))
-            ->map(fn($right) => HashSet::collect($right));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template LO
-     * @template RO
-     *
-     * @param callable(TV): Either<LO, RO> $callback
-     * @return Separated<HashSet<LO>, HashSet<RO>>
-     */
-    public function partitionMap(callable $callback): Separated
-    {
-        return Ops\PartitionMapOperation::of($this)(dropFirstArg($callback))
-            ->mapLeft(fn($left) => HashSet::collect($left))
-            ->map(fn($right) => HashSet::collect($right));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TKO
-     *
-     * @param callable(TV): TKO $callback
-     * @return NonEmptyHashMap<TKO, TV>
-     */
-    public function reindex(callable $callback): NonEmptyHashMap
-    {
-        return new NonEmptyHashMap(
-            HashMap::collect(Ops\ReindexOperation::of($this)(dropFirstArg($callback))),
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TKO
-     *
-     * @param callable(TV): TKO $callback
-     * @return NonEmptyMap<TKO, NonEmptyHashSet<TV>>
-     */
-    public function groupBy(callable $callback): NonEmptyMap
-    {
-        $groups = Ops\GroupByOperation::of($this)(dropFirstArg($callback));
-
-        return (new NonEmptyHashMap($groups))
-            ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return Option<TV>
-     */
-    public function first(callable $predicate): Option
-    {
-        return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return Option<TV>
-     */
-    public function last(callable $predicate): Option
-    {
-        return Ops\LastOperation::of($this)(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param TVO $init
-     * @return FoldOperation<TV, TVO>
-     */
-    public function fold(mixed $init): FoldOperation
-    {
-        return new FoldOperation($this->getIterator(), $init);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return TV
-     */
-    public function head(): mixed
-    {
-        return Ops\HeadOperation::of($this)()->getUnsafe();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return TV
-     */
-    public function firstElement(): mixed
-    {
-        return Ops\FirstOperation::of($this)()->getUnsafe();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return TV
-     */
-    public function lastElement(): mixed
-    {
-        return Ops\LastOperation::of($this)()->getUnsafe();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param TV $element
-     */
-    public function contains(mixed $element): bool
-    {
-        return $this->set->contains($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return HashSet<TV>
-     */
-    public function tail(): HashSet
-    {
-        return $this->set->tail();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return HashSet<TV>
-     */
-    public function init(): HashSet
-    {
-        return HashSet::collect(Ops\InitOperation::of($this)());
-    }
+    #region NonEmptySetChainableOps
 
     /**
      * {@inheritDoc}
@@ -571,64 +287,6 @@ final class NonEmptyHashSet implements NonEmptySet
     public function updated(mixed $element): NonEmptyHashSet
     {
         return new NonEmptyHashSet($this->set->appended($element));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param TV $element
-     * @return HashSet<TV>
-     */
-    public function removed(mixed $element): HashSet
-    {
-        return $this->set->removed($element);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return HashSet<TV>
-     */
-    public function filter(callable $predicate): HashSet
-    {
-        return $this->set->filter($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return HashSet<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
-    {
-        return $this->set->filterOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return HashSet<TVO>
-     */
-    public function filterMap(callable $callback): HashSet
-    {
-        return $this->set->filterMap($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return HashSet<TV>
-     */
-    public function filterNotNull(): HashSet
-    {
-        return $this->filter(fn($elem) => null !== $elem);
     }
 
     /**
@@ -654,7 +312,7 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function map(callable $callback): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe(Ops\MapOperation::of($this)(dropFirstArg($callback)));
+        return new NonEmptyHashSet($this->set->map($callback));
     }
 
     /**
@@ -689,13 +347,558 @@ final class NonEmptyHashSet implements NonEmptySet
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(mixed...): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptyHashSet<TVO>
+     */
+    public function flatMapN(callable $callback): NonEmptyHashSet
+    {
+        return $this->flatMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): void $callback
      * @return NonEmptyHashSet<TV>
      */
     public function tap(callable $callback): NonEmptyHashSet
     {
-        Stream::emits(Ops\TapOperation::of($this)(dropFirstArg($callback)))->drain();
-        return $this;
+        return new NonEmptyHashSet($this->set->tap($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptyHashSet<TV>
+     */
+    public function tapN(callable $callback): NonEmptyHashSet
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    #endregion NonEmptySetChainableOps
+
+    #region NonEmptySetTerminalOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return $this->set->every($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->every(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-assert-if-true Set<TVO> $this
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     */
+    public function everyOf(string|array $fqcn, bool $invariant = false): bool
+    {
+        return $this->set->everyOf($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<NonEmptyHashSet<TVO>>
+     */
+    public function traverseOption(callable $callback): Option
+    {
+        return $this->set->traverseOption($callback)->map(fn($set) => new NonEmptyHashSet($set));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<NonEmptyHashSet<TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->traverseOption(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashSet<Option<TVO>>
+     *
+     * @return Option<NonEmptyHashSet<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return $this->set->sequenceOption()->map(fn($set) => new NonEmptyHashSet($set));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashSet<TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return $this->set->traverseEither($callback)->map(fn($set) => new NonEmptyHashSet($set));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashSet<TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->traverseEither(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashSet<Either<E, TVO>>
+     *
+     * @return Either<E, NonEmptyHashSet<TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return $this->set->sequenceEither()->map(fn($set) => new NonEmptyHashSet($set));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<HashSet<TV>, HashSet<TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return $this->set->partition($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<HashSet<TV>, HashSet<TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->partition(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<HashSet<LO>, HashSet<RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return $this->set->partitionMap($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<HashSet<LO>, HashSet<RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->partitionMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindex(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->set->reindex($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): NonEmptyMap
+    {
+        return $this->reindex(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return $this->set->exists($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->exists(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     */
+    public function existsOf(string|array $fqcn, bool $invariant = false): bool
+    {
+        return $this->set->existsOf($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, NonEmptyHashSet<TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->set->groupBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return NonEmptyHashMap<TKO, NonEmptyHashSet<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->set->groupMap($group, $map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->set->groupMapReduce($group, $map, $reduce));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
+     */
+    public function first(callable $predicate): Option
+    {
+        return $this->set->first($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option
+    {
+        return $this->first(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
+     */
+    public function last(callable $predicate): Option
+    {
+        return $this->set->last($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option
+    {
+        return $this->last(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return Option<TVO>
+     */
+    public function firstOf(string|array $fqcn, bool $invariant = false): Option
+    {
+        return $this->set->firstOf($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldOperation
+    {
+        return $this->set->fold($init);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function head(): mixed
+    {
+        return $this->firstElement();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function firstElement(): mixed
+    {
+        return $this->set->firstElement()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return TV
+     */
+    public function lastElement(): mixed
+    {
+        return $this->set->lastElement()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TV $element
+     */
+    public function contains(mixed $element): bool
+    {
+        return $this->set->contains($element);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
+     */
+    public function tail(): HashSet
+    {
+        return $this->set->tail();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
+     */
+    public function init(): HashSet
+    {
+        return $this->set->init();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TV $element
+     * @return HashSet<TV>
+     */
+    public function removed(mixed $element): HashSet
+    {
+        return $this->set->removed($element);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return HashSet<TV>
+     */
+    public function filter(callable $predicate): HashSet
+    {
+        return $this->set->filter($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return HashSet<TV>
+     */
+    public function filterN(callable $predicate): HashSet
+    {
+        return $this->filter(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     * @return HashSet<TVO>
+     */
+    public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
+    {
+        return $this->set->filterOf($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return HashSet<TVO>
+     */
+    public function filterMap(callable $callback): HashSet
+    {
+        return $this->set->filterMap($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return HashSet<TVO>
+     */
+    public function filterMapN(callable $callback): HashSet
+    {
+        return $this->filterMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
+     */
+    public function filterNotNull(): HashSet
+    {
+        return $this->set->filterNotNull();
     }
 
     /**
@@ -703,38 +906,29 @@ final class NonEmptyHashSet implements NonEmptySet
      */
     public function subsetOf(Set|NonEmptySet $superset): bool
     {
-        $isSubset = true;
-
-        foreach ($this as $elem) {
-            if (!$superset($elem)) {
-                $isSubset = false;
-                break;
-            }
-        }
-
-        return $isSubset;
+        return $this->set->subsetOf($superset);
     }
 
     /**
      * {@inheritDoc}
      *
      * @param Set<TV>|NonEmptySet<TV> $that
-     * @return Set<TV>
+     * @return HashSet<TV>
      */
-    public function intersect(Set|NonEmptySet $that): Set
+    public function intersect(Set|NonEmptySet $that): HashSet
     {
-        return $this->filter(fn($elem) => /** @var TV $elem */ $that($elem));
+        return $this->set->intersect($that);
     }
 
     /**
      * {@inheritDoc}
      *
      * @param Set<TV>|NonEmptySet<TV> $that
-     * @return Set<TV>
+     * @return HashSet<TV>
      */
-    public function diff(Set|NonEmptySet $that): Set
+    public function diff(Set|NonEmptySet $that): HashSet
     {
-        return $this->filter(fn($elem) => /** @var TV $elem */ !$that($elem));
+        return $this->set->diff($that);
     }
 
     /**
@@ -779,10 +973,29 @@ final class NonEmptyHashSet implements NonEmptySet
         return $this->set->minBy($callback)->getUnsafe();
     }
 
-    public function toString(): string
+    #endregion NonEmptySetTerminalOps
+
+    #region Traversable
+
+    /**
+     * @return Iterator<int, TV>
+     */
+    public function getIterator(): Iterator
     {
-        return (string) $this;
+        return $this->set->getIterator();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function count(): int
+    {
+        return $this->set->count();
+    }
+
+    #endregion Traversable
+
+    #region Magic methods
 
     public function __toString(): string
     {
@@ -790,6 +1003,16 @@ final class NonEmptyHashSet implements NonEmptySet
             ->map(Ops\ToStringOperation::of(...))
             ->toArrayList()
             ->mkString('NonEmptyHashSet(', ', ', ')');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TV $element
+     */
+    public function __invoke(mixed $element): bool
+    {
+        return $this->contains($element);
     }
 
     /**
@@ -809,4 +1032,6 @@ final class NonEmptyHashSet implements NonEmptySet
     {
         return NonEmptyHashSetExtensions::callStatic($name, $arguments);
     }
+
+    #endregion Magic methods
 }

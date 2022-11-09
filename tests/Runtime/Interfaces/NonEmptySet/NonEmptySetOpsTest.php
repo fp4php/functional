@@ -48,6 +48,12 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertFalse($hs->every(fn($i) => $i > 0));
     }
 
+    public function testEveryN(): void
+    {
+        $this->assertTrue(NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) <= 6));
+        $this->assertFalse(NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) < 6));
+    }
+
     public function testEveryOf(): void
     {
         $this->assertTrue(NonEmptyHashSet::collectNonEmpty([new Foo(1), new Foo(2)])->everyOf(Foo::class));
@@ -88,6 +94,28 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testTraverseOptionN(): void
+    {
+        $collection = NonEmptyHashSet::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Option::some(NonEmptyHashSet::collectNonEmpty([2, 4, 6])),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b < 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+    }
+
     /**
      * @param NonEmptySet<int> $set1
      * @param NonEmptySet<int> $set2
@@ -114,6 +142,28 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testTraverseEitherN(): void
+    {
+        $collection = NonEmptyHashSet::collectNonEmpty([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Either::right(NonEmptyHashSet::collectNonEmpty([2, 4, 6])),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+        $this->assertEquals(
+            Either::left('invalid'),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+    }
+
     public function testPartition(): void
     {
         $this->assertEquals(
@@ -123,6 +173,38 @@ final class NonEmptySetOpsTest extends TestCase
             ),
             NonEmptyHashSet::collectNonEmpty([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3),
         );
+    }
+
+    public function testPartitionN(): void
+    {
+        $collection = NonEmptyHashSet::collectNonEmpty([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: HashSet::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: HashSet::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionN(fn(int $a, int $b) => ($a + $b) >= 4);
+
+        $this->assertEquals($expected, $actual);
     }
 
     public function testPartitionMap(): void
@@ -137,6 +219,42 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testPartitionMapN(): void
+    {
+        $collection = NonEmptyHashSet::collectNonEmpty([
+            [1, 1, 'lhs'],
+            [1, 1, 'lhs'],
+            [1, 2, 'lhs'],
+            [1, 2, 'lhs'],
+            [2, 2, 'rhs'],
+            [2, 2, 'rhs'],
+            [3, 3, 'rhs'],
+            [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: HashSet::collect([
+                [1, 1, 'lhs'],
+                [1, 1, 'lhs'],
+                [1, 2, 'lhs'],
+                [1, 2, 'lhs'],
+            ]),
+            right: HashSet::collect([
+                [2, 2, 'rhs'],
+                [2, 2, 'rhs'],
+                [3, 3, 'rhs'],
+                [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionMapN(fn(int $a, int $b, string $mark) => Either::when(
+            cond: ($a + $b) >= 4,
+            right: fn() => [$a, $b, $mark],
+            left: fn() => [$a, $b, $mark],
+        ));
+
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testExists(): void
     {
         /** @psalm-var NonEmptyHashSet<object|scalar> $hs */
@@ -144,6 +262,12 @@ final class NonEmptySetOpsTest extends TestCase
 
         $this->assertTrue($hs->exists(fn($i) => $i === 1));
         $this->assertFalse($hs->exists(fn($i) => $i === 2));
+    }
+
+    public function testExistsN(): void
+    {
+        $this->assertTrue(NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 6));
+        $this->assertFalse(NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 7));
     }
 
     public function testExistsOf(): void
@@ -166,11 +290,56 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testGroupMap(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'odd' => NonEmptyHashSet::collectNonEmpty(['num-3', 'num-1']),
+                'even' => NonEmptyHashSet::collectNonEmpty(['num-2']),
+            ]),
+            NonEmptyHashSet::collectNonEmpty([1, 1, 2, 2, 3, 3])->groupMap(
+                fn($i) => 0 === $i % 2 ? 'even' : 'odd',
+                fn($i) => "num-{$i}",
+            ),
+        );
+    }
+
+    public function testGroupMapReduce(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                10 => [10, 15, 20],
+                20 => [10, 15],
+                30 => [20],
+            ]),
+            NonEmptyHashSet::collectNonEmpty([
+                ['id' => 10, 'sum' => 10],
+                ['id' => 10, 'sum' => 15],
+                ['id' => 10, 'sum' => 20],
+                ['id' => 20, 'sum' => 10],
+                ['id' => 20, 'sum' => 15],
+                ['id' => 30, 'sum' => 20],
+            ])->groupMapReduce(
+                fn(array $a) => $a['id'],
+                fn(array $a) => [$a['sum']],
+                fn(array $old, array $new) => array_merge($old, $new),
+            )
+        );
+    }
+
     public function testFilter(): void
     {
         $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);
         $this->assertEquals([1], $hs->filter(fn($i) => $i === 1)->toList());
         $this->assertEquals([1], NonEmptyHashSet::collectNonEmpty([1, null])->filterNotNull()->toList());
+    }
+
+    public function testFilterN(): void
+    {
+        $actual = NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])
+            ->filterN(fn(int $a, int $b) => $a + $b >= 6);
+
+        $this->assertEquals(HashSet::collect([[3, 3]]), $actual);
     }
 
     public function testFilterOf(): void
@@ -189,6 +358,14 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testFilterMapN(): void
+    {
+        $actual = NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])
+            ->filterMapN(fn(int $a, int $b) => Option::when($a + $b >= 6, fn() => $a));
+
+        $this->assertEquals(HashSet::collect([3]), $actual);
+    }
+
     public function testFirstsAndLasts(): void
     {
         $hs = NonEmptyHashSet::collectNonEmpty(['1', 2, '3']);
@@ -201,6 +378,24 @@ final class NonEmptySetOpsTest extends TestCase
 
         $hs = NonEmptyHashSet::collectNonEmpty([$f1 = new Foo(1), 2, new Foo(2)]);
         $this->assertEquals($f1, $hs->firstOf(Foo::class)->get());
+    }
+
+    public function testFirstN(): void
+    {
+        $this->assertEquals(
+            Option::some([2, 2, 'm3']),
+            NonEmptyHashSet::collectNonEmpty([[1, 1, 'm1'], [1, 1, 'm2'], [2, 2, 'm3'], [2, 2, 'm4']])
+                ->firstN(fn(int $a, int $b) => ($a + $b) === 4),
+        );
+    }
+
+    public function testLastN(): void
+    {
+        $this->assertEquals(
+            Option::some([2, 2, 'm4']),
+            NonEmptyHashSet::collectNonEmpty([[1, 1, 'm1'], [1, 1, 'm2'], [2, 2, 'm3'], [2, 2, 'm4']])
+                ->lastN(fn(int $a, int $b) => ($a + $b) === 4),
+        );
     }
 
     public function testFold(): void
@@ -261,6 +456,15 @@ final class NonEmptySetOpsTest extends TestCase
         );
     }
 
+    public function testFlatMapN(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashSet::collectNonEmpty([2, 3, 4, 5, 6, 7]),
+            NonEmptyHashSet::collectNonEmpty([[1, 2], [3, 4], [5, 6]])
+                ->flatMapN(fn(int $a, int $b) => [$a + 1, $b + 1]),
+        );
+    }
+
     public function testTap(): void
     {
         $this->assertEquals(
@@ -269,6 +473,16 @@ final class NonEmptySetOpsTest extends TestCase
                 ->tap(fn(Foo $foo) => $foo->a = $foo->a + 1)
                 ->map(fn(Foo $foo) => $foo->a)
                 ->toList()
+        );
+    }
+
+    public function testTapN(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashSet::collectNonEmpty([2, 3]),
+            NonEmptyHashSet::collectNonEmpty([[new Foo(1), 2], [new Foo(2), 3]])
+                ->tapN(fn(Foo $foo, int $new) => $foo->a = $new)
+                ->mapN(fn(Foo $foo) => $foo->a),
         );
     }
 
@@ -332,6 +546,19 @@ final class NonEmptySetOpsTest extends TestCase
             ]),
             NonEmptyHashSet::collectNonEmpty([1, 2, 2])
                 ->reindex(fn($value) => "key-{$value}"),
+        );
+    }
+
+    public function testReindexN(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['x-1', ['x', 1]],
+                ['y-2', ['y', 2]],
+                ['z-3', ['z', 3]],
+            ]),
+            NonEmptyHashSet::collectNonEmpty([['x', 1], ['y', 2], ['z', 3]])
+                ->reindexN(fn(string $a, int $b) => "{$a}-{$b}"),
         );
     }
 }

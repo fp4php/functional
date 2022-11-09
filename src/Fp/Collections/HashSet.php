@@ -774,9 +774,9 @@ final class HashSet implements Set
      * @template TKO
      *
      * @param callable(TV): TKO $callback
-     * @return Map<TKO, NonEmptyHashSet<TV>>
+     * @return HashMap<TKO, NonEmptyHashSet<TV>>
      */
-    public function groupBy(callable $callback): Map
+    public function groupBy(callable $callback): HashMap
     {
         return Ops\GroupByOperation::of($this)(dropFirstArg($callback))
             ->map(fn(NonEmptyHashMap $seq) => $seq->values()->toNonEmptyHashSet());

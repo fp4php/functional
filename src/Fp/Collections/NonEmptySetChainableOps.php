@@ -59,6 +59,50 @@ interface NonEmptySetChainableOps
     public function mapN(callable $callback): NonEmptySet;
 
     /**
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([2, 5])
+     * >>>     ->flatMap(fn($e) => [$e - 1, $e, $e, $e + 1])
+     * >>>     ->toList();
+     * => [1, 2, 3, 4, 5, 6]
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptySet<TVO>
+     */
+    public function flatMap(callable $callback): NonEmptySet;
+
+    /**
+     * Same as {@see NonEmptySetChainableOps::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>) $callback
+     * @return NonEmptySet<TVO>
+     */
+    public function flatMapN(callable $callback): NonEmptySet;
+
+    /**
+     * Converts this NonEmptySet<iterable<TVO>> into a Set<TVO>.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([
+     * >>>     HashSet::collect([1, 2]),
+     * >>>     HashSet::collect([3, 4]),
+     * >>>     HashSet::collect([5, 6]),
+     * >>> ])->flatten();
+     * => HashSet(1, 2, 3, 4, 5, 6)
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<non-empty-array<array-key, TVO>|NonEmptyCollection<mixed, TVO>>
+     *
+     * @return NonEmptySet<TVO>
+     */
+    public function flatten(): NonEmptySet;
+
+    /**
      * Call a function for every collection element
      *
      * ```php
@@ -73,4 +117,12 @@ interface NonEmptySetChainableOps
      * @return NonEmptySet<TV>
      */
     public function tap(callable $callback): NonEmptySet;
+
+    /**
+     * Same as {@see NonEmptySetChainableOps::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptySet<TV>
+     */
+    public function tapN(callable $callback): NonEmptySet;
 }
