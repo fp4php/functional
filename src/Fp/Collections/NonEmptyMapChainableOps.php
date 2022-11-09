@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Fp\Functional\Option\Option;
-use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 
 /**
@@ -83,6 +81,53 @@ interface NonEmptyMapChainableOps
     public function mapN(callable $callback): NonEmptyMap;
 
     /**
+     * Map collection and flatten the result
+     *
+     * ```php
+     * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['2', 2], ['5', 5]]);
+     * => NonEmptyHashMap('2' -> 2, '5' -> 5)
+     *
+     * >>> $collection
+     * >>>     ->flatMap(fn(int $val) => [
+     * >>>         ($val - 1) => $val - 1,
+     * >>>         ($val) => $val,
+     * >>>         ($val + 1) => $val + 1,
+     * >>>     ])
+     * >>>     ->toList();
+     * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyMap<TKO, TVO>
+     */
+    public function flatMap(callable $callback): NonEmptyMap;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(mixed...): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyMap<TKO, TVO>
+     */
+    public function flatMapN(callable $callback): NonEmptyMap;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::flatMap()}, but passing also the key to the $callback function.
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyMap<TKO, TVO>
+     */
+    public function flatMapKV(callable $callback): NonEmptyMap;
+
+    /**
      * Call a function for every collection element
      *
      * ```php
@@ -97,6 +142,14 @@ interface NonEmptyMapChainableOps
      * @return NonEmptyMap<TK, TV>
      */
     public function tap(callable $callback): NonEmptyMap;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptyMap<TK, TV>
+     */
+    public function tapN(callable $callback): NonEmptyMap;
 
     /**
      * Same as {@see NonEmptyMapChainableOps::tap()}, but passing also the key to the $callback function.
@@ -123,6 +176,16 @@ interface NonEmptyMapChainableOps
      * @return NonEmptyMap<TKO, TV>
      */
     public function reindex(callable $callback): NonEmptyMap;
+
+    /**
+     * Same as {@see NonEmptyMapChainableOps::reindex()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return NonEmptyMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): NonEmptyMap;
 
     /**
      * Same as {@see NonEmptyMapChainableOps::reindex()}, but passing also the key to the $callback function.

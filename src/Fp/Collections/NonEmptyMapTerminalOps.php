@@ -85,6 +85,13 @@ interface NonEmptyMapTerminalOps
     public function every(callable $predicate): bool;
 
     /**
+     * Same as {@see NonEmptyMapTerminalOps::every()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool;
+
+    /**
      * Same as {@see NonEmptyMapTerminalOps::every()}, but passing also the key to the $predicate function.
      *
      * @param callable(TK, TV): bool $predicate
@@ -118,6 +125,13 @@ interface NonEmptyMapTerminalOps
     public function exists(callable $predicate): bool;
 
     /**
+     * Same as {@see NonEmptyMapTerminalOps::exists()}, but deconstruct input tuple and pass it to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool;
+
+    /**
      * Same as {@see NonEmptyMapTerminalOps::exists()}, but passing also the key to the $predicate function.
      *
      * @param callable(TK, TV): bool $predicate
@@ -143,6 +157,16 @@ interface NonEmptyMapTerminalOps
      * @return Option<NonEmptyMap<TK, TVO>>
      */
     public function traverseOption(callable $callback): Option;
+
+    /**
+     * Same as {@see NonEmptyMapTerminalOps::exists()}, but passing also the key to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<NonEmptyMap<TK, TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option;
 
     /**
      * Same as {@see NonEmptyMapTerminalOps::traverseOption()}, but passing also the key to the $callback function.
@@ -205,6 +229,17 @@ interface NonEmptyMapTerminalOps
      * @template E
      * @template TVO
      *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyMap<TK, TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either;
+
+    /**
+     * Same as {@see NonEmptyMapTerminalOps::traverseEither()}, but passing also the key to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
      * @param callable(TK, TV): Either<E, TVO> $callback
      * @return Either<E, NonEmptyMap<TK, TVO>>
      */
@@ -225,6 +260,14 @@ interface NonEmptyMapTerminalOps
      * @return Separated<Map<TK, TV>, Map<TK, TV>>
      */
     public function partition(callable $predicate): Separated;
+
+    /**
+     * Same as {@see NonEmptyMapTerminalOps::partition()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<Map<TK, TV>, Map<TK, TV>>
+     */
+    public function partitionN(callable $predicate): Separated;
 
     /**
      * Same as {@see NonEmptyMapTerminalOps::partition()}, but passing also the key to the $predicate function.
@@ -253,6 +296,17 @@ interface NonEmptyMapTerminalOps
      * @return Separated<Map<TK, LO>, Map<TK, RO>>
      */
     public function partitionMap(callable $callback): Separated;
+
+    /**
+     * Same as {@see NonEmptyMapTerminalOps::partitionMap()}, but passing also the key to the $callback function.
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<Map<TK, LO>, Map<TK, RO>>
+     */
+    public function partitionMapN(callable $callback): Separated;
 
     /**
      * Same as {@see NonEmptyMapTerminalOps::partitionMap()}, but passing also the key to the $callback function.
@@ -339,6 +393,16 @@ interface NonEmptyMapTerminalOps
     public function filter(callable $predicate): Map;
 
     /**
+     * Same as {@see NonEmptyMapTerminalOps::filter()}, but passing also the key to the $predicate function.
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Map<TK, TV>
+     *
+     * @see CollectionFilterMethodReturnTypeProvider
+     */
+    public function filterN(callable $predicate): Map;
+
+    /**
      * Same as {@see NonEmptyMapChainableOps::filter()}, but passing also the key to the $predicate function.
      *
      * @param callable(TK, TV): bool $predicate
@@ -370,6 +434,16 @@ interface NonEmptyMapTerminalOps
     public function filterMap(callable $callback): Map;
 
     /**
+     * Same as {@see NonEmptyMapTerminalOps::filterMap()}, but passing also the key to the $callback function.
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Map<TK, TVO>
+     */
+    public function filterMapN(callable $callback): Map;
+
+    /**
      * Same as {@see NonEmptyMapChainableOps::filterMap()}, but passing also the key to the $callback function.
      *
      * @template TVO
@@ -398,42 +472,6 @@ interface NonEmptyMapTerminalOps
      * @return NonEmptyMap<TKO, TVO>
      */
     public function flatten(): NonEmptyMap;
-
-    /**
-     * Map collection and flatten the result
-     *
-     * ```php
-     * >>> $collection = NonEmptyHashMap::collectPairsNonEmpty([['2', 2], ['5', 5]]);
-     * => NonEmptyHashMap('2' -> 2, '5' -> 5)
-     *
-     * >>> $collection
-     * >>>     ->flatMap(fn(int $val) => [
-     * >>>         ($val - 1) => $val - 1,
-     * >>>         ($val) => $val,
-     * >>>         ($val + 1) => $val + 1,
-     * >>>     ])
-     * >>>     ->toList();
-     * => [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
-     * ```
-     *
-     * @template TKO
-     * @template TVO
-     *
-     * @param callable(TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
-     * @return NonEmptyMap<TKO, TVO>
-     */
-    public function flatMap(callable $callback): NonEmptyMap;
-
-    /**
-     * Same as {@see NonEmptyMapChainableOps::flatMap()}, but passing also the key to the $callback function.
-     *
-     * @template TKO
-     * @template TVO
-     *
-     * @param callable(TK, TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
-     * @return NonEmptyMap<TKO, TVO>
-     */
-    public function flatMapKV(callable $callback): NonEmptyMap;
 
     /**
      * Returns sequence of collection keys

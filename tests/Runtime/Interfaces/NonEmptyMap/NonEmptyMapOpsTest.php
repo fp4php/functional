@@ -40,6 +40,29 @@ final class NonEmptyMapOpsTest extends TestCase
         $this->assertFalse(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->every(fn($entry) => $entry > 0));
     }
 
+    public function testEveryN(): void
+    {
+        $this->assertTrue(
+            NonEmptyHashMap
+                ::collectNonEmpty([
+                    'fst' => [1, 1],
+                    'snd' => [2, 2],
+                    'thr' => [3, 3],
+                ])
+                ->everyN(fn(int $a, int $b) => ($a + $b) <= 6),
+        );
+
+        $this->assertFalse(
+            HashMap
+                ::collect([
+                    'fst' => [1, 1],
+                    'snd' => [2, 2],
+                    'thr' => [3, 3],
+                ])
+                ->everyN(fn(int $a, int $b) => ($a + $b) < 6),
+        );
+    }
+
     public function testEveryOf(): void
     {
         $this->assertFalse(
@@ -54,6 +77,28 @@ final class NonEmptyMapOpsTest extends TestCase
     {
         $this->assertTrue(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->exists(fn($entry) => $entry >= 0));
         $this->assertFalse(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->exists(fn($entry) => $entry > 1));
+    }
+
+    public function testExistsN(): void
+    {
+        $this->assertTrue(
+            NonEmptyHashMap
+                ::collectNonEmpty([
+                    'fst' => [1, 1],
+                    'snd' => [2, 2],
+                    'thr' => [3, 3],
+                ])
+                ->existsN(fn(int $a, int $b) => ($a + $b) === 6),
+        );
+        $this->assertFalse(
+            NonEmptyHashMap
+                ::collectNonEmpty([
+                    'fst' => [1, 1],
+                    'snd' => [2, 2],
+                    'thr' => [3, 3],
+                ])
+                ->existsN(fn(int $a, int $b) => ($a + $b) === 7),
+        );
     }
 
     public function provideTestTraverseData(): Generator
@@ -90,6 +135,28 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
+    public function testTraverseOptionN(): void
+    {
+        $collection = NonEmptyHashMap::collectNonEmpty([
+            'fst' => [1, 1],
+            'snd' => [2, 2],
+            'thr' => [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Option::some(NonEmptyHashMap::collectNonEmpty(['fst' => 2, 'snd' => 4, 'thr' => 6])),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+        $this->assertEquals(
+            Option::none(),
+            $collection->traverseOptionN(
+                fn(int $a, int $b) => $a + $b < 6 ? Option::some($a + $b) : Option::none(),
+            ),
+        );
+    }
+
     /**
      * @param NonEmptyMap<string, int> $map1
      * @param NonEmptyMap<string, int> $map2
@@ -116,6 +183,28 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
+    public function testTraverseEitherN(): void
+    {
+        $collection = NonEmptyHashMap::collectNonEmpty([
+            'fst' => [1, 1],
+            'snd' => [2, 2],
+            'thr' => [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Either::right(NonEmptyHashMap::collectNonEmpty(['fst' => 2, 'snd' => 4, 'thr' => 6])),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b <= 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+        $this->assertEquals(
+            Either::left('invalid'),
+            $collection->traverseEitherN(
+                fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+    }
+
     public function testPartition(): void
     {
         $expected = Separated::create(
@@ -125,6 +214,38 @@ final class NonEmptyMapOpsTest extends TestCase
 
         $actual = NonEmptyHashMap::collectNonEmpty(['k0' => 0, 'k1' => 1, 'k2' => 2, 'k3' => 3, 'k4' => 4, 'k5' => 5])
             ->partition(fn($i) => $i < 3);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testPartitionN(): void
+    {
+        $collection = NonEmptyHashMap::collectNonEmpty([
+            'k1' => [1, 1, 'lhs'],
+            'k2' => [1, 1, 'lhs'],
+            'k3' => [1, 2, 'lhs'],
+            'k4' => [1, 2, 'lhs'],
+            'k5' => [2, 2, 'rhs'],
+            'k6' => [2, 2, 'rhs'],
+            'k7' => [3, 3, 'rhs'],
+            'k8' => [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: HashMap::collect([
+                'k1' => [1, 1, 'lhs'],
+                'k2' => [1, 1, 'lhs'],
+                'k3' => [1, 2, 'lhs'],
+                'k4' => [1, 2, 'lhs'],
+            ]),
+            right: HashMap::collect([
+                'k5' => [2, 2, 'rhs'],
+                'k6' => [2, 2, 'rhs'],
+                'k7' => [3, 3, 'rhs'],
+                'k8' => [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionN(fn(int $a, int $b) => ($a + $b) >= 4);
 
         $this->assertEquals($expected, $actual);
     }
@@ -142,11 +263,60 @@ final class NonEmptyMapOpsTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testPartitionMapN(): void
+    {
+        $collection = NonEmptyHashMap::collectNonEmpty([
+            'k1' => [1, 1, 'lhs'],
+            'k2' => [1, 1, 'lhs'],
+            'k3' => [1, 2, 'lhs'],
+            'k4' => [1, 2, 'lhs'],
+            'k5' => [2, 2, 'rhs'],
+            'k6' => [2, 2, 'rhs'],
+            'k7' => [3, 3, 'rhs'],
+            'k8' => [3, 3, 'rhs'],
+        ]);
+
+        $expected = Separated::create(
+            left: HashMap::collect([
+                'k1' => [1, 1, 'lhs'],
+                'k2' => [1, 1, 'lhs'],
+                'k3' => [1, 2, 'lhs'],
+                'k4' => [1, 2, 'lhs'],
+            ]),
+            right: HashMap::collect([
+                'k5' => [2, 2, 'rhs'],
+                'k6' => [2, 2, 'rhs'],
+                'k7' => [3, 3, 'rhs'],
+                'k8' => [3, 3, 'rhs'],
+            ]),
+        );
+        $actual = $collection->partitionMapN(fn(int $a, int $b, string $mark) => Either::when(
+            cond: ($a + $b) >= 4,
+            right: fn() => [$a, $b, $mark],
+            left: fn() => [$a, $b, $mark],
+        ));
+
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testFilter(): void
     {
         $hm = NonEmptyHashMap::collectPairsUnsafe([['a', new Foo(1)], ['b', 1], ['c',  new Foo(2)]]);
         $this->assertEquals([['b', 1]], $hm->filter(fn($e) => $e === 1)->toList());
         $this->assertEquals([['b', 1]], $hm->filterKV(fn($key, $value) => $key === 'b' && $value === 1)->toList());
+    }
+
+    public function testFilterN(): void
+    {
+        $actual = NonEmptyHashMap
+            ::collectNonEmpty([
+                'fst' => [1, 1],
+                'snd' => [2, 2],
+                'thr' => [3, 3],
+            ])
+            ->filterN(fn(int $a, int $b) => $a + $b >= 6);
+
+        $this->assertEquals(HashMap::collect(['thr' => [3, 3]]), $actual);
     }
 
     public function testFilterMap(): void
@@ -157,6 +327,19 @@ final class NonEmptyMapOpsTest extends TestCase
                 ->filterMap(fn($val) => is_numeric($val) ? Option::some((int) $val) : Option::none())
                 ->toList()
         );
+    }
+
+    public function testFilterMapN(): void
+    {
+        $actual = NonEmptyHashMap
+            ::collectNonEmpty([
+                'fst' => [1, 1],
+                'snd' => [2, 2],
+                'thr' => [3, 3],
+            ])
+            ->filterMapN(fn(int $a, int $b) => Option::when($a + $b >= 6, fn() => $a));
+
+        $this->assertEquals(HashMap::collect(['thr' => 3]), $actual);
     }
 
     public function testFlatten(): void
@@ -195,6 +378,30 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
+    public function testFlatMapN(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty([
+                'k2' => 2,
+                'k3' => 3,
+                'k4' => 4,
+                'k5' => 5,
+                'k6' => 6,
+                'k7' => 7,
+            ]),
+            NonEmptyHashMap
+                ::collectNonEmpty([
+                    'fst' => [1, 2],
+                    'snd' => [3, 4],
+                    'thr' => [5, 6],
+                ])
+                ->flatMapN(fn(int $a, int $b) => [
+                    'k' . ($a + 1) => $a + 1,
+                    'k' . ($b + 1) => $b + 1,
+                ]),
+        );
+    }
+
     public function testFold(): void
     {
         $hm = NonEmptyHashMap::collectPairsNonEmpty([['2', 2], ['3', 3]]);
@@ -209,6 +416,16 @@ final class NonEmptyMapOpsTest extends TestCase
             NonEmptyHashMap::collectNonEmpty([2 => 22, 3 => 33])
                 ->tap(fn(int $v) => $v + 10)
                 ->toList(),
+        );
+    }
+
+    public function testTapN(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectNonEmpty(['snd' => 2, 'thr' => 3]),
+            NonEmptyHashMap::collectNonEmpty(['snd' => [new Foo(1), 2], 'thr' => [new Foo(2), 3]])
+                ->tapN(fn(Foo $foo, int $new) => $foo->a = $new)
+                ->mapN(fn(Foo $foo) => $foo->a),
         );
     }
 
@@ -257,6 +474,24 @@ final class NonEmptyMapOpsTest extends TestCase
         $this->assertEquals(
             [['2-22', 22], ['3-33', 33]],
             $hm->reindexKV(fn($k, $v) => "{$k}-{$v}")->toList(),
+        );
+    }
+
+    public function testReindexN(): void
+    {
+        $this->assertEquals(
+            NonEmptyHashMap::collectPairsNonEmpty([
+                ['x-1', ['x', 1]],
+                ['y-2', ['y', 2]],
+                ['z-3', ['z', 3]],
+            ]),
+            NonEmptyHashMap
+                ::collectNonEmpty([
+                    'fst' => ['x', 1],
+                    'snd' => ['y', 2],
+                    'thr' => ['z', 3],
+                ])
+                ->reindexN(fn(string $a, int $b) => "{$a}-{$b}"),
         );
     }
 

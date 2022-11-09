@@ -35,6 +35,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     {
     }
 
+    #region NonEmptyMapCollectorOps
+
     /**
      * {@inheritDoc}
      *
@@ -135,21 +137,9 @@ final class NonEmptyHashMap implements NonEmptyMap
         return NonEmptyHashMap::collectPairsUnsafe($source);
     }
 
-    /**
-     * @return Generator<TK, TV>
-     */
-    public function getIterator(): Generator
-    {
-        return $this->hashMap->getIterator();
-    }
+    #endregion NonEmptyMapCollectorOps
 
-    /**
-     * {@inheritDoc}
-     */
-    public function count(): int
-    {
-        return $this->hashMap->count();
-    }
+    #region NonEmptyMapCastableOps
 
     /**
      * {@inheritDoc}
@@ -318,230 +308,14 @@ final class NonEmptyHashMap implements NonEmptyMap
         return $this->hashMap->toStream();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     */
-    public function every(callable $predicate): bool
+    public function toString(): string
     {
-        return $this->everyKV(dropFirstArg($predicate));
+        return (string) $this;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TK, TV): bool $predicate
-     */
-    public function everyKV(callable $predicate): bool
-    {
-        return $this->hashMap->everyKV($predicate);
-    }
+    #endregion NonEmptyMapCastableOps
 
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-assert-if-true NonEmptyHashMap<TK, TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->hashMap->everyOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return $this->existsKV(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TK, TV): bool $predicate
-     */
-    public function existsKV(callable $predicate): bool
-    {
-        return $this->hashMap->existsKV($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return Option<NonEmptyHashMap<TK, TVO>>
-     */
-    public function traverseOption(callable $callback): Option
-    {
-        return $this->traverseOptionKV(dropFirstArg($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TK, TV): Option<TVO> $callback
-     * @return Option<NonEmptyHashMap<TK, TVO>>
-     */
-    public function traverseOptionKV(callable $callback): Option
-    {
-        return $this->hashMap
-            ->traverseOptionKV($callback)
-            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, Option<TVO>>
-     *
-     * @return Option<NonEmptyHashMap<TK, TVO>>
-     */
-    public function sequenceOption(): Option
-    {
-        return $this->hashMap
-            ->sequenceOption()
-            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     *
-     * @param callable(TV): Either<E, TVO> $callback
-     * @return Either<E, NonEmptyHashMap<TK, TVO>>
-     */
-    public function traverseEither(callable $callback): Either
-    {
-        return $this->traverseEitherKV(dropFirstArg($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     *
-     * @param callable(TK, TV): Either<E, TVO> $callback
-     * @return Either<E, NonEmptyHashMap<TK, TVO>>
-     */
-    public function traverseEitherKV(callable $callback): Either
-    {
-        return $this->hashMap->traverseEitherKV($callback)
-            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
-     */
-    public function partition(callable $predicate): Separated
-    {
-        return $this->partitionKV(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TK, TV): bool $predicate
-     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
-     */
-    public function partitionKV(callable $predicate): Separated
-    {
-        return $this->hashMap->partitionKV($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template LO
-     * @template RO
-     *
-     * @param callable(TV): Either<LO, RO> $callback
-     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
-     */
-    public function partitionMap(callable $callback): Separated
-    {
-        return $this->partitionMapKV(dropFirstArg($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template LO
-     * @template RO
-     *
-     * @param callable(TK, TV): Either<LO, RO> $callback
-     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
-     */
-    public function partitionMapKV(callable $callback): Separated
-    {
-        return $this->hashMap->partitionMapKV($callback);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template E
-     * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, Either<E, TVO>>
-     *
-     * @return Either<E, NonEmptyHashMap<TK, TVO>>
-     */
-    public function sequenceEither(): Either
-    {
-        return $this->hashMap->sequenceEither()
-            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param TVO $init
-     * @return FoldOperation<TV, TVO>
-     */
-    public function fold(mixed $init): FoldOperation
-    {
-        return new FoldOperation($this, $init);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param TK $key
-     * @return Option<TV>
-     */
-    public function __invoke(mixed $key): Option
-    {
-        return $this->get($key);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param TK $key
-     * @return Option<TV>
-     */
-    public function get(mixed $key): Option
-    {
-        return $this->hashMap->get($key);
-    }
+    #region NonEmptyMapChainableOps
 
     /**
      * {@inheritDoc}
@@ -559,17 +333,6 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param TK $key
-     * @return HashMap<TK, TV>
-     */
-    public function removed(mixed $key): HashMap
-    {
-        return $this->hashMap->removed($key);
-    }
-
-    /**
      * @template TKO
      * @template TVO
      *
@@ -579,54 +342,6 @@ final class NonEmptyHashMap implements NonEmptyMap
     public function merge(iterable $map): NonEmptyHashMap
     {
         return new NonEmptyHashMap($this->hashMap->merge($map));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): bool $predicate
-     * @return HashMap<TK, TV>
-     */
-    public function filter(callable $predicate): HashMap
-    {
-        return $this->hashMap->filter($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TK, TV): bool $predicate
-     * @return Map<TK, TV>
-     */
-    public function filterKV(callable $predicate): Map
-    {
-        return $this->hashMap->filterKV($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TV): Option<TVO> $callback
-     * @return HashMap<TK, TVO>
-     */
-    public function filterMap(callable $callback): HashMap
-    {
-        return $this->filterMapKV(dropFirstArg($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param callable(TK, TV): Option<TVO> $callback
-     * @return HashMap<TK, TVO>
-     */
-    public function filterMapKV(callable $callback): HashMap
-    {
-        return $this->hashMap->filterMapKV($callback);
     }
 
     /**
@@ -655,6 +370,20 @@ final class NonEmptyHashMap implements NonEmptyMap
     public function flatMap(callable $callback): NonEmptyHashMap
     {
         return $this->flatMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(mixed...): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function flatMapN(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->flatMapN($callback));
     }
 
     /**
@@ -724,6 +453,17 @@ final class NonEmptyHashMap implements NonEmptyMap
     /**
      * {@inheritDoc}
      *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptyHashMap<TK, TV>
+     */
+    public function tapN(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->tapN($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TK, TV): void $callback
      * @return NonEmptyHashMap<TK, TV>
      */
@@ -750,10 +490,23 @@ final class NonEmptyHashMap implements NonEmptyMap
      *
      * @template TKO
      *
+     * @param callable(mixed...): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->reindexN($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
      * @param callable(TK, TV): TKO $callback
      * @return NonEmptyHashMap<TKO, TV>
      */
-    public function reindexKV(callable $callback): NonEmptyMap
+    public function reindexKV(callable $callback): NonEmptyHashMap
     {
         return new NonEmptyHashMap($this->hashMap->reindexKV($callback));
     }
@@ -848,6 +601,379 @@ final class NonEmptyHashMap implements NonEmptyMap
         return new NonEmptyHashMap($this->hashMap->groupMapReduceKV($group, $map, $reduce));
     }
 
+    #endregion NonEmptyMapChainableOps
+
+    #region NonEmptyMapTerminalOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return $this->everyKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->hashMap->everyN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function everyKV(callable $predicate): bool
+    {
+        return $this->hashMap->everyKV($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-assert-if-true NonEmptyHashMap<TK, TVO> $this
+     *
+     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+     */
+    public function everyOf(string|array $fqcn, bool $invariant = false): bool
+    {
+        return $this->hashMap->everyOf($fqcn, $invariant);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return $this->existsKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->hashMap->existsN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function existsKV(callable $predicate): bool
+    {
+        return $this->hashMap->existsKV($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseOption(callable $callback): Option
+    {
+        return $this->traverseOptionKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->hashMap->traverseOptionN($callback)->map(fn($map) => new NonEmptyHashMap($map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseOptionKV(callable $callback): Option
+    {
+        return $this->hashMap
+            ->traverseOptionKV($callback)
+            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, Option<TVO>>
+     *
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return $this->hashMap
+            ->sequenceOption()
+            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return $this->traverseEitherKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->hashMap->traverseEitherN($callback)->map(fn($map) => new NonEmptyHashMap($map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEitherKV(callable $callback): Either
+    {
+        return $this->hashMap->traverseEitherKV($callback)
+            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return $this->partitionKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->hashMap->partitionN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionKV(callable $predicate): Separated
+    {
+        return $this->hashMap->partitionKV($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return $this->partitionMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->hashMap->partitionMapN($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TK, TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapKV(callable $callback): Separated
+    {
+        return $this->hashMap->partitionMapKV($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, Either<E, TVO>>
+     *
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return $this->hashMap->sequenceEither()
+            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldOperation
+    {
+        return new FoldOperation($this, $init);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function get(mixed $key): Option
+    {
+        return $this->hashMap->get($key);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TK $key
+     * @return HashMap<TK, TV>
+     */
+    public function removed(mixed $key): HashMap
+    {
+        return $this->hashMap->removed($key);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return HashMap<TK, TV>
+     */
+    public function filter(callable $predicate): HashMap
+    {
+        return $this->hashMap->filter($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return HashMap<TK, TV>
+     */
+    public function filterN(callable $predicate): HashMap
+    {
+        return $this->hashMap->filterN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Map<TK, TV>
+     */
+    public function filterKV(callable $predicate): Map
+    {
+        return $this->hashMap->filterKV($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function filterMap(callable $callback): HashMap
+    {
+        return $this->filterMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function filterMapN(callable $callback): HashMap
+    {
+        return $this->hashMap->filterMapN($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
+     */
+    public function filterMapKV(callable $callback): HashMap
+    {
+        return $this->hashMap->filterMapKV($callback);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -872,10 +998,29 @@ final class NonEmptyHashMap implements NonEmptyMap
             ->getUnsafe();
     }
 
-    public function toString(): string
+    #endregion NonEmptyMapTerminalOps
+
+    #region Traversable
+
+    /**
+     * @return Generator<TK, TV>
+     */
+    public function getIterator(): Generator
     {
-        return (string) $this;
+        return $this->hashMap->getIterator();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function count(): int
+    {
+        return $this->hashMap->count();
+    }
+
+    #endregion Traversable
+
+    #region Magic methods
 
     public function __toString(): string
     {
@@ -884,6 +1029,17 @@ final class NonEmptyHashMap implements NonEmptyMap
             ->values()
             ->toArrayList()
             ->mkString('NonEmptyHashMap(', ', ', ')');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
     }
 
     /**
@@ -903,4 +1059,6 @@ final class NonEmptyHashMap implements NonEmptyMap
     {
         return NonEmptyHashMapExtensions::callStatic($name, $arguments);
     }
+
+    #endregion Magic methods
 }

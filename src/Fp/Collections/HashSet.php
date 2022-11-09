@@ -723,9 +723,9 @@ final class HashSet implements Set
      * @template TKO
      *
      * @param callable(mixed...): TKO $callback
-     * @return Map<TKO, TV>
+     * @return HashMap<TKO, TV>
      */
-    public function reindexN(callable $callback): Map
+    public function reindexN(callable $callback): HashMap
     {
         return $this->reindex(function($tuple) use ($callback) {
             /** @var array $tuple */;

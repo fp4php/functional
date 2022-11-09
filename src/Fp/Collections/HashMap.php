@@ -333,7 +333,7 @@ final class HashMap implements Map
      * @param callable(mixed...): bool $predicate
      * @return HashMap<TK, TV>
      */
-    public function filterN(callable $predicate): Map
+    public function filterN(callable $predicate): HashMap
     {
         return $this->filterKV(function($_k, $tuple) use ($predicate) {
             /** @var array $tuple */;
@@ -373,7 +373,7 @@ final class HashMap implements Map
      * @param callable(mixed...): Option<TVO> $callback
      * @return HashMap<TK, TVO>
      */
-    public function filterMapN(callable $callback): Map
+    public function filterMapN(callable $callback): HashMap
     {
         return $this->filterMapKV(function($_k, $tuple) use ($callback) {
             /** @var array $tuple */;
@@ -431,7 +431,7 @@ final class HashMap implements Map
      * @param callable(mixed...): (iterable<TKO, TVO>|Collection<TKO, TVO>) $callback
      * @return HashMap<TKO, TVO>
      */
-    public function flatMapN(callable $callback): Map
+    public function flatMapN(callable $callback): HashMap
     {
         return $this->flatMapKV(function($_k, $tuple) use ($callback) {
             /** @var array $tuple */;
@@ -512,7 +512,7 @@ final class HashMap implements Map
      * @param callable(mixed...): void $callback
      * @return HashMap<TK, TV>
      */
-    public function tapN(callable $callback): Map
+    public function tapN(callable $callback): HashMap
     {
         return $this->tapKV(function($_k, $tuple) use ($callback) {
             /** @var array $tuple */;
@@ -553,7 +553,7 @@ final class HashMap implements Map
      * @param callable(mixed...): TKO $callback
      * @return HashMap<TKO, TV>
      */
-    public function reindexN(callable $callback): Map
+    public function reindexN(callable $callback): HashMap
     {
         return $this->reindexKV(function($_k, $tuple) use ($callback) {
             /** @var array $tuple */;
