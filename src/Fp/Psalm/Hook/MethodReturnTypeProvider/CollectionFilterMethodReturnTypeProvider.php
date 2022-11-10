@@ -18,17 +18,12 @@ use Fp\Collections\NonEmptySeq;
 use Fp\Collections\NonEmptySet;
 use Fp\Collections\Seq;
 use Fp\Collections\Set;
+use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Streams\Stream;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
-use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\Isset_;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\FunctionLike;
-use PhpParser\Node\Param;
-use Psalm\Node\Expr\VirtualArrowFunction;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type;
@@ -38,11 +33,9 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
-use function Fp\Collection\first;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
-use function Fp\classOf;
 
 final class CollectionFilterMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
@@ -80,12 +73,10 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
     {
         return proveTrue(in_array($event->getMethodNameLowercase(), self::getMethodNames()))
             ->flatMap(fn() => sequenceOptionT(
-                fn() => Option::some($event->getMethodNameLowercase() === 'filterkv'
+                fn() => Option::some($event->getMethodNameLowercase() === strtolower('filterKV')
                     ? RefineForEnum::KeyValue
                     : RefineForEnum::Value),
-                fn() => self::extractPredicateArg($event)
-                    ->map(fn(Arg $arg) => $arg->value)
-                    ->filterOf(FunctionLike::class),
+                fn() => PredicateExtractor::extract($event),
                 fn() => Option::some($event->getContext()),
                 fn() => proveOf($event->getSource(), StatementsAnalyzer::class),
                 fn() => Option::fromNullable($event->getTemplateTypeParameters())
@@ -99,34 +90,11 @@ final class CollectionFilterMethodReturnTypeProvider implements MethodReturnType
             ->get();
     }
 
-    /**
-     * @psalm-return Option<Arg>
-     */
-    public static function extractPredicateArg(MethodReturnTypeProviderEvent $event): Option
-    {
-        return first($event->getCallArgs())
-            ->orElse(fn() => self::mockNotNullPredicateArg($event));
-    }
-
-    /**
-     * @psalm-return Option<Arg>
-     */
-    public static function mockNotNullPredicateArg(MethodReturnTypeProviderEvent $event): Option
-    {
-        return proveTrue(strtolower('filterNotNull') === $event->getMethodNameLowercase())
-            ->map(fn() => new Variable('$elem'))
-            ->map(fn(Variable $var) => new VirtualArrowFunction([
-                'expr' => new Isset_([$var]),
-                'params' => [new Param($var)],
-            ]))
-            ->map(fn(VirtualArrowFunction $expr) => new Arg($expr));
-    }
-
     private static function getReturnType(MethodReturnTypeProviderEvent $event, CollectionTypeParams $result): Union
     {
         $class_name = str_replace('NonEmpty', '', $event->getFqClasslikeName());
 
-        $template_params = classOf($class_name, Map::class)
+        $template_params = 2 === count($event->getTemplateTypeParameters() ?? [])
             ? [$result->key_type, $result->val_type]
             : [$result->val_type];
 

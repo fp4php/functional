@@ -7,10 +7,10 @@ namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
-use PhpParser\Node\FunctionLike;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
@@ -36,7 +36,7 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
         return proveTrue('filter' === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOptionT(
                 fn() => Option::some(RefineForEnum::Value),
-                fn() => first($event->getCallArgs())->pluck('value')->filterOf(FunctionLike::class),
+                fn() => PredicateExtractor::extract($event),
                 fn() => Option::some($event->getContext()),
                 fn() => proveOf($event->getSource(), StatementsAnalyzer::class),
                 fn() => first($event->getTemplateTypeParameters() ?? [])

@@ -74,6 +74,58 @@ final class CollectionFilterPluginStaticTest
 
     /**
      * @psalm-param array{
+     *     ArrayList: ArrayList<1|null|2>,
+     *     LinkedList: LinkedList<1|null|2>,
+     *     HashSet: HashSet<1|null|2>,
+     *     NonEmptyArrayList: NonEmptyArrayList<1|null|2>,
+     *     NonEmptyLinkedList: NonEmptyLinkedList<1|null|2>,
+     *     NonEmptyHashSet: NonEmptyHashSet<1|null|2>,
+     *     Seq: Seq<1|null|2>,
+     *     Set: Set<1|null|2>,
+     *     NonEmptySeq: NonEmptySeq<1|null|2>,
+     *     NonEmptySet: NonEmptySet<1|null|2>,
+     *     Map: Map<string, null|int>,
+     *     HashMap: HashMap<string, null|int>,
+     *     Stream: Stream<1|null|2>,
+     * } $in
+     *
+     * @psalm-return array{
+     *     ArrayList<1|2>,
+     *     LinkedList<1|2>,
+     *     HashSet<1|2>,
+     *     ArrayList<1|2>,
+     *     LinkedList<1|2>,
+     *     HashSet<1|2>,
+     *     Seq<1|2>,
+     *     Set<1|2>,
+     *     Seq<1|2>,
+     *     Set<1|2>,
+     *     Map<string, int>,
+     *     HashMap<string, int>,
+     *     Stream<1|2>,
+     * }
+     */
+    public function testFilterFirstClassCallable(array $in): array
+    {
+        return [
+            $in['ArrayList']->filter(is_int(...)),
+            $in['LinkedList']->filter(is_int(...)),
+            $in['HashSet']->filter(is_int(...)),
+            $in['NonEmptyArrayList']->filter(is_int(...)),
+            $in['NonEmptyLinkedList']->filter(is_int(...)),
+            $in['NonEmptyHashSet']->filter(is_int(...)),
+            $in['Seq']->filter(is_int(...)),
+            $in['Set']->filter(is_int(...)),
+            $in['NonEmptySeq']->filter(is_int(...)),
+            $in['NonEmptySet']->filter(is_int(...)),
+            $in['Map']->filter(is_int(...)),
+            $in['HashMap']->filter(is_int(...)),
+            $in['Stream']->filter(is_int(...)),
+        ];
+    }
+
+    /**
+     * @psalm-param array{
      *     ArrayList: ArrayList<int|null>,
      *     LinkedList: LinkedList<int|null>,
      *     NonEmptyArrayList: NonEmptyArrayList<int|null>,
