@@ -53,4 +53,22 @@ final class OptionStaticTest
     {
         return Option::fromNullable(1)->toArrayList();
     }
+
+    /**
+     * @param Option<int|string> $in
+     * @return Option<string>
+     */
+    public function testFilter(Option $in): Option
+    {
+        return $in->filter(fn($i) => is_string($i));
+    }
+
+    /**
+     * @param Option<int|string> $in
+     * @return Option<string>
+     */
+    public function testFilterWithFirstClassCallable(Option $in): Option
+    {
+        return $in->filter(is_string(...));
+    }
 }

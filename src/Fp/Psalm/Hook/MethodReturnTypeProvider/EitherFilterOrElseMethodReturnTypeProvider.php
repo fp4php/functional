@@ -7,6 +7,7 @@ namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
@@ -41,7 +42,7 @@ final class EitherFilterOrElseMethodReturnTypeProvider implements MethodReturnTy
         return proveTrue(strtolower('filterOrElse') === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOptionT(
                 fn() => Option::some(RefineForEnum::Value),
-                fn() => first($event->getCallArgs())->pluck('value')->filterOf(FunctionLike::class),
+                fn() => PredicateExtractor::extract($event),
                 fn() => Option::some($event->getContext()),
                 fn() => proveOf($event->getSource(), StatementsAnalyzer::class),
                 fn() => second($event->getTemplateTypeParameters() ?? [])

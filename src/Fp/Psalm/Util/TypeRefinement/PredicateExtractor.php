@@ -19,12 +19,14 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
+use Psalm\Internal\MethodIdentifier;
 use Psalm\Node\Expr\VirtualArrowFunction;
 use Psalm\Node\Expr\VirtualFuncCall;
 use Psalm\Node\Expr\VirtualMethodCall;
 use Psalm\Node\Expr\VirtualStaticCall;
 use Psalm\Node\Expr\VirtualVariable;
 use Psalm\Node\VirtualArg;
+use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\StatementsSource;
 use Psalm\Storage\FunctionLikeStorage;
@@ -33,6 +35,7 @@ use Psalm\Type\Atomic\TNamedObject;
 use function Fp\Callable\ctor;
 use function Fp\Collection\first;
 use function Fp\Collection\map;
+use function Fp\Collection\second;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveNonEmptyString;
 use function Fp\Evidence\proveOf;
@@ -43,9 +46,13 @@ final class PredicateExtractor
     /**
      * @psalm-return Option<FunctionLike>
      */
-    public static function extract(MethodReturnTypeProviderEvent $event): Option
+    public static function extract(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $event): Option
     {
-        return first($event->getCallArgs())
+        $predicate_arg = $event instanceof MethodReturnTypeProviderEvent
+            ? first($event->getCallArgs())
+            : second($event->getCallArgs());
+
+        return $predicate_arg
             ->map(fn(Arg $arg) => $arg->value)
             ->filterOf([Closure::class, ArrowFunction::class])
             ->orElse(fn() => self::mockNotNullPredicateArg($event))
@@ -55,9 +62,10 @@ final class PredicateExtractor
     /**
      * @psalm-return Option<VirtualArrowFunction>
      */
-    private static function mockNotNullPredicateArg(MethodReturnTypeProviderEvent $event): Option
+    private static function mockNotNullPredicateArg(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $event): Option
     {
-        return proveTrue($event->getMethodNameLowercase() === strtolower('filterNotNull'))
+        return proveOf($event, MethodReturnTypeProviderEvent::class)
+            ->flatMap(fn($e) => proveTrue($e->getMethodNameLowercase() === strtolower('filterNotNull')))
             ->map(fn() => new VirtualVariable('elem'))
             ->map(fn(VirtualVariable $var) => new VirtualArrowFunction([
                 'expr' => new Isset_([$var]),
@@ -68,17 +76,30 @@ final class PredicateExtractor
     /**
      * @psalm-return Option<VirtualArrowFunction>
      */
-    private static function mockFirstClassCallable(MethodReturnTypeProviderEvent $event): Option
+    private static function mockFirstClassCallable(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $e): Option
     {
-        $variables = $event->getMethodNameLowercase() === strtolower('filterKV')
+        $calling_id = $e instanceof MethodReturnTypeProviderEvent
+            ? $e->getMethodNameLowercase()
+            : $e->getFunctionId();
+
+        $variables = strtolower('filterKV') === $calling_id || strtolower('Fp\Collection\filterKV') === $calling_id
             ? [new VirtualVariable('key'), new VirtualVariable('val')]
             : [new VirtualVariable('val')];
 
-        return first($event->getCallArgs())
+        $predicate_arg = $e instanceof MethodReturnTypeProviderEvent
+            ? first($e->getCallArgs())
+            : second($e->getCallArgs());
+
+        return $predicate_arg
             ->map(fn(Arg $arg) => $arg->value)
             ->filterOf([FuncCall::class, MethodCall::class, StaticCall::class])
             ->filter(fn(CallLike $call_like) => $call_like->isFirstClassCallable())
-            ->flatMap(fn(CallLike $call_like) => self::createVirtualCall($call_like, $variables, $event))
+            ->flatMap(fn(CallLike $call_like) => self::createVirtualCall(
+                statements_source: $e instanceof MethodReturnTypeProviderEvent ? $e->getSource() : $e->getStatementsSource(),
+                self: $e->getContext()->self,
+                original_call: $call_like,
+                fake_variables: $variables,
+            ))
             ->map(fn(CallLike $call_like) => new VirtualArrowFunction([
                 'expr' => $call_like,
                 'params' => map($variables, ctor(Param::class)),
@@ -86,44 +107,48 @@ final class PredicateExtractor
     }
 
     /**
-     * @param FuncCall|MethodCall|StaticCall $call_like
-     * @param non-empty-list<VirtualVariable> $variables
+     * @param FuncCall|MethodCall|StaticCall $original_call
+     * @param non-empty-list<VirtualVariable> $fake_variables
      * @return Option<CallLike>
      */
-    private static function createVirtualCall(CallLike $call_like, array $variables, MethodReturnTypeProviderEvent $event): Option
-    {
+    private static function createVirtualCall(
+        StatementsSource $statements_source,
+        null|string $self,
+        CallLike $original_call,
+        array $fake_variables,
+    ): Option {
         $function_id = match (true) {
-            $call_like instanceof FuncCall => Option::fromNullable($call_like->name->getAttribute('resolvedName'))
-                ->orElse(fn() => proveOf($call_like->name, Name::class)->map(fn(Name $name) => $name->toString()))
+            $original_call instanceof FuncCall => Option::fromNullable($original_call->name->getAttribute('resolvedName'))
+                ->orElse(fn() => proveOf($original_call->name, Name::class)->map(fn(Name $name) => $name->toString()))
                 ->flatMap(proveNonEmptyString(...)),
-            $call_like instanceof MethodCall => sequenceOptionT(
-                PsalmApi::$types->getType($event->getSource(), $call_like->var)
+            $original_call instanceof MethodCall => sequenceOptionT(
+                PsalmApi::$types->getType($statements_source, $original_call->var)
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                     ->filterOf(TNamedObject::class)
                     ->map(fn(TNamedObject $object) => $object->value),
-                proveOf($call_like->name, Identifier::class)
+                proveOf($original_call->name, Identifier::class)
                     ->map(fn(Identifier $id) => $id->toString())
                     ->map(strtolower(...)),
             )->mapN(self::toMethodId(...)),
-            $call_like instanceof StaticCall => sequenceOptionT(
-                proveOf($call_like->class, Name::class)
+            $original_call instanceof StaticCall => sequenceOptionT(
+                proveOf($original_call->class, Name::class)
                     ->map(fn(Name $id) => $id->toString())
                     ->map(strtolower(...))
-                    ->map(fn($name) => in_array($name, ['self', 'static', 'parent']) ? $event->getContext()->self : $name)
+                    ->map(fn($name) => in_array($name, ['self', 'static', 'parent']) ? $self : $name)
                     ->flatMap(proveNonEmptyString(...)),
-                proveOf($call_like->name, Identifier::class)
+                proveOf($original_call->name, Identifier::class)
                     ->map(fn(Identifier $id) => $id->toString())
                     ->map(strtolower(...)),
             )->mapN(self::toMethodId(...)),
         };
 
-        $args = map($variables, ctor(VirtualArg::class));
+        $args = map($fake_variables, ctor(VirtualArg::class));
 
         return $function_id->flatMap(
-            fn($id) => self::withCustomAssertions($id, $event->getSource(), match (true) {
-                $call_like instanceof FuncCall => new VirtualFuncCall($call_like->name, $args),
-                $call_like instanceof MethodCall => new VirtualMethodCall($call_like->var, $call_like->name, $args),
-                $call_like instanceof StaticCall => new VirtualStaticCall($call_like->class, $call_like->name, $args),
+            fn($id) => self::withCustomAssertions($id, $statements_source, match (true) {
+                $original_call instanceof FuncCall => new VirtualFuncCall($original_call->name, $args),
+                $original_call instanceof MethodCall => new VirtualMethodCall($original_call->var, $original_call->name, $args),
+                $original_call instanceof StaticCall => new VirtualStaticCall($original_call->class, $original_call->name, $args),
             })
         );
     }
@@ -143,14 +168,19 @@ final class PredicateExtractor
      */
     private static function withCustomAssertions(string $function_id, StatementsSource $source, CallLike $expr): Option
     {
-        return proveOf($source, StatementsAnalyzer::class)
-            ->flatMap(fn(StatementsAnalyzer $analyzer) => Option
+        return proveOf($source, StatementsAnalyzer::class)->flatMap(
+            fn(StatementsAnalyzer $analyzer) => Option
                 ::when(
                     cond: PsalmApi::$codebase->functions->functionExists($analyzer, strtolower($function_id)),
-                    some: fn() => PsalmApi::$codebase->getFunctionLikeStorage($analyzer, $function_id),
+                    some: fn() => PsalmApi::$codebase->functions->getStorage($analyzer, strtolower($function_id)),
                 )
+                ->orElse(fn() => Option::when(
+                    cond: PsalmApi::$codebase->methods->hasStorage(MethodIdentifier::wrap($function_id)),
+                    some: fn() => PsalmApi::$codebase->methods->getStorage(MethodIdentifier::wrap($function_id)),
+                ))
                 ->tap(fn(FunctionLikeStorage $storage) => $analyzer->node_data->setIfTrueAssertions($expr, $storage->if_true_assertions))
                 ->tap(fn(FunctionLikeStorage $storage) => $analyzer->node_data->setIfFalseAssertions($expr, $storage->if_false_assertions))
-                ->map(fn() => $expr));
+                ->map(fn() => $expr),
+        );
     }
 }

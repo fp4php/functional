@@ -7,13 +7,13 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 use Fp\Collections\ArrayList;
 use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
 use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
-use PhpParser\Node\FunctionLike;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TFalse;
 use Psalm\Type\Atomic\TList;
@@ -30,8 +30,6 @@ use function Fp\Evidence\proveOf;
 
 final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    private const COLLECTION_IDX = 0;
-    private const PREDICATE_IDX = 1;
     private const PRESERVE_KEY_IDX = 2;
 
     public static function getFunctionIds(): array
@@ -49,12 +47,10 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
                 fn() => Option::some($event->getFunctionId() === 'fp\collection\filterkv'
                     ? RefineForEnum::KeyValue
                     : RefineForEnum::Value),
-                fn() => $args->at(self::PREDICATE_IDX)
-                    ->map(fn(CallArg $arg) => $arg->node->value)
-                    ->filterOf(FunctionLike::class),
+                fn() => PredicateExtractor::extract($event),
                 fn() => Option::some($event->getContext()),
                 fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
-                fn() => $args->at(self::COLLECTION_IDX)
+                fn() => $args->firstElement()
                     ->map(fn(CallArg $arg) => $arg->type)
                     ->flatMap(GetCollectionTypeParams::keyValue(...)),
             ))
