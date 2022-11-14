@@ -15,10 +15,7 @@ use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
-use Tests\Mock\Baz;
 use Tests\Mock\Foo;
-use Tests\Mock\SubBar;
 
 final class SeqOpsTest extends TestCase
 {
@@ -964,5 +961,39 @@ final class SeqOpsTest extends TestCase
         }
 
         $this->assertEquals([2, 3, 4], $agg);
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testFirstMap(string $seq): void
+    {
+        $this->assertEquals(
+            Option::none(),
+            $seq::collect(['fst', 'snd', 'thr'])->firstMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+
+        $this->assertEquals(
+            Option::some(1),
+            $seq::collect(['zero', '1', '2'])->firstMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testLastMap(string $seq): void
+    {
+        $this->assertEquals(
+            Option::none(),
+            $seq::collect(['fst', 'snd', 'thr'])->lastMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+
+        $this->assertEquals(
+            Option::some(2),
+            $seq::collect(['zero', '1', '2'])->lastMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
     }
 }

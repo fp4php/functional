@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\first;
 use function Fp\Collection\firstKV;
+use function Fp\Collection\firstMap;
 
 final class FirstTest extends TestCase
 {
@@ -36,5 +37,18 @@ final class FirstTest extends TestCase
         ];
 
         $this->assertEquals(Option::some(2), firstKV($c, fn($k, $v) => $k === 'snd' && $v === 2));
+    }
+
+    public function testFirstMap(): void
+    {
+        $this->assertEquals(
+            Option::none(),
+            firstMap(['fst', 'snd', 'thr'], fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+
+        $this->assertEquals(
+            Option::some(1),
+            firstMap(['zero', '1', '2'], fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
     }
 }

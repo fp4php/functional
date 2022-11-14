@@ -912,6 +912,19 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option
+    {
+        return Ops\FirstMapOperation::of($this)(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
@@ -932,6 +945,19 @@ final class ArrayList implements Seq
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option
+    {
+        return Ops\LastMapOperation::of($this)(dropFirstArg($callback));
     }
 
     /**

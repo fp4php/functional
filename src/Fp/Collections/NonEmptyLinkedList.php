@@ -11,6 +11,7 @@ use Fp\Operations as Ops;
 use Fp\Operations\FoldOperation;
 use Fp\Streams\Stream;
 use Iterator;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * @template-covariant TV
@@ -703,6 +704,19 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option
+    {
+        return Ops\FirstMapOperation::of($this)(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return TV
      */
     public function head(): mixed
@@ -730,6 +744,19 @@ final class NonEmptyLinkedList implements NonEmptySeq
     public function lastN(callable $predicate): Option
     {
         return $this->linkedList->lastN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option
+    {
+        return Ops\LastMapOperation::of($this)(dropFirstArg($callback));
     }
 
     /**

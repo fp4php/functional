@@ -50,9 +50,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
                 fn() => PredicateExtractor::extract($event),
                 fn() => Option::some($event->getContext()),
                 fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
-                fn() => $args->firstElement()
-                    ->map(fn(CallArg $arg) => $arg->type)
-                    ->flatMap(GetCollectionTypeParams::keyValue(...)),
+                fn() => $args->firstMap(fn(CallArg $arg) => GetCollectionTypeParams::keyValue($arg->type)),
             ))
             ->mapN(ctor(RefinementContext::class))
             ->map(RefineByPredicate::for(...))

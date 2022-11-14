@@ -107,6 +107,25 @@ interface StreamTerminalOps
     public function firstN(callable $predicate): Option;
 
     /**
+     * A combined {@see Stream::first} and {@see Stream::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> Stream::emits(['zero', '1', '2'])
+     * >>>     ->firstMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(1)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option;
+
+    /**
      * Fold many elements into one
      *
      * ```php
@@ -147,6 +166,25 @@ interface StreamTerminalOps
      * @return Option<TV>
      */
     public function last(callable $predicate): Option;
+
+    /**
+     * A combined {@see Stream::last} and {@see Stream::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> Stream::emits(['zero', '1', '2'])
+     * >>>     ->lastMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(2)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option;
 
     /**
      * Same as {@see StreamTerminalOps::last()}, but deconstruct input tuple and pass it to the $predicate function.

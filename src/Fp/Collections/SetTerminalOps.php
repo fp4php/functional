@@ -386,6 +386,25 @@ interface SetTerminalOps
     public function first(callable $predicate): Option;
 
     /**
+     * A combined {@see Set::first} and {@see Set::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> HashSet::collect(['zero', '1', '2'])
+     * >>>     ->firstMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(1)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option;
+
+    /**
      * @param callable(mixed...): bool $predicate
      * @return Option<TV>
      */
@@ -409,6 +428,25 @@ interface SetTerminalOps
      * @return Option<TV>
      */
     public function lastN(callable $predicate): Option;
+
+    /**
+     * A combined {@see Set::last} and {@see Set::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> HashSet::collect(['zero', '1', '2'])
+     * >>>     ->lastMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(2)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option;
 
     /**
      * Return first collection element

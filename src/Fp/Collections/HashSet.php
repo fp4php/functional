@@ -807,6 +807,19 @@ final class HashSet implements Set
      *
      * @template TVO
      *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option
+    {
+        return Ops\FirstMapOperation::of($this)(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
      * @param TVO $init
      * @return Ops\FoldOperation<TV, TVO>
      */
@@ -834,6 +847,19 @@ final class HashSet implements Set
     public function last(callable $predicate): Option
     {
         return Ops\LastOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option
+    {
+        return Ops\LastMapOperation::of($this)(dropFirstArg($callback));
     }
 
     /**

@@ -907,6 +907,19 @@ abstract class LinkedList implements Seq
      *
      * @template TVO
      *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option
+    {
+        return Ops\FirstMapOperation::of($this)(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
      * @param TVO $init
      * @return FoldOperation<TV, TVO>
      */
@@ -948,6 +961,19 @@ abstract class LinkedList implements Seq
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option
+    {
+        return Ops\LastMapOperation::of($this)(dropFirstArg($callback));
     }
 
     /**

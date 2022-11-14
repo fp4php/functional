@@ -18,8 +18,10 @@ use Psalm\Type\Union;
 
 use function Fp\Collection\at;
 use function Fp\Collection\first;
+use function Fp\Collection\firstMap;
 use function Fp\Collection\second;
 use function Fp\Collection\sequenceOptionT;
+use function Fp\Evidence\of;
 use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
@@ -112,7 +114,7 @@ final class RefineByPredicate
     {
         return Option::fromNullable($context->predicate->getStmts())
             ->filter(fn($stmts) => 1 === count($stmts))
-            ->flatMap(fn($stmts) => proveOf($stmts[0], Return_::class))
+            ->flatMap(fn($stmts) => firstMap($stmts, of(Return_::class)))
             ->flatMap(fn($return) => Option::fromNullable($return->expr));
     }
 

@@ -418,6 +418,25 @@ interface NonEmptySetTerminalOps
     public function firstN(callable $predicate): Option;
 
     /**
+     * A combined {@see NonEmptySet::first} and {@see NonEmptySet::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty(['zero', '1', '2'])
+     * >>>     ->firstMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(1)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option;
+
+    /**
      * Returns last collection element which satisfies the condition
      *
      * ```php
@@ -437,6 +456,25 @@ interface NonEmptySetTerminalOps
      * @return Option<TV>
      */
     public function lastN(callable $predicate): Option;
+
+    /**
+     * A combined {@see NonEmptySet::last} and {@see NonEmptySet::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty(['zero', '1', '2'])
+     * >>>     ->lastMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(2)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option;
 
     /**
      * Return first collection element

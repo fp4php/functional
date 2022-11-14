@@ -9,8 +9,6 @@ use Fp\Collections\Seq;
 use Fp\Streams\Stream;
 use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
-use Tests\Mock\Baz;
 use Tests\Mock\Foo;
 
 final class StreamOpsTest extends TestCase
@@ -354,6 +352,32 @@ final class StreamOpsTest extends TestCase
             Stream::emits([new Foo(1), new Foo(3), new Foo(2)])
                 ->sortedDescBy(fn(Foo $obj) => $obj->a)
                 ->toList(),
+        );
+    }
+
+    public function testFirstMap(): void
+    {
+        $this->assertEquals(
+            Option::none(),
+            Stream::emits(['fst', 'snd', 'thr'])->firstMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+
+        $this->assertEquals(
+            Option::some(1),
+            Stream::emits(['zero', '1', '2'])->firstMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+    }
+
+    public function testLastMap(): void
+    {
+        $this->assertEquals(
+            Option::none(),
+            Stream::emits(['fst', 'snd', 'thr'])->lastMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+
+        $this->assertEquals(
+            Option::some(2),
+            Stream::emits(['zero', '1', '2'])->lastMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
         );
     }
 }

@@ -709,6 +709,19 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVO
      *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option
+    {
+        return $this->leaf(Ops\FirstMapOperation::of($this->emitter)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
      * @param TVO $init
      * @return FoldOperation<TV, TVO>
      */
@@ -750,6 +763,19 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option
+    {
+        return $this->leaf(Ops\LastMapOperation::of($this->emitter)(dropFirstArg($callback)));
     }
 
     /**

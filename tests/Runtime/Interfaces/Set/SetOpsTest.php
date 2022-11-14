@@ -612,4 +612,30 @@ final class SetOpsTest extends TestCase
             $emptySet->minBy(fn(Foo $obj) => $obj->a),
         );
     }
+
+    public function testFirstMap(): void
+    {
+        $this->assertEquals(
+            Option::none(),
+            HashSet::collect(['fst', 'snd', 'thr'])->firstMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+
+        $this->assertEquals(
+            Option::some(1),
+            HashSet::collect(['zero', '1', '2'])->firstMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+    }
+
+    public function testLastMap(): void
+    {
+        $this->assertEquals(
+            Option::none(),
+            HashSet::collect(['fst', 'snd', 'thr'])->lastMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+
+        $this->assertEquals(
+            Option::some(2),
+            HashSet::collect(['zero', '1', '2'])->lastMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
+        );
+    }
 }
