@@ -31,7 +31,7 @@
 ```
 
 - `Fp\Collection\everyMap` was removed. Use `Fp\Collection\traverseOption`:
-```
+```diff
 - \Fp\Collection\everyMap($collection, fn($i) => Option::when($i % 2, fn() => $i));
 + \Fp\Collection\traverseOption($collection, fn($i) => Option::when($i % 2, fn() => $i));
 ```
