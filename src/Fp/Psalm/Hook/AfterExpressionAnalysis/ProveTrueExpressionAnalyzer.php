@@ -21,6 +21,7 @@ use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveOf;
+use function Fp\Evidence\of;
 
 final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterface
 {
@@ -33,7 +34,7 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
     {
         sequenceOptionT(
             fn() => Option::some($event->getExpr())
-                ->filterOf(Yield_::class)
+                ->flatMap(of(Yield_::class))
                 ->flatMap(self::getProveTrueArgsFromYield(...)),
             fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class)
                 ->filter(fn(StatementsAnalyzer $source) => $source->getSource() instanceof ClosureAnalyzer),
@@ -73,7 +74,7 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
             public function leaveNode(Node $node): ?int
             {
                 $this->proveTrueArgs = Option::some($node)
-                    ->filterOf(FuncCall::class)
+                    ->flatMap(of(FuncCall::class))
                     ->filter(fn(FuncCall $n) => 'Fp\Evidence\proveTrue' === $n->name->getAttribute('resolvedName'))
                     ->filter(fn(FuncCall $n) => !$n->isFirstClassCallable())
                     ->map(fn(FuncCall $n) => $n->getArgs())

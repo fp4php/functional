@@ -80,21 +80,6 @@ interface SetChainableOps
     public function filterN(callable $predicate): Set;
 
     /**
-     * Filter elements of given class
-     *
-     * ```php
-     * >>> HashSet::collect([1, 1, new Foo(2)])->filterOf(Foo::class)->toList();
-     * => [Foo(2)]
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Set<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): Set;
-
-    /**
      * Exclude null elements
      *
      * ```php

@@ -21,6 +21,7 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 
+use function Fp\Evidence\of;
 use function Fp\Callable\ctor;
 use function Fp\Cast\asNonEmptyArray;
 use function Fp\Collection\at;
@@ -50,7 +51,7 @@ final class PartitionFunctionReturnTypeProvider implements FunctionReturnTypePro
                 fn(CollectionTypeParams $type_params) => ArrayList::range(1, $partition_count + 1)
                     ->traverseOption(fn(int $offset) => sequenceOptionT(
                         fn() => Option::some(RefineForEnum::Value),
-                        fn() => at($args, $offset)->pluck('value')->filterOf(FunctionLike::class),
+                        fn() => at($args, $offset)->pluck('value')->flatMap(of(FunctionLike::class)),
                         fn() => Option::some($event->getContext()),
                         fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
                         fn() => Option::some($type_params),

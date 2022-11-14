@@ -13,9 +13,9 @@ use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
-use Tests\Mock\Baz;
 use Tests\Mock\Foo;
+
+use function Fp\Evidence\of;
 
 final class SetOpsTest extends TestCase
 {
@@ -59,12 +59,6 @@ final class SetOpsTest extends TestCase
     {
         $this->assertTrue(HashSet::collect([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) <= 6));
         $this->assertFalse(HashSet::collect([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) < 6));
-    }
-
-    public function testEveryOf(): void
-    {
-        $this->assertTrue(HashSet::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class));
-        $this->assertFalse(HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class));
     }
 
     public function provideTestTraverseData(): Generator
@@ -277,14 +271,6 @@ final class SetOpsTest extends TestCase
         $this->assertFalse(HashSet::collect([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 7));
     }
 
-    public function testExistsOf(): void
-    {
-        $hs = HashSet::collect([new Foo(1), 1, 1, new Foo(1)]);
-
-        $this->assertTrue($hs->existsOf(Foo::class));
-        $this->assertFalse($hs->existsOf(Bar::class));
-    }
-
     public function testGroupBy(): void
     {
         $this->assertEquals(
@@ -350,7 +336,7 @@ final class SetOpsTest extends TestCase
     public function testFilterOf(): void
     {
         $hs = HashSet::collect([new Foo(1), 1, 2, new Foo(1)]);
-        $this->assertCount(1, $hs->filterOf(Foo::class));
+        $this->assertCount(1, $hs->filterMap(of(Foo::class)));
     }
 
     public function testFilterMap(): void
@@ -383,12 +369,6 @@ final class SetOpsTest extends TestCase
         $this->assertEquals(Option::none(), HashSet::collect([])->firstElement());
     }
 
-    public function testFirstOf(): void
-    {
-        $this->assertEquals(Option::some(new Foo(1)), HashSet::collect([new Foo(1), 2, new Foo(2)])->firstOf(Foo::class));
-        $this->assertEquals(Option::none(), HashSet::collect([])->firstOf(Baz::class));
-    }
-
     public function testFirstN(): void
     {
         $this->assertEquals(
@@ -408,12 +388,6 @@ final class SetOpsTest extends TestCase
     {
         $this->assertEquals(Option::some('3'), HashSet::collect(['1', 2, '3'])->lastElement());
         $this->assertEquals(Option::none(), HashSet::collect([])->lastElement());
-    }
-
-    public function testLastOf(): void
-    {
-        $this->assertEquals(Option::some(new Foo(2)), HashSet::collect([new Foo(1), 2, new Foo(2)])->lastOf(Foo::class));
-        $this->assertEquals(Option::none(), HashSet::collect([])->lastOf(Foo::class));
     }
 
     public function testLastN(): void

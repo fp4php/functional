@@ -22,6 +22,7 @@ use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 
+use function Fp\Evidence\of;
 use function Fp\Callable\ctor;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
@@ -40,7 +41,7 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
                 fn() => $args->lastElement()
                     ->pluck('type')
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                    ->filterOf(TLiteralString::class),
+                    ->flatMap(of(TLiteralString::class)),
                 fn() => $args->firstElement()
                     ->pluck('type')
                     ->flatMap(GetCollectionTypeParams::value(...))

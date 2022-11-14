@@ -15,6 +15,7 @@ use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
+use function Fp\Evidence\of;
 use function Fp\Callable\ctor;
 use function Fp\Collection\sequenceOptionT;
 
@@ -31,7 +32,7 @@ final class SequenceEitherAccFunctionReturnTypeProvider implements FunctionRetur
     {
         return PsalmApi::$args->getFirstCallArgType($event)
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->filterOf(TKeyedArray::class)
+            ->flatMap(of(TKeyedArray::class))
             ->flatMap(fn(TKeyedArray $either_shape) => sequenceOptionT(
                 self::mapEither($either_shape, GetEitherTypeParam::GET_LEFT),
                 self::mapEither($either_shape, GetEitherTypeParam::GET_RIGHT),

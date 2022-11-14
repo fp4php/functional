@@ -17,6 +17,7 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 use Psalm\Type\Atomic;
 
+use function Fp\Evidence\of;
 use function Fp\Collection\first;
 use function Fp\Collection\traverseOption;
 use function Fp\Evidence\proveTrue;
@@ -62,7 +63,7 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
             ->flatMap(fn(ArrayList $args) => $args->head())
             ->map(fn(CallArg $arg) => $arg->type)
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->filterOf(TKeyedArray::class);
+            ->flatMap(of(TKeyedArray::class));
     }
 
     /**

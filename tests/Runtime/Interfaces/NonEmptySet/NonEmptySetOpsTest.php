@@ -54,12 +54,6 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertFalse(NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) < 6));
     }
 
-    public function testEveryOf(): void
-    {
-        $this->assertTrue(NonEmptyHashSet::collectNonEmpty([new Foo(1), new Foo(2)])->everyOf(Foo::class));
-        $this->assertFalse(NonEmptyHashSet::collectNonEmpty([new Foo(1), new Bar(2)])->everyOf(Foo::class));
-    }
-
     public function provideTestTraverseData(): Generator
     {
         yield NonEmptyHashSet::class => [
@@ -270,14 +264,6 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertFalse(NonEmptyHashSet::collectNonEmpty([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 7));
     }
 
-    public function testExistsOf(): void
-    {
-        $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 1, new Foo(1)]);
-
-        $this->assertTrue($hs->existsOf(Foo::class));
-        $this->assertFalse($hs->existsOf(Bar::class));
-    }
-
     public function testGroupBy(): void
     {
         $this->assertEquals(
@@ -342,12 +328,6 @@ final class NonEmptySetOpsTest extends TestCase
         $this->assertEquals(HashSet::collect([[3, 3]]), $actual);
     }
 
-    public function testFilterOf(): void
-    {
-        $hs = NonEmptyHashSet::collectNonEmpty([new Foo(1), 1, 2, new Foo(1)]);
-        $this->assertCount(1, $hs->filterOf(Foo::class));
-    }
-
     public function testFilterMap(): void
     {
         $this->assertEquals(
@@ -375,9 +355,6 @@ final class NonEmptySetOpsTest extends TestCase
         $hs = NonEmptyHashSet::collectNonEmpty(['1', 2, '3']);
         $this->assertEquals('3', $hs->last(fn($i) => is_string($i))->get());
         $this->assertEquals('3', $hs->lastElement());
-
-        $hs = NonEmptyHashSet::collectNonEmpty([$f1 = new Foo(1), 2, new Foo(2)]);
-        $this->assertEquals($f1, $hs->firstOf(Foo::class)->get());
     }
 
     public function testFirstN(): void

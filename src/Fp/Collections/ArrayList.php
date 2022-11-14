@@ -460,19 +460,6 @@ final class ArrayList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return ArrayList<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): ArrayList
-    {
-        return ArrayList::collect(Ops\FilterOfOperation::of($this)($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
      * @psalm-if-this-is ArrayList<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return ArrayList<TVO>
@@ -730,19 +717,6 @@ final class ArrayList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-assert-if-true ArrayList<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
      * @return Option<ArrayList<TVO>>
@@ -779,8 +753,7 @@ final class ArrayList implements Seq
      */
     public function sequenceOption(): Option
     {
-        return Ops\TraverseOptionOperation::id($this->getIterator())
-            ->map(fn($gen) => ArrayList::collect($gen));
+        return Ops\TraverseOptionOperation::id($this->getIterator())->map(ArrayList::collect(...));
     }
 
     /**
@@ -794,8 +767,7 @@ final class ArrayList implements Seq
      */
     public function traverseEither(callable $callback): Either
     {
-        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))
-            ->map(fn($gen) => ArrayList::collect($gen));
+        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))->map(ArrayList::collect(...));
     }
 
     /**
@@ -826,8 +798,7 @@ final class ArrayList implements Seq
      */
     public function sequenceEither(): Either
     {
-        return Ops\TraverseEitherOperation::id($this->getIterator())
-            ->map(fn($gen) => ArrayList::collect($gen));
+        return Ops\TraverseEitherOperation::id($this)->map(ArrayList::collect(...));
     }
 
     /**
@@ -916,18 +887,6 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
@@ -953,19 +912,6 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
@@ -986,19 +932,6 @@ final class ArrayList implements Seq
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return Ops\LastOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**

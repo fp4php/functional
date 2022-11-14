@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 use Tests\Mock\Foo;
 
+use function Fp\Evidence\classStringOf;
 use function Fp\Evidence\proveCallableString;
 use function Fp\Evidence\proveClassString;
 use function Fp\Evidence\proveClassStringOf;
@@ -58,5 +59,8 @@ final class ProveStringTest extends TestCase
     {
         $this->assertInstanceOf(Some::class, proveClassStringOf(ArrayList::class, Collection::class));
         $this->assertInstanceOf(None::class, proveClassStringOf(Option::class, Collection::class));
+
+        $this->assertInstanceOf(Some::class, classStringOf(Collection::class)(ArrayList::class));
+        $this->assertInstanceOf(None::class, classStringOf(Collection::class)(Option::class));
     }
 }

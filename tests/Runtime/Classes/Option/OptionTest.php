@@ -195,34 +195,6 @@ final class OptionTest extends TestCase
         $this->assertEquals(null, $none);
     }
 
-    public function testFilterOf(): void
-    {
-        $this->assertInstanceOf(
-            Foo::class,
-            Option::some(new Foo(1))->filterOf(Foo::class)->get()
-        );
-        $this->assertNull(
-            Option::some(new Bar(1))->filterOf(Foo::class)->get()
-        );
-    }
-
-    public function filterOfWithMultipleFqcnDataProvider(): iterable
-    {
-        yield [new Foo(1)];
-        yield [new Bar(2)];
-    }
-
-    /**
-     * @dataProvider filterOfWithMultipleFqcnDataProvider
-     */
-    public function testFilterOfWithMultipleFqcn(Foo|Bar $item): void
-    {
-        $this->assertEquals(
-            Option::some($item),
-            Option::some($item)->filterOf([Foo::class, Bar::class]),
-        );
-    }
-
     public function testTap(): void
     {
         $this->assertEquals(1, Option::some(1)->tap(fn($e) => $e)->get());

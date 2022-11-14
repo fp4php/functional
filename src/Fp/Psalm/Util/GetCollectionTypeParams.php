@@ -16,22 +16,18 @@ use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use Generator;
 use Psalm\Type;
-use Psalm\Type\Atomic;
-use Psalm\Type\Atomic\TArray;
-use Psalm\Type\Atomic\TGenericObject;
-use Psalm\Type\Atomic\TIterable;
-use Psalm\Type\Atomic\TKeyedArray;
-use Psalm\Type\Atomic\TList;
-use Psalm\Type\Union;
 
-use function Fp\classOf;
+use function Fp\Evidence\of;
+use function Fp\Evidence\classStringOf;
+use function Fp\Collection\first;
+use function Fp\Collection\second;
 
 final class GetCollectionTypeParams
 {
     /**
      * @return Option<CollectionTypeParams>
      */
-    public static function keyValue(Union $union): Option
+    public static function keyValue(Type\Union $union): Option
     {
         return GetCollectionTypeParams::value($union)
             ->map(fn($val_type) => new CollectionTypeParams(
@@ -41,9 +37,9 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    public static function key(Union $union): Option
+    public static function key(Type\Union $union): Option
     {
         return Option::do(function () use ($union) {
             $atomic = yield PsalmApi::$types->asSingleAtomic($union);
@@ -57,64 +53,64 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function keyFromIterable(Atomic $atomic): Option
+    private static function keyFromIterable(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TIterable::class)
-            ->map(fn(TIterable $a) => $a->type_params[0]);
+            ->flatMap(of(Type\Atomic\TIterable::class))
+            ->flatMap(fn(Type\Atomic\TIterable $a) => first($a->type_params));
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function keyFromGenerator(Atomic $atomic): Option
+    private static function keyFromGenerator(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TGenericObject::class)
-            ->filter(fn(TGenericObject $generic) => $generic->value === Generator::class)
-            ->map(fn(TGenericObject $generic) => $generic->type_params[0]);
+            ->flatMap(of(Type\Atomic\TGenericObject::class))
+            ->filter(fn(Type\Atomic\TGenericObject $generic) => $generic->value === Generator::class)
+            ->flatMap(fn(Type\Atomic\TGenericObject $generic) => first($generic->type_params));
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function keyFromArray(Atomic $atomic): Option
+    private static function keyFromArray(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TArray::class)
-            ->map(fn(TArray $a) => $a->type_params[0]);
+            ->flatMap(of(Type\Atomic\TArray::class))
+            ->flatMap(fn(Type\Atomic\TArray $a) => first($a->type_params));
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function keyFromKeyedArray(Atomic $atomic): Option
+    private static function keyFromKeyedArray(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TKeyedArray::class)
-            ->map(fn(TKeyedArray $a) => $a->getGenericKeyType());
+            ->flatMap(of(Type\Atomic\TKeyedArray::class))
+            ->map(fn(Type\Atomic\TKeyedArray $a) => $a->getGenericKeyType());
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function keyFromGenericObject(Atomic $atomic): Option
+    private static function keyFromGenericObject(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TGenericObject::class)
-            ->flatMap(fn(TGenericObject $a) => Option::fromNullable(match (true) {
-                classOf($a->value, Map::class) => $a->type_params[1],
-                classOf($a->value, NonEmptyMap::class) => $a->type_params[1],
-                default => null
-            }));
+            ->flatMap(of(Type\Atomic\TGenericObject::class))
+            ->flatMap(
+                fn(Type\Atomic\TGenericObject $a) => Option::some($a->value)
+                    ->flatMap(classStringOf([Map::class, NonEmptyMap::class]))
+                    ->flatMap(fn() => second($a->type_params)),
+            );
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    public static function value(Union $union): Option
+    public static function value(Type\Union $union): Option
     {
         return Option::do(function () use ($union) {
             $atomic = yield PsalmApi::$types->asSingleAtomic($union);
@@ -129,73 +125,73 @@ final class GetCollectionTypeParams
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function valueFromIterable(Atomic $atomic): Option
+    private static function valueFromIterable(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TIterable::class)
-            ->map(fn(TIterable $a) => $a->type_params[1]);
+            ->flatMap(of(Type\Atomic\TIterable::class))
+            ->flatMap(fn(Type\Atomic\TIterable $a) => second($a->type_params));
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function valueFromGenerator(Atomic $atomic): Option
+    private static function valueFromGenerator(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TGenericObject::class)
-            ->filter(fn(TGenericObject $generic) => $generic->value === Generator::class)
-            ->map(fn(TGenericObject $generic) => $generic->type_params[1]);
+            ->flatMap(of(Type\Atomic\TGenericObject::class))
+            ->filter(fn(Type\Atomic\TGenericObject $generic) => $generic->value === Generator::class)
+            ->flatMap(fn(Type\Atomic\TGenericObject $generic) => second($generic->type_params));
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function valueFromArray(Atomic $atomic): Option
+    private static function valueFromArray(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TArray::class)
-            ->map(fn(TArray $a) => $a->type_params[1]);
+            ->flatMap(of(Type\Atomic\TArray::class))
+            ->flatMap(fn(Type\Atomic\TArray $a) => second($a->type_params));
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function valueFromList(Atomic $atomic): Option
+    private static function valueFromList(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TList::class)
-            ->map(fn(TList $a) => $a->type_param);
+            ->flatMap(of(Type\Atomic\TList::class))
+            ->map(fn(Type\Atomic\TList $a) => $a->type_param);
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function valueFromKeyedArray(Atomic $atomic): Option
+    private static function valueFromKeyedArray(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TKeyedArray::class)
-            ->map(fn(TKeyedArray $a) => $a->getGenericValueType());
+            ->flatMap(of(Type\Atomic\TKeyedArray::class))
+            ->map(fn(Type\Atomic\TKeyedArray $a) => $a->getGenericValueType());
     }
 
     /**
-     * @return Option<Union>
+     * @return Option<Type\Union>
      */
-    private static function valueFromGenericObject(Atomic $atomic): Option
+    private static function valueFromGenericObject(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->filterOf(TGenericObject::class)
-            ->flatMap(fn(TGenericObject $a) => Option::fromNullable(match (true) {
-                classOf($a->value, Seq::class) => $a->type_params[0],
-                classOf($a->value, Set::class) => $a->type_params[0],
-                classOf($a->value, Map::class) => $a->type_params[1],
-                classOf($a->value, NonEmptyMap::class) => $a->type_params[1],
-                classOf($a->value, NonEmptySeq::class) => $a->type_params[0],
-                classOf($a->value, NonEmptySet::class) => $a->type_params[0],
-                classOf($a->value, Option::class) => $a->type_params[0],
-                classOf($a->value, Either::class) => $a->type_params[1],
-                default => null
-            }));
+            ->flatMap(of(Type\Atomic\TGenericObject::class))
+            ->flatMap(fn(Type\Atomic\TGenericObject $a) => match (true) {
+                is_subclass_of($a->value, Seq::class),
+                is_subclass_of($a->value, Set::class),
+                is_subclass_of($a->value, NonEmptySet::class),
+                is_subclass_of($a->value, NonEmptySeq::class),
+                is_subclass_of($a->value, Option::class) => first($a->type_params),
+                is_subclass_of($a->value, Map::class),
+                is_subclass_of($a->value, NonEmptyMap::class),
+                is_subclass_of($a->value, Either::class) => second($a->type_params),
+                default => Option::none(),
+            });
     }
 }

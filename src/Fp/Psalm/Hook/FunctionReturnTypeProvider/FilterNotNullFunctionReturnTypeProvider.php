@@ -11,6 +11,7 @@ use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
+use function Fp\Evidence\of;
 use function Fp\Callable\ctor;
 
 final class FilterNotNullFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
@@ -26,7 +27,7 @@ final class FilterNotNullFunctionReturnTypeProvider implements FunctionReturnTyp
     {
         return PsalmApi::$args->getFirstCallArgType($event)
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->filterOf(TKeyedArray::class)
+            ->flatMap(of(TKeyedArray::class))
             ->filter(fn(TKeyedArray $keyed) => !$keyed->is_list)
             ->map(fn(TKeyedArray $keyed) => NonEmptyHashMap::collectNonEmpty($keyed->properties)
                 ->map(function(Union $property) {

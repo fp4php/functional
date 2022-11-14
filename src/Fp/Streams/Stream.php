@@ -354,19 +354,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVO
      *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Stream<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): Stream
-    {
-        return $this->fork(Ops\FilterOfOperation::of($this->emitter)($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
      * @param callable(TV): (iterable<TVO>) $callback
      * @return Stream<TVO>
      */
@@ -504,7 +491,8 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     {
         return $this->fork(Ops\TapOperation::of($this->emitter)(
             function ($_key, $elem) {
-                print_r($elem) . PHP_EOL;
+                print_r($elem);
+                print_r(PHP_EOL);
             }),
         );
     }
@@ -642,18 +630,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->leaf(Ops\EveryOfOperation::of($this->emitter)($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool
@@ -672,18 +648,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->leaf(Ops\ExistsOfOperation::of($this->emitter)($fqcn, $invariant));
     }
 
     /**
@@ -745,19 +709,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
      *
      * @template TVO
      *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return $this->leaf(Ops\FirstOfOperation::of($this->emitter)($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
      * @param TVO $init
      * @return FoldOperation<TV, TVO>
      */
@@ -799,19 +750,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return $this->leaf(Ops\LastOfOperation::of($this->emitter)($fqcn, $invariant));
     }
 
     /**

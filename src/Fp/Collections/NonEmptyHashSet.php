@@ -402,19 +402,6 @@ final class NonEmptyHashSet implements NonEmptySet
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-assert-if-true Set<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->set->everyOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
      * @return Option<NonEmptyHashSet<TVO>>
@@ -591,18 +578,6 @@ final class NonEmptyHashSet implements NonEmptySet
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->set->existsOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @template TKO
      *
      * @param callable(TV): TKO $callback
@@ -687,19 +662,6 @@ final class NonEmptyHashSet implements NonEmptySet
     public function lastN(callable $predicate): Option
     {
         return $this->set->lastN($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return $this->set->firstOf($fqcn, $invariant);
     }
 
     /**
@@ -806,19 +768,6 @@ final class NonEmptyHashSet implements NonEmptySet
     public function filterN(callable $predicate): HashSet
     {
         return $this->set->filterN($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return HashSet<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
-    {
-        return $this->set->filterOf($fqcn, $invariant);
     }
 
     /**

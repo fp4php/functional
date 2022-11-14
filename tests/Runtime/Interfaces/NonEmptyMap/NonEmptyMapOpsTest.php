@@ -63,16 +63,6 @@ final class NonEmptyMapOpsTest extends TestCase
         );
     }
 
-    public function testEveryOf(): void
-    {
-        $this->assertFalse(
-            NonEmptyHashMap::collectNonEmpty(['a' => new Foo(1), 'b' => new Bar(2)])->everyOf(Foo::class),
-        );
-        $this->assertTrue(
-            NonEmptyHashMap::collectNonEmpty(['a' => new Foo(1), 'b' => new Foo(2)])->everyOf(Foo::class),
-        );
-    }
-
     public function testExists(): void
     {
         $this->assertTrue(NonEmptyHashMap::collectNonEmpty(['a' => 0, 'b' => 1])->exists(fn($entry) => $entry >= 0));

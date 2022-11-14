@@ -65,16 +65,6 @@ final class MapOpsTest extends TestCase
         );
     }
 
-    public function testEveryOf(): void
-    {
-        $this->assertFalse(
-            HashMap::collect(['a' => new Foo(1), 'b' => new Bar(2)])->everyOf(Foo::class),
-        );
-        $this->assertTrue(
-            HashMap::collect(['a' => new Foo(1), 'b' => new Foo(2)])->everyOf(Foo::class),
-        );
-    }
-
     public function testExists(): void
     {
         $hm = HashMap::collect(['a' => 0, 'b' => 1]);

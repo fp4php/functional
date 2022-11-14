@@ -448,19 +448,6 @@ abstract class LinkedList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return LinkedList<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): LinkedList
-    {
-        return LinkedList::collect(Ops\FilterOfOperation::of($this)($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
      * @psalm-if-this-is LinkedList<iterable<mixed, TVO>|Collection<mixed, TVO>>
      *
      * @return LinkedList<TVO>
@@ -720,19 +707,6 @@ abstract class LinkedList implements Seq
      * {@inheritDoc}
      *
      * @template TVO
-     * @psalm-assert-if-true LinkedList<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
      *
      * @param callable(TV): Option<TVO> $callback
      * @return Option<LinkedList<TVO>>
@@ -906,18 +880,6 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
@@ -938,32 +900,6 @@ abstract class LinkedList implements Seq
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return Ops\LastOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**

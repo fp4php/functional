@@ -19,7 +19,7 @@ declare(strict_types=1);
 use Tests\Mock\Foo;
 use Fp\Functional\Option\Option;
 
-use function Fp\Collection\atOf;
+use function Fp\Collection\at;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveArray;
 use function Fp\Evidence\proveBool;
@@ -41,9 +41,9 @@ function fooFromJson(string $json): Option
     return Option::try(fn(): mixed => json_decode($json, associative: true, flags: JSON_THROW_ON_ERROR))
         ->flatMap(proveArray(...))
         ->flatMap(fn(array $data) => sequenceOptionT(
-            fn() => atOf(proveInt(...), $data, 'a'),
-            fn() => atOf(proveBool(...), $data, 'b'),
-            fn() => atOf(proveBool(...), $data, 'c'),
+            fn() => at($data, 'a')->flatMap(proveInt(...)),
+            fn() => at($data, 'b')->flatMap(proveBool(...)),
+            fn() => at($data, 'c')->flatMap(proveBool(...)),
         ))
         ->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
 }

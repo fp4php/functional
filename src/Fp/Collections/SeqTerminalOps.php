@@ -73,25 +73,6 @@ interface SeqTerminalOps
     public function everyN(callable $predicate): bool;
 
     /**
-     * Returns true if every collection element is of given class
-     * false otherwise
-     *
-     * ```php
-     * >>> LinkedList::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class);
-     * => true
-     *
-     * >>> LinkedList::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class);
-     * => false
-     * ```
-     *
-     * @template TVO
-     * @psalm-assert-if-true Seq<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool;
-
-    /**
      * Suppose you have an ArrayList<TV> and you want to format each element with a function that returns an Option<TVO>.
      * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<ArrayList<TVO>>
      * i.e. an Some<ArrayList<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
@@ -386,24 +367,6 @@ interface SeqTerminalOps
     public function existsN(callable $predicate): bool;
 
     /**
-     * Returns true if there is collection element of given class
-     * False otherwise
-     *
-     * ```php
-     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Foo::class);
-     * => true
-     *
-     * >>> LinkedList::collect([1, new Foo(2)])->existsOf(Bar::class);
-     * => false
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool;
-
-    /**
      * Find first element which satisfies the condition
      *
      * ```php
@@ -425,36 +388,6 @@ interface SeqTerminalOps
      * @see MapTapNMethodReturnTypeProvider
      */
     public function firstN(callable $predicate): Option;
-
-    /**
-     * Find first element of given class
-     *
-     * ```php
-     * >>> LinkedList::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get();
-     * => Foo(2)
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option;
-
-    /**
-     * Find last element of given class
-     *
-     * ```php
-     * >>> LinkedList::collect([new Foo(1), new Bar(1), new Foo(2)])->lastOf(Foo::class)->get();
-     * => Foo(2)
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option;
 
     /**
      * Fold many elements into one

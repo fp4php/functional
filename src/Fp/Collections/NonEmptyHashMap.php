@@ -638,19 +638,6 @@ final class NonEmptyHashMap implements NonEmptyMap
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     * @psalm-assert-if-true NonEmptyHashMap<TK, TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->hashMap->everyOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool

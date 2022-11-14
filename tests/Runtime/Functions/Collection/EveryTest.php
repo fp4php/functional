@@ -9,7 +9,6 @@ use Tests\Mock\Foo;
 
 use function Fp\Collection\every;
 use function Fp\Collection\everyKV;
-use function Fp\Collection\everyOf;
 
 final class EveryTest extends TestCase
 {
@@ -47,30 +46,5 @@ final class EveryTest extends TestCase
         ];
 
         $this->assertFalse(everyKV($c2, fn($k, $v) => $k % 2 === 0 && $v % 2 !== 0));
-    }
-
-    public function testEveryOf(): void
-    {
-        $this->assertTrue(everyOf(
-            [],
-            Foo::class,
-            false
-        ));
-
-        $this->assertTrue(everyOf(
-            [],
-            Foo::class,
-            true
-        ));
-
-        $this->assertTrue(everyOf(
-            [new Foo(1), new Foo(2)],
-            Foo::class
-        ));
-
-        $this->assertFalse(everyOf(
-            [new Foo(1), new Foo(2), 1],
-            Foo::class
-        ));
     }
 }

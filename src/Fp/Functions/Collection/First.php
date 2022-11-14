@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
-use Fp\Operations\FirstOfOperation;
 use Fp\Operations\FirstOperation;
 use function Fp\Callable\dropFirstArg;
 
@@ -41,24 +40,4 @@ function first(iterable $collection, ?callable $predicate = null): Option
 function firstKV(iterable $collection, callable $predicate): Option
 {
     return FirstOperation::of($collection)($predicate);
-}
-
-/**
- * Find first element of given class
- *
- * ```php
- * >>> firstOf([1, new Foo(1), new Foo(2)], Foo::class)->get()
- * => Foo(1)
- * ```
- *
- * @template TV
- * @template TVO
- *
- * @param iterable<TV> $collection
- * @param class-string<TVO>|list<class-string<TVO>> $fqcn
- * @return Option<TVO>
- */
-function firstOf(iterable $collection, string|array $fqcn, bool $invariant = false): Option
-{
-    return FirstOfOperation::of($collection)($fqcn, $invariant);
 }

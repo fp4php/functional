@@ -7,10 +7,9 @@ namespace Fp\Collection;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterNotNullOperation;
-use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
-
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterNotNullFunctionReturnTypeProvider;
+
 use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
@@ -87,33 +86,6 @@ function filterNotNull(iterable $collection): array
     return is_array($collection) && array_is_list($collection)
         ? asList($gen)
         : asArray($gen);
-}
-
-/**
- * Filter elements of given class
- * Do not preserve keys by default
- *
- * ```php
- * >>> filterOf([1, new Foo(1), 2], Foo::class);
- * => [Foo(1)]
- * ```
- *
- * @template TK of array-key
- * @template TV
- * @template TVO
- *
- * @param iterable<TK, TV> $collection
- * @param class-string<TVO>|list<class-string<TVO>> $fqcn
- * @return array<TK, TVO>
- *
- * @psalm-return ($preserveKeys is true ? array<TK, TVO> : list<TVO>)
- */
-function filterOf(iterable $collection, string|array $fqcn, bool $preserveKeys = false, bool $invariant = false): array
-{
-    $gen = FilterOfOperation::of($collection)($fqcn, $invariant);
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
 }
 
 /**

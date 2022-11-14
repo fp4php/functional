@@ -95,7 +95,6 @@
             "src/Fp/Functions/Evidence/ProveString.php",
             "src/Fp/Functions/Panic.php",
             "src/Fp/Functions/Id.php",
-            "src/Fp/Functions/Of.php",
             "src/Fp/Functions/Unit.php"
         ]
     },

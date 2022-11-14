@@ -719,33 +719,6 @@ abstract class Option
     }
 
     /**
-     * 1) Unwrap the box
-     * 2) If the box is empty then do nothing
-     * 3) Check if unwrapped value is of given class
-     * 4) If the value is of given class then return Some. Otherwise, None.
-     *
-     * ```php
-     * >>> $res1 = Option::fromNullable(new Foo(1));
-     * => Some(Foo(1))
-     *
-     * >>> $res2 = $res1->filterOf(Foo::class);
-     * => Some(Foo(1))
-     *
-     * >>> $res3 = $res2->filterOf(Bar::class);
-     * => None
-     * ```
-     *
-     * @template B
-     *
-     * @param class-string<B>|list<class-string<B>> $fqcn
-     * @return Option<B>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return $this->flatMap(fn(mixed $value) => proveOf($value, $fqcn, $invariant));
-    }
-
-    /**
      * Combine two Options into one
      *
      * ```php

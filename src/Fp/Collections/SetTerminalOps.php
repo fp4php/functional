@@ -72,25 +72,6 @@ interface SetTerminalOps
     public function everyN(callable $predicate): bool;
 
     /**
-     * Returns true if every collection element is of given class
-     * false otherwise
-     *
-     * ```php
-     * >>> HashSet::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class);
-     * => true
-     *
-     * >>> HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class);
-     * => false
-     * ```
-     *
-     * @template TVO
-     * @psalm-assert-if-true Set<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool;
-
-    /**
      * Suppose you have an HashSet<TV> and you want to format each element with a function that returns an Option<TVO>.
      * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<HashSet<TVO>>
      * i.e. an Some<HashSet<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
@@ -282,24 +263,6 @@ interface SetTerminalOps
     public function existsN(callable $predicate): bool;
 
     /**
-     * Returns true if there is collection element of given class
-     * False otherwise
-     *
-     * ```php
-     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Foo::class);
-     * => true
-     *
-     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Bar::class);
-     * => false
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool;
-
-    /**
      * Group elements
      *
      * ```php
@@ -442,40 +405,10 @@ interface SetTerminalOps
     public function last(callable $predicate): Option;
 
     /**
-     * Find last element of given class
-     *
-     * ```php
-     * >>> HashSet::collect([new Bar(1), new Foo(2), new Foo(3)])->lastOf(Foo::class)->get();
-     * => Foo(3)
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option;
-
-    /**
      * @param callable(mixed...): bool $predicate
      * @return Option<TV>
      */
     public function lastN(callable $predicate): Option;
-
-    /**
-     * Find first element of given class
-     *
-     * ```php
-     * >>> HashSet::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get();
-     * => Foo(2)
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option;
 
     /**
      * Return first collection element

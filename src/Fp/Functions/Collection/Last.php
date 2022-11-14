@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
-use Fp\Operations\LastOfOperation;
 use Fp\Operations\LastOperation;
 
 use function Fp\Callable\dropFirstArg;
@@ -43,23 +42,4 @@ function last(iterable $collection, ?callable $predicate = null): Option
 function lastKV(iterable $collection, callable $predicate): Option
 {
     return LastOperation::of($collection)($predicate);
-}
-
-/**
- * Find last element of given class
- *
- * ```php
- * >>> lastOf([1, new Foo(1), new Foo(2)], Foo::class)->get()
- * => Foo(2)
- * ```
- *
- * @template TV
- *
- * @param iterable<TV> $collection
- * @param class-string<TV>|list<class-string<TV>> $fqcn
- * @return Option<TV>
- */
-function lastOf(iterable $collection, string|array $fqcn, bool $invariant = false): Option
-{
-    return LastOfOperation::of($collection)($fqcn, $invariant);
 }

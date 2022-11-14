@@ -83,16 +83,6 @@ final class NonEmptySeqOpsTest extends TestCase
      * @param class-string<NonEmptySeq> $seq
      * @dataProvider seqClassDataProvider
      */
-    public function testEveryOf(string $seq): void
-    {
-        $this->assertTrue($seq::collectNonEmpty([new Foo(1), new Foo(1)])->everyOf(Foo::class));
-        $this->assertFalse($seq::collectNonEmpty([new Bar(true), new Foo(1)])->everyOf(Foo::class));
-    }
-
-    /**
-     * @param class-string<NonEmptySeq> $seq
-     * @dataProvider seqClassDataProvider
-     */
     public function testExists(string $seq): void
     {
         /** @var Seq<int|Foo> $collection */
@@ -201,16 +191,6 @@ final class NonEmptySeqOpsTest extends TestCase
 
     /**
      * @param class-string<NonEmptySeq> $seq
-     * @dataProvider seqClassDataProvider
-     */
-    public function testExistsOf(string $seq): void
-    {
-        $this->assertTrue($seq::collectNonEmpty([1, new Foo(1)])->existsOf(Foo::class));
-        $this->assertFalse($seq::collectNonEmpty([1, new Foo(1)])->existsOf(Bar::class));
-    }
-
-    /**
-     * @param class-string<NonEmptySeq> $seq
      * @param class-string<Seq> $emptySeq
      * @dataProvider seqClassDataProvider
      */
@@ -247,55 +227,6 @@ final class NonEmptySeqOpsTest extends TestCase
 
     /**
      * @param class-string<NonEmptySeq> $seq
-     * @param class-string<Seq> $emptySeq
-     * @dataProvider seqClassDataProvider
-     */
-    public function testFilterOf(string $seq, string $emptySeq): void
-    {
-        $collection = $seq::collectNonEmpty([new Foo(1), new Bar(1), new SubBar(1)]);
-
-        $this->assertEquals(
-            $emptySeq::collect([new Bar(1), new SubBar(1)]),
-            $collection->filterOf(Bar::class),
-        );
-        $this->assertEquals(
-            $emptySeq::collect([new Bar(1)]),
-            $collection->filterOf(Bar::class, invariant: true),
-        );
-    }
-
-    /**
-     * @param class-string<NonEmptySeq> $seq
-     * @param class-string<Seq> $emptySeq
-     * @dataProvider seqClassDataProvider
-     */
-    public function testFilterOfWithMultipleFqcn(string $seq, string $emptySeq): void
-    {
-        $this->assertEquals(
-            $emptySeq::collect([new Bar(2), new Baz()]),
-            $seq::collectNonEmpty([new Foo(1), new Bar(2), new Baz()])->filterOf([Bar::class, Baz::class]),
-        );
-    }
-
-    /**
-     * @param class-string<NonEmptySeq> $seq
-     * @dataProvider seqClassDataProvider
-     */
-    public function testFirstOfWithMultipleFqcn(string $seq): void
-    {
-        $foo = new Foo(1);
-        $bar = new Bar(2);
-        $baz = new Baz();
-
-        $fqcn = [$foo::class, $bar::class, $baz::class];
-
-        $this->assertEquals(Option::some($foo), $seq::collectNonEmpty([$foo, $bar, $baz])->firstOf($fqcn));
-        $this->assertEquals(Option::some($bar), $seq::collectNonEmpty([$bar, $foo, $baz])->firstOf($fqcn));
-        $this->assertEquals(Option::some($baz), $seq::collectNonEmpty([$baz, $bar, $foo])->firstOf($fqcn));
-    }
-
-    /**
-     * @param class-string<NonEmptySeq> $seq
      * @dataProvider seqClassDataProvider
      */
     public function testFirst(string $seq): void
@@ -305,29 +236,6 @@ final class NonEmptySeqOpsTest extends TestCase
 
         $this->assertEquals(Option::some(1), $collection->first(fn($e) => 1 === $e));
         $this->assertEquals(Option::none(), $collection->first(fn($e) => 5 === $e));
-    }
-
-    /**
-     * @param class-string<NonEmptySeq> $seq
-     * @dataProvider seqClassDataProvider
-     */
-    public function testFirstOfAndLastOf(string $seq): void
-    {
-        $foo = new Foo(1);
-        $bar = new Bar(1);
-        $subBar = new SubBar(1);
-
-        $collection = $seq::collectNonEmpty([$foo, $subBar, $bar]);
-
-        $this->assertEquals(Option::some($subBar), $collection->firstOf(Bar::class));
-        $this->assertEquals(Option::some($bar), $collection->firstOf(Bar::class, invariant: true));
-        $this->assertEquals(Option::none(), $collection->firstOf(Baz::class));
-        $this->assertEquals(Option::none(), $collection->firstOf(Baz::class, invariant: true));
-
-        $this->assertEquals(Option::some($bar), $collection->lastOf(Bar::class));
-        $this->assertEquals(Option::some($subBar), $collection->lastOf(SubBar::class, invariant: true));
-        $this->assertEquals(Option::none(), $collection->lastOf(Baz::class));
-        $this->assertEquals(Option::none(), $collection->lastOf(Baz::class, invariant: true));
     }
 
     /**

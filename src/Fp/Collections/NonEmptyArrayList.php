@@ -396,19 +396,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return ArrayList<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): ArrayList
-    {
-        return $this->arrayList->filterOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @return ArrayList<TV>
      */
     public function tail(): ArrayList
@@ -496,19 +483,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function everyN(callable $predicate): bool
     {
         return $this->arrayList->everyN($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-assert-if-true NonEmptyArrayList<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->arrayList->everyOf($fqcn, $invariant);
     }
 
     /**
@@ -708,18 +682,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return $this->arrayList->existsOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      * @return Option<TV>
      */
@@ -737,33 +699,6 @@ final class NonEmptyArrayList implements NonEmptySeq
     public function firstN(callable $predicate): Option
     {
         return $this->arrayList->firstN($predicate);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return $this->arrayList->firstOf($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @param bool $invariant
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return $this->arrayList->lastOf($fqcn, $invariant);
     }
 
     /**

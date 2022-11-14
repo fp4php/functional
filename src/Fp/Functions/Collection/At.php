@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Closure;
 use Fp\Functional\Option\Option;
 use Fp\Operations\AtOperation;
 
@@ -34,18 +33,4 @@ function at(iterable $collection, int|string $key): Option
         ->filter(fn($coll) => is_array($coll))
         ->flatMap(fn(array $coll) => array_key_exists($key, $coll) ? Option::some($coll[$key]) : Option::none())
         ->orElse(fn() => AtOperation::of($collection)($key));
-}
-
-/**
- * @template TK of array-key
- * @template TVO
- *
- * @param Closure(mixed): Option<TVO> $evidence
- * @param iterable<TK, mixed> $collection
- * @param TK $key
- * @return Option<TVO>
- */
-function atOf(Closure $evidence, iterable $collection, int|string $key): Option
-{
-    return at($collection, $key)->flatMap($evidence);
 }

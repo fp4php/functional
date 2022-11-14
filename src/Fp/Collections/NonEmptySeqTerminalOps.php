@@ -71,25 +71,6 @@ interface NonEmptySeqTerminalOps
     public function everyN(callable $predicate): bool;
 
     /**
-     * Returns true if every collection element is of given class
-     * false otherwise
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([new Foo(1), new Foo(2)])->everyOf(Foo::class);
-     * => true
-     *
-     * >>> NonEmptyLinkedList::collectNonEmpty([new Foo(1), new Bar(2)])->everyOf(Foo::class);
-     * => false
-     * ```
-     *
-     * @template TVO
-     * @psalm-assert-if-true NonEmptySeq<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool;
-
-    /**
      * Filter collection by condition.
      * true - include element to new collection.
      * false - exclude element from new collection.
@@ -156,21 +137,6 @@ interface NonEmptySeqTerminalOps
      * @return Seq<TV>
      */
     public function filterNotNull(): Seq;
-
-    /**
-     * Filter elements of given class
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, new Foo(2)])->filterOf(Foo::class)->toList();
-     * => [Foo(2)]
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Seq<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): Seq;
 
     /**
      * Converts this NonEmptySeq<iterable<TVO>> into a Seq<TVO>.
@@ -496,24 +462,6 @@ interface NonEmptySeqTerminalOps
     public function existsN(callable $predicate): bool;
 
     /**
-     * Returns true if there is collection element of given class
-     * False otherwise
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, new Foo(2)])->existsOf(Foo::class);
-     * => true
-     *
-     * >>> NonEmptyLinkedList::collectNonEmpty([1, new Foo(2)])->existsOf(Bar::class);
-     * => false
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool;
-
-    /**
      * Find first element which satisfies the condition
      *
      * ```php
@@ -535,40 +483,6 @@ interface NonEmptySeqTerminalOps
      * @see MapTapNMethodReturnTypeProvider
      */
     public function firstN(callable $predicate): Option;
-
-    /**
-     * Find first element of given class
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get();
-     * => Foo(2)
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option;
-
-    /**
-     * Find last element of given class
-     *
-     * ```php
-     * >>> NonEmptyLinkedList::collectNonEmpty([
-     *     new Foo(1),
-     *     new Bar(1),
-     *     new Foo(2)
-     * ])->lastOf(Foo::class)->get();
-     * => Foo(2)
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option;
 
     /**
      * Return first collection element

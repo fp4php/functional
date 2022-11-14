@@ -704,19 +704,6 @@ final class HashMap implements Map
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     * @psalm-assert-if-true HashMap<TK, TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool

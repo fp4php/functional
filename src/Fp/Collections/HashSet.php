@@ -345,19 +345,6 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return HashSet<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): HashSet
-    {
-        return HashSet::collect(Ops\FilterOfOperation::of($this)($fqcn, $invariant));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @return HashSet<TV>
      */
     public function filterNotNull(): HashSet
@@ -538,19 +525,6 @@ final class HashSet implements Set
             /** @var array $tuple */;
             return toSafeClosure($predicate)(...$tuple);
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     * @psalm-assert-if-true Set<TVO> $this
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function everyOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\EveryOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**
@@ -759,18 +733,6 @@ final class HashSet implements Set
     /**
      * {@inheritDoc}
      *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     */
-    public function existsOf(string|array $fqcn, bool $invariant = false): bool
-    {
-        return Ops\ExistsOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @template TKO
      *
      * @param callable(TV): TKO $callback
@@ -845,19 +807,6 @@ final class HashSet implements Set
      *
      * @template TVO
      *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function firstOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return Ops\FirstOfOperation::of($this)($fqcn, $invariant);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
      * @param TVO $init
      * @return Ops\FoldOperation<TV, TVO>
      */
@@ -885,19 +834,6 @@ final class HashSet implements Set
     public function last(callable $predicate): Option
     {
         return Ops\LastOperation::of($this)(dropFirstArg($predicate));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Option<TVO>
-     */
-    public function lastOf(string|array $fqcn, bool $invariant = false): Option
-    {
-        return Ops\LastOfOperation::of($this)($fqcn, $invariant);
     }
 
     /**

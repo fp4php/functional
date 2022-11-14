@@ -113,21 +113,6 @@ interface SeqChainableOps
     public function filterNotNull(): Seq;
 
     /**
-     * Filter elements of given class
-     *
-     * ```php
-     * >>> LinkedList::collect([1, new Foo(2)])->filterOf(Foo::class)->toList();
-     * => [Foo(2)]
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Seq<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): Seq;
-
-    /**
      * A combined {@see Seq::map} and {@see Seq::filter}.
      *
      * Filtering is handled via Option instead of Boolean.

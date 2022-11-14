@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Evidence;
 
+use Closure;
 use Fp\Functional\Option\Option;
-use function Fp\classOf;
+
+use function Fp\Collection\exists;
 
 /**
  * Prove that subject is of string type
@@ -61,7 +63,32 @@ function proveClassString(mixed $potential): Option
  */
 function proveClassStringOf(mixed $potential, string|array $fqcn, bool $invariant = false): Option
 {
-    return proveClassString($potential)->filter(fn($class) => classOf($class, $fqcn, $invariant));
+    /** @var Option<class-string<TVO>> */
+    return proveClassString($potential)->filter(fn(string $class) => exists(
+        is_array($fqcn) ? $fqcn : [$fqcn],
+        fn($fqcn) => $invariant ? $class === $fqcn : is_a($class, $fqcn, allow_string: true),
+    ));
+}
+
+/**
+ * Curried version of {@see proveClassStringOf}.
+ *
+ * ```php
+ * >>> classStringOf(Collection::class)(ArrayList::class)
+ * => Some(ArrayList::class)
+ * >>> classStringOf(Collection::class)(Option::class)
+ * => None
+ *
+ * ```
+ *
+ * @template TVO
+ *
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+ * @return Closure(mixed): Option<class-string<TVO>>
+ */
+function classStringOf(string|array $fqcn, bool $invariant = false): Closure
+{
+    return fn(mixed $potential) => proveClassStringOf($potential, $fqcn, $invariant);
 }
 
 /**

@@ -111,21 +111,6 @@ interface StreamChainableOps
     public function filterNotNull(): Stream;
 
     /**
-     * Filter elements of given class
-     *
-     * ```php
-     * >>> Stream::emits([1, new Foo(2)])->filterOf(Foo::class)->toList();
-     * => [Foo(2)]
-     * ```
-     *
-     * @template TVO
-     *
-     * @param class-string<TVO>|list<class-string<TVO>> $fqcn
-     * @return Stream<TVO>
-     */
-    public function filterOf(string|array $fqcn, bool $invariant = false): Stream;
-
-    /**
      * A combined {@see Stream::map} and {@see Stream::filter}.
      *
      * Filtering is handled via Option instead of Boolean.

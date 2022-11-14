@@ -8,7 +8,6 @@ use Fp\Collections\HashMap;
 use Fp\Collections\HashTable;
 use Fp\Collections\Map;
 use Fp\Collections\NonEmptyHashMap;
-use Fp\Collections\NonEmptyLinkedList;
 
 /**
  * @template TK

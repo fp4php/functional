@@ -42,6 +42,7 @@ use function Fp\Collection\last;
 use function Fp\Evidence\proveFalse;
 use function Fp\Evidence\proveNonEmptyList;
 use function Fp\Evidence\proveTrue;
+use function Fp\Evidence\of;
 
 final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
@@ -82,7 +83,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             //    Map<K, A>    -> A
             $current_args = yield last($templates)
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                ->filterOf(TKeyedArray::class)
+                ->flatMap(of(TKeyedArray::class))
                 ->filter(fn(TKeyedArray $keyed) => self::isTuple($keyed) || self::isAssoc($keyed))
                 ->orElse(fn() => self::valueTypeIsNotValidKeyedArrayIssue($event));
 
@@ -95,7 +96,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                 ->flatMap(fn(ArrayList $args) => $args->firstElement())
                 ->pluck('type')
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                ->filterOf([TCallable::class, TClosure::class]);
+                ->flatMap(of([TCallable::class, TClosure::class]));
 
             // Input tuple type inferred by $callback argument
             $func_args = yield Option::some($map_callback)

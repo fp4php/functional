@@ -6,7 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 use Fp\Collections\Collection;
-use Fp\Collections\NonEmptyCollection;
 
 use function Fp\Cast\asGenerator;
 

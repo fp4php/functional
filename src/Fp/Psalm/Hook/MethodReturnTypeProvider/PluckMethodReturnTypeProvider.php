@@ -23,6 +23,7 @@ use function Fp\Collection\last;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
+use function Fp\Evidence\of;
 
 final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
@@ -39,7 +40,7 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
                     ->flatMap(fn(ArrayList $args) => $args->lastElement()
                         ->pluck('type')
                         ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                        ->filterOf(TLiteralString::class)),
+                        ->flatMap(of(TLiteralString::class))),
                 fn() => Option::fromNullable($event->getTemplateTypeParameters())
                     ->flatMap(fn(array $templates) => last($templates))
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))

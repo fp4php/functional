@@ -30,12 +30,6 @@ final class StreamOpsTest extends TestCase
         $this->assertFalse(Stream::emits([[1, 1], [2, 2], [3, 3]])->everyN(fn(int $a, int $b) => ($a + $b) < 6));
     }
 
-    public function testEveryOf(): void
-    {
-        $this->assertTrue(Stream::emits([new Foo(1), new Foo(2)])->everyOf(Foo::class));
-        $this->assertFalse(Stream::emits([new Foo(1), new Bar(2)])->everyOf(Foo::class));
-    }
-
     public function testExists(): void
     {
         /** @psalm-var Stream<object|scalar> $hasOne */
@@ -54,15 +48,6 @@ final class StreamOpsTest extends TestCase
         $this->assertFalse(Stream::emits([[1, 1], [2, 2], [3, 3]])->existsN(fn(int $a, int $b) => ($a + $b) === 7));
     }
 
-    public function testExistsOf(): void
-    {
-        $hasFoo = Stream::emits([new Foo(1), 1, 1, new Foo(1)]);
-        $hasNotFoo = Stream::emits([new Foo(1), 1, 1, new Foo(1)]);
-
-        $this->assertTrue($hasFoo->existsOf(Foo::class));
-        $this->assertFalse($hasNotFoo->existsOf(Bar::class));
-    }
-
     public function testFilter(): void
     {
         $hs = Stream::emits([new Foo(1), 1, new Foo(1)]);
@@ -78,12 +63,6 @@ final class StreamOpsTest extends TestCase
             ->toList();
 
         $this->assertEquals([[3, 3]], $actual);
-    }
-
-    public function testFilterOf(): void
-    {
-        $hs = Stream::emits([new Foo(1), 1, 2, new Foo(1)]);
-        $this->assertCount(2, $hs->filterOf(Foo::class));
     }
 
     public function testFilterMap(): void
@@ -117,12 +96,6 @@ final class StreamOpsTest extends TestCase
         $this->assertEquals(Option::none(), Stream::emits([])->firstElement());
     }
 
-    public function testFirstOf(): void
-    {
-        $this->assertEquals(Option::some(new Foo(1)), Stream::emits([new Foo(1), 2, new Foo(2)])->firstOf(Foo::class));
-        $this->assertEquals(Option::none(), Stream::emits([])->firstOf(Baz::class));
-    }
-
     public function testFirstN(): void
     {
         $this->assertEquals(
@@ -142,12 +115,6 @@ final class StreamOpsTest extends TestCase
     {
         $this->assertEquals(Option::some('3'), Stream::emits(['1', 2, '3'])->lastElement());
         $this->assertEquals(Option::none(), Stream::emits([])->lastElement());
-    }
-
-    public function testLastOf(): void
-    {
-        $this->assertEquals(Option::some(new Foo(2)), Stream::emits([new Foo(1), 2, new Foo(2)])->lastOf(Foo::class));
-        $this->assertEquals(Option::none(), Stream::emits([])->lastOf(Foo::class));
     }
 
     public function testLastN(): void
@@ -269,7 +236,7 @@ final class StreamOpsTest extends TestCase
     public function testLines(): void
     {
         Stream::emits([1, 2])->lines()->drain();
-        $this->expectOutputString('12');
+        $this->expectOutputString("1\n2\n");
     }
 
     public function testInterleave(): void

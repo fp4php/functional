@@ -13,7 +13,6 @@ use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
-use PhpParser\Node\FunctionLike;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
@@ -29,6 +28,7 @@ use function Fp\Collection\second;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
+use function Fp\Evidence\of;
 
 final class EitherFilterOrElseMethodReturnTypeProvider implements MethodReturnTypeProviderInterface
 {
@@ -67,7 +67,7 @@ final class EitherFilterOrElseMethodReturnTypeProvider implements MethodReturnTy
             second($event->getCallArgs())
                 ->flatMap(fn(Arg $arg) => PsalmApi::$args->getArgType($event, $arg))
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                ->filterOf([TClosure::class, TCallable::class])
+                ->flatMap(of([TClosure::class, TCallable::class]))
                 ->flatMap(fn(TClosure|TCallable $func) => Option::fromNullable($func->return_type))
                 ->getOrCall(fn() => Type::getNever()),
         );

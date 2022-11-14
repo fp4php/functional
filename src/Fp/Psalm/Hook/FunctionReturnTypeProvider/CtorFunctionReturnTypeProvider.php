@@ -15,6 +15,7 @@ use Psalm\Type\Atomic\TLiteralClassString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
 
+use function Fp\Evidence\of;
 use function Fp\Callable\ctor;
 use function Fp\Collection\at;
 
@@ -31,7 +32,7 @@ final class CtorFunctionReturnTypeProvider implements FunctionReturnTypeProvider
             ->flatMap(fn(ArrayList $args) => $args->head())
             ->pluck('type')
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->filterOf(TLiteralClassString::class)
+            ->flatMap(of(TLiteralClassString::class))
             ->pluck('value')
             ->map(ctor(TNamedObject::class))
             ->map(fn(TNamedObject $class) => [
