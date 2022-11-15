@@ -1,14 +1,20 @@
 ## Functions BC
 
-- `Fp\Collection\existsOf` has been removed. Use `Fp\Collection\exists` instead: 
+All collection functions with `$callback`/`$predicate` params does not allow key as second parameter anymore.
+To use key in the map, filter and other collection functions use *KV combinators:
+```diff
+- \Fp\Collection\map(fn($value, $key) => new Row(id: $key, data: $value));
++ \Fp\Collection\mapKV(fn($key, $value) => new Row(id: $key, data: $value));
+```
+Each collection function with `$callback`/`$predicate` has *KV version.
 
+- `Fp\Collection\existsOf` has been removed. Use `Fp\Collection\exists` instead:
 ```diff
 - \Fp\Collection\existsOf($collection, Foo::class)
 + \Fp\Collection\exists($collection, fn(mixed $i) => $i instanceof Foo);
 ```
 
-- `Fp\Collection\everyOf` has been removed. Use `Fp\Collection\every` instead: 
-
+- `Fp\Collection\everyOf` has been removed. Use `Fp\Collection\every` instead:
 ```diff
 - \Fp\Collection\everyOf($collection, Foo::class)
 + \Fp\Collection\every($collection, fn(mixed $i) => $i instanceof Foo);
@@ -44,8 +50,35 @@
 + \Fp\Collection\fold($collection, 0)(fn($acc, $cur) => $acc + $cur);
 ```
 
-## Map BC
+- `Fp\Collection\partitionOf` has been removed. Use `Fp\Collection\partitionT`:
+```diff
+- \Fp\Collection\partitionOf($collection, Foo::class, Bar::class);
++ \Fp\Collection\partitionT($collection, fn($i) => $i instanceof Foo, fn($i) => $i instanceof Bar);
+```
 
+- `Fp\Evidence\proveListOf` has been removed. Use `Fp\Evidence\proveList` and `Fp\Evidence\of`:
+```diff
+- \Fp\Evidence\proveListOf(getMixed(), Foo::class);
++ \Fp\Evidence\proveList(getMixed(), of(Foo::class));
+```
+
+- `Fp\Evidence\proveNonEmptyListOf` has been removed. Use `Fp\Evidence\proveNonEmptyList` and `Fp\Evidence\of`:
+```diff
+- \Fp\Evidence\proveNonEmptyListOf(getMixed(), Foo::class);
++ \Fp\Evidence\proveNonEmptyList(getMixed(), of(Foo::class));
+```
+
+- `Fp\Evidence\proveArrayOf` has been removed. Use `Fp\Evidence\proveList` and `Fp\Evidence\of`:
+```diff
+- \Fp\Evidence\proveArrayOf(getMixed(), Foo::class);
++ \Fp\Evidence\proveArray(getMixed(), vType: of(Foo::class));
+```
+
+- `Fp\Evidence\proveNonEmptyArrayOf` has been removed. Use `Fp\Evidence\proveNonEmptyList` and `Fp\Evidence\of`:
+```diff
+- \Fp\Evidence\proveNonEmptyArrayOf(getMixed(), Foo::class);
++ \Fp\Evidence\proveNonEmptyArray(getMixed(), vType: of(Foo::class));
+```
 
 ## Option BC
 - `Fp\Functional\Option\Option::filterOf` has been removed. Use `Fp\Functional\Option\Option::flatMap` and `Fp\Evidence\of`:
@@ -115,7 +148,21 @@
 + $either->fold(fn($left) => doSomethingWhenLeft($left), fn($right) => doSomethingWhenRight($right));
 ```
 
+# Seq BC
+- `Fp\Collections\Seq::unique` has been removed. Use `Fp\Collections\Seq::uniqueBy` instead:
+```diff
+- $seq->unique(fn(Foo $foo) => $foo->a);
++ $seq->uniqueBy(fn(Foo $foo) => $foo->a);
+```
+
 # Map BC
+- `Fp\Collections\Entry` has been removed. To use key in the map, filter and other `Fp\Collections\Map` operations use *KV combinators:
+```diff
+- $map->map(fn(Entry $kv) => new Row(id: $kv->key, data: $kv->value));
++ $map->mapKV(fn(string $key, array $row) => new Row(id: $key, data: $row));
+```
+Each `Fp\Collections\Map` operation has *KV version.
+
 - Iteration with foreach has been changed:
 ```diff
 - foreach($map as [$k, $v]) {}
@@ -127,7 +174,83 @@
 - $map->toAssocArray()->getOrElse([]);
 + $map->toArray();
 ```
-`Fp\Collections\Map::toArray` has `@psalm-if-this-is` annotation. You cannot call this method if `Map` key is not `array-key` subtype.
+`Fp\Collections\Map::toArray` has `@psalm-if-this-is` annotation. It impossibly to call this method if `Map` key is not `array-key` subtype.
+
+- `Fp\Collections\Map::mapKeys` has been removed. Use `Fp\Collections\Map::reindex` instead:
+```diff
+- $map->mapKeys(fn(Entry $kv) => $kv->value->a);
++ $map->reindex(fn(Foo $foo) => $foo->a);
+```
+
+- Alias `Fp\Collections\Map::mapValues` has been removed. Use `Fp\Collections\Map::map` instead:
+```diff
+- $map->mapValues(fn(Entry $kv) => $kv->value->a);
++ $map->map(fn(Foo $foo) => $foo->a);
+```
+
+## Set BC
+- `Fp\Collections\Set::updated` has been removed. Use `Fp\Collections\Set::appended`:
+```diff
+- $set->updated(new Foo(a: 42));
++ $set->appended(new Foo(a: 42));
+```
+
+## Stream BC
+
+- `Fp\Streams\Stream::toAssocArray` has been removed. Use `Fp\Streams\Stream::toArray` instead:
+```diff
+- $stream->toAssocArray();
++ $stream->toArray();
+```
+
+- `Fp\Streams\Stream::repeatN` has been removed. Use `Fp\Streams\Stream::repeat` with `$times` parameter:
+```diff
+- $stream->repeatN(2);
++ $stream->repeat(2);
+```
+
+## Collection common BC
+- Method `filterOf` has been removed. Use `filterMap` method and `Fp\Evidence\of` function: 
+```diff
+- $seq->filterOf(Foo::class);
++ $seq->filterMap(of(Foo::class));
+```
+
+- Method `firstOf` has been removed. Use `firstMap` method and `Fp\Evidence\of` function:
+```diff
+- $seq->firstOf(Foo::class);
++ $seq->firstMap(of(Foo::class));
+```
+
+- Method `lastOf` has been removed. Use `lastMap` method and `Fp\Evidence\of` function:
+```diff
+- $seq->lastOf(Foo::class);
++ $seq->lastMap(of(Foo::class));
+```
+
+- Method `reduce` has been removed. Use `fold` method:
+```diff
+- $seq->reduce(fn($acc, $cur) => $acc + $cur)->getOrElse(0);
++ $seq->fold(0)(fn($acc, $cur) => $acc + $cur);
+```
+
+- Method `everyMap` has been removed. Use `traverseOption` method:
+```diff
+- $seq->everyMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i));
++ $seq->traverseOption(fn($i) => Option::when(is_numeric($i), fn() => (int) $i));
+```
+
+- Method `existsOf` has been removed. Use `exists` method with predicate:
+```diff
+- $seq->existsOf(Foo::class);
++ $seq->exists(fn($i) => $i instanceof Foo);
+```
+
+- Method `everyOf` has been removed. Use `every` method with predicate:
+```diff
+- $seq->everyOf(Foo::class);
++ $seq->every(fn($i) => $i instanceof Foo);
+```
 
 ## Removed without alternatives
 - Fp\Functional\Validated\Validated

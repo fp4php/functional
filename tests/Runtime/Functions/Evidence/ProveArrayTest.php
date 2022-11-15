@@ -13,10 +13,8 @@ use Tests\Mock\Foo;
 use Tests\Mock\FooIterable;
 
 use function Fp\Evidence\proveArray;
-use function Fp\Evidence\proveArrayOf;
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveNonEmptyArray;
-use function Fp\Evidence\proveNonEmptyArrayOf;
 use function Fp\Evidence\proveString;
 
 final class ProveArrayTest extends TestCase
@@ -75,21 +73,5 @@ final class ProveArrayTest extends TestCase
         $this->assertInstanceOf(None::class, proveNonEmptyArray(new FooIterable()));
         $this->assertInstanceOf(None::class, proveNonEmptyArray([]));
         $this->assertInstanceOf(Some::class, proveNonEmptyArray([1]));
-    }
-
-    public function testProveArrayOf(): void
-    {
-        $this->assertInstanceOf(None::class, proveArrayOf(new FooIterable(), Foo::class));
-        $this->assertInstanceOf(Some::class, proveArrayOf([], Foo::class));
-        $this->assertInstanceOf(Some::class, proveArrayOf([new Foo(1)], Foo::class));
-        $this->assertInstanceOf(None::class, proveArrayOf([new Foo(1), new Bar(true)], Foo::class));
-    }
-
-    public function testProveNonEmptyArrayOf(): void
-    {
-        $this->assertInstanceOf(None::class, proveNonEmptyArrayOf(new FooIterable(), Foo::class));
-        $this->assertInstanceOf(None::class, proveNonEmptyArrayOf([], Foo::class));
-        $this->assertInstanceOf(None::class, proveNonEmptyArrayOf([1, new Foo(1)], Foo::class));
-        $this->assertInstanceOf(Some::class, proveNonEmptyArrayOf([new Foo(1)], Foo::class));
     }
 }
