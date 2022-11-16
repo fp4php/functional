@@ -569,11 +569,16 @@ final class ArrayList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @param null|callable(TV, TV): int $cmp
      * @return ArrayList<TV>
      */
-    public function sorted(): ArrayList
+    public function sorted(null|callable $cmp = null): ArrayList
     {
-        return ArrayList::collect(Ops\SortedOperation::of($this)->asc());
+        return ArrayList::collect(
+            null !== $cmp
+                ? Ops\SortedOperation::of($this)($cmp)
+                : Ops\SortedOperation::of($this)->asc(),
+        );
     }
 
     /**

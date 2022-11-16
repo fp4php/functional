@@ -557,11 +557,16 @@ abstract class LinkedList implements Seq
     /**
      * {@inheritDoc}
      *
+     * @param null|callable(TV, TV): int $cmp
      * @return LinkedList<TV>
      */
-    public function sorted(): LinkedList
+    public function sorted(null|callable $cmp = null): LinkedList
     {
-        return LinkedList::collect(Ops\SortedOperation::of($this)->asc());
+        return LinkedList::collect(
+            null !== $cmp
+                ? Ops\SortedOperation::of($this)($cmp)
+                : Ops\SortedOperation::of($this)->asc(),
+        );
     }
 
     /**

@@ -488,6 +488,18 @@ final class SeqOpsTest extends TestCase
      * @param class-string<Seq> $seq
      * @dataProvider seqClassDataProvider
      */
+    public function testSortedByComparator(string $seq): void
+    {
+        $this->assertEquals(
+            $seq::collect([1, 2, 3]),
+            $seq::collect([3, 2, 1])->sorted(fn($l, $r) => $l <=> $r),
+        );
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
     public function testSortedBy(string $seq): void
     {
         $this->assertEquals(

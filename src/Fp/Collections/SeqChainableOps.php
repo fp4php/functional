@@ -308,9 +308,10 @@ interface SeqChainableOps
      * => LinkedList(1, 2, 3)
      * ```
      *
+     * @param null|callable(TV, TV): int $cmp
      * @return Seq<TV>
      */
-    public function sorted(): Seq;
+    public function sorted(null|callable $cmp = null): Seq;
 
     /**
      * Ascending sort by specific value

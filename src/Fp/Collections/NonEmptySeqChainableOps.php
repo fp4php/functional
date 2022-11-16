@@ -144,9 +144,10 @@ interface NonEmptySeqChainableOps
      * => NonEmptyLinkedList(1, 2, 3)
      * ```
      *
+     * @param null|callable(TV, TV): int $cmp
      * @return NonEmptySeq<TV>
      */
-    public function sorted(): NonEmptySeq;
+    public function sorted(null|callable $cmp = null): NonEmptySeq;
 
     /**
      * Ascending sort by specific value

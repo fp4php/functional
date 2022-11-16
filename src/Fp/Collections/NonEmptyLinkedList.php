@@ -268,11 +268,12 @@ final class NonEmptyLinkedList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @param null|callable(TV, TV): int $cmp
      * @return NonEmptyLinkedList<TV>
      */
-    public function sorted(): NonEmptyLinkedList
+    public function sorted(null|callable $cmp = null): NonEmptyLinkedList
     {
-        return new NonEmptyLinkedList($this->linkedList->sorted());
+        return new NonEmptyLinkedList($this->linkedList->sorted($cmp));
     }
 
     /**

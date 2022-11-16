@@ -269,11 +269,12 @@ final class NonEmptyArrayList implements NonEmptySeq
     /**
      * {@inheritDoc}
      *
+     * @param null|callable(TV, TV): int $cmp
      * @return NonEmptyArrayList<TV>
      */
-    public function sorted(): NonEmptyArrayList
+    public function sorted(null|callable $cmp = null): NonEmptyArrayList
     {
-        return new NonEmptyArrayList($this->arrayList->sorted());
+        return new NonEmptyArrayList($this->arrayList->sorted($cmp));
     }
 
     /**
