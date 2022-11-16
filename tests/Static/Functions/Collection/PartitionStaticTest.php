@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Static\Functions\Collection;
 
-use function Fp\Collection\partition;
+use function Fp\Collection\partitionT;
 
 final class PartitionStaticTest
 {
@@ -14,7 +14,7 @@ final class PartitionStaticTest
      */
     public function testPartitionWithOnePredicate(array $list): array
     {
-        return partition($list, fn(int $v) => $v % 2 === 0);
+        return partitionT($list, fn(int $v) => $v % 2 === 0);
     }
 
     /**
@@ -23,7 +23,7 @@ final class PartitionStaticTest
      */
     public function testPartitionWithTwoPredicates(array $nums): array
     {
-        return partition(
+        return partitionT(
             $nums,
             fn(int $v) => $v % 2 === 0,
             fn(int $v) => $v % 2 === 1,

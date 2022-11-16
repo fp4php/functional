@@ -4,14 +4,11 @@
   Returns true if there is collection element which satisfies the condition and false otherwise
 
   ```php
+  <?php
+  
+  use function Fp\Collection\exists;
+  
   exists([1, 2, 3], fn(int $value) => $value === 2); // true
-  ```
-
-- #### existsOf
-  Returns true if there is collection element of given class and false otherwise
-
-  ```php
-  existsOf([new Foo(), 2, 3], Foo::class); // true
   ```
 
 - #### at
@@ -20,6 +17,10 @@
   O(1) for arrays and classes which implement ArrayAccess. O(N) for other cases
 
   ```php
+  <?php
+  
+  use function Fp\Collection\at;
+  
   /** @var Option<Foo|int> $result */
   $result = at([new Foo(), 2, 3], 1);
   ```
@@ -28,20 +29,21 @@
   Returns true if every collection element satisfies the condition and false otherwise
 
   ```php
-  every([1, 2], fn(int $v) => $v === 1); // false
-  ```
+  <?php
   
-- #### everyOf
-  Returns true if every collection element is of given class and false otherwise
-
-  ```php
-  everyOf([1, new Foo()], Foo::class); // false
+  use function Fp\Collection\every;
+  
+  every([1, 2], fn(int $v) => $v === 1); // false
   ```
 
 - #### filter
   Filter collection by condition. Do not preserve keys by default
 
   ```php
+  <?php
+  
+  use function Fp\Collection\filter;
+  
   filter([1, 2], fn(int $v): bool => $v === 2); // [2]
   ```
 
@@ -49,37 +51,33 @@
   Filter not null elements. Do not preserve keys by default
 
   ```php
+  <?php
+  
+  use function Fp\Collection\filterNotNull;
+  
   filterNotNull([1, null, 2]); // [1, 2]
-  ```
-
-- #### filterOf
-  Filter elements of given class. Do not preserve keys by default
-
-  ```php
-  /** @var list<Foo> $result */
-  $result = filterOf([1, new Foo(), 2], Foo::class);
   ```
 
 - #### first
   Find first element which satisfies the condition
 
   ```php
+  <?php
+  
+  use function Fp\Collection\first;
+  
   /** @var Option<int> $result */
   $result = first([1, 2], fn(int $v): bool => $v === 2);
-  ```
-
-- #### firstOf
-  Find first element of given class
-
-  ```php
-  /** @var Option<Foo> $result */
-  $result = firstOf([1, new Foo(1), new Foo(2)], Foo::class);
   ```
 
 - #### flatMap
   Flat map Consists of map and flatten operations
 
   ```php
+  <?php
+  
+  use function Fp\Collection\flatMap;
+  
   /**
    * 1) map [1, 4] to [[0, 1, 2], [3, 4, 5]]
    * 2) flatten [[0, 1, 2], [3, 4, 5]] to [0, 1, 2, 3, 4, 5]
@@ -87,43 +85,37 @@
   flatMap([1, 4], fn(int $x) => [$x - 1, $x, $x + 1]); // [0, 1, 2, 3, 4, 5]
   ```
 
-- #### fold
-  Fold many elements into one
-
-  ```php
-  fold(
-    '', 
-    ['a', 'b', 'c'], 
-    fn(string $accumulator, $currentValue) => $accumulator . $currentValue
-  ); 
-  
-  // 'abc'
-  ```
-
 - #### groupBy
   Group collection elements by key returned by function
 
   ```php
-  groupBy( 
-    [1, 2, 3], 
-    fn(int $v): int => $v
-  ); 
+  <?php
   
-  // [1 => [1], 2 => [2], 3 => [3]]
+  use function Fp\Collection\groupBy;
+  
+  $result = groupBy([1, 2, 3], fn(int $v): int => $v); // [1 => [1], 2 => [2], 3 => [3]] 
   ```
 
 - #### head
   Returns collection first element
 
   ```php
-  /** @var Option<int> $result */
-  $result = head([1, 2, 3]); 
+  <?php
+  
+  use function Fp\Collection\head;
+  
+  $result = head([1, 2, 3]); // Some(1)
+  $result = head([]); // None
   ```
 
 - #### keys
   Returns list of collection keys
 
   ```php
+  <?php
+  
+  use function Fp\Collection\keys;
+  
   keys(['a' => 1, 'b' => 2]); // ['a', 'b']
   ```
 
@@ -131,6 +123,10 @@
   Returns last collection element and None if there is no last element
 
   ```php
+  <?php
+  
+  use function Fp\Collection\last;
+  
   /** @var Option<int> $result */
   $result = last([1, 2, 3]);
   ```
@@ -139,30 +135,28 @@
   Produces a new array of elements by mapping each element in collection through a transformation function (callback).
 
   ```php
+  <?php
+  
+  use function Fp\Collection\map;
+  
   map([1, 2, 3], fn(int $v) => (string) $v); // ['1', '2', '3']
   ```
 
-- #### partition
-  Divide collection by given conditions
-
-  ```php
-  partition(
-    ['a' => 1, 'b' => 2],
-    fn(int $x) => $x % 2 === 0 
-  );
-  
-  // [[2], [1]]
-  ```
-
-- #### partitionOf
+- #### partitionT
   Divide collection by given classes
 
   ```php
-  /** @var array{list<Foo>, list<Bar>, list<Foo|Bar>} $result */
-  $result = partitionOf(
+  <?php
+  
+  use Tests\Mock\Foo;
+  use Tests\Mock\Bar;
+  use function Fp\Collection\partitionT;
+  
+  // inferred as array{list<Foo>, list<Bar>, list<Foo|Bar>}
+  $result = partitionT(
     [new Foo(), new Bar()],
-    Foo::class,
-    Bar::class 
+    fn($i) => $i instanceof Foo,
+    fn($i) => $i instanceof Bar, 
   );
   ```
 
@@ -170,33 +164,44 @@
   Pop last collection element and return tuple containing this element and other collection elements. If there is no last element then returns None
 
   ```php
+  <?php
+  
+  use function Fp\Collection\pop;
+  
   [$head, $tail] = pop([1, 2, 3])->get(); // [3, [1, 2]]
   ```
   
   ```php
+  <?php
+  
+  use Fp\Functional\Option\Option;
+  use function Fp\Collection\pop;
+  
   Option::do(function () use ($collection) {
     [$head, $tail] = yield pop($collection);
     return doSomethingWithHeadAndTail($head, $tail);
   })   
   ```
 
-- #### reduce
-  Reduce multiple elements into one. Returns None for empty collection
+- #### fold
+  Fold multiple elements into one. Returns None for empty collection
 
   ```php
-  /** @var Option<string> $option */
-  $option = reduce(
-    ['a', 'b', 'c'], 
-    fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
-  ); 
+  <?php
   
-  $option->get(); // 'abc'
+  use function Fp\Collection\fold;
+  
+  $result = fold('', ['a', 'b', 'c'])(fn($acc, string $cur) => $acc . $cur); // 'abc'
   ```
 
 - #### reindex
   Produces a new array of elements by assigning the values to keys generated by a transformation function (callback).
 
   ```php
+  <?php
+  
+  use function Fp\Collection\reindex;
+  
   reindex([1, 'a' => 2], fn (int $value) => $value); // [1 => 1, 2 => 2]
   ```
 
@@ -204,6 +209,10 @@
   Copy collection in reversed order
 
   ```php
+  <?php
+  
+  use function Fp\Collection\reverse;
+  
   reverse([1, 2, 3]); // [3, 2, 1]   
   ```
 
@@ -211,6 +220,10 @@
   Returns second collection element. None if there is no second collection element
 
   ```php
+  <?php
+  
+  use function Fp\Collection\second;
+  
   second([1, 2, 3])->get(); // 2   
   ```
 
@@ -218,10 +231,19 @@
   Shift first collection element and return tuple containing this element and other collection elements. If there is no first element then returns None
 
   ```php
+  <?php
+  
+  use function Fp\Collection\shift;
+  
   [$head, $tail] = shift([1, 2, 3])->get(); // [1, [2, 3]]   
   ```
 
   ```php
+  <?php
+  
+  use Fp\Functional\Option\Option;
+  use function Fp\Collection\shift;
+  
   Option::do(function () use ($collection) {
     [$head, $tail] = yield shift($collection);
     return doSomethingWithHeadAndTail($head, $tail);
@@ -232,6 +254,10 @@
   Returns every collection element except first
 
   ```php
+  <?php
+  
+  use function Fp\Collection\tail;
+  
   tail([1, 2, 3]); // [2, 3]   
   ```
 
@@ -241,6 +267,10 @@
   If one of the two collections is longer than the other, its remaining elements are ignored.
 
   ```php
+  <?php
+  
+  use function Fp\Collection\zip;
+  
   zip([1, 2, 3], ['a', 'b']); // [[1, 'a'], [2, 'b']]
   ```
 

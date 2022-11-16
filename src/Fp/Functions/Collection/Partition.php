@@ -11,7 +11,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider
  *
  *
  * ```php
- * >>> partitionN([new Foo(1), new Foo(2), new Bar(3)],
+ * >>> partitionT([new Foo(1), new Foo(2), new Bar(3)],
  * >>>     fn(Foo|Bar $v) => objectOf($v, Foo::class),
  * >>>     fn(Foo|Bar $v) => objectOf($v, Bar::class),
  * >>> )
@@ -26,7 +26,7 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartitionFunctionReturnTypeProvider
  * @no-named-arguments
  * @see PartitionFunctionReturnTypeProvider
  */
-function partition(iterable $collection, callable ...$predicates): array
+function partitionT(iterable $collection, callable ...$predicates): array
 {
     $predicateCount = count($predicates);
     $partitions = array_fill(0, $predicateCount + 1, []);
