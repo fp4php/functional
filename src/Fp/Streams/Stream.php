@@ -558,48 +558,6 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
         );
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return Stream<TV>
-     */
-    public function sorted(): Stream
-    {
-        return $this->fork(Ops\SortedOperation::of($this->emitter)->asc());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return Stream<TV>
-     */
-    public function sortedBy(callable $callback): Stream
-    {
-        return $this->fork(Ops\SortedOperation::of($this->emitter)->ascBy($callback));
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return Stream<TV>
-     */
-    public function sortedDesc(): Stream
-    {
-        return $this->fork(Ops\SortedOperation::of($this->emitter)->desc());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param callable(TV): mixed $callback
-     * @return Stream<TV>
-     */
-    public function sortedDescBy(callable $callback): Stream
-    {
-        return $this->fork(Ops\SortedOperation::of($this->emitter)->descBy($callback));
-    }
-
     #endregion StreamChainableOps
 
     #region StreamTerminalOps

@@ -209,6 +209,12 @@ Each `Fp\Collections\Map` operation has *KV version.
 + $stream->repeat(2);
 ```
 
+- `Fp\Streams\Stream::sorted` has been removed. This method was hide all elements loading to the memory. Alternative:
+```diff
++ $stream->sorted(fn($l, $r) => $l <=> $r);
++ $stream->toArrayList()->sorted(fn($l, $r) => $l <=> $r)->toStream();
+```
+
 ## Collection common BC
 - Method `filterOf` has been removed. Use `filterMap` method and `Fp\Evidence\of` function: 
 ```diff
