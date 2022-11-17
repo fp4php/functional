@@ -14,60 +14,26 @@ use function Fp\Collection\filterKV;
 final class FilterStaticTest
 {
     /**
-     * @param array<string, int> $coll
+     * @param list<int> $list
+     * @return list<int>
+     */
+    public function testPreserveListType(array $list): array
+    {
+        return filter($list, fn($i) => $i > 42);
+    }
+
+    /**
+     * @param non-empty-list<int> $list
+     * @return list<int>
+     */
+    public function testPreserveListTypeFromNonEmptyList(array $list): array
+    {
+        return filter($list, fn($i) => $i > 42);
+    }
+
+    /**
+     * @param array<string, null|int> $coll
      * @return array<string, int>
-     */
-    public function testPreserveKeysTrue(array $coll): array
-    {
-        return filter(
-            $coll,
-            fn(int $v) => true,
-            preserveKeys: true
-        );
-    }
-
-    /**
-     * @param array<string, int> $coll
-     * @return list<int>
-     */
-    public function testPreserveKeysExplicitFalse(array $coll): array
-    {
-        return filter(
-            $coll,
-            fn(int $v) => true,
-            preserveKeys: false
-        );
-    }
-
-    /**
-     * @param array<string, int> $coll
-     * @return list<int>
-     */
-    public function testPreserveKeysImplicitFalse(array $coll): array
-    {
-        return filter(
-            $coll,
-            fn(int $v) => true,
-        );
-    }
-
-    /**
-     * @param array<string, int> $coll
-     * @return array<string, int>
-     */
-    public function testPreserveKeysIsNonLiteralBool(array $coll): array
-    {
-        return filter(
-            $coll,
-            fn(int $v) => true,
-            preserveKeys: (bool) rand(0, 1)
-        );
-    }
-
-    /**
-     * @param array<string, int> $coll
-     * @return list<int>
-     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public function testRefineNotNull(array $coll): array
     {
@@ -79,7 +45,7 @@ final class FilterStaticTest
 
     /**
      * @param array<string, ShapeWithPossiblyUndefinedPostcode> $coll
-     * @return list<array{name: string, postcode: int}>
+     * @return array<string, array{name: string, postcode: int}>
      */
     public function testRefineShapeType(array $coll): array
     {
@@ -94,7 +60,7 @@ final class FilterStaticTest
 
     /**
      * @param array<string, array>  $coll
-     * @return list<array{name: string, postcode: int}>
+     * @return array<string, array{name: string, postcode: int}>
      */
     public function testRefineShapeWithPsalmAssert(array $coll): array
     {
@@ -126,7 +92,7 @@ final class FilterStaticTest
 
     /**
      * @param array<string, array>  $coll
-     * @return list<array{name: string, postcode: int}>
+     * @return array<string, array{name: string, postcode: int}>
      */
     public function testWithFirstClassCallableMethod(array $coll): array
     {
@@ -135,7 +101,7 @@ final class FilterStaticTest
 
     /**
      * @param array<string, array>  $coll
-     * @return list<array{name: string, postcode: int}>
+     * @return array<string, array{name: string, postcode: int}>
      */
     public function testWithFirstClassCallableStaticMethod(array $coll): array
     {
@@ -144,7 +110,7 @@ final class FilterStaticTest
 
     /**
      * @param array<string, int|string>  $coll
-     * @return list<int>
+     * @return array<string, int>
      */
     public function testWithFirstClassCallableFunction(array $coll): array
     {

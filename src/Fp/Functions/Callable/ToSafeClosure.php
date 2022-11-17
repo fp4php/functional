@@ -31,7 +31,6 @@ function toSafeClosure(callable $callable): callable
         $withoutExtraArgs = filterKV(
             collection: $args,
             predicate: fn($key) => array_key_exists($key, $params) || $hasVariadic,
-            preserveKeys: true,
         );
 
         return $callable(...$withoutExtraArgs);

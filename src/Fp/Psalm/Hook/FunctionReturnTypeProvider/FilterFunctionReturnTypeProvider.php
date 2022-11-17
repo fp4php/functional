@@ -15,8 +15,9 @@ use Fp\PsalmToolkit\Toolkit\CallArg;
 use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use Psalm\Type\Atomic\TArray;
-use Psalm\Type\Atomic\TFalse;
+use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TList;
+use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
@@ -24,19 +25,19 @@ use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Fp\Functional\Option\Option;
 
 use function Fp\Callable\ctor;
-use function Fp\Collection\at;
+use function Fp\Collection\first;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 
 final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    private const PRESERVE_KEY_IDX = 2;
-
     public static function getFunctionIds(): array
     {
         return [
             strtolower('Fp\Collection\filter'),
             strtolower('Fp\Collection\filterKV'),
+            strtolower('Fp\Collection\last'),
+            strtolower('Fp\Collection\first'),
         ];
     }
 
@@ -60,13 +61,22 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
 
     private static function getReturnType(FunctionReturnTypeProviderEvent $event, CollectionTypeParams $result): Union
     {
-        return at($event->getCallArgs(), self::PRESERVE_KEY_IDX)
+        if (self::isAccessorFunction($event->getFunctionId())) {
+            return self::optionType($result);
+        }
+
+        return first($event->getCallArgs())
             ->flatMap(fn(Arg $preserve_keys) => PsalmApi::$args->getArgType($event, $preserve_keys))
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->map(fn($preserve_keys) => $preserve_keys::class === TFalse::class
+            ->map(fn($atomic) => $atomic::class === TList::class || $atomic::class === TNonEmptyList::class
                 ? self::listType($result)
                 : self::arrayType($result))
             ->getOrCall(fn() => self::listType($result));
+    }
+
+    private static function isAccessorFunction(string $id): bool
+    {
+        return $id === strtolower('Fp\Collection\last') || $id === strtolower('Fp\Collection\first');
     }
 
     private static function arrayType(CollectionTypeParams $result): Union
@@ -80,6 +90,13 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
     {
         return new Union([
             new TList($result->val_type),
+        ]);
+    }
+
+    private static function optionType(CollectionTypeParams $result): Union
+    {
+        return new Union([
+            new TGenericObject(Option::class, [$result->val_type]),
         ]);
     }
 }

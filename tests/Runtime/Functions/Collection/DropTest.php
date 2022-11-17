@@ -25,7 +25,7 @@ final class DropTest extends TestCase
 
     public function testDropWhile(): void
     {
-        $this->assertEquals([4, 5], dropWhile([1, 2, 3, 4, 5], fn($e) => $e < 3));
+        $this->assertEquals([3, 4, 5], dropWhile([1, 2, 3, 4, 5], fn($e) => $e < 3));
         $this->assertEquals([], dropWhile([], fn($e) => $e < 3));
     }
 }

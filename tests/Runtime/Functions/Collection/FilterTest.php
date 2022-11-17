@@ -17,21 +17,20 @@ final class FilterTest extends TestCase
     public function testFilter(): void
     {
         $this->assertEquals([1], filter(
-            ['a' => 1, 2],
+            [1, 2],
             fn(int $v) => $v < 2
         ));
 
         $this->assertEquals(['a' => 1], filter(
             ['a' =>  1, 'b' => 2],
             fn(int $v) => $v < 2,
-            true
         ));
     }
 
     public function testFilterKV(): void
     {
         $this->assertEquals(
-            [2],
+            ['snd' => 2],
             filterKV(
                 ['fst' => 1, 'snd' => 2, 'thd' => 3],
                 fn($k, $v): bool => $k !== 'fst' && $v !== 3,
@@ -43,7 +42,6 @@ final class FilterTest extends TestCase
             filterKV(
                 ['fst' => 1, 'snd' => 2, 'thd' => 3],
                 fn($k, $v): bool => $k !== 'fst' && $v !== 3,
-                true,
             ),
         );
     }
@@ -63,7 +61,7 @@ final class FilterTest extends TestCase
 
     public function testFilterMap(): void
     {
-        $this->assertEquals([1], filterMap(
+        $this->assertEquals(['a' => 1], filterMap(
             ['a' => 1, 2],
             fn(int $v) => $v < 2 ? Option::some($v) : Option::none(),
         ));
@@ -71,7 +69,6 @@ final class FilterTest extends TestCase
         $this->assertEquals(['a' => 1], filterMap(
             ['a' =>  1, 'b' => 2],
             fn(int $v) => $v < 2 ? Option::some($v) : Option::none(),
-            true
         ));
     }
 }

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Operations\DropOperation;
-use Fp\Operations\DropRightOperation;
 use Fp\Operations\DropWhileOperation;
 
+use function Fp\Callable\dropFirstArg;
+use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 
 /**
@@ -18,14 +19,20 @@ use function Fp\Cast\asList;
  * => [3]
  * ```
  *
+ * @template TK of array-key
  * @template TV
  *
- * @param iterable<TV> $collection
- * @return list<TV>
+ * @param iterable<TK, TV> $collection
+ * @return array<TK, TV>
+ * @psalm-return ($collection is list<TV> ? list<TV> : array<TK, TV>)
  */
 function drop(iterable $collection, int $length): array
 {
-    return asList(DropOperation::of($collection)($length));
+    $gen = DropOperation::of($collection)($length);
+
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }
 
 /**
@@ -36,14 +43,16 @@ function drop(iterable $collection, int $length): array
  * => [1, 2]
  * ```
  *
+ * @template TK of array-key
  * @template TV
  *
- * @param iterable<TV> $collection
- * @return list<TV>
+ * @param iterable<TK, TV> $collection
+ * @return array<TK, TV>
+ * @psalm-return ($collection is list<TV> ? list<TV> : array<TK, TV>)
  */
 function dropRight(iterable $collection, int $length): array
 {
-    return DropRightOperation::of($collection)($length);
+    return reverse(drop(reverse($collection), $length));
 }
 
 /**
@@ -54,13 +63,19 @@ function dropRight(iterable $collection, int $length): array
  * => [4, 5]
  * ```
  *
+ * @template TK of array-key
  * @template TV
  *
- * @param iterable<TV> $collection
+ * @param iterable<TK, TV> $collection
  * @param callable(TV): bool $predicate
- * @return list<TV>
+ * @return array<TK, TV>
+ * @psalm-return ($collection is list<TV> ? list<TV> : array<TK, TV>)
  */
 function dropWhile(iterable $collection, callable $predicate): array
 {
-    return asList(DropWhileOperation::of($collection)($predicate));
+    $gen = DropWhileOperation::of($collection)(dropFirstArg($predicate));
+
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }

@@ -60,7 +60,6 @@ function ctor(string $class): Closure
         $withoutExtraArgs = filterKV(
             collection: $args,
             predicate: fn($key) => array_key_exists($key, $params) || $hasVariadic,
-            preserveKeys: true,
         );
 
         /** @psalm-suppress MixedMethodCall */

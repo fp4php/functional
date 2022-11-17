@@ -35,7 +35,7 @@ final class PartitionFunctionReturnTypeProvider implements FunctionReturnTypePro
     public static function getFunctionIds(): array
     {
         return [
-            strtolower('Fp\Collection\partition'),
+            strtolower('Fp\Collection\partitionT'),
         ];
     }
 

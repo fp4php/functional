@@ -30,11 +30,11 @@ use function Fp\Cast\asList;
  * @param callable(TV): bool $predicate
  * @return array<TK, TV>
  *
- * @psalm-return ($preserveKeys is true ? array<TK, TV> : list<TV>)
+ * @psalm-return ($collection is array<TK, TV> ? list<TV> : array<TK, TV>)
  */
-function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
+function filter(iterable $collection, callable $predicate): array
 {
-    return filterKV($collection, dropFirstArg($predicate), $preserveKeys);
+    return filterKV($collection, dropFirstArg($predicate));
 }
 
 /**
@@ -52,14 +52,14 @@ function filter(iterable $collection, callable $predicate, bool $preserveKeys = 
  * @param callable(TK, TV): bool $predicate
  * @return array<TK, TV>
  *
- * @psalm-return ($preserveKeys is true ? array<TK, TV> : list<TV>)
+ * @psalm-return ($collection is list<TV> ? list<TV> : array<TK, TV>)
  */
-function filterKV(iterable $collection, callable $predicate, bool $preserveKeys = false): array
+function filterKV(iterable $collection, callable $predicate): array
 {
     $gen = FilterOperation::of($collection)($predicate);
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }
 
 /**
@@ -108,12 +108,13 @@ function filterNotNull(iterable $collection): array
  * @param callable(TV): Option<TVO> $predicate
  * @return array<TK, TVO>
  *
- * @psalm-return ($preserveKeys is true ? array<TK, TVO> : list<TVO>)
+ * @psalm-return ($collection is list<TV> ? list<TVO> : array<TK, TVO>)
  */
-function filterMap(iterable $collection, callable $predicate, bool $preserveKeys = false): array
+function filterMap(iterable $collection, callable $predicate): array
 {
     $gen = FilterMapOperation::of($collection)(dropFirstArg($predicate));
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
+
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }
