@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Fp\Functional\Option\Option;
 
-use function Fp\Cast\asList;
-
 /**
  * @template TK
  * @template TV
@@ -21,8 +19,19 @@ final class MaxElementOperation extends AbstractOperation
      */
     public function __invoke(): Option
     {
-        $list = asList($this->gen);
+        $max = null;
 
-        return Option::fromNullable(!empty($list) ? max($list) : null);
+        foreach ($this->gen as $val) {
+            if (null === $max) {
+                $max = $val;
+                continue;
+            }
+
+            if ($max < $val) {
+                $max = $val;
+            }
+        }
+
+        return Option::fromNullable($max);
     }
 }

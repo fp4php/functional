@@ -20,8 +20,19 @@ final class MinByElementOperation extends AbstractOperation
      */
     public function __invoke(callable $by): Option
     {
-        $sorted = SortedOperation::of($this->gen)->asc();
+        $min = null;
 
-        return FirstOperation::of($sorted)();
+        foreach ($this->gen as $item) {
+            if (null === $min) {
+                $min = $item;
+                continue;
+            }
+
+            if ($by($min) > $by($item)) {
+                $min = $item;
+            }
+        }
+
+        return Option::fromNullable($min);
     }
 }

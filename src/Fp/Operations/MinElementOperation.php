@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Fp\Functional\Option\Option;
 
-use function Fp\Cast\asList;
-
 /**
  * @template TK
  * @template TV
@@ -21,8 +19,19 @@ final class MinElementOperation extends AbstractOperation
      */
     public function __invoke(): Option
     {
-        $list = asList($this->gen);
+        $min = null;
 
-        return Option::fromNullable(!empty($list) ? min($list) : null);
+        foreach ($this->gen as $val) {
+            if (null === $min) {
+                $min = $val;
+                continue;
+            }
+
+            if ($min > $val) {
+                $min = $val;
+            }
+        }
+
+        return Option::fromNullable($min);
     }
 }

@@ -20,8 +20,19 @@ final class MaxByElementOperation extends AbstractOperation
      */
     public function __invoke(callable $by): Option
     {
-        $sorted = SortedOperation::of($this->gen)->desc();
+        $max = null;
 
-        return FirstOperation::of($sorted)();
+        foreach ($this->gen as $item) {
+            if (null === $max) {
+                $max = $item;
+                continue;
+            }
+
+            if ($by($max) < $by($item)) {
+                $max = $item;
+            }
+        }
+
+        return Option::fromNullable($max);
     }
 }
