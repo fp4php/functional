@@ -163,6 +163,7 @@ filter(getList(), is_string(...));
 
 Is too difficult to make the fold function using type system of psalm.
 Without plugin `Fp\Collection\fold` and collections fold method has some edge cases. For example: https://psalm.dev/r/b0a99c4912
+
 Plugin can fix that problem.
 
 - #### ctor: infer function type from __construct
@@ -174,6 +175,7 @@ But that feature cannot be used for class constructor. `Fp\Callable\ctor` can si
 <?php
 
 use Tests\Mock\Foo;
+
 use function Fp\Callable\ctor;
 
 // Psalm knows that ctor(Foo::class) is Closure(int, bool, bool): Foo 
@@ -197,6 +199,7 @@ Plugin brings structural type inference for sequence functions:
 <?php
 
 use Fp\Functional\Option\Option;
+
 use function Fp\Collection\sequenceOption;
 use function Fp\Collection\sequenceOptionT;
 
@@ -238,7 +241,7 @@ Unfortunately `@psalm-assert-if-true`/`@psalm-assert-if-false` works incorrectly
 
 Plugin implements workaround for this bug.
 
-- #### *N combinators: typecheck call
+- #### N-combinators
 
 Psalm plugin will prevent calling *N combinator in non-valid cases:
 
@@ -264,7 +267,7 @@ function test(Option $maybeData): Option
 }
 ```
 
-- #### proveTrue: Flow assertions in the do notation
+- #### proveTrue
 
 Implementation assertion effect for `Fp\Evidence\proveTrue` (like for builtin `assert` function):
 
@@ -286,7 +289,7 @@ Option::do(function() {
 });
 ```
 
-- #### toEither: Separated to Either
+- #### toEither
 
 Inference for `Fp\Functional\Separated\Separated::toEither`:
 
@@ -297,15 +300,6 @@ use Fp\Collections\HashSet;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Separated\Separated;
-
-/**
- * @param Separated<ArrayList<int>, ArrayList<string>> $separated
- * @return Either<ArrayList<int>, ArrayList<string>>
- */
-function separatedArrayListToEither(Separated $separated): Either
-{
-    return $separated->toEither();
-}
 
 /**
  * @param Separated<ArrayList<int>, ArrayList<string>> $separated
