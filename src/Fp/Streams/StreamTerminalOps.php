@@ -245,4 +245,54 @@ interface StreamTerminalOps
      * ```
      */
     public function mkString(string $start = '', string $sep = ',', string $end = ''): string;
+
+    /**
+     * Returns the maximum value from collection
+     *
+     * ```php
+     * >>> Stream::emits([1, 4, 2])->max()->get();
+     * => 4
+     * ```
+     *
+     * @return Option<TV>
+     */
+    public function max(): Option;
+
+    /**
+     * Returns the maximum value from collection by iterating each element using the callback
+     *
+     * ```php
+     * >>> Stream::emits([new Foo(1), new Bar(6), new Foo(2)])->maxBy(fn(Foo $foo) => $foo->a)->get();
+     * => Bar(6)
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function maxBy(callable $callback): Option;
+
+    /**
+     * Returns the minimum value from collection
+     *
+     * ```php
+     * >>> Stream::emits([1, 4, 2])->min()->get();
+     * => 1
+     * ```
+     *
+     * @return Option<TV>
+     */
+    public function min(): Option;
+
+    /**
+     * Returns the minimum value from collection by iterating each element using the callback
+     *
+     * ```php
+     * >>> Stream::emits([new Foo(1), new Bar(6), new Foo(2)])->minBy(fn(Foo $foo) => $foo->a)->get();
+     * => Foo(1)
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function minBy(callable $callback): Option;
 }

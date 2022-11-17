@@ -773,6 +773,48 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
         foreach ($this as $ignored) { }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function max(): Option
+    {
+        return Ops\MaxElementOperation::of($this)();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function maxBy(callable $callback): Option
+    {
+        return Ops\MaxByElementOperation::of($this)($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function min(): Option
+    {
+        return Ops\MinElementOperation::of($this)();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function minBy(callable $callback): Option
+    {
+        return Ops\MinByElementOperation::of($this)($callback);
+    }
+
     #endregion StreamTerminalOps
 
     #region StreamCastableOps

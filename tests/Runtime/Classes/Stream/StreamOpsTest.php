@@ -350,4 +350,52 @@ final class StreamOpsTest extends TestCase
             Stream::emits(['zero', '1', '2'])->lastMap(fn($i) => Option::when(is_numeric($i), fn() => (int) $i)),
         );
     }
+
+    public function testMax(): void
+    {
+        $this->assertEquals(Option::some(3), Stream::emits([2, 1, 3])->max());
+        $this->assertEquals(Option::none(), Stream::emits([])->max());
+    }
+
+    public function testMaxBy(): void
+    {
+        $neSet = Stream::emits([new Foo(2), new Foo(1), new Foo(3)]);
+
+        /** @var Stream<Foo> */
+        $emptySet = Stream::emits([]);
+
+        $this->assertEquals(
+            Option::some(new Foo(3)),
+            $neSet->maxBy(fn(Foo $obj) => $obj->a),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySet->maxBy(fn(Foo $obj) => $obj->a),
+        );
+    }
+
+    public function testMin(): void
+    {
+        $this->assertEquals(Option::some(1), Stream::emits([2, 1, 3])->min());
+        $this->assertEquals(Option::none(), Stream::emits([])->min());
+    }
+
+    public function testMinBy(): void
+    {
+        $neSet = Stream::emits([new Foo(2), new Foo(1), new Foo(3)]);
+
+        /** @var Stream<Foo> */
+        $emptySet = Stream::emits([]);
+
+        $this->assertEquals(
+            Option::some(new Foo(1)),
+            $neSet->minBy(fn(Foo $obj) => $obj->a),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            $emptySet->minBy(fn(Foo $obj) => $obj->a),
+        );
+    }
 }

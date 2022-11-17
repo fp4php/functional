@@ -61,8 +61,8 @@ final class FilterTest extends TestCase
 
     public function testFilterMap(): void
     {
-        $this->assertEquals(['a' => 1], filterMap(
-            ['a' => 1, 2],
+        $this->assertEquals([1], filterMap(
+            [1, 2],
             fn(int $v) => $v < 2 ? Option::some($v) : Option::none(),
         ));
 
