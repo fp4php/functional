@@ -22,12 +22,7 @@ final class MinElementOperation extends AbstractOperation
         $min = null;
 
         foreach ($this->gen as $val) {
-            if (null === $min) {
-                $min = $val;
-                continue;
-            }
-
-            if ($min > $val) {
+            if (null === $min || $min > $val) {
                 $min = $val;
             }
         }

@@ -22,12 +22,7 @@ final class MaxElementOperation extends AbstractOperation
         $max = null;
 
         foreach ($this->gen as $val) {
-            if (null === $max) {
-                $max = $val;
-                continue;
-            }
-
-            if ($max < $val) {
+            if (null === $max || $max < $val) {
                 $max = $val;
             }
         }

@@ -23,12 +23,7 @@ final class MaxByElementOperation extends AbstractOperation
         $max = null;
 
         foreach ($this->gen as $item) {
-            if (null === $max) {
-                $max = $item;
-                continue;
-            }
-
-            if ($by($max) < $by($item)) {
+            if (null === $max || $by($max) < $by($item)) {
                 $max = $item;
             }
         }
