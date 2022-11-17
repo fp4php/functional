@@ -106,33 +106,6 @@ function omitAnyValueFromShape(Option $maybeData): Option
 }
 ```
 
-- #### Psalm issues
-
-Psalm will prevent calling *N combinator in non-valid cases:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use Fp\Functional\Option\Option;
-use Tests\Mock\Foo;
-
-/**
- * @param Option<array{int, bool}> $maybeData
- * @return Option<Foo>
- */
-function test(Option $maybeData): Option
-{
-    /*
-     * ERROR: IfThisIsMismatch
-     * at /home/andrew/PhpstormProjects/whsv26/functional/main.php:45:24
-     * Object must be type of Fp\Functional\Option\Option<array{int, bool, bool}>, actual type Fp\Functional\Option\Option<array{int, bool}>
-     */
-    return $maybeData->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
-}
-```
-
 In the example above tuple contains only two values. But `mapN` waits three parameters.
 This is non-valid case and Psalm tells about it.
 

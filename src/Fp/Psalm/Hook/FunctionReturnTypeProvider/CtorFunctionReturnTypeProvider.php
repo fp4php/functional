@@ -37,6 +37,7 @@ final class CtorFunctionReturnTypeProvider implements FunctionReturnTypeProvider
             ->map(ctor(TNamedObject::class))
             ->map(fn(TNamedObject $class) => [
                 new TClosure(
+                    value: 'Closure',
                     params: PsalmApi::$classlikes->getStorage($class)
                         ->flatMap(fn(ClassLikeStorage $storage) => at($storage->methods, '__construct'))
                         ->map(fn(MethodStorage $method) => $method->params)

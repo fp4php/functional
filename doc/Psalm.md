@@ -1,28 +1,45 @@
+# Psalm
+**Contents**
+- [Static analysis](#Static-analysis)
+- [Psalm plugin](#Psalm-plugin)
+- [Features](#Features)
+  - [filter: type narrowing](#filter:-type-narrowing)
+  - [fold: fix edge cases](#fold:-fix-edge-cases)
+  - [ctor: infer function type from \_\_construct](#ctor:-infer-function-type-from-\_\_construct)
+  - [sequence: shape\\tuple inference for call](#sequence:-shape\\tuple-inference-for-call)
+  - [assertion: fix Option/Either assertions](#assertion:-fix-Option/Either-assertions)
+  - [\*N combinators: typecheck call](#\*N-combinators:-typecheck-call)
+  - [proveTrue: Flow assertions in the do notation](#proveTrue:-Flow-assertions-in-the-do-notation)
+  - [toEither: Separated to Either](#toEither:-Separated-to-Either)
+
 # Static analysis
 
-Highly recommended to use this library in tandem with [Psalm](https://github.com/vimeo/psalm).
+Highly recommended to use this library in tandem with
+[Psalm](https://github.com/vimeo/psalm).
 
-Psalm is awesome library for static analysis of PHP code.
-It opens the road to typed functional programming.
+Psalm is awesome library for static analysis of PHP code. It opens the
+road to typed functional programming.
 
 # Psalm plugin
 
-Psalm cannot check everything. But the [plugin system](https://psalm.dev/docs/running_psalm/plugins/authoring_plugins/) allows to improve type inference and implement other custom diagnostics.
+Psalm cannot check everything. But the [plugin
+system](https://psalm.dev/docs/running_psalm/plugins/authoring_plugins/)
+allows to improve type inference and implement other custom diagnostics.
 
 To enable plugin shipped with library:
 
-```console
+``` console
 $ composer require --dev fp4php/psalm-toolkit
 $ vendor/bin/psalm-plugin enable fp4php/functional
 ```
 
 # Features
 
-- #### filter: type narrowing
+  - #### filter: type narrowing
 
 `Fp\Functional\Option\Option::filter`:
 
-```php
+``` php
 <?php
 
 declare(strict_types=1);
@@ -43,9 +60,10 @@ function getOption(): Option
 $result = getOption()->filter(fn($value) => is_string($value));
 ```
 
-`Fp\Collections\ArrayList::filter` (and other collections with `filter` method):
+`Fp\Collections\ArrayList::filter` (and other collections with `filter`
+method):
 
-```php
+``` php
 <?php
 
 declare(strict_types=1);
@@ -68,7 +86,7 @@ $result = getArrayList()->filter(fn($value) => is_string($value));
 
 `Fp\Functional\Either\Either::filterOrElse`:
 
-```php
+``` php
 <?php
 
 declare(strict_types=1);
@@ -94,7 +112,7 @@ getEither()->filterOrElse(
 
 `Fp\Collection\filter`:
 
-```php
+``` php
 <?php
 
 declare(strict_types=1);
@@ -115,7 +133,7 @@ filter(getList(), fn($value) => is_string($value));
 
 `Fp\Collection\first` and `Fp\Collection\last`:
 
-```php
+``` php
 <?php
 
 declare(strict_types=1);
@@ -138,9 +156,10 @@ first(getList(), fn($value) => is_string($value));
 last(getList(), fn($value) => is_int($value));
 ```
 
-For all cases above you can use [first-class callable](https://wiki.php.net/rfc/first_class_callable_syntax) syntax:
+For all cases above you can use [first-class
+callable](https://wiki.php.net/rfc/first_class_callable_syntax) syntax:
 
-```php
+``` php
 <?php
 
 declare(strict_types=1);
@@ -159,18 +178,22 @@ function getList(): array
 filter(getList(), is_string(...));
 ```
 
-- #### fold: fix edge cases
+  - #### fold: fix edge cases
 
 Is too difficult to make the fold function using type system of psalm.
-Without plugin `Fp\Collection\fold` and collections fold method has some edge cases. For example: https://psalm.dev/r/b0a99c4912
-Plugin can fix that problem.
+Without plugin `Fp\Collection\fold` and collections fold method has some
+edge cases. For example: <https://psalm.dev/r/b0a99c4912> Plugin can fix
+that problem.
 
-- #### ctor: infer function type from __construct
+  - #### ctor: infer function type from \_\_construct
 
-PHP 8.1 brings feature called [first-class callable](https://wiki.php.net/rfc/first_class_callable_syntax).
-But that feature cannot be used for class constructor. `Fp\Callable\ctor` can simulate this feature for class constructors, but requires plugin for static analysis.
+PHP 8.1 brings feature called [first-class
+callable](https://wiki.php.net/rfc/first_class_callable_syntax). But
+that feature cannot be used for class constructor. `Fp\Callable\ctor`
+can simulate this feature for class constructors, but requires plugin
+for static analysis.
 
-```php
+``` php
 <?php
 
 use Tests\Mock\Foo;
@@ -189,11 +212,11 @@ function test(Closure $makeFoo): void
 }
 ```
 
-- #### sequence: shape\tuple inference for call
+  - #### sequence: shape\\tuple inference for call
 
 Plugin brings structural type inference for sequence functions:
 
-```php
+``` php
 <?php
 
 use Fp\Functional\Option\Option;
@@ -232,17 +255,19 @@ function sequenceOptionTupleExample(int $id): Option
 }
 ```
 
-- #### assertion: fix Option/Either assertions
+  - #### assertion: fix Option/Either assertions
 
-Unfortunately `@psalm-assert-if-true`/`@psalm-assert-if-false` works incorrectly for Option/Either assertion methods: https://psalm.dev/r/408248f46f
+Unfortunately `@psalm-assert-if-true`/`@psalm-assert-if-false` works
+incorrectly for Option/Either assertion methods:
+<https://psalm.dev/r/408248f46f>
 
 Plugin implements workaround for this bug.
 
-- #### *N combinators: typecheck call
+  - #### \*N combinators: typecheck call
 
-Psalm plugin will prevent calling *N combinator in non-valid cases:
+Psalm plugin will prevent calling \*N combinator in non-valid cases:
 
-```php
+``` php
 <?php
 
 declare(strict_types=1);
@@ -264,11 +289,12 @@ function test(Option $maybeData): Option
 }
 ```
 
-- #### proveTrue: Flow assertions in the do notation
+  - #### proveTrue: Flow assertions in the do notation
 
-Implementation assertion effect for `Fp\Evidence\proveTrue` (like for builtin `assert` function):
+Implementation assertion effect for `Fp\Evidence\proveTrue` (like for
+builtin `assert` function):
 
-```php
+``` php
 <?php
 
 use Fp\Functional\Option\Option;
@@ -286,11 +312,11 @@ Option::do(function() {
 });
 ```
 
-- #### toEither: Separated to Either
+  - #### toEither: Separated to Either
 
 Inference for `Fp\Functional\Separated\Separated::toEither`:
 
-```php
+``` php
 <?php
 
 use Fp\Collections\HashSet;

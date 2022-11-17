@@ -3,7 +3,6 @@
 - [\*N combinators](#\*N-combinators)
   - [Introduction](#Introduction)
   - [Omit values from tuple or shape](#Omit-values-from-tuple-or-shape)
-  - [Psalm issues](#Psalm-issues)
   - [Ctor function](#Ctor-function)
   - [Caveats](#Caveats)
 
@@ -31,7 +30,7 @@ declare(strict_types=1);
 use Tests\Mock\Foo;
 use Fp\Functional\Option\Option;
 
-use function Fp\Collection\atOf;
+use function Fp\Collection\at;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveArray;
 use function Fp\Evidence\proveBool;
@@ -53,9 +52,9 @@ function fooFromJson(string $json): Option
     return Option::try(fn(): mixed => json_decode($json, associative: true, flags: JSON_THROW_ON_ERROR))
         ->flatMap(proveArray(...))
         ->flatMap(fn(array $data) => sequenceOptionT(
-            fn() => atOf(proveInt(...), $data, 'a'),
-            fn() => atOf(proveBool(...), $data, 'b'),
-            fn() => atOf(proveBool(...), $data, 'c'),
+            fn() => at($data, 'a')->flatMap(proveInt(...)),
+            fn() => at($data, 'b')->flatMap(proveBool(...)),
+            fn() => at($data, 'c')->flatMap(proveBool(...)),
         ))
         ->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
 }
@@ -117,33 +116,6 @@ function omitAnyValueFromShape(Option $maybeData): Option
 {
     // Keys 'd', 'e' and 'c' will be ignored
     return $maybeData->mapN(fn(int $a, bool $b) => new Foo($a, $b, c: false));
-}
-```
-
-  - #### Psalm issues
-
-Psalm will prevent calling \*N combinator in non-valid cases:
-
-``` php
-<?php
-
-declare(strict_types=1);
-
-use Fp\Functional\Option\Option;
-use Tests\Mock\Foo;
-
-/**
- * @param Option<array{int, bool}> $maybeData
- * @return Option<Foo>
- */
-function test(Option $maybeData): Option
-{
-    /*
-     * ERROR: IfThisIsMismatch
-     * at /home/andrew/PhpstormProjects/whsv26/functional/main.php:45:24
-     * Object must be type of Fp\Functional\Option\Option<array{int, bool, bool}>, actual type Fp\Functional\Option\Option<array{int, bool}>
-     */
-    return $maybeData->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
 }
 ```
 

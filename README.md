@@ -12,7 +12,6 @@ PHP Functional Programming library. Monads and common use functions.
 - ### [Functions](doc/Functions.md)
 - ### [Combinators](doc/Combinators.md)
 
-
 ## Installation
 
 ### Composer 
@@ -22,7 +21,8 @@ $ composer require fp4php/functional
 ```
 
 ### Enable psalm plugin (optional)
-To improve type inference
+
+Read more about [plugin](doc/Psalm.md).
 
 ```console
 $ composer require --dev fp4php/psalm-toolkit
@@ -34,24 +34,32 @@ Typesafe and concise.
 
 Powerful combination: Collections + Option monad.
 ```php
+<?php
+
+use Fp\Collections\ArrayList;
+use Fp\Functional\Option\Option;
+
+use function Fp\Evidence\of;
+use function Fp\Evidence\proveString;
+
 class PgSqlCurrencyArrayType extends Type
 {
     public function convertToDatabaseValue($value, AbstractPlatform $platform): string
     {
         $currencies = Option::fromNullable($value)
-            ->filter(fn(mixed $raw) => is_iterable($raw))
+            ->filter(is_iterable(...))
             ->getOrElse([]);
 
         return ArrayList::collect($currencies)
-            ->filterOf(Currency::class)
+            ->flatMap(of(Currency::class))
             ->map(fn(Currency $currency) => $currency->getCurrencyCode())
             ->mkString('{', ',', '}');
     }
 
     /**
-     * @return Seq<Currency>
+     * @return ArrayList<Currency>
      */
-    public function convertToPHPValue($value, AbstractPlatform $platform): Seq
+    public function convertToPHPValue($value, AbstractPlatform $platform): ArrayList
     {
         $csv = Option::fromNullable($value)
             ->flatMap(proveString(...))
@@ -77,6 +85,10 @@ class PgSqlCurrencyArrayType extends Type
 
 - Type safety
 ```php
+<?php
+
+use Fp\Collections\NonEmptyLinkedList;
+
 /**
  * Inferred type is NonEmptyLinkedList<1|2|3>
  */
@@ -97,6 +109,12 @@ $mappedCollection = $collection->map(fn($elem) => $elem - 1);
 $filteredCollection = $mappedCollection->filter(fn(int $elem) => $elem > 0);
 ```
 ```php
+<?php
+
+use Tests\Mock\Foo;
+use Tests\Mock\Bar;
+use Fp\Collections\NonEmptyArrayList;
+
 $source = [new Foo(1), null, new Bar(2)];
 
 /**
@@ -117,13 +135,17 @@ $onlyFoos = $withoutNulls->filter(fn($elem) => $elem instanceof Foo);
 
 - Covariance
 ```php
+<?php
+
+use Fp\Collections\NonEmptyLinkedList;
+
 class User {}
 class Admin extends User {}
 
 /**
-* @param NonEmptyCollection<User> $collection
+* @param NonEmptyLinkedList<User> $collection
 */
-function acceptUsers(NonEmptyCollection $collection): void {}
+function acceptUsers(NonEmptyLinkedList $collection): void {}
 
 /** 
  * @var NonEmptyLinkedList<Admin> $collection 
@@ -139,6 +161,10 @@ acceptUsers($collection);
 
 - Immutability
 ```php
+<?php
+
+use Fp\Collections\LinkedList;
+
 $originalCollection = LinkedList::collect([1, 2, 3]);
 
 /**
@@ -154,18 +180,22 @@ $mappedCollection = $prependedCollection->map(fn(int $elem) => $elem + 1);
 
 - Null safety
 ```php
+<?php
+
+use Fp\Functional\Option\Option;
+use Fp\Collections\ArrayList;
+
 /**
- * @var Collection<int> $emptyCollection 
+ * @var ArrayList<int> $collection 
  */
-$emptyCollection = getEmptyCollection();
+$collection = getCollection();
 
 /**
  * @return Option<float>
  */
-function div(int $a, int $b): Option {
-    return 0 === $b 
-        ? Option::none()
-        : Option::some($a / $b)
+function div(int $a, int $b): Option
+{
+    return Option::when(0 !== $b, fn() => $a / $b);
 }
 
 /**
@@ -175,33 +205,43 @@ function div(int $a, int $b): Option {
  * In this case the execution will short circuit (stop)
  * and no Null Pointer Exception will be thrown.
  */
-$emptyCollection
+$collection
     ->first(fn(int $elem) => $elem > 0)
     ->map(fn(int $elem) => $elem + 1)
     ->flatMap(fn(int $elem) => div($elem, $elem - 1))
     ->getOrElse(0)
 ```
 
-- Type assertions with Option monad via [PHP generators](https://www.php.net/manual/en/language.generators.syntax.php) based [do-notation](https://en.wikibooks.org/wiki/Haskell/do_notation) implementation
+- [Do-notation](https://en.wikibooks.org/wiki/Haskell/do_notation) via [PHP generators](https://www.php.net/manual/en/language.generators.syntax.php):
+
 ```php
+<?php
+
+use Tests\Mock\Foo;
+use Fp\Functional\Option\Option;
+
+use function Fp\Evidence\proveTrue;
+use function Fp\Evidence\proveNonEmptyList;
+
 /**
  * Inferred type is Option<Foo> 
  */ 
 $maybeFooMaybeNot = Option::do(function() use ($untrusted) {
+    // If $untrusted is not null then bind this value to $notNull
     $notNull = yield Option::fromNullable($untrusted);
-    yield proveTrue(is_array($notNull)); // Inferred type is array<array-key, mixed> 
-    $list = yield proveList($notNull); // Inferred type is list<mixed>
-    $nonEmptyList = yield proveNonEmptyList($list); // Inferred type is non-empty-list<mixed>
-    $nonEmptyListOfFoo = yield proveNonEmptyListOf($nonEmptyList, Foo::class); // Inferred type is non-empty-list<Foo>
-    $firstFoo = $nonEmptyListOfFoo[0]; // Inferred type is Foo
+ 
+    // If $notNull is non-empty-list<Tests\Mock\Foo> then bind this value to $nonEmptyListOfFoo 
+    $nonEmptyList = yield proveNonEmptyList($notNull, of(Foo::class));
 
-    return $firstFoo; // I'm sure it's Foo object
+    // Continue computation if $nonEmptyList contains only one element
+    yield proveTrue(1 === count($nonEmptyList));
+
+    // I'm sure it's Foo object
+    return $nonEmptyList[0];
 });
 
-/**
- * Inferred type is Foo
- */
-$foo = $maybeFooMaybeNot->getOrCall(fn() => new Foo(0))
+// Inferred type is Tests\Mock\Foo
+$foo = $maybeFooMaybeNot->getOrCall(fn() => new Foo(0));
 ```
 
 
