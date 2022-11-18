@@ -7,6 +7,11 @@ Consists of Some and None subclasses.
 Prevents null pointer exceptions and allow short-circuiting the computation if there was step which returned None.
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+use Fp\Functional\Option\Option;
 
 /** 
  * @return Option<User> 

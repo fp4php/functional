@@ -41,15 +41,13 @@ final class GetCollectionTypeParams
      */
     public static function key(Type\Union $union): Option
     {
-        return Option::do(function () use ($union) {
-            $atomic = yield PsalmApi::$types->asSingleAtomic($union);
-
-            return yield self::keyFromIterable($atomic)
+        return PsalmApi::$types->asSingleAtomic($union)->flatMap(
+            fn($atomic) => self::keyFromIterable($atomic)
                 ->orElse(fn() => self::keyFromGenerator($atomic))
                 ->orElse(fn() => self::keyFromArray($atomic))
                 ->orElse(fn() => self::keyFromGenericObject($atomic))
-                ->orElse(fn() => self::keyFromKeyedArray($atomic));
-        });
+                ->orElse(fn() => self::keyFromKeyedArray($atomic)),
+        );
     }
 
     /**
@@ -112,16 +110,14 @@ final class GetCollectionTypeParams
      */
     public static function value(Type\Union $union): Option
     {
-        return Option::do(function () use ($union) {
-            $atomic = yield PsalmApi::$types->asSingleAtomic($union);
-
-            return yield self::valueFromIterable($atomic)
+        return PsalmApi::$types->asSingleAtomic($union)->flatMap(
+            fn($atomic) => self::valueFromIterable($atomic)
                 ->orElse(fn() => self::valueFromGenerator($atomic))
                 ->orElse(fn() => self::valueFromArray($atomic))
                 ->orElse(fn() => self::valueFromList($atomic))
                 ->orElse(fn() => self::valueFromGenericObject($atomic))
-                ->orElse(fn() => self::valueFromKeyedArray($atomic));
-        });
+                ->orElse(fn() => self::valueFromKeyedArray($atomic)),
+        );
     }
 
     /**

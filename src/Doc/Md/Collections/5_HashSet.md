@@ -7,11 +7,16 @@ Collection of unique elements.
 Object comparison by default uses ```spl_object_hash``` function. If you want to override default comparison behaviour then you need to implement HashContract interface for your classes which objects will be used as elements in HashSet.
 
 ```php
-class Foo implements HashContract
+<?php
+
+use Fp\Collections\HashSet;
+
+final class Foo implements HashContract
 {
-    public function __construct(public int $a, public bool $b = true)
-    {
-    }
+    public function __construct(
+        public readonly int $a,
+        public readonly bool $b = true,
+    ) {}
 
     public function equals(mixed $that): bool
     {
@@ -27,15 +32,18 @@ class Foo implements HashContract
 }
 
 $collection = HashSet::collect([
-    new Foo(1), new Foo(2), new Foo(2), 
-    new Foo(3), new Foo(3), new Foo(4),
+    new Foo(1),
+    new Foo(2),
+    new Foo(2), 
+    new Foo(3),
+    new Foo(3),
+    new Foo(4),
 ]);
 
 $collection
     ->map(fn(Foo $elem) => $elem->a)
     ->filter(fn(int $elem) => $elem > 1)
-    ->reduce(fn($acc, $elem) => $acc + $elem)
-    ->getOrElse(0); // 9
+    ->fold(0)(fn($acc, $elem) => $acc + $elem);
 
 /**
  * Check if set contains given element
@@ -46,26 +54,44 @@ $collection(new Foo(2)); // true
  * Check if one set is contained in another set 
  */
 $collection->subsetOf(HashSet::collect([
-    new Foo(1), new Foo(2), new Foo(3), 
-    new Foo(4), new Foo(5), new Foo(6),
+    new Foo(1),
+    new Foo(2),
+    new Foo(3), 
+    new Foo(4),
+    new Foo(5),
+    new Foo(6),
 ])); // true
 ```
 
 - Easy to move from MANY to ONE for many-to-one relations
 ```php
-class Ceo
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\HashSet;
+
+final class Ceo
 {
-    public function __construct(public string $name) { }
+    public function __construct(
+        public readonly string $name,
+    ) {}
 }
 
-class Manager
+final class Manager
 {
-    public function __construct(public string $name, public Ceo $ceo) { }
+    public function __construct(
+        public readonly string $name,
+        public readonly Ceo $ceo,
+    ) {}
 }
 
-class Developer
+final class Developer
 {
-    public function __construct(public string $name, public Manager $manager) { }
+    public function __construct(
+        public string $name,
+        public Manager $manager,
+    ) {}
 }
 
 $ceo = new Ceo('CEO');

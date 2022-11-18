@@ -41,16 +41,24 @@
 Collection with O(1) `Seq::at()` and `Seq::__invoke()` operations.
 
 ``` php
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\ArrayList;
+use Tests\Mock\Foo;
+
 $collection = ArrayList::collect([
-    new Foo(1), new Foo(2) 
-    new Foo(3), new Foo(4),
+    new Foo(1),
+    new Foo(2) 
+    new Foo(3),
+    new Foo(4),
 ]);
 
 $collection
     ->map(fn(Foo $elem) => $elem->a)
     ->filter(fn(int $elem) => $elem > 1)
-    ->reduce(fn($acc, $elem) => $acc + $elem)
-    ->getOrElse(0); // 9
+    ->fold(0)(fn($acc, $elem) => $acc + $elem); // 9
 ```
 
 # LinkedList
@@ -60,6 +68,12 @@ $collection
 Collection with O(1) prepend operation.
 
 ``` php
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\LinkedList;
+
 $collection = LinkedList::collect([
     new Foo(1), new Foo(2) 
     new Foo(3), new Foo(4),
@@ -68,8 +82,7 @@ $collection = LinkedList::collect([
 $collection
     ->map(fn(Foo $elem) => $elem->a)
     ->filter(fn(int $elem) => $elem > 1)
-    ->reduce(fn($acc, $elem) => $acc + $elem)
-    ->getOrElse(0); // 9
+    ->fold(0)(fn($acc, $elem) => $acc + $elem); // 9
 ```
 
 # HashMap
@@ -84,11 +97,18 @@ implement HashContract interface for your classes which objects will be
 used as keys in HashMap.
 
 ``` php
-class Foo implements HashContract
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\HashMap;
+
+final class Foo implements HashContract
 {
-    public function __construct(public int $a, public bool $b = true)
-    {
-    }
+    public function __construct(
+        public readonly int $a,
+        public readonly bool $b = true,
+    ) {}
 
     public function equals(mixed $that): bool
     {
@@ -104,8 +124,10 @@ class Foo implements HashContract
 }
 
 $collection = HashMap::collectPairs([
-    [new Foo(1), 1], [new Foo(2), 2],
-    [new Foo(3), 3], [new Foo(4), 4]
+    [new Foo(1), 1],
+    [new Foo(2), 2],
+    [new Foo(3), 3],
+    [new Foo(4), 4]
 ]);
 
 $collection(new Foo(2))->getOrElse(0); // 2
@@ -113,7 +135,7 @@ $collection(new Foo(2))->getOrElse(0); // 2
 $collection
     ->map(fn(int $value) => $value + 1)
     ->filter(fn(int $value) => $value > 2)
-    ->fold(0, fn(int $acc, int $value) => $acc + $value); // 3+4+5=12 
+    ->fold(0)(fn(int $acc, int $value) => $acc + $value); // 3+4+5=12 
 ```
 
 # HashSet
@@ -128,11 +150,16 @@ HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
 ``` php
-class Foo implements HashContract
+<?php
+
+use Fp\Collections\HashSet;
+
+final class Foo implements HashContract
 {
-    public function __construct(public int $a, public bool $b = true)
-    {
-    }
+    public function __construct(
+        public readonly int $a,
+        public readonly bool $b = true,
+    ) {}
 
     public function equals(mixed $that): bool
     {
@@ -148,15 +175,18 @@ class Foo implements HashContract
 }
 
 $collection = HashSet::collect([
-    new Foo(1), new Foo(2), new Foo(2), 
-    new Foo(3), new Foo(3), new Foo(4),
+    new Foo(1),
+    new Foo(2),
+    new Foo(2), 
+    new Foo(3),
+    new Foo(3),
+    new Foo(4),
 ]);
 
 $collection
     ->map(fn(Foo $elem) => $elem->a)
     ->filter(fn(int $elem) => $elem > 1)
-    ->reduce(fn($acc, $elem) => $acc + $elem)
-    ->getOrElse(0); // 9
+    ->fold(0)(fn($acc, $elem) => $acc + $elem);
 
 /**
  * Check if set contains given element
@@ -167,8 +197,12 @@ $collection(new Foo(2)); // true
  * Check if one set is contained in another set 
  */
 $collection->subsetOf(HashSet::collect([
-    new Foo(1), new Foo(2), new Foo(3), 
-    new Foo(4), new Foo(5), new Foo(6),
+    new Foo(1),
+    new Foo(2),
+    new Foo(3), 
+    new Foo(4),
+    new Foo(5),
+    new Foo(6),
 ])); // true
 ```
 
@@ -177,19 +211,33 @@ $collection->subsetOf(HashSet::collect([
 <!-- end list -->
 
 ``` php
-class Ceo
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\HashSet;
+
+final class Ceo
 {
-    public function __construct(public string $name) { }
+    public function __construct(
+        public readonly string $name,
+    ) {}
 }
 
-class Manager
+final class Manager
 {
-    public function __construct(public string $name, public Ceo $ceo) { }
+    public function __construct(
+        public readonly string $name,
+        public readonly Ceo $ceo,
+    ) {}
 }
 
-class Developer
+final class Developer
 {
-    public function __construct(public string $name, public Manager $manager) { }
+    public function __construct(
+        public string $name,
+        public Manager $manager,
+    ) {}
 }
 
 $ceo = new Ceo('CEO');
@@ -213,14 +261,23 @@ Collection with O(1) `NonEmptySeq::at()` and `NonEmptySeq::__invoke()`
 operations.
 
 ``` php
-$collection = NonEmptyArrayList::collect([
-    new Foo(1), new Foo(2) 
-    new Foo(3), new Foo(4),
+<?php
+
+declare(strict_types=1);
+
+use Tests\Mock\Foo;
+use Fp\Collections\NonEmptyArrayList;
+
+$collection = NonEmptyArrayList::collectNonEmpty([
+    new Foo(1),
+    new Foo(2) 
+    new Foo(3),
+    new Foo(4),
 ]);
 
 $collection
     ->map(fn(Foo $elem) => $elem->a)
-    ->reduce(fn($acc, $elem) => $acc + $elem); // 10
+    ->fold(0)(fn($acc, $elem) => $acc + $elem); // 10
 ```
 
 # NonEmptyLinkedList
@@ -230,14 +287,23 @@ $collection
 Collection with O(1) prepend operation.
 
 ``` php
-$collection = NonEmptyLinkedList::collect([
-    new Foo(1), new Foo(2) 
-    new Foo(3), new Foo(4),
+<?php
+
+declare(strict_types=1);
+
+use Tests\Mock\Foo;
+use Fp\Collections\NonEmptyLinkedList;
+
+$collection = NonEmptyLinkedList::collectNonEmpty([
+    new Foo(1),
+    new Foo(2) 
+    new Foo(3),
+    new Foo(4),
 ]);
 
 $collection
     ->map(fn(Foo $elem) => $elem->a)
-    ->reduce(fn($acc, $elem) => $acc + $elem); // 10
+    ->fold(0)(fn($acc, $elem) => $acc + $elem);
 ```
 
 # NonEmptyHashMap
@@ -252,11 +318,18 @@ implement HashContract interface for your classes which objects will be
 used as keys in HashMap.
 
 ``` php
-class Foo implements HashContract
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\NonEmptyHashMap;
+
+final class Foo implements HashContract
 {
-    public function __construct(public int $a, public bool $b = true)
-    {
-    }
+    public function __construct(
+        public readonly int $a,
+        public readonly bool $b = true,
+    ) {}
 
     public function equals(mixed $that): bool
     {
@@ -272,8 +345,10 @@ class Foo implements HashContract
 }
 
 $collection = NonEmptyHashMap::collectPairsNonEmpty([
-    [new Foo(1), 1], [new Foo(2), 2],
-    [new Foo(3), 3], [new Foo(4), 4]
+    [new Foo(1), 1],
+    [new Foo(2), 2],
+    [new Foo(3), 3],
+    [new Foo(4), 4]
 ]);
 
 $collection(new Foo(2))->getOrElse(0); // 2
@@ -289,17 +364,24 @@ $collection
 
 Collection of unique elements.
 
-Object comparison by default uses spl\_object\_hash function. If you
+Object comparison by default uses `spl_object_hash` function. If you
 want to override default comparison behaviour then you need to implement
 HashContract interface for your classes which objects will be used as
 elements in HashSet.
 
 ``` php
-class Foo implements HashContract
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\NonEmptyHashSet;
+
+final class Foo implements HashContract
 {
-    public function __construct(public int $a, public bool $b = true)
-    {
-    }
+    public function __construct(
+        public readonly int $a,
+        public readonly bool $b = true,
+    ) {}
 
     public function equals(mixed $that): bool
     {
@@ -314,15 +396,19 @@ class Foo implements HashContract
     }
 }
 
-$collection = NonEmptyHashSet::collect([
-    new Foo(1), new Foo(2), new Foo(2), 
-    new Foo(3), new Foo(3), new Foo(4),
+$collection = NonEmptyHashSet::collectNonEmpty([
+    new Foo(1),
+    new Foo(2),
+    new Foo(2), 
+    new Foo(3),
+    new Foo(3),
+    new Foo(4),
 ]);
 
 $collection
     ->map(fn(Foo $elem) => $elem->a)
-    ->reduce(fn($acc, $elem) => $acc + $elem); // 10
-    
+    ->fold(0)(fn($acc, $elem) => $acc + $elem); // 10
+
 /**
  * Check if set contains given element 
  */
@@ -331,8 +417,14 @@ $collection(new Foo(2)); // true
 /**
  * Check if one set is contained in another set 
  */
-$collection->subsetOf(NonEmptyHashSet::collect([
-    new Foo(1), new Foo(2), new Foo(3), 
-    new Foo(4), new Foo(5), new Foo(6),
-])); // true
+$collection->subsetOf(
+    NonEmptyHashSet::collectNonEmpty([
+        new Foo(1),
+        new Foo(2),
+        new Foo(3), 
+        new Foo(4),
+        new Foo(5),
+        new Foo(6),
+    ]),
+); // true
 ```

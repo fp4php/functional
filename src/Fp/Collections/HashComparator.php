@@ -39,9 +39,7 @@ final class HashComparator
 
     public static function computeHashForArray(array $arr): string
     {
-        $list = map($arr, fn($elem): mixed => self::computeHash($elem));
-
-        return json_encode($list) ?: '';
+        return json_encode(map($arr, self::computeHash(...))) ?: '';
     }
 
     /**

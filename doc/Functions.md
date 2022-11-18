@@ -37,12 +37,8 @@
 - [Evidence](#Evidence)
   - [proveArray](#proveArray)
   - [proveNonEmptyArray](#proveNonEmptyArray)
-  - [proveArrayOf](#proveArrayOf)
-  - [proveNonEmptyArrayOf](#proveNonEmptyArrayOf)
   - [proveList](#proveList)
   - [proveNonEmptyList](#proveNonEmptyList)
-  - [proveListOf](#proveListOf)
-  - [proveNonEmptyListOf](#proveNonEmptyListOf)
   - [proveBool](#proveBool)
   - [proveTrue](#proveTrue)
   - [proveFalse](#proveFalse)
@@ -419,6 +415,12 @@
     Copy collection as array
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asArray;
+    
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
     
@@ -431,6 +433,12 @@
     Try cast boolean like value. Returns None if cast is not possible
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asBool;
+    
     /** @var Option<bool> $result */
     $result = asBool('yes');
     ```
@@ -440,6 +448,12 @@
     Try cast float like value. Returns None if cast is not possible
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asFloat;
+    
     /** @var Option<float> $result */
     $result = asFloat('1.1');
     ```
@@ -449,6 +463,11 @@
     Try cast integer like value. Returns None if cast is not possible
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asInt;
     /** @var Option<int> $result */
     $result = asInt(1);
     ```
@@ -458,6 +477,12 @@
     Copy one or multiple collections as list
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asList;
+    
     $result = asList([1], ['prop' => 2], [3, 4]); // [1, 2, 3, 4]
     ```
 
@@ -467,6 +492,12 @@
     no first collection element
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asNonEmptyArray;
+    
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
     
@@ -480,6 +511,12 @@
     no first collection element
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asNonEmptyList;
+    
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
     
@@ -494,6 +531,12 @@
     Prove that given value is of array type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveArray;
+    
     function getMixed(): mixed { return []; }
     
     // inferred as Option<array<array-key, mixed>>
@@ -503,6 +546,12 @@
     Type params from any iterable type will be preserved:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveArray;
+    
     /** @return iterable<string, int> */
     function getCollection(): iterable { return []; }
     
@@ -513,6 +562,14 @@
     Key and value type can be proved separately:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveArray;
+    use function Fp\Evidence\proveString;
+    use function Fp\Evidence\proveInt;
+    
     /** @return iterable<mixed, mixed> */
     function getCollection(): iterable { return []; }
     
@@ -525,6 +582,12 @@
     Prove that given collection is of non-empty-array type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyArray;
+    
     /** @return iterable<string, int> */
     function getCollection(): array { return []; }
     
@@ -535,6 +598,12 @@
     Type params from any iterable type will be preserved:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyArray;
+    
     /** @return iterable<string, int> */
     function getCollection(): iterable { return []; }
     
@@ -545,38 +614,19 @@
     Key and value type can be proved separately:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyArray;
+    use function Fp\Evidence\proveString;
+    use function Fp\Evidence\proveInt;
+    
     /** @return iterable<mixed, mixed> */
     function getCollection(): iterable { return []; }
     
     // inferred as Option<non-empty-array<string, int>>
     $result = proveNonEmptyArray(getCollection(), proveString(...), proveInt(...));
-    
-    ```
-
-  - #### proveArrayOf
-    
-    Prove that collection is of array type and every element is of given
-    class
-    
-    ``` php
-    /** @return iterable<string, int> */
-    function getCollection(): array { return []; }
-    
-    // Inferred as Option<array<string, Foo>>
-    $result = proveArrayOf(getCollection(), Foo::class);
-    ```
-
-  - #### proveNonEmptyArrayOf
-    
-    Prove that collection is of non-empty-array type and every element
-    is of given class
-    
-    ``` php
-    /** @return iterable<string, int> */
-    function getCollection(): array { return []; }
-    
-    // Inferred as Option<non-empty-array<string, Foo>>
-    $result = proveNonEmptyArrayOf(getCollection(), Foo::class);
     ```
 
   - #### proveList
@@ -584,6 +634,12 @@
     Prove that given value is of list type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveList;
+    
     function getMixed(): mixed { return []; }
     
     // Inferred as Option<list<mixed>>
@@ -593,6 +649,12 @@
     Type params from any iterable type will be preserved:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveList;
+    
     /** @return iterable<int, string> */
     function getCollection(): iterable { return []; }
     
@@ -603,6 +665,13 @@
     Value type can be proved separately:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveList;
+    use function Fp\Evidence\proveInt;
+    
     function getMixed(): mixed { return []; }
     
     // Inferred as Option<list<int>>
@@ -614,6 +683,12 @@
     Prove that given value is of non-empty-list type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyList;
+    
     function getMixed(): mixed { return []; }
     
     // Inferred as Option<non-empty-list<mixed>>
@@ -623,6 +698,12 @@
     Type params from any iterable type will be preserved:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyList;
+    
     /** @return iterable<int, string> */
     function getCollection(): iterable { return []; }
     
@@ -633,34 +714,17 @@
     Value type can be proved separately:
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyList;
+    use function Fp\Evidence\proveInt;
+    
     function getMixed(): mixed { return []; }
     
     // Inferred as Option<non-empty-list<int>>
     $result = proveNonEmptyList(getMixed(), proveInt(...));
-    ```
-
-  - #### proveListOf
-    
-    Prove that collection is of array type and every element is of given
-    class
-    
-    ``` php
-    function getMixed(): mixed { return []; }
-    
-    // Inferred as Option<list<Foo>>
-    $result = proveListOf(getMixed(), Foo::class);
-    ```
-
-  - #### proveNonEmptyListOf
-    
-    Prove that collection is of non-empty-list type and every element is
-    of given class
-    
-    ``` php
-    function getMixed(): mixed { return []; }
-    
-    // Inferred as Option<non-empty-list<Foo>>
-    $result = proveNonEmptyListOf(getMixed(), Foo::class);
     ```
 
   - #### proveBool
@@ -668,6 +732,12 @@
     Prove that subject is of boolean type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveBool;
+    
     // Inferred as Option<bool>
     $result = proveBool($subject);
     ```
@@ -677,6 +747,12 @@
     Prove that subject is of boolean type, and it's value is true
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveTrue;
+    
     // Inferred as Option<true>
     $result = proveTrue($subject);
     ```
@@ -686,6 +762,12 @@
     Prove that subject is of boolean type, and it's value is false
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveFalse;
+    
     // Inferred as Option<false>
     $result = proveFalse($subject);
     ```
@@ -695,6 +777,12 @@
     Prove that subject is of string type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveString;
+    
     // Inferred as Option<string>
     $result = proveString($subject);
     ```
@@ -704,6 +792,12 @@
     Prove that subject is of given class
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyString;
+    
     $possiblyEmptyString = '';
     
     // Inferred as Option<non-empty-string>
@@ -715,6 +809,12 @@
     Prove that subject is of callable-string type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveCallableString;
+    
     // Inferred as Option<callable-string>
     $result = proveCallableString($subject);
     ```
@@ -724,6 +824,12 @@
     Prove that subject is of class-string type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveClassString;
+    
     // Inferred as Option<class-string>
     $result = proveClassString($subject);
     ```
@@ -733,6 +839,12 @@
     Prove that subject is subtype of given class-string
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveClassStringOf;
+    
     // Inferred as Option<class-string<Collection>>
     $result = proveClassStringOf(ArrayList::class, Collection::class);
     ```
@@ -742,6 +854,12 @@
     Prove that subject is of float type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveFloat;
+    
     // Inferred as Option<float>
     $result = proveFloat($subject);
     ```
@@ -751,6 +869,12 @@
     Prove that subject is of int type
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveInt;
+    
     // Inferred as Option<int>
     $result = proveInt($subject);
     ```
@@ -760,6 +884,12 @@
     Prove that subject is of given class
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveOf;
+    
     // Inferred as Option<Foo>
     $result = proveOf(new Bar(), Foo::class);
     ```

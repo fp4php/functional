@@ -100,10 +100,9 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
 
             // Input tuple type inferred by $callback argument
             $func_args = yield Option::some($map_callback)
-                ->flatMap(fn(TCallable|TClosure $func) => ArrayList::collect($func->params ?? [])
-                    ->zipWithKeys()
-                    ->reindexN(fn(int $idx, FunctionLikeParameter $param) => $current_args_kind === MapTapNContextEnum::Shape ? $param->name : $idx)
-                    ->mapN(function(int $_, FunctionLikeParameter $param) use ($current_args_kind) {
+                ->flatMap(fn(TCallable|TClosure $func) => HashMap::collect($func->params ?? [])
+                    ->reindexKV(fn(int $idx, FunctionLikeParameter $param) => $current_args_kind === MapTapNContextEnum::Shape ? $param->name : $idx)
+                    ->map(function(FunctionLikeParameter $param) use ($current_args_kind) {
                         $param_type = $param->type ?? Type::getMixed();
 
                         return $current_args_kind === MapTapNContextEnum::Shape && $param->is_optional
