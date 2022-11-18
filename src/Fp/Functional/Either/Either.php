@@ -652,7 +652,7 @@ abstract class Either
      */
     public function orElse(callable $fallback): Either
     {
-        return $this->fold($fallback, fn() => $this);
+        return $this->fold(fn() => $fallback(), fn() => $this);
     }
 
     /**
