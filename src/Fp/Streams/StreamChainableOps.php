@@ -204,6 +204,18 @@ interface StreamChainableOps
     public function tail(): Stream;
 
     /**
+     * Returns every stream element except last
+     *
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->init()->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return Stream<TV>
+     */
+    public function init(): Stream;
+
+    /**
      * Take stream elements while predicate is true
      *
      * ```php

@@ -391,6 +391,16 @@ final class Stream implements StreamOps, StreamEmitter, IteratorAggregate
     /**
      * {@inheritDoc}
      *
+     * @return Stream<TV>
+     */
+    public function init(): Stream
+    {
+        return $this->fork(Ops\InitOperation::of($this->emitter)());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param callable(TV): bool $predicate
      * @return Stream<TV>
      */

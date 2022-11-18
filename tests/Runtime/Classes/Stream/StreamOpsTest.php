@@ -217,6 +217,14 @@ final class StreamOpsTest extends TestCase
         );
     }
 
+    public function testInit(): void
+    {
+        $this->assertEquals(
+            [1, 2],
+            Stream::emits([1, 2, 3])->init()->toList(),
+        );
+    }
+
     public function testTakeAndDrop(): void
     {
         $this->assertEquals([0, 1], Stream::emits([0, 1, 2])->takeWhile(fn($e) => $e < 2)->toList());

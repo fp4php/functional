@@ -6,6 +6,8 @@ namespace Fp\Collection;
 
 use Fp\Operations\InitOperation;
 
+use function Fp\Cast\asArray;
+
 /**
  * @template TK of array-key
  * @template TV
@@ -16,5 +18,5 @@ use Fp\Operations\InitOperation;
  */
 function init(iterable $collection): array
 {
-    return InitOperation::of($collection)();
+    return asArray(InitOperation::of($collection)());
 }

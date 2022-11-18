@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
+use Generator;
+
 /**
  * @template TK
  * @template TV
@@ -13,13 +15,25 @@ namespace Fp\Operations;
 final class InitOperation extends AbstractOperation
 {
     /**
-     * @return array<TK, TV>
+     * @return Generator<TK, TV>
      */
-    public function __invoke(): array
+    public function __invoke(): Generator
     {
-        $butLast = iterator_to_array($this->gen);
-        array_pop($butLast);
+        if (!$this->gen->valid()) {
+            return [];
+        }
 
-        return $butLast;
+        while (true) {
+            $item = $this->gen->current();
+            $key = $this->gen->key();
+
+            $this->gen->next();
+
+            if (!$this->gen->valid()) {
+                break;
+            }
+
+            yield $key => $item;
+        }
     }
 }
