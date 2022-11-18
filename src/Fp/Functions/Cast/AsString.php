@@ -28,7 +28,9 @@ function asString(mixed $subject): Option
 {
     return Option::fromNullable(match (true) {
         is_string($subject) => $subject,
-        is_int($subject) || $subject instanceof Stringable => (string) $subject,
+        is_int($subject), is_float($subject) => "{$subject}",
+        is_bool($subject) => $subject ? 'true' : 'false',
+        $subject instanceof Stringable => (string) $subject,
         default => null,
     });
 }
