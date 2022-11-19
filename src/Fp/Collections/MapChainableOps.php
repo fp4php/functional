@@ -31,20 +31,7 @@ interface MapChainableOps
      * @param TVI $value
      * @return Map<TK|TKI, TV|TVI>
      */
-    public function updated(mixed $key, mixed $value): Map;
-
-    /**
-     * Produces new collection without an element with given key
-     *
-     * ```php
-     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->removed('b')->toList();
-     * => [['a', 1]]
-     * ```
-     *
-     * @param TK $key
-     * @return Map<TK, TV>
-     */
-    public function removed(mixed $key): Map;
+    public function appended(mixed $key, mixed $value): Map;
 
     /**
      * Fold two maps into one.
@@ -60,7 +47,20 @@ interface MapChainableOps
      * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return HashMap<TK|TKO, TV|TVO>
      */
-    public function merge(iterable $map): HashMap;
+    public function appendedAll(iterable $map): HashMap;
+
+    /**
+     * Produces new collection without an element with given key
+     *
+     * ```php
+     * >>> HashMap::collectPairs([['a', 1], ['b', 2]])->removed('b')->toList();
+     * => [['a', 1]]
+     * ```
+     *
+     * @param TK $key
+     * @return Map<TK, TV>
+     */
+    public function removed(mixed $key): Map;
 
     /**
      * Filter collection by condition

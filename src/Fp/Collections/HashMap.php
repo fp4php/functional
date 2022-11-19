@@ -288,9 +288,21 @@ final class HashMap implements Map
      * @param TVI $value
      * @return HashMap<TK|TKI, TV|TVI>
      */
-    public function updated(mixed $key, mixed $value): HashMap
+    public function appended(mixed $key, mixed $value): HashMap
     {
         return HashMap::collectPairs([...$this->toList(), [$key, $value]]);
+    }
+
+    /**
+     * @template TKO
+     * @template TVO
+     *
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
+     * @return HashMap<TK|TKO, TV|TVO>
+     */
+    public function appendedAll(iterable $map): HashMap
+    {
+        return HashMap::collect(Ops\MergeMapOperation::of($this)($map));
     }
 
     /**
@@ -302,18 +314,6 @@ final class HashMap implements Map
     public function removed(mixed $key): HashMap
     {
         return $this->filterKV(fn($k) => $k !== $key);
-    }
-
-    /**
-     * @template TKO
-     * @template TVO
-     *
-     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
-     * @return HashMap<TK|TKO, TV|TVO>
-     */
-    public function merge(iterable $map): HashMap
-    {
-        return HashMap::collect(Ops\MergeMapOperation::of($this)($map));
     }
 
     /**

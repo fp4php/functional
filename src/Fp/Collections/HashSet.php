@@ -270,7 +270,7 @@ final class HashSet implements Set
      */
     public function appended(mixed $element): HashSet
     {
-        return new HashSet($this->map->updated($element, $element));
+        return new HashSet($this->map->appended($element, $element));
     }
 
     /**

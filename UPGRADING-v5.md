@@ -188,6 +188,12 @@ Each `Fp\Collections\Map` operation has *KV version.
 + $map->map(fn(Foo $foo) => $foo->a);
 ```
 
+- Method `Fp\Collections\Map::updated` has been renamed to `Fp\Collections\Map::appended`.
+```diff
+- $map->updated($key, $value);
++ $map->appended($key, $value);
+```
+
 ## Set BC
 - `Fp\Collections\Set::updated` has been removed. Use `Fp\Collections\Set::appended`:
 ```diff
@@ -257,6 +263,20 @@ Each `Fp\Collections\Map` operation has *KV version.
 - $seq->everyOf(Foo::class);
 + $seq->every(fn($i) => $i instanceof Foo);
 ```
+
+- Signature of `toHashMap` method has been changed:
+```diff
+- $seq->toHashMap($i => [$i->key, $i]);
++ $seq->toHashMap();
+```
+Method `toHashMap` now have `@psalm-if-this-is` annotation.
+
+- Signature of `toArray` method has been changed:
+```diff
+- $seq->toArray();
++ $seq->toList();
+```
+Method `toArray` now have `@psalm-if-this-is` annotation and return `array<TKO, TVO>` instead `list<TV>`.
 
 ## Removed without alternatives
 - Fp\Functional\Validated\Validated

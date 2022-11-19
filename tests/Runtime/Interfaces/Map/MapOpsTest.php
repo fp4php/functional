@@ -28,7 +28,7 @@ final class MapOpsTest extends TestCase
     public function testUpdatedAndRemoved(): void
     {
         $hm = HashMap::collect(['a' => 1, 'b' => 2]);
-        $hm = $hm->updated('c', 3);
+        $hm = $hm->appended('c', 3);
         $hm = $hm->removed('a');
 
         $this->assertEquals([['b', 2], ['c', 3]], $hm->toList());
@@ -613,7 +613,7 @@ final class MapOpsTest extends TestCase
     {
         $this->assertEquals(
             HashMap::collect(['a' => 1, 'b' => 2, 'c' => 3]),
-            HashMap::collect(['a' => 1, 'b' => 3])->merge(HashMap::collect(['b' => 2, 'c' => 3])),
+            HashMap::collect(['a' => 1, 'b' => 3])->appendedAll(HashMap::collect(['b' => 2, 'c' => 3])),
         );
     }
 }

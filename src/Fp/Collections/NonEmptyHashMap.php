@@ -329,7 +329,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function updated(mixed $key, mixed $value): NonEmptyHashMap
     {
-        return new NonEmptyHashMap($this->hashMap->updated($key, $value));
+        return new NonEmptyHashMap($this->hashMap->appended($key, $value));
     }
 
     /**
@@ -341,7 +341,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      */
     public function merge(iterable $map): NonEmptyHashMap
     {
-        return new NonEmptyHashMap($this->hashMap->merge($map));
+        return new NonEmptyHashMap($this->hashMap->appendedAll($map));
     }
 
     /**
