@@ -188,7 +188,7 @@ interface NonEmptySeqCastableOps
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySeq<array<TKO, TVO>>
+     * @psalm-if-this-is NonEmptySeq<non-empty-array<TKO, TVO>>
      *
      * @return non-empty-array<TKO, TVO>
      */

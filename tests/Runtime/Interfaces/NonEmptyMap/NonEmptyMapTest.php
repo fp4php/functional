@@ -148,6 +148,7 @@ final class NonEmptyMapTest extends TestCase
 
     public function testToNonEmptyMergedArray(): void
     {
+        /** @var non-empty-array<string, non-empty-array<string, int>> $shapes */
         $shapes = [
             'f' => ['fst' => 1],
             's' => ['snd' => 2],

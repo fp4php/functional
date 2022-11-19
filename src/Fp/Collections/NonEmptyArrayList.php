@@ -1046,7 +1046,7 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyArrayList<array<TKO, TVO>>
+     * @psalm-if-this-is NonEmptyArrayList<non-empty-array<TKO, TVO>>
      *
      * @return non-empty-array<TKO, TVO>
      */

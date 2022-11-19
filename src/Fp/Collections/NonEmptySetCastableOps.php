@@ -188,7 +188,7 @@ interface NonEmptySetCastableOps
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySet<array<TKO, TVO>>
+     * @psalm-if-this-is NonEmptySet<non-empty-array<TKO, TVO>>
      *
      * @return non-empty-array<TKO, TVO>
      */

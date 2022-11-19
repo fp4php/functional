@@ -257,7 +257,7 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashSet<array<TKO, TVO>>
+     * @psalm-if-this-is NonEmptyHashSet<non-empty-array<TKO, TVO>>
      *
      * @return non-empty-array<TKO, TVO>
      */

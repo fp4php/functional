@@ -289,7 +289,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, array<TKO, TVO>>
+     * @psalm-if-this-is NonEmptyHashMap<TK, non-empty-array<TKO, TVO>>
      *
      * @return non-empty-array<TKO, TVO>
      */

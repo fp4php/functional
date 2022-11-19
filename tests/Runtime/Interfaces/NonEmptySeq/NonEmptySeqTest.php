@@ -249,7 +249,7 @@ final class NonEmptySeqTest extends TestCase
     }
 
     /**
-     * @param NonEmptySeq<array<array-key, mixed>> $seq
+     * @param NonEmptySeq<non-empty-array<array-key, mixed>> $seq
      * @param array<array-key, mixed> $expected
      *
      * @dataProvider provideTestDataForCastToNonEmptyMergedArray

@@ -202,6 +202,7 @@ final class NonEmptySetTest extends TestCase
 
     public function testToNonEmptyMergedArray(): void
     {
+        /** @var non-empty-list<non-empty-array<string, int>> $shapes */
         $shapes = [
             ['fst' => 1],
             ['snd' => 2],

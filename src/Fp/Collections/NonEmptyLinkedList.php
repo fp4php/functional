@@ -1043,7 +1043,7 @@ final class NonEmptyLinkedList implements NonEmptySeq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyLinkedList<array<TKO, TVO>>
+     * @psalm-if-this-is NonEmptyLinkedList<non-empty-array<TKO, TVO>>
      *
      * @return non-empty-array<TKO, TVO>
      */
