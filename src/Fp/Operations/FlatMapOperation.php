@@ -5,31 +5,33 @@ declare(strict_types=1);
 namespace Fp\Operations;
 
 use Generator;
+use Fp\Collections\Collection;
 
 use function Fp\Cast\asGenerator;
 
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class FlatMapOperation extends AbstractOperation
+final class FlatMapOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
-     * @psalm-template TVO
-     * @psalm-param callable(TV, TK): iterable<TVO> $f
-     * @return Generator<int, TVO>
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): (iterable<TKO, TVO>|Collection<TKO, TVO>) $f
+     * @return Generator<TKO, TVO>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                $xs = $f($value, $key);
+                $xs = $f($key, $value);
 
-                foreach ($xs as $x) {
-                    yield $x;
+                foreach ($xs as $k => $x) {
+                    yield $k => $x;
                 }
             }
         });

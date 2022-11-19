@@ -9,10 +9,10 @@ use Fp\Functional\Option\Option;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class AtOperation extends AbstractOperation
+final class AtOperation extends AbstractOperation
 {
     /**
      * @param TK $pos

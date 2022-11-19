@@ -6,42 +6,42 @@ namespace Fp\Operations;
 
 use Fp\Collections\HashMap;
 use Fp\Collections\HashTable;
-use Fp\Collections\LinkedList;
 use Fp\Collections\Map;
-use Fp\Collections\Nil;
+use Fp\Collections\NonEmptyHashMap;
 
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class GroupByOperation extends AbstractOperation
+final class GroupByOperation extends AbstractOperation
 {
     /**
      * @template TKO
-     * @psalm-param callable(TV, TK): TKO $f
-     * @psalm-return HashMap<TKO, LinkedList<TV>>
+     *
+     * @param callable(TK, TV): TKO $f
+     * @return HashMap<TKO, NonEmptyHashMap<TK, TV>>
      */
     public function __invoke(callable $f): Map
     {
-        /**
-         * @psalm-var HashTable<TKO, LinkedList<TV>> $hashTable
-         */
-        $hashTable = new HashTable();
+        /** @psalm-var HashTable<TKO, HashTable<TK, TV>> $groups */
+        $groups = new HashTable();
 
         foreach ($this->gen as $key => $value) {
-            $groupKey = $f($value, $key);
+            $groupKey = $f($key, $value);
 
-            HashTable::update(
-                $hashTable,
+            $groups->update(
                 $groupKey,
-                HashTable::get($hashTable, $groupKey)
-                    ->getOrElse(Nil::getInstance())
-                    ->prepended($value)
+                $groups->get($groupKey)
+                    ->map(fn(HashTable $group) => $group->update($key, $value))
+                    ->getOrCall(fn() => (new HashTable())->update($key, $value))
             );
         }
 
-        return new HashMap($hashTable);
+        return (new HashMap($groups))
+            ->map(function(HashTable $ht) {
+                return new NonEmptyHashMap(new HashMap($ht));
+            });
     }
 }

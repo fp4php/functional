@@ -4,21 +4,60 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Streams\Stream;
+
 /**
- * @psalm-immutable
  * @template-covariant TV
  */
 interface NonEmptySetCastableOps
 {
     /**
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toArray();
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toList();
+     * => [1, 2]
+     * ```
+     *
+     * @return list<TV>
+     */
+    public function toList(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @return non-empty-list<TV>
      */
+    public function toNonEmptyList(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2]])->toArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
     public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2]])->toNonEmptyArray();
+     * => ['fst' => 1, 'snd' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array{TKO, TVO}>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array;
 
     /**
      * ```php
@@ -82,29 +121,76 @@ interface NonEmptySetCastableOps
 
     /**
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])
-     * >>>     ->toHashMap(fn($elem) => [(sting) $elem, $elem]);
-     * => HashMap('1' -> 1, '2' -> 2)
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2], ['snd', 2]])->toHashMap();
+     * => HashMap('fst' -> 1, 'snd' -> 2)
      * ```
      *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is NonEmptySet<array{TKI, TVI}>
+     *
      * @return HashMap<TKI, TVI>
      */
-    public function toHashMap(callable $callback): HashMap;
+    public function toHashMap(): HashMap;
 
     /**
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([1, 2, 2])
-     * >>>     ->toNonEmptyHashMap(fn($elem) => [(sting) $elem, $elem]);
-     * => NonEmptyHashMap('1' -> 1, '2' -> 2)
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst', 1], ['snd', 2], ['snd', 2]])->toNonEmptyHashMap();
+     * => NonEmptyHashMap('fst' -> 1, 'snd' -> 2)
      * ```
      *
      * @template TKI
      * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
+     * @psalm-if-this-is NonEmptySet<array{TKI, TVI}>
+     *
      * @return NonEmptyHashMap<TKI, TVI>
      */
-    public function toNonEmptyHashMap(callable $callback): NonEmptyHashMap;
+    public function toNonEmptyHashMap(): NonEmptyHashMap;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty(['fst', 'fst', 'snd', 'thd'])
+     * >>>     ->toStream()
+     * >>>     ->lines()
+     * >>>     ->drain();
+     * => 'fst'
+     * => 'snd'
+     * => 'thd'
+     * ```
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream;
+
+    /**
+     * If each element of the collection is an associative array then call of this method will fold all elements to one associative array.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array;
+
+    /**
+     * Non-empty version of {@see NonEmptySetCastableOps::toMergedArray()}.
+     *
+     * ```php
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptySet<non-empty-array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyMergedArray(): array;
 }

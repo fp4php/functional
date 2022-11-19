@@ -4,21 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Countable;
-use Iterator;
-use IteratorAggregate;
-
 /**
- * @psalm-immutable
+ * @template-covariant TK
  * @template-covariant TV
- * @implements IteratorAggregate<empty, TV>
+ * @extends Collection<TK, TV>
  */
-interface NonEmptyCollection extends IteratorAggregate, Countable
+interface NonEmptyCollection extends Collection
 {
-    /**
-     * @mutation-free
-     * @inheritDoc
-     * @return Iterator<TV>
-     */
-    public function getIterator(): Iterator;
 }

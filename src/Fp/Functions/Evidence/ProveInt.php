@@ -17,10 +17,7 @@ use Fp\Functional\Option\Option;
  * => Some(1)
  * ```
  *
- * @psalm-template T
- * @psalm-param T $potential
- * @psalm-return Option<int>
- * @psalm-pure
+ * @return Option<int>
  */
 function proveInt(mixed $potential): Option
 {

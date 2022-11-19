@@ -9,21 +9,22 @@ use Generator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class InterleaveOperation extends AbstractOperation
+final class InterleaveOperation extends AbstractOperation
 {
     /**
      * @template TVI
-     * @param iterable<TVI> $that
+     *
+     * @param iterable<mixed, TVI> $that
      * @return Generator<int, TV|TVI>
      */
     public function __invoke(iterable $that): Generator
     {
         $pairs = ZipOperation::of($this->gen)($that);
 
-        return FlatMapOperation::of($pairs)(function (array $pair) {
+        return FlatMapOperation::of($pairs)(function (mixed $_key, array $pair) {
             yield from $pair;
         });
     }

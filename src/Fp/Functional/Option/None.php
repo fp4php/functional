@@ -5,32 +5,29 @@ declare(strict_types=1);
 namespace Fp\Functional\Option;
 
 /**
- * @psalm-immutable
- * @extends Option<empty>
+ * @extends Option<never>
  */
 final class None extends Option
 {
-    private static ?self $instance = null;
+    private static ?None $instance = null;
 
-    /**
-     * @psalm-var null
-     */
-    protected mixed $value = null;
-
-    /**
-     * @psalm-pure
-     * @psalm-suppress ImpureStaticProperty
-     */
-    public static function getInstance(): self
+    public static function getInstance(): None
     {
-        return is_null(self::$instance) ? self::$instance = new self() : self::$instance;
+        return null === self::$instance ? self::$instance = new None() : self::$instance;
     }
 
     /**
-     * @psalm-return null
+     * {@inheritDoc}
+     *
+     * @template SO
+     * @template NO
+     *
+     * @param callable(): NO $ifNone
+     * @param callable(never): SO $ifSome
+     * @return SO|NO
      */
-    public function get(): mixed
+    public function fold(callable $ifNone, callable $ifSome): mixed
     {
-        return $this->value;
+        return $ifNone();
     }
 }

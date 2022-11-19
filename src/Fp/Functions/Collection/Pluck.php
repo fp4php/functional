@@ -17,22 +17,17 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PluckFunctionReturnTypeProvider;
  * => [1, 2]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV of object|array
- * @psalm-param iterable<TK, TV> $collection
+ * @template TK of array-key
+ * @template TV of object|array
+ *
+ * @param iterable<TK, TV> $collection
+ *
  * @see PluckFunctionReturnTypeProvider
  */
 function pluck(iterable $collection, string $key): array
 {
-    $aggregation = [];
-
-    foreach ($collection as $index => $element) {
-        /** @psalm-suppress MixedAssignment */
-        $aggregation[$index] = match (true) {
-            is_array($element) => $element[$key] ?? null,
-            is_object($element) => $element->{$key} ?? null,
-        };
-    }
-
-    return $aggregation;
+    return map($collection, fn($element) => match (true) {
+        is_array($element) => $element[$key] ?? null,
+        is_object($element) => $element->{$key} ?? null,
+    });
 }

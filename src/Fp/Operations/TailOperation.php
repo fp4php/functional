@@ -11,13 +11,12 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class TailOperation extends AbstractOperation
+final class TailOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @return Generator<TK, TV>
      */
     public function __invoke(): Generator

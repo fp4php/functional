@@ -61,7 +61,7 @@ class DocLinker
                     ]),
                     default => '',
                 })
-                ->fold('', fn (string $acc, string $h) => $acc . $h);
+                ->fold('')(fn (string $acc, string $h) => $acc . $h);
 
             file_put_contents($to, implode(PHP_EOL, [
                 '# ' . basename($dir),

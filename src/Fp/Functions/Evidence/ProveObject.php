@@ -17,9 +17,7 @@ use Fp\Functional\Option\Option;
  * => Some(Foo(1))
  * ```
  *
- * @psalm-param mixed $potential
- * @psalm-return Option<object>
- * @psalm-pure
+ * @return Option<object>
  */
 function proveObject(mixed $potential): Option
 {

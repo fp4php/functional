@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Fp\Streams;
 
+use Fp\Collections\Collection;
 use Fp\Functional\Unit;
 
 /**
- * @psalm-immutable
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface StreamEmitter
 {
@@ -16,11 +18,12 @@ interface StreamEmitter
      * Create singleton stream with one element
      *
      * ```php
-     * >>> Stream::emit(1)->toArray();
+     * >>> Stream::emit(1)->toList();
      * => [1]
      * ```
      *
      * @template TVI
+     *
      * @param TVI $elem
      * @return Stream<TVI>
      */
@@ -30,12 +33,13 @@ interface StreamEmitter
      * Emits elements from iterable source
      *
      * ```php
-     * >>> Stream::emits([1, 2])->toArray();
+     * >>> Stream::emits([1, 2])->toList();
      * => [1, 2]
      * ```
      *
      * @template TVI
-     * @param iterable<TVI> $source
+     *
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
      * @return Stream<TVI>
      */
     public static function emits(iterable $source): Stream;
@@ -44,25 +48,20 @@ interface StreamEmitter
      * Repeat this stream an infinite number of times.
      *
      * ```php
-     * >>> Stream::emits([1,2,3])->repeat()->take(8)->toArray();
+     * >>> Stream::emits([1,2,3])->repeat()->take(8)->toList();
      * => [1, 2, 3, 1, 2, 3, 1, 2]
      * ```
      *
-     * @return Stream<TV>
-     */
-    public function repeat(): Stream;
-
-    /**
-     * Repeat this stream N times
+     * If you pass $times stream repeats N times.
      *
      * ```php
-     * >>> Stream::emit(1)->repeatN(3)->toArray();
+     * >>> Stream::emit(1)->repeatN(3)->toList();
      * => [1, 1, 1]
      * ```
      *
      * @return Stream<TV>
      */
-    public function repeatN(int $times): Stream;
+    public function repeat(null|int $times = null): Stream;
 
     /**
      * Discrete stream that emits elapsed duration since the start time of stream consumption.
@@ -77,11 +76,12 @@ interface StreamEmitter
      * Creates an infinite stream that always returns the supplied value
      *
      * ```php
-     * >>> Stream::constant(0)->take(3)->toArray();
+     * >>> Stream::constant(0)->take(3)->toList();
      * => [0, 0, 0]
      * ```
      *
      * @template TVI
+     *
      * @param TVI $const
      * @return Stream<TVI>
      */
@@ -91,12 +91,12 @@ interface StreamEmitter
      * Creates int stream of given range
      *
      * ```php
-     * >>> Stream::range(0, 10, 2)->toArray();
+     * >>> Stream::range(0, 10, 2)->toList();
      * => [0, 2, 4, 6, 8]
      * ```
      *
-     * @psalm-param positive-int $by
-     * @psalm-return Stream<int>
+     * @param positive-int $by
+     * @return Stream<int>
      */
     public static function range(int $start, int $stopExclusive, int $by = 1): Stream;
 
@@ -104,7 +104,7 @@ interface StreamEmitter
      * Creates an infinite stream
      *
      * ```php
-     * >>> Stream::infinite()->map(fn() => rand(0, 1))->take(2)->toArray();
+     * >>> Stream::infinite()->map(fn() => rand(0, 1))->take(2)->toList();
      * => [0, 1]
      * ```
      *

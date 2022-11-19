@@ -5,25 +5,33 @@ declare(strict_types=1);
 namespace Fp\Operations;
 
 /**
- * @template TK
- * @template TV
- * @psalm-immutable
- * @extends AbstractOperation<TK, TV>
+ * @template A
+ * @template TInit
  */
-class FoldOperation extends AbstractOperation
+final class FoldOperation
 {
     /**
-     * @template TA
-     * @psalm-param TA $init
-     * @psalm-param callable(TA, TV, TK): TA $f
-     * @psalm-return TA
+     * @param iterable<A> $iterator
+     * @param TInit $init
      */
-    public function __invoke(mixed $init, callable $f): mixed
-    {
-        $acc = $init;
+    public function __construct(
+        public iterable $iterator,
+        public mixed $init,
+    ) {}
 
-        foreach ($this->gen as $key => $value) {
-            $acc = $f($acc, $value, $key);
+    /**
+     * @template TFold
+     *
+     * @param callable(TInit, A): TFold $callback
+     * @return TFold|TInit
+     */
+    public function __invoke(callable $callback): mixed
+    {
+        $acc = $this->init;
+
+        foreach ($this->iterator as $value) {
+            /** @psalm-suppress PossiblyInvalidArgument */
+            $acc = $callback($acc, $value);
         }
 
         return $acc;

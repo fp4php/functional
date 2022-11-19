@@ -7,9 +7,10 @@ namespace Fp\Collection;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FilterMapOperation;
 use Fp\Operations\FilterNotNullOperation;
-use Fp\Operations\FilterOfOperation;
 use Fp\Operations\FilterOperation;
+use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterNotNullFunctionReturnTypeProvider;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 
@@ -22,71 +23,69 @@ use function Fp\Cast\asList;
  * => [2]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool $predicate
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): bool $predicate
+ * @return array<TK, TV>
+ *
+ * @psalm-return ($collection is array<TK, TV> ? list<TV> : array<TK, TV>)
  */
-function filter(iterable $collection, callable $predicate, bool $preserveKeys = false): array
+function filter(iterable $collection, callable $predicate): array
 {
-    $gen = FilterOperation::of($collection)($predicate);
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
+    return filterKV($collection, dropFirstArg($predicate));
 }
 
 /**
- * Filter not null elements
- * Do not preserve keys by default
+ * Same as {@see filter()} but passing also the key to the $predicate function.
+ *
+ * ```php
+ * >>> filterKV(['fst' => 1, 'snd' => 2, 'thd' => 3], fn($k, $v) => $k !== 'fst' && $v !== 3);
+ * => [2]
+ * ```
+ *
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
+ * @return array<TK, TV>
+ *
+ * @psalm-return ($collection is list<TV> ? list<TV> : array<TK, TV>)
+ */
+function filterKV(iterable $collection, callable $predicate): array
+{
+    $gen = FilterOperation::of($collection)($predicate);
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
+}
+
+/**
+ * Filter not null elements.
  *
  * ```php
  * >>> filterNotNull([1, null, 2]);
  * => [1, 2]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV|null> $collection
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TV> : list<TV>)
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV|null> $collection
+ * @return array<TK, TV>
+ *
+ * @psalm-return ($collection is list<TV|null> ? list<TV> : array<TK, TV>)
+ * @see FilterNotNullFunctionReturnTypeProvider
  */
-function filterNotNull(iterable $collection, bool $preserveKeys = false): array
+function filterNotNull(iterable $collection): array
 {
     $gen = FilterNotNullOperation::of($collection)();
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
-}
 
-/**
- * Filter elements of given class
- * Do not preserve keys by default
- *
- * ```php
- * >>> filterOf([1, new Foo(1), 2], Foo::class);
- * => [Foo(1)]
- * ```
- *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param TP $preserveKeys
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
- * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
- */
-function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false, bool $invariant = false): array
-{
-    $gen = FilterOfOperation::of($collection)($fqcn, $invariant);
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }
 
 /**
@@ -101,19 +100,21 @@ function filterOf(iterable $collection, string $fqcn, bool $preserveKeys = false
  * => [2]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-template TP of bool
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): Option<TVO> $predicate
- * @psalm-param TP $preserveKeys
- * @psalm-return (TP is true ? array<TK, TVO> : list<TVO>)
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): Option<TVO> $predicate
+ * @return array<TK, TVO>
+ *
+ * @psalm-return ($collection is list<TV> ? list<TVO> : array<TK, TVO>)
  */
-function filterMap(iterable $collection, callable $predicate, bool $preserveKeys = false): array
+function filterMap(iterable $collection, callable $predicate): array
 {
-    $gen = FilterMapOperation::of($collection)($predicate);
-    return $preserveKeys
-        ? asArray($gen)
-        : asList($gen);
+    $gen = FilterMapOperation::of($collection)(dropFirstArg($predicate));
+
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }

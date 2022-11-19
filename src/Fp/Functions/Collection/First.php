@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Functional\Option\Option;
-use Fp\Operations\FirstOfOperation;
+use Fp\Operations\FirstMapOperation;
 use Fp\Operations\FirstOperation;
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Find first element which satisfies the condition
@@ -16,34 +17,68 @@ use Fp\Operations\FirstOperation;
  * => 1
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param null|callable(TV, TK): bool $predicate
- * @psalm-return Option<TV>
+ * @template TV
+ *
+ * @param iterable<TV> $collection
+ * @param null|callable(TV): bool $predicate
+ * @return Option<TV>
  */
 function first(iterable $collection, ?callable $predicate = null): Option
+{
+    return FirstOperation::of($collection)(null !== $predicate ? dropFirstArg($predicate) : null);
+}
+
+/**
+ * Same as {@see first()} but passing also the key to the $predicate function.
+ *
+ * @template TK
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
+ * @return Option<TV>
+ */
+function firstKV(iterable $collection, callable $predicate): Option
 {
     return FirstOperation::of($collection)($predicate);
 }
 
 /**
- * Find first element of given class
+ * A combined {@see first} and {@see map}.
+ *
+ * Filtering is handled via Option instead of Boolean.
+ * So the output type TVO can be different from the input type TV.
  *
  * ```php
- * >>> firstOf([1, new Foo(1), new Foo(2)], Foo::class)->get()
- * => Foo(1)
+ * >>> firstMap(['zero', '1', '2'], fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+ * => Some(1)
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
- * @psalm-return Option<TVO>
+ * @template TK
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): Option<TVO> $callback
+ * @return Option<TVO>
  */
-function firstOf(iterable $collection, string $fqcn, bool $invariant = false): Option
+function firstMap(iterable $collection, callable $callback): Option
 {
-    return FirstOfOperation::of($collection)($fqcn, $invariant);
+    return firstMapKV($collection, dropFirstArg($callback));
+}
+
+/**
+ * Same as {@see firstMap()} but passing also the key to the $callback function.
+ *
+ * @template TK
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): Option<TVO> $callback
+ * @return Option<TVO>
+ */
+function firstMapKV(iterable $collection, callable $callback): Option
+{
+    return FirstMapOperation::of($collection)($callback);
 }

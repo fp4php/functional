@@ -12,10 +12,10 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class RepeatNOperation extends AbstractOperation
+final class RepeatNOperation extends AbstractOperation
 {
     /**
      * @return Generator<int, TV>

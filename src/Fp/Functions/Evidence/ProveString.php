@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Evidence;
 
+use Closure;
 use Fp\Functional\Option\Option;
+
+use function Fp\Collection\exists;
 
 /**
  * Prove that subject is of string type
@@ -17,10 +20,7 @@ use Fp\Functional\Option\Option;
  * => None
  * ```
  *
- * @psalm-pure
- * @psalm-template T
- * @psalm-param T $potential
- * @psalm-return Option<string>
+ * @return Option<string>
  */
 function proveString(mixed $potential): Option
 {
@@ -38,12 +38,57 @@ function proveString(mixed $potential): Option
  * => None
  * ```
  *
- * @psalm-pure
- * @psalm-return Option<class-string>
+ * @return Option<class-string>
  */
 function proveClassString(mixed $potential): Option
 {
     return proveString($potential)->filter(fn($fqcn) => class_exists($fqcn) || interface_exists($fqcn));
+}
+
+/**
+ * Prove that subject is of class-string<TVO> type
+ *
+ * ```php
+ * >>> proveClassStringOf(ArrayList::class, Collection::class)
+ * => Some(ArrayList::class)
+ * >>> proveClassStringOf(Option::class, Collection::class)
+ * => None
+ *
+ * ```
+ *
+ * @template TVO
+ *
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+ * @return Option<class-string<TVO>>
+ */
+function proveClassStringOf(mixed $potential, string|array $fqcn, bool $invariant = false): Option
+{
+    /** @var Option<class-string<TVO>> */
+    return proveClassString($potential)->filter(fn(string $class) => exists(
+        is_array($fqcn) ? $fqcn : [$fqcn],
+        fn($fqcn) => $invariant ? $class === $fqcn : is_a($class, $fqcn, allow_string: true),
+    ));
+}
+
+/**
+ * Curried version of {@see proveClassStringOf}.
+ *
+ * ```php
+ * >>> classStringOf(Collection::class)(ArrayList::class)
+ * => Some(ArrayList::class)
+ * >>> classStringOf(Collection::class)(Option::class)
+ * => None
+ *
+ * ```
+ *
+ * @template TVO
+ *
+ * @param class-string<TVO>|list<class-string<TVO>> $fqcn
+ * @return Closure(mixed): Option<class-string<TVO>>
+ */
+function classStringOf(string|array $fqcn, bool $invariant = false): Closure
+{
+    return fn(mixed $potential) => proveClassStringOf($potential, $fqcn, $invariant);
 }
 
 /**
@@ -57,8 +102,7 @@ function proveClassString(mixed $potential): Option
  * => None
  * ```
  *
- * @psalm-pure
- * @psalm-return Option<non-empty-string>
+ * @return Option<non-empty-string>
  */
 function proveNonEmptyString(mixed $subject): Option
 {
@@ -78,8 +122,7 @@ function proveNonEmptyString(mixed $subject): Option
  * => None
  * ```
  *
- * @psalm-pure
- * @psalm-return Option<callable-string>
+ * @return Option<callable-string>
  */
 function proveCallableString(mixed $subject): Option
 {

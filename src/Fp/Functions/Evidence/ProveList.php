@@ -6,8 +6,7 @@ namespace Fp\Evidence;
 
 use Fp\Functional\Option\Option;
 
-use function Fp\Collection\everyOf;
-use function Fp\Collection\head;
+use function Fp\Collection\traverseOption;
 
 /**
  * Prove that given collection is of list type
@@ -18,190 +17,60 @@ use function Fp\Collection\head;
  *
  * >>> proveList([1, 2 => 2]);
  * => None
+ *
+ * >>> proveList([1, 2], proveInt(...));
+ * => Some([1, 2])
+ *
+ * >>> proveList(['1', '2'], proveInt(...));
+ * => None
  * ```
  *
+ * @template TV
+ * @template TVO
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- *
- * @psalm-param iterable<TK, TV> $collection
- *
- * @psalm-return Option<list<TV>>
+ * @param mixed|iterable<TV> $value
+ * @param null|callable(mixed): Option<TVO> $vType
+ * @return Option<list<TV>
+ * @psalm-return ($vType is null ? Option<list<TV>> : Option<list<TVO>>)
  */
-function proveList(iterable $collection): Option
+function proveList(mixed $value, null|callable $vType = null): Option
 {
-    return Option::do(function () use ($collection) {
-        $array = yield proveArray($collection);
-        $isSequence = true;
-        $previousKey = -1;
-
-        foreach (array_keys($array) as $key) {
-            if (is_int($key) && is_int($previousKey) && 1 === ((int) $key - (int) $previousKey)) {
-                $previousKey = $key;
-            } else {
-                $isSequence = false;
-                break;
-            }
-
-        }
-
-        yield proveTrue($isSequence);
-
-        /** @var list<TV> */
-        return $array;
-    });
+    return match (true) {
+        !is_array($value) || !array_is_list($value) => Option::none(),
+        null === $vType => Option::some($value),
+        default => traverseOption($value, $vType),
+    };
 }
 
 /**
- * Prove that given collection is of non-empty-list type
+ * Prove that given collection is of list type
  *
  * ```php
+ * >>> proveNonEmptyList([]);
+ * => None
+ *
  * >>> proveNonEmptyList([1, 2]);
  * => Some([1, 2])
  *
  * >>> proveNonEmptyList([1, 2 => 2]);
  * => None
  *
- * >>> proveNonEmptyList([]);
+ * >>> proveNonEmptyList([1, 2], proveInt(...));
+ * => Some([1, 2])
+ *
+ * >>> proveNonEmptyList(['1', '2'], proveInt(...));
  * => None
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
+ * @template TV
+ * @template TVO
  *
- * @psalm-param iterable<TK, TV> $collection
- *
- * @psalm-return Option<non-empty-list<TV>>
+ * @param mixed|iterable<TV> $value
+ * @param null|callable(mixed): Option<TVO> $vType
+ * @return Option<list<TV>
+ * @psalm-return ($vType is null ? Option<non-empty-list<TV>> : Option<non-empty-list<TVO>>)
  */
-function proveNonEmptyList(iterable $collection): Option
+function proveNonEmptyList(mixed $value, null|callable $vType = null): Option
 {
-    return Option::do(function () use ($collection) {
-        $list = yield proveList($collection);
-        yield head($list);
-
-        /** @var non-empty-list<TV> $list */
-        return $list;
-    });
-}
-
-/**
- * Prove that collection is of list type
- * and every element is of given class
- *
- * ```php
- * >>> proveListOf([new Foo(1), new Foo(2)], Foo::class);
- * => Some([Foo(1), Foo(2)])
- *
- * >>> proveListOf([new Foo(1), 2], Foo::class);
- * => None
- * ```
- *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- *
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
- *
- * @psalm-return Option<list<TVO>>
- */
-function proveListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
-{
-    return Option::do(function () use ($collection, $fqcn, $invariant) {
-        $list = yield proveList($collection);
-        yield proveTrue(everyOf($list, $fqcn, $invariant));
-
-        /** @var list<TVO> $list */
-        return $list;
-    });
-}
-
-/**
- * Prove that collection is of non-empty-list type
- * and every element is of given class
- *
- * ```php
- * >>> proveNonEmptyListOf([new Foo(1), new Foo(2)], Foo::class);
- * => Some([Foo(1), Foo(2)])
- *
- * >>> proveNonEmptyListOf([new Foo(1), 2], Foo::class);
- * => None
- *
- * >>> proveNonEmptyListOf([], Foo::class);
- * => None
- * ```
- *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- *
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
- *
- * @psalm-return Option<non-empty-list<TVO>>
- */
-function proveNonEmptyListOf(iterable $collection, string $fqcn, bool $invariant = false): Option
-{
-    return Option::do(function () use ($collection, $fqcn, $invariant) {
-        $list = yield proveListOf($collection, $fqcn, $invariant);
-        yield head($list);
-
-        /** @var non-empty-list<TVO> $list */
-        return $list;
-    });
-}
-
-/**
- * Prove that collection is of list type
- * and every element is of given scalar type
- *
- * ```php
- * >>> proveListOfScalar([1, 2, 3], 'int');
- * => Some([1, 2, 3])
- *
- * >>> proveListOfScalar([1, '2', 3], 'int');
- * => None
- * ```
- *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- *
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param 'string'|'non-empty-string'|'int'|'float'|'bool' $type
- *
- * @psalm-return (
- *     $type is 'string'           ? Option<list<string>> : (
- *     $type is 'non-empty-string' ? Option<list<non-empty-string>> : (
- *     $type is 'int'              ? Option<list<int>> : (
- *     $type is 'float'            ? Option<list<float>> : (
- *                                   Option<list<bool>>
- * )))))
- */
-function proveListOfScalar(mixed $subject, string $type): Option
-{
-    if (!is_array($subject)) {
-        return Option::none();
-    }
-
-    return Option::do(function () use ($subject, $type) {
-        $list = yield proveList($subject);
-
-        $provenListOf = [];
-
-        /** @psalm-var mixed $element */
-        foreach ($list as $element) {
-            $provenListOf[] = yield match($type) {
-                'string' => proveString($element),
-                'non-empty-string' => proveNonEmptyString($element),
-                'int' => proveInt($element),
-                'float' => proveFloat($element),
-                'bool' => proveBool($element),
-            };
-        }
-
-        return $provenListOf;
-    });
+    return proveList($value, $vType)->filter(fn($list) => !empty($list));
 }

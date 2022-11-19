@@ -5,23 +5,28 @@ declare(strict_types=1);
 namespace Fp\Operations;
 
 use Fp\Functional\Option\Option;
-use function Fp\Cast\asList;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template TV
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class MinElementOperation extends AbstractOperation
+final class MinElementOperation extends AbstractOperation
 {
     /**
      * @return Option<TV>
      */
     public function __invoke(): Option
     {
-        $list = asList($this->gen);
+        $min = null;
 
-        return Option::fromNullable(!empty($list) ? min($list) : null);
+        foreach ($this->gen as $val) {
+            if (null === $min || $min > $val) {
+                $min = $val;
+            }
+        }
+
+        return Option::fromNullable($min);
     }
 }

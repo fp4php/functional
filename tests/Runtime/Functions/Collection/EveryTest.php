@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Functions\Collection;
 
-use Fp\Functional\Option\Option;
 use PHPUnit\Framework\TestCase;
-
 use Tests\Mock\Foo;
 
 use function Fp\Collection\every;
-use function Fp\Collection\everyMap;
-use function Fp\Collection\everyOf;
+use function Fp\Collection\everyKV;
 
 final class EveryTest extends TestCase
 {
@@ -30,43 +27,24 @@ final class EveryTest extends TestCase
         ));
     }
 
-    public function testEveryOf(): void
+    public function testEveryKV(): void
     {
-        $this->assertTrue(everyOf(
-            [],
-            Foo::class,
-            false
-        ));
+        /** @var array<int, int> */
+        $c1 = [
+            2 => 3,
+            4 => 5,
+            6 => 7,
+        ];
 
-        $this->assertTrue(everyOf(
-            [],
-            Foo::class,
-            true
-        ));
+        $this->assertTrue(everyKV($c1, fn($k, $v) => $k % 2 === 0 && $v % 2 !== 0));
 
-        $this->assertTrue(everyOf(
-            [new Foo(1), new Foo(2)],
-            Foo::class
-        ));
+        /** @var array<int, int> */
+        $c2 = [
+            3 => 2,
+            5 => 4,
+            7 => 6,
+        ];
 
-        $this->assertFalse(everyOf(
-            [new Foo(1), new Foo(2), 1],
-            Foo::class
-        ));
-    }
-
-    public function testEveryMap(): void
-    {
-        $c = [1, 2];
-
-        $this->assertEquals(
-            Option::some($c),
-            everyMap($c, fn(int $v) => $v < 3 ? Option::some($v) : Option::none())
-        );
-
-        $this->assertEquals(
-            Option::none(),
-            everyMap($c, fn(int $v) => $v < 2 ? Option::some($v) : Option::none()),
-        );
+        $this->assertFalse(everyKV($c2, fn($k, $v) => $k % 2 === 0 && $v % 2 !== 0));
     }
 }

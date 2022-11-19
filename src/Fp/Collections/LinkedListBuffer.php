@@ -31,19 +31,15 @@ final class LinkedListBuffer
 
     /**
      * @param TV $elem
-     * @return self<TV>
+     * @return LinkedListBuffer<TV>
      */
-    public function append(mixed $elem): self
+    public function append(mixed $elem): LinkedListBuffer
     {
         $appended = new Cons($elem, Nil::getInstance());
 
         if (0 === $this->length) {
             $this->first = $appended;
         } elseif (isset($this->last)) {
-            /**
-             * @dies-from-psalm-suppress
-             * @psalm-suppress InaccessibleProperty
-             */
             $this->last->tail = $appended;
         }
 

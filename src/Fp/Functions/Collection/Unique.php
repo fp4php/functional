@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Operations\UniqueOperation;
+use Fp\Operations\UniqueByOperation;
 
+use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
+
 
 /**
  * Returns collection unique elements
@@ -14,21 +16,44 @@ use function Fp\Cast\asList;
  * ```php
  * >>> unique([1, 2, 2, 3, 3, 3, 3]);
  * => [1, 2, 3]
+ * ```
  *
+ * @template TK of array-key
+ * @template TV
+ * @param iterable<TK, TV> $collection
+ * @return ($collection is list ? list<TV> : array<TK, TV>)
+ */
+function unique(iterable $collection): array
+{
+    $gen = UniqueByOperation::of($collection)(fn(mixed $i): mixed => $i);
+
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
+}
+
+/**
+ * Returns collection unique elements by given $callback.
+ *
+ * ```php
  * >>> unique(
  *     [new User(id: 1), new User(id: 1), new User(id: 2)],
- *     fn(User $user) => $user->getId()
+ *     fn(User $user) => $user->getId(),
  * );
  * => [User(1), User(2)]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV): array-key $callback returns element unique id
- * @psalm-return list<TV>
+ * @template TK of array-key
+ * @template TV
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): mixed $callback
+ * @return ($collection is list ? list<TV> : array<TK, TV>)
  */
-function unique(iterable $collection, callable $callback): array
+function uniqueBy(iterable $collection, callable $callback): array
 {
-    return asList(UniqueOperation::of($collection)($callback));
+    $gen = UniqueByOperation::of($collection)($callback);
+
+    return is_array($collection) && array_is_list($collection)
+        ? asList($gen)
+        : asArray($gen);
 }

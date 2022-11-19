@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Runtime\Classes\Option;
 
-use Error;
 use Exception;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Left;
@@ -13,12 +12,27 @@ use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class OptionTest extends TestCase
 {
+    public function testOptionPluck(): void
+    {
+        $this->assertEquals(Option::some(1), Option::some(new Foo(a: 1))->pluck('a'));
+        $this->assertEquals(Option::some(1), Option::some(['a' => 1])->pluck('a'));
+    }
+
+    public function testToString(): void
+    {
+        $this->assertEquals('None', (string) Option::none());
+        $this->assertEquals('Some(42)', (string) Option::some(42));
+        $this->assertEquals('None', Option::none()->toString());
+        $this->assertEquals('Some(42)', Option::some(42)->toString());
+        $this->assertEquals('Some(true)', Option::some(true)->toString());
+        $this->assertEquals('Some(false)', Option::some(false)->toString());
+    }
+
     public function testCreation(): void
     {
         $this->assertInstanceOf(Some::class, Option::fromNullable(1));
@@ -34,9 +48,6 @@ final class OptionTest extends TestCase
 
     public function testIsMethods(): void
     {
-        $this->assertFalse(Option::some(1)->isEmpty());
-        $this->assertTrue(Option::some(1)->isNonEmpty());
-
         $this->assertFalse(Option::some(1)->isNone());
         $this->assertTrue(Option::some(1)->isSome());
     }
@@ -61,6 +72,17 @@ final class OptionTest extends TestCase
         $this->assertInstanceOf(Some::class, $someAlso);
     }
 
+    public function testMapN(): void
+    {
+        $some = Option::some([1, true, false])->mapN(Foo::create(...));
+        $someAlso = Option::some([1, true])->mapN(Foo::create(...));
+        $someToo = Option::some(['a' => 1, 'b' => true, 'c' => false])->mapN(Foo::create(...));
+
+        $this->assertEquals(Option::some(new Foo(1, true, false)), $some);
+        $this->assertEquals(Option::some(new Foo(1, true, true)), $someAlso);
+        $this->assertEquals(Option::some(new Foo(1, true, false)), $someToo);
+    }
+
     public function testFlatMap(): void
     {
         $some = Option::some(1)
@@ -81,6 +103,15 @@ final class OptionTest extends TestCase
         $this->assertNull($none->get());
     }
 
+    public function testFlatMapN(): void
+    {
+        $some = Option::some([1, true, false])->flatMapN(Foo::createOption(...));
+        $none = Option::some([0, true, false])->flatMapN(Foo::createOption(...));
+
+        $this->assertEquals(Option::some(new Foo(1, true, false)), $some);
+        $this->assertEquals(Option::none(), $none);
+    }
+
     public function testTry(): void
     {
         $this->assertInstanceOf(Some::class, Option::try(fn() => 1));
@@ -93,13 +124,13 @@ final class OptionTest extends TestCase
     public function testFold(): void
     {
         $foldSome = Option::some(1)->fold(
-            fn(int $some) => $some + 1,
             fn() => 0,
+            fn(int $some) => $some + 1,
         );
 
         $foldNone = Option::none()->fold(
-            fn(int $some) => $some + 1,
             fn() => 0,
+            fn(int $some) => $some + 1,
         );
 
         $this->assertEquals(2, $foldSome);
@@ -116,13 +147,6 @@ final class OptionTest extends TestCase
     {
         $this->assertEquals(1, Option::some(1)->getOrCall(fn() => 0));
         $this->assertEquals(0, Option::none()->getOrCall(fn() => 0));
-    }
-
-    public function testGetOrThrow(): void
-    {
-        $this->assertEquals(1, Option::some(1)->getOrThrow(fn() => new RuntimeException('???')));
-        $this->expectExceptionMessage('???');
-        Option::none()->getOrThrow(fn() => new RuntimeException('???'));
     }
 
     public function testOrElse(): void
@@ -155,45 +179,20 @@ final class OptionTest extends TestCase
 
     public function testFilter(): void
     {
-        $some = Option::some(42)
+        /** @var int $num */
+        $num = 42;
+
+        $some = Option::some($num)
             ->filter(fn(int $v) => $v >= 42)
             ->get();
 
-        $this->assertEquals(42, $some);
+        $this->assertEquals($num, $some);
 
-        $none = Option::some(42)
+        $none = Option::some($num)
             ->filter(fn(int $v) => $v > 42)
             ->get();
 
         $this->assertEquals(null, $none);
-    }
-
-    public function testFilterOf(): void
-    {
-        $this->assertInstanceOf(
-            Foo::class,
-            Option::some(new Foo(1))->filterOf(Foo::class)->get()
-        );
-        $this->assertNull(
-            Option::some(new Bar(1))->filterOf(Foo::class)->get()
-        );
-    }
-
-    public function testCond(): void
-    {
-        $this->assertEquals('some', Option::cond(true, 'some')->get());
-        $this->assertEquals('some', Option::condLazy(true, fn() => 'some')->get());
-        $this->assertNull(Option::condLazy(false, fn() => throw new Error())->get());
-        $this->assertNull(Option::cond(false, 'some')->get());
-    }
-
-    public function testWhenAndUnless(): void
-    {
-        $this->assertEquals('some', Option::when(true, fn() => 'some')->get());
-        $this->assertNull(Option::when(false, fn() => throw new Error())->get());
-
-        $this->assertEquals('some', Option::unless(false, fn() => 'some')->get());
-        $this->assertNull(Option::unless(true, fn() => throw new Error())->get());
     }
 
     public function testTap(): void
@@ -202,27 +201,42 @@ final class OptionTest extends TestCase
         $this->assertNull(Option::none()->tap(fn($e) => $e)->get());
     }
 
+    public function testTapN(): void
+    {
+        $some = Option::some([1, true, false])
+            ->tapN(function(int $a, bool $b, bool $c) {
+                $this->assertEquals(1, $a);
+                $this->assertEquals(true, $b);
+                $this->assertEquals(false, $c);
+            });
+
+        $this->assertEquals(Option::some([1, true, false]), $some);
+    }
+
     public function testFlatTap(): void
     {
         $this->assertEquals(1, Option::some(1)->flatTap(fn($e) => Option::some(2))->get());
         $this->assertNull(Option::some(1)->flatTap(fn($e) => Option::none())->get());
     }
 
+    public function testFlatTapN(): void
+    {
+        $some = Option::some([1, true, false])->flatTapN(Foo::createOption(...));
+        $none = Option::some([0, true, false])->flatTapN(Foo::createOption(...));
+
+        $this->assertEquals(Option::some([1, true, false]), $some);
+        $this->assertEquals(Option::none(), $none);
+    }
+
     public function testToArrayList(): void
     {
-        $this->assertEquals(
-            [1],
-            Option::some(1)->toArrayList(fn(int $val) => ArrayList::singleton($val))->toArray()
-        );
+        $this->assertEquals(ArrayList::collect([1]), Option::some(1)->toArrayList());
+        $this->assertEquals(ArrayList::collect([]), Option::none()->toArrayList());
+    }
 
-        $this->assertEquals(
-            [1],
-            Option::some([1])->toArrayList(fn(array $val) => ArrayList::collect($val))->toArray()
-        );
-
-        $this->assertEquals(
-            [],
-            Option::none()->toArrayList(fn(array $val) => ArrayList::collect($val))->toArray()
-        );
+    public function testWhen(): void
+    {
+        $this->assertEquals(Option::some(42), Option::when(true, fn() => 42));
+        $this->assertEquals(Option::none(), Option::when(false, fn() => 42));
     }
 }

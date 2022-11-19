@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Option\Option;
+
+use function Fp\Collection\map;
+use function Fp\Evidence\proveOf;
+
 /**
  * @internal
  */
@@ -11,11 +16,9 @@ final class HashComparator
 {
     public static function hashEquals(mixed $lhs, mixed $rhs): bool
     {
-        return match (true) {
-            $lhs instanceof HashContract => $lhs->equals($rhs),
-            $rhs instanceof HashContract => $rhs->equals($lhs),
-            default => self::computeHash($lhs) === self::computeHash($rhs),
-        };
+        return self::asHashContract($lhs)->map(fn(HashContract $lhs) => $lhs->equals($rhs))
+            ->orElse(fn() => self::asHashContract($rhs)->map(fn(HashContract $rhs) => $rhs->equals($lhs)))
+            ->getOrCall(fn() => self::computeHash($lhs) === self::computeHash($rhs));
     }
 
     public static function computeHash(mixed $subject): mixed
@@ -29,17 +32,21 @@ final class HashComparator
 
     public static function computeHashForObject(object $object): string
     {
-        return $object instanceof HashContract
-            ? $object->hashCode()
-            : spl_object_hash($object);
+        return self::asHashContract($object)
+            ->map(fn(HashContract $hc) => $hc->hashCode())
+            ->getOrCall(fn() => spl_object_hash($object));
     }
 
     public static function computeHashForArray(array $arr): string
     {
-        $list = LinkedList::collect($arr)
-            ->map(fn($elem): mixed => self::computeHash($elem))
-            ->toArray();
+        return json_encode(map($arr, self::computeHash(...))) ?: '';
+    }
 
-        return json_encode($list) ?: '';
+    /**
+     * @return Option<HashContract>
+     */
+    private static function asHashContract(mixed $value): Option
+    {
+        return proveOf($value, HashContract::class)->orElse(fn() => HashContractGlobal::get($value));
     }
 }

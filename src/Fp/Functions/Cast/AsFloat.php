@@ -18,9 +18,7 @@ use Fp\Functional\Option\Option;
  * => None
  * ```
  *
- * @psalm-template T
- * @psalm-param T $subject
- * @psalm-return Option<float>
+ * @return Option<float>
  */
 function asFloat(mixed $subject): Option
 {

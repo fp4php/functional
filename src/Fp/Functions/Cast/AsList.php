@@ -12,13 +12,16 @@ namespace Fp\Cast;
  * => [1, 2, 3, 4]
  * ```
  *
- * @psalm-template TV
- * @psalm-param iterable<mixed, TV> ...$collections
- * @psalm-return (
+ * @template TV
+ *
+ * @param iterable<mixed, TV> ...$collections
+ * @return (
  *     $collections is non-empty-array
  *         ? non-empty-list<TV>
  *         : list<TV>
  * )
+ *
+ * @no-named-arguments
  */
 function asList(iterable ...$collections): array
 {

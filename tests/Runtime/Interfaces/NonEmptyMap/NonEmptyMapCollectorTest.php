@@ -13,8 +13,8 @@ final class NonEmptyMapCollectorTest extends TestCase
 {
     public function testCollect(): void
     {
-        $this->assertNull(NonEmptyHashMap::collect([])->get()?->toArray());
-        $this->assertEquals([['a', 1]], NonEmptyHashMap::collect(['a' => 1])->get()?->toArray());
+        $this->assertNull(NonEmptyHashMap::collect([])->get()?->toList());
+        $this->assertEquals([['a', 1]], NonEmptyHashMap::collect(['a' => 1])->get()?->toList());
     }
 
     public function testCollectUnsafe(): void
@@ -26,7 +26,7 @@ final class NonEmptyMapCollectorTest extends TestCase
     {
         $this->assertEquals(
             [['a', 1]],
-            NonEmptyHashMap::collectNonEmpty(['a' => 1])->toArray()
+            NonEmptyHashMap::collectNonEmpty(['a' => 1])->toList()
         );
     }
 
@@ -46,7 +46,7 @@ final class NonEmptyMapCollectorTest extends TestCase
     public function testCollectPairs(Option $m1, Option $m2): void
     {
         $expected = [['a', 1], ['b', 2]];
-        $this->assertEquals($expected, $m1->getUnsafe()->toArray());
+        $this->assertEquals($expected, $m1->getUnsafe()->toList());
         $this->assertNull($m2->get());
     }
 
@@ -66,7 +66,7 @@ final class NonEmptyMapCollectorTest extends TestCase
     public function testCollectPairsUnsafe(callable $t1, callable $t2): void
     {
         $expected = [['a', 1], ['b', 2]];
-        $this->assertEquals($expected, Option::try(fn() => $t1()->toArray())->get());
-        $this->assertNull(Option::try(fn() => $t2()->toArray())->get());
+        $this->assertEquals($expected, Option::try(fn() => $t1()->toList())->get());
+        $this->assertNull(Option::try(fn() => $t2()->toList())->get());
     }
 }

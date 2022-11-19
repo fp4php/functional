@@ -6,29 +6,24 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class FilterOperation extends AbstractOperation
+final class FilterOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
-     * @psalm-param callable(TV, TK): bool $f
+     * @param callable(TK, TV): bool $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
     {
-        return asGenerator(function () use ($f) {
-            foreach ($this->gen as $key => $value) {
-                if ($f($value, $key)) {
-                    yield $key => $value;
-                }
+        foreach ($this->gen as $key => $value) {
+            if ($f($key, $value)) {
+                yield $key => $value;
             }
-        });
+        }
     }
 }

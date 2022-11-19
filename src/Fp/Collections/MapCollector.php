@@ -5,12 +5,21 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template-covariant TV
  */
 interface MapCollector
 {
+    /**
+     * ```php
+     * >>> HashMap::empty()->toList();
+     * => []
+     * ```
+     *
+     * @return HashMap<empty, empty>
+     */
+    public static function empty(): HashMap;
+
     /**
      * ```php
      * >>> HashMap::collect(['a' =>  1, 'b' => 2]);
@@ -19,10 +28,11 @@ interface MapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return Map<TKI, TVI>
      */
-    public static function collect(iterable $source): self;
+    public static function collect(iterable $source): Map;
 
     /**
      * ```php
@@ -32,8 +42,9 @@ interface MapCollector
      *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     * @return Map<TKI, TVI>
      */
-    public static function collectPairs(iterable $source): self;
+    public static function collectPairs(iterable $source): Map;
 }

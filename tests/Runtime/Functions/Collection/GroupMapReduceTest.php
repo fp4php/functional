@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
-use function Fp\Collection\groupBy;
 use function Fp\Collection\groupMapReduce;
+use function Fp\Collection\groupMapReduceKV;
 
 final class GroupMapReduceTest extends TestCase
 {
@@ -27,16 +27,32 @@ final class GroupMapReduceTest extends TestCase
                     ['id' => 20, 'sum' => 15],
                     ['id' => 30, 'sum' => 20],
                 ],
-                /** @param array{id: int, sum: int} $a */
                 fn(array $a) => $a['id'],
-                /** @param array{id: int, sum: int} $a */
                 fn(array $a) => [$a['sum']],
-                /**
-                 * @param list<int> $old
-                 * @param list<int> $new
-                 */
                 fn(array $old, array $new) => array_merge($old, $new),
             )
+        );
+    }
+
+    public function testGroupMapKV(): void
+    {
+        /** @var array<int, int> $c */
+        $c = [
+            1 => 1, // 2
+            3 => 2, // 5
+            5 => 3, // 8
+            7 => 4, // 11
+        ];
+
+        $this->assertEquals(
+            [
+                'k+v=even-sum' => 10,
+                'k+v=odd-sum' => 16,
+            ],
+            groupMapReduceKV($c,
+                group: fn($k, $v) => ($k + $v) % 2 === 0 ? 'k+v=even-sum' : 'k+v=odd-sum',
+                map: fn($k, $v) => $k + $v,
+                reduce: fn($old, $new) => $old + $new),
         );
     }
 }

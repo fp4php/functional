@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\Psalm\Util\Psalm;
+use Fp\PsalmToolkit\Toolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use Psalm\CodeLocation;
 use Psalm\Internal\Type\Comparator\CallableTypeComparator;
@@ -18,16 +18,14 @@ use Psalm\Type\Atomic\TCallable;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Union;
 
+use function Fp\Cast\asList;
 use function Fp\Collection\filterNotNull;
 use function Fp\Collection\head;
 use function Fp\Collection\map;
 use function Fp\Collection\tail;
 
-class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
+final class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInterface
 {
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionIds(): array
     {
         return [
@@ -37,18 +35,15 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return head($event->getCallArgs())
-            ->flatMap(fn(Arg $head_arg) => Psalm::getArgUnion($head_arg, $event->getStatementsSource()))
+            ->flatMap(fn(Arg $head_arg) => PsalmApi::$args->getArgType($event, $head_arg))
             ->flatMap(fn(Union $head_arg_type) => head(array_merge(
                 $head_arg_type->getClosureTypes(),
                 $head_arg_type->getCallableTypes(),
                 filterNotNull(map(
-                    collection: $head_arg_type->getAtomicTypes(),
+                    collection: asList($head_arg_type->getAtomicTypes()),
                     callback: fn(Atomic $atomic) => CallableTypeComparator::getCallableFromAtomic(
                         codebase: $event->getStatementsSource()->getCodebase(),
                         input_type_part: $atomic
@@ -112,9 +107,9 @@ class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProviderInt
             }
 
             $param_type = $param->type ?? Type::getMixed();
-            $arg_type = Psalm::getArgUnion($arg, $event->getStatementsSource());
+            $arg_type = PsalmApi::$args->getArgType($event, $arg);
 
-            if ($arg_type->isEmpty()) {
+            if ($arg_type->isNone()) {
                 continue;
             }
 

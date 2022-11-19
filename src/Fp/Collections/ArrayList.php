@@ -5,55 +5,32 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use ArrayIterator;
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
-use Fp\Operations\AppendedAllOperation;
-use Fp\Operations\AppendedOperation;
-use Fp\Operations\DropOperation;
-use Fp\Operations\DropWhileOperation;
-use Fp\Operations\EveryMapOperation;
-use Fp\Operations\EveryOfOperation;
-use Fp\Operations\EveryOperation;
-use Fp\Operations\ExistsOfOperation;
-use Fp\Operations\ExistsOperation;
-use Fp\Operations\FilterMapOperation;
-use Fp\Operations\FilterNotNullOperation;
-use Fp\Operations\FilterOfOperation;
-use Fp\Operations\FilterOperation;
-use Fp\Operations\FirstOfOperation;
-use Fp\Operations\FirstOperation;
-use Fp\Operations\FlatMapOperation;
+use Fp\Functional\Separated\Separated;
+use Fp\Operations as Ops;
 use Fp\Operations\FoldOperation;
-use Fp\Operations\GroupByOperation;
-use Fp\Operations\IntersperseOperation;
-use Fp\Operations\LastOfOperation;
-use Fp\Operations\LastOperation;
-use Fp\Operations\MapValuesOperation;
-use Fp\Operations\MaxByElementOperation;
-use Fp\Operations\MaxElementOperation;
-use Fp\Operations\MinByElementOperation;
-use Fp\Operations\MinElementOperation;
-use Fp\Operations\MkStringOperation;
-use Fp\Operations\PrependedAllOperation;
-use Fp\Operations\PrependedOperation;
-use Fp\Operations\ReduceOperation;
-use Fp\Operations\SortedOperation;
-use Fp\Operations\TailOperation;
-use Fp\Operations\TakeOperation;
-use Fp\Operations\TakeWhileOperation;
-use Fp\Operations\TapOperation;
-use Fp\Operations\UniqueOperation;
-use Fp\Operations\ZipOperation;
 use Fp\Streams\Stream;
 use Iterator;
 
-use function Fp\Cast\asGenerator;
+use function Fp\Callable\dropFirstArg;
+use function Fp\Callable\toSafeClosure;
+use function Fp\Cast\fromPairs;
+use function Fp\Collection\at;
+use function Fp\Collection\keys;
+use function Fp\Evidence\proveNonEmptyArray;
+use function Fp\Evidence\proveNonEmptyList;
 
 /**
  * O(1) {@see Seq::at()} and {@see Seq::__invoke} operations
  *
- * @psalm-immutable
  * @template-covariant TV
  * @implements Seq<TV>
+ *
+ * @psalm-seal-methods
+ * @mixin ArrayListExtensions<TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class ArrayList implements Seq
 {
@@ -62,13 +39,17 @@ final class ArrayList implements Seq
      */
     public function __construct(public array $elements) { }
 
+    #region SeqCollector
+
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
-     * @param iterable<TVI> $source
-     * @return self<TVI>
+     *
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $source
+     * @return ArrayList<TVI>
      */
-    public static function collect(iterable $source): self
+    public static function collect(iterable $source): ArrayList
     {
         $buffer = [];
 
@@ -76,37 +57,1087 @@ final class ArrayList implements Seq
             $buffer[] = $elem;
         }
 
-        return new self($buffer);
+        return new ArrayList($buffer);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVI
+     *
      * @param TVI $val
-     * @return self<TVI>
+     * @return ArrayList<TVI>
      */
-    public static function singleton(mixed $val): self
+    public static function singleton(mixed $val): ArrayList
     {
-        return new self([$val]);
+        return new ArrayList([$val]);
     }
 
     /**
-     * @inheritDoc
-     * @return self<empty>
+     * {@inheritDoc}
+     *
+     * @return ArrayList<empty>
      */
-    public static function empty(): self
+    public static function empty(): ArrayList
     {
-        return new self([]);
+        return new ArrayList([]);
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param positive-int $by
-     * @psalm-return self<int>
+     * {@inheritDoc}
+     *
+     * @param positive-int $by
+     * @return ArrayList<int>
      */
-    public static function range(int $start, int $stopExclusive, int $by = 1): self
+    public static function range(int $start, int $stopExclusive, int $by = 1): ArrayList
     {
         return Stream::range($start, $stopExclusive, $by)->toArrayList();
+    }
+
+    #endregion SeqCollector
+
+    #region SeqCastableOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return list<TV>
+     */
+    public function toList(): array
+    {
+        return $this->elements;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<non-empty-list<TV>>
+     */
+    public function toNonEmptyList(): Option
+    {
+        return proveNonEmptyList($this->toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is ArrayList<array{TKO, TVO}>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toArray(): array
+    {
+        return fromPairs($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is ArrayList<array{TKO, TVO}>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyArray(): Option
+    {
+        return proveNonEmptyArray($this->toArray());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return LinkedList<TV>
+     */
+    public function toLinkedList(): LinkedList
+    {
+        return LinkedList::collect($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<NonEmptyLinkedList<TV>>
+     */
+    public function toNonEmptyLinkedList(): Option
+    {
+        return NonEmptyLinkedList::collect($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<NonEmptyArrayList<TV>>
+     */
+    public function toNonEmptyArrayList(): Option
+    {
+        return NonEmptyArrayList::collect($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return HashSet<TV>
+     */
+    public function toHashSet(): HashSet
+    {
+        return HashSet::collect($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<NonEmptyHashSet<TV>>
+     */
+    public function toNonEmptyHashSet(): Option
+    {
+        return NonEmptyHashSet::collect($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKI
+     * @template TVI
+     * @psalm-if-this-is ArrayList<array{TKI, TVI}>
+     *
+     * @return HashMap<TKI, TVI>
+     */
+    public function toHashMap(): HashMap
+    {
+        return HashMap::collectPairs($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKI
+     * @template TVI
+     * @psalm-if-this-is ArrayList<array{TKI, TVI}>
+     *
+     * @return Option<NonEmptyHashMap<TKI, TVI>>
+     */
+    public function toNonEmptyHashMap(): Option
+    {
+        return NonEmptyHashMap::collectPairs($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Stream<TV>
+     */
+    public function toStream(): Stream
+    {
+        return Stream::emits($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is ArrayList<array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array
+    {
+        return array_merge(...$this->toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is ArrayList<array<TKO, TVO>>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyMergedArray(): Option
+    {
+        return proveNonEmptyArray($this->toMergedArray());
+    }
+
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
+    #endregion SeqCastableOps
+
+    #region SeqChainableOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function tail(): ArrayList
+    {
+        return ArrayList::collect(Ops\TailOperation::of($this)());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function init(): ArrayList
+    {
+        return ArrayList::collect(Ops\InitOperation::of($this)());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function reverse(): ArrayList
+    {
+        return new ArrayList(array_reverse($this->elements));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): TVO $callback
+     * @return ArrayList<TVO>
+     */
+    public function map(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\MapOperation::of($this)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return ArrayList<TVO>
+     */
+    public function mapN(callable $callback): ArrayList
+    {
+        return $this->map(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $elem
+     * @return ArrayList<TV | TVI>
+     */
+    public function appended(mixed $elem): ArrayList
+    {
+        return ArrayList::collect(Ops\AppendedOperation::of($this)($elem));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $suffix
+     * @return ArrayList<TV | TVI>
+     */
+    public function appendedAll(iterable $suffix): ArrayList
+    {
+        return ArrayList::collect(Ops\AppendedAllOperation::of($this)($suffix));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $elem
+     * @return ArrayList<TV | TVI>
+     */
+    public function prepended(mixed $elem): ArrayList
+    {
+        return ArrayList::collect(Ops\PrependedOperation::of($this)($elem));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $prefix
+     * @return ArrayList<TV|TVI>
+     */
+    public function prependedAll(iterable $prefix): ArrayList
+    {
+        return ArrayList::collect(Ops\PrependedAllOperation::of($this)($prefix));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function filter(callable $predicate): ArrayList
+    {
+        return ArrayList::collect(Ops\FilterOperation::of($this)(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function filterN(callable $predicate): ArrayList
+    {
+        return $this->filter(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return ArrayList<TVO>
+     */
+    public function filterMap(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\FilterMapOperation::of($this)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return ArrayList<TVO>
+     */
+    public function filterMapN(callable $callback): ArrayList
+    {
+        return $this->filterMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function filterNotNull(): ArrayList
+    {
+        return ArrayList::collect(Ops\FilterNotNullOperation::of($this)());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is ArrayList<iterable<mixed, TVO>|Collection<mixed, TVO>>
+     *
+     * @return ArrayList<TVO>
+     */
+    public function flatten(): ArrayList
+    {
+        return ArrayList::collect(Ops\FlattenOperation::of($this));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
+     * @return ArrayList<TVO>
+     */
+    public function flatMap(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\FlatMapOperation::of($this)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): (iterable<mixed, TVO>|Collection<mixed, TVO>) $callback
+     * @return ArrayList<TVO>
+     */
+    public function flatMapN(callable $callback): ArrayList
+    {
+        return $this->flatMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function takeWhile(callable $predicate): ArrayList
+    {
+        return ArrayList::collect(Ops\TakeWhileOperation::of($this)(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return ArrayList<TV>
+     */
+    public function dropWhile(callable $predicate): ArrayList
+    {
+        return ArrayList::collect(Ops\DropWhileOperation::of($this)(dropFirstArg($predicate)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function take(int $length): ArrayList
+    {
+        return ArrayList::collect(Ops\TakeOperation::of($this)($length));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function drop(int $length): ArrayList
+    {
+        return ArrayList::collect(Ops\DropOperation::of($this)($length));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): void $callback
+     * @return ArrayList<TV>
+     */
+    public function tap(callable $callback): ArrayList
+    {
+        Stream::emits(Ops\TapOperation::of($this)(dropFirstArg($callback)))->drain();
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): void $callback
+     * @return ArrayList<TV>
+     */
+    public function tapN(callable $callback): ArrayList
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param null|callable(TV, TV): int $cmp
+     * @return ArrayList<TV>
+     */
+    public function sorted(null|callable $cmp = null): ArrayList
+    {
+        return ArrayList::collect(
+            null !== $cmp
+                ? Ops\SortedOperation::of($this)($cmp)
+                : Ops\SortedOperation::of($this)->asc(),
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return ArrayList<TV>
+     */
+    public function sortedBy(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\SortedOperation::of($this)->ascBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<TV>
+     */
+    public function sortedDesc(): ArrayList
+    {
+        return ArrayList::collect(Ops\SortedOperation::of($this)->desc());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return ArrayList<TV>
+     */
+    public function sortedDescBy(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\SortedOperation::of($this)->descBy($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param TVI $separator
+     * @return ArrayList<TV | TVI>
+     */
+    public function intersperse(mixed $separator): ArrayList
+    {
+        return ArrayList::collect(Ops\IntersperseOperation::of($this)($separator));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVI
+     *
+     * @param (iterable<mixed, TVI>|Collection<mixed, TVI>) $that
+     * @return ArrayList<array{TV, TVI}>
+     */
+    public function zip(iterable $that): ArrayList
+    {
+        return ArrayList::collect(Ops\ZipOperation::of($this)($that));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayList<array{int, TV}>
+     */
+    public function zipWithKeys(): ArrayList
+    {
+        return ArrayList::collect(Ops\ZipOperation::of(keys($this->getIterator()))($this->getIterator()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return ArrayList<TV>
+     */
+    public function uniqueBy(callable $callback): ArrayList
+    {
+        return ArrayList::collect(Ops\UniqueByOperation::of($this)($callback));
+    }
+
+    #endregion SeqChainableOps
+
+    #region SeqTerminalOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function __invoke(int $index): Option
+    {
+        return $this->at($index);
+    }
+
+    /**
+     * {@inheritDoc}
+     * O(1) time/space complexity
+     *
+     * @return Option<TV>
+     */
+    public function at(int $index): Option
+    {
+        return Option::fromNullable($this->elements[$index] ?? null);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function head(): Option
+    {
+        return Option::fromNullable($this->elements[0] ?? null);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function every(callable $predicate): bool
+    {
+        return Ops\EveryOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function everyN(callable $predicate): bool
+    {
+        return $this->every(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<ArrayList<TVO>>
+     */
+    public function traverseOption(callable $callback): Option
+    {
+        return Ops\TraverseOptionOperation::of($this)(dropFirstArg($callback))
+            ->map(fn($gen) => ArrayList::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<ArrayList<TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->traverseOption(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is ArrayList<Option<TVO>>
+     *
+     * @return Option<ArrayList<TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return Ops\TraverseOptionOperation::id($this->getIterator())->map(ArrayList::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, ArrayList<TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return Ops\TraverseEitherOperation::of($this)(dropFirstArg($callback))->map(ArrayList::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, ArrayList<TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->traverseEither(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is ArrayList<Either<E, TVO>>
+     *
+     * @return Either<E, ArrayList<TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return Ops\TraverseEitherOperation::id($this)->map(ArrayList::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<ArrayList<TV>, ArrayList<TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return Ops\PartitionOperation::of($this)(dropFirstArg($predicate))
+            ->mapLeft(fn($left) => ArrayList::collect($left))
+            ->map(fn($right) => ArrayList::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<ArrayList<TV>, ArrayList<TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->partition(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<ArrayList<LO>, ArrayList<RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return Ops\PartitionMapOperation::of($this)(dropFirstArg($callback))
+            ->mapLeft(fn($left) => ArrayList::collect($left))
+            ->map(fn($right) => ArrayList::collect($right));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<ArrayList<LO>, ArrayList<RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->partitionMap(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return Ops\ExistsOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->exists(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
+     */
+    public function first(callable $predicate): Option
+    {
+        return Ops\FirstOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option
+    {
+        return $this->first(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option
+    {
+        return Ops\FirstMapOperation::of($this)(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
+     */
+    public function last(callable $predicate): Option
+    {
+        return Ops\LastOperation::of($this)(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option
+    {
+        return $this->last(function($tuple) use ($predicate) {
+            /** @var array $tuple */;
+            return toSafeClosure($predicate)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function lastMap(callable $callback): Option
+    {
+        return Ops\LastMapOperation::of($this)(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function firstElement(): Option
+    {
+        return $this->head();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function lastElement(): Option
+    {
+        return Option::fromNullable(array_key_last($this->elements))
+            ->flatMap(fn($index) => at($this->elements, $index));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldOperation
+    {
+        return new FoldOperation($this->getIterator(), $init);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return HashMap<TKO, NonEmptyArrayList<TV>>
+     */
+    public function groupBy(callable $callback): HashMap
+    {
+        return Ops\GroupByOperation::of($this)(dropFirstArg($callback))
+            ->map(fn(NonEmptyHashMap $neSeq) => $neSeq->values()->toNonEmptyArrayList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return HashMap<TKO, NonEmptyArrayList<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): HashMap
+    {
+        return Ops\GroupMapOperation::of($this)(dropFirstArg($group), dropFirstArg($map))
+            ->map(fn(NonEmptyHashMap $hs) => $hs->values()->toNonEmptyArrayList());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return HashMap<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): HashMap
+    {
+        return Ops\GroupMapReduceOperation::of($this)(dropFirstArg($group), dropFirstArg($map), $reduce);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindex(callable $callback): HashMap
+    {
+        return HashMap::collect(Ops\ReindexOperation::of($this)(dropFirstArg($callback)));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return HashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): HashMap
+    {
+        return $this->reindex(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isEmpty(): bool
+    {
+        return empty($this->elements);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
+    {
+        return Ops\MkStringOperation::of($this)($start, $sep, $end);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function max(): Option
+    {
+        return Ops\MaxElementOperation::of($this)();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function maxBy(callable $callback): Option
+    {
+        return Ops\MaxByElementOperation::of($this)($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Option<TV>
+     */
+    public function min(): Option
+    {
+        return Ops\MinElementOperation::of($this)();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function minBy(callable $callback): Option
+    {
+        return Ops\MinByElementOperation::of($this)($callback);
+    }
+
+    public function __toString(): string
+    {
+        return $this
+            ->map(fn($value) => Ops\ToStringOperation::of($value))
+            ->mkString('ArrayList(', ', ', ')');
     }
 
     /**
@@ -118,534 +1149,34 @@ final class ArrayList implements Seq
     }
 
     /**
-     * @inheritDoc
-     * @return list<TV>
-     */
-    public function toArray(): array
-    {
-        return $this->elements;
-    }
-
-    /**
-     * @inheritDoc
-     * @return LinkedList<TV>
-     */
-    public function toLinkedList(): LinkedList
-    {
-        return LinkedList::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @return ArrayList<TV>
-     */
-    public function toArrayList(): ArrayList
-    {
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     * @return Option<NonEmptyArrayList<TV>>
-     */
-    public function toNonEmptyArrayList(): Option
-    {
-        $that = $this;
-        return Option::when(
-            $this->isNonEmpty(),
-            fn() => new NonEmptyArrayList($that)
-        );
-    }
-
-    /**
-     * @inheritDoc
-     * @return HashSet<TV>
-     */
-    public function toHashSet(): HashSet
-    {
-        return HashSet::collect($this);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TKI
-     * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
-     * @return HashMap<TKI, TVI>
-     */
-    public function toHashMap(callable $callback): HashMap
-    {
-        return HashMap::collectPairs(asGenerator(function () use ($callback) {
-            foreach ($this as $elem) {
-                yield $callback($elem);
-            }
-        }));
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function count(): int
     {
         return count($this->elements);
     }
 
+    #endregion SeqTerminalOps
+
+    #region Extension
+
     /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
      */
-    public function __invoke(int $index): Option
+    public function __call(string $name, array $arguments): mixed
     {
-        return $this->at($index);
+        return ArrayListExtensions::call($this, $name, $arguments);
     }
 
     /**
-     * O(1) time/space complexity
-     *
-     * @inheritDoc
-     * @psalm-return Option<TV>
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
      */
-    public function at(int $index): Option
+    public static function __callStatic(string $name, array $arguments): mixed
     {
-        return Option::fromNullable($this->elements[$index] ?? null);
+        return ArrayListExtensions::callStatic($name, $arguments);
     }
 
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function head(): Option
-    {
-        return Option::fromNullable($this->elements[0] ?? null);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return self<TV>
-     */
-    public function tail(): self
-    {
-        return self::collect(TailOperation::of($this->getIterator())());
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return self<TV>
-     */
-    public function reverse(): self
-    {
-        return new self(array_reverse($this->elements));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     */
-    public function every(callable $predicate): bool
-    {
-        return EveryOperation::of($this->getIterator())($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function everyOf(string $fqcn, bool $invariant = false): bool
-    {
-        return EveryOfOperation::of($this->getIterator())($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVO
-     * @param callable(TV): Option<TVO> $callback
-     * @return Option<self<TVO>>
-     */
-    public function everyMap(callable $callback): Option
-    {
-        return EveryMapOperation::of($this->getIterator())($callback)
-            ->map(fn($gen) => ArrayList::collect($gen));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     */
-    public function exists(callable $predicate): bool
-    {
-        return ExistsOperation::of($this->getIterator())($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     */
-    public function existsOf(string $fqcn, bool $invariant = false): bool
-    {
-        return ExistsOfOperation::of($this->getIterator())($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function first(callable $predicate): Option
-    {
-        return FirstOperation::of($this->getIterator())($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
-     */
-    public function firstOf(string $fqcn, bool $invariant = false): Option
-    {
-        return FirstOfOperation::of($this->getIterator())($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
-     */
-    public function lastOf(string $fqcn, bool $invariant = false): Option
-    {
-        return LastOfOperation::of($this->getIterator())($fqcn, $invariant);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
-     */
-    public function last(callable $predicate): Option
-    {
-        return LastOperation::of($this->getIterator())($predicate);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function firstElement(): Option
-    {
-        return $this->head();
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return Option<TV>
-     */
-    public function lastElement(): Option
-    {
-        // TODO known size optimization
-        return LastOperation::of($this->getIterator())();
-    }
-
-    /**
-     * @inheritDoc
-     * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
-     */
-    public function fold(mixed $init, callable $callback): mixed
-    {
-        return FoldOperation::of($this->getIterator())($init, $callback);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback
-     * @psalm-return Option<TV|TA>
-     */
-    public function reduce(callable $callback): Option
-    {
-        return ReduceOperation::of($this->getIterator())($callback);
-    }
-
-    /**
-     * @inheritDoc
-     * @template TKO
-     * @psalm-param callable(TV): TKO $callback
-     * @psalm-return Map<TKO, Seq<TV>>
-     */
-    public function groupBy(callable $callback): Map
-    {
-        return GroupByOperation::of($this->getIterator())($callback);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isEmpty(): bool
-    {
-        return empty($this->elements);
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-assert-if-true non-empty-list<TV> $this->elements
-     */
-    public function isNonEmpty(): bool
-    {
-        return !$this->isEmpty();
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVO
-     * @psalm-param callable(TV): TVO $callback
-     * @psalm-return self<TVO>
-     */
-    public function map(callable $callback): self
-    {
-        return self::collect(MapValuesOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
-     */
-    public function appended(mixed $elem): self
-    {
-        return self::collect(AppendedOperation::of($this->getIterator())($elem));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param iterable<TVI> $suffix
-     * @psalm-return self<TV|TVI>
-     */
-    public function appendedAll(iterable $suffix): self
-    {
-        return self::collect(AppendedAllOperation::of($this->getIterator())($suffix));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param TVI $elem
-     * @psalm-return self<TV|TVI>
-     */
-    public function prepended(mixed $elem): self
-    {
-        return self::collect(PrependedOperation::of($this->getIterator())($elem));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @psalm-param iterable<TVI> $prefix
-     * @psalm-return self<TV|TVI>
-     */
-    public function prependedAll(iterable $prefix): self
-    {
-        return self::collect(PrependedAllOperation::of($this->getIterator())($prefix));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
-     */
-    public function filter(callable $predicate): self
-    {
-        return self::collect(FilterOperation::of($this->getIterator())($predicate));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return self<TVO>
-     */
-    public function filterMap(callable $callback): self
-    {
-        return self::collect(FilterMapOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return self<TV>
-     */
-    public function filterNotNull(): self
-    {
-        return self::collect(FilterNotNullOperation::of($this->getIterator())());
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return self<TVO>
-     */
-    public function filterOf(string $fqcn, bool $invariant = false): self
-    {
-        return self::collect(FilterOfOperation::of($this->getIterator())($fqcn, $invariant));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(TV): iterable<TVO> $callback
-     * @psalm-return self<TVO>
-     */
-    public function flatMap(callable $callback): self
-    {
-        return self::collect(FlatMapOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
-     */
-    public function takeWhile(callable $predicate): self
-    {
-        return self::collect(TakeWhileOperation::of($this->getIterator())($predicate));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return self<TV>
-     */
-    public function dropWhile(callable $predicate): self
-    {
-        return self::collect(DropWhileOperation::of($this->getIterator())($predicate));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return self<TV>
-     */
-    public function take(int $length): self
-    {
-        return self::collect(TakeOperation::of($this->getIterator())($length));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-return self<TV>
-     */
-    public function drop(int $length): self
-    {
-        return self::collect(DropOperation::of($this->getIterator())($length));
-    }
-
-    /**
-     * @inheritDoc
-     * @param callable(TV): void $callback
-     * @psalm-return self<TV>
-     */
-    public function tap(callable $callback): self
-    {
-        Stream::emits(TapOperation::of($this->getIterator())($callback))->drain();
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     * @experimental
-     * @psalm-param callable(TV): (int|string) $callback
-     * @psalm-return self<TV>
-     */
-    public function unique(callable $callback): self
-    {
-        return self::collect(UniqueOperation::of($this->getIterator())($callback));
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV, TV): int $cmp
-     * @psalm-return self<TV>
-     */
-    public function sorted(callable $cmp): self
-    {
-        return self::collect(SortedOperation::of($this->getIterator())($cmp));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @param TVI $separator
-     * @psalm-return self<TV|TVI>
-     */
-    public function intersperse(mixed $separator): self
-    {
-        return self::collect(IntersperseOperation::of($this->getIterator())($separator));
-    }
-
-    /**
-     * @inheritDoc
-     * @template TVI
-     * @param iterable<TVI> $that
-     * @return self<array{TV, TVI}>
-     */
-    public function zip(iterable $that): self
-    {
-        return self::collect(ZipOperation::of($this->getIterator())($that));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function mkString(string $start = '', string $sep = ',', string $end = ''): string
-    {
-        return MkStringOperation::of($this->getIterator())($start, $sep, $end);
-    }
-
-    /**
-     * @inheritDoc
-     * @return Option<TV>
-     */
-    public function max(): Option
-    {
-        return MaxElementOperation::of($this->getIterator())();
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): mixed $callback
-     * @return Option<TV>
-     */
-    public function maxBy(callable $callback): Option
-    {
-        return MaxByElementOperation::of($this->getIterator())($callback);
-    }
-
-    /**
-     * @inheritDoc
-     * @return Option<TV>
-     */
-    public function min(): Option
-    {
-        return MinElementOperation::of($this->getIterator())();
-    }
-
-    /**
-     * @inheritDoc
-     * @psalm-param callable(TV): mixed $callback
-     * @return Option<TV>
-     */
-    public function minBy(callable $callback): Option
-    {
-        return MinByElementOperation::of($this->getIterator())($callback);
-    }
+    #endregion Extension
 }

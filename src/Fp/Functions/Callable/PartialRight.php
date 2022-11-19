@@ -20,7 +20,6 @@ use Fp\Psalm\Hook\FunctionReturnTypeProvider\PartialFunctionReturnTypeProvider;
  * ```
  *
  * {@see PartialFunctionReturnTypeProvider}
- * @psalm-pure
  */
 function partialRight(callable $callback, mixed ...$args): callable
 {

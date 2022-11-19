@@ -1,9 +1,9 @@
-FROM php:8.0-cli
+FROM php:8.1-cli
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions
 
-RUN apt-get update -y && apt-get install -y curl unzip
+RUN apt-get update -y && apt-get install -y curl unzip pandoc
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
 

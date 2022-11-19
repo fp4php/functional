@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Fp\Callable;
 
-use Fp\Collections\NonEmptyLinkedList;
-
 use function Fp\Collection\filterNotNull;
+use function Fp\Collection\tail;
 
 /**
  * Compose functions
@@ -24,30 +23,30 @@ use function Fp\Collection\filterNotNull;
  * => fn(int $a): float => $cTod($bToC($aToB($a)))
  * ```
  *
- * @psalm-template A
- * @psalm-template B
- * @psalm-template C
- * @psalm-template D
- * @psalm-template F
- * @psalm-template G
- * @psalm-template H
- * @psalm-template I
- * @psalm-template J
- * @psalm-template K
- * @psalm-template L
+ * @template A
+ * @template B
+ * @template C
+ * @template D
+ * @template F
+ * @template G
+ * @template H
+ * @template I
+ * @template J
+ * @template K
+ * @template L
  *
- * @psalm-param callable(A): B $aToB
- * @psalm-param callable(B): C $bToC
- * @psalm-param callable(C): D $cToD
- * @psalm-param callable(D): F $dToF
- * @psalm-param callable(F): G $fToG
- * @psalm-param callable(G): H $gToH
- * @psalm-param callable(H): I $hToI
- * @psalm-param callable(I): J $iToJ
- * @psalm-param callable(J): K $jToK
- * @psalm-param callable(K): L $kToL
+ * @param callable(A): B $aToB
+ * @param callable(B): C $bToC
+ * @param callable(C): D $cToD
+ * @param callable(D): F $dToF
+ * @param callable(F): G $fToG
+ * @param callable(G): H $gToH
+ * @param callable(H): I $hToI
+ * @param callable(I): J $iToJ
+ * @param callable(J): K $jToK
+ * @param callable(K): L $kToL
  *
- * @psalm-return (
+ * @return (
  *     func_num_args() is 2 ? callable(A): C : (
  *     func_num_args() is 3 ? callable(A): D : (
  *     func_num_args() is 4 ? callable(A): F : (
@@ -76,9 +75,7 @@ function compose(
 {
     $callableChain = filterNotNull([$aToB, $bToC, $cToD, $dToF, $fToG, $gToH, $hToI, $iToJ, $jToK, $kToL]);
 
-    return NonEmptyLinkedList::collectUnsafe($callableChain)
-        ->reduce(function(callable $acc, callable $cur) {
-            return fn(mixed $v): mixed => $cur($acc($v));
-        });
+    return array_reduce(tail($callableChain), function(callable $acc, callable $cur) {
+        return fn(mixed $v): mixed => $cur($acc($v));
+    }, $callableChain[0]);
 }
-

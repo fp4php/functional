@@ -12,22 +12,22 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class FilterMapOperation extends AbstractOperation
+final class FilterMapOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @template TVO
-     * @psalm-param callable(TV, TK): Option<TVO> $f
+     *
+     * @param callable(TK, TV): Option<TVO> $f
      * @return Generator<TK, TVO>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                $res = $f($value, $key);
+                $res = $f($key, $value);
 
                 if ($res->isSome()) {
                     yield $key => $res->get();

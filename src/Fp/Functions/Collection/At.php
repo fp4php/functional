@@ -20,17 +20,17 @@ use Fp\Operations\AtOperation;
  * => 2
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param TK $key
- * @psalm-return Option<TV>
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param TK $key
+ * @return Option<TV>
  */
 function at(iterable $collection, int|string $key): Option
 {
     return Option::some($collection)
         ->filter(fn($coll) => is_array($coll))
-        ->flatMap(fn(array $coll) => Option::when(array_key_exists($key, $coll), fn() => $coll[$key]))
+        ->flatMap(fn(array $coll) => array_key_exists($key, $coll) ? Option::some($coll[$key]) : Option::none())
         ->orElse(fn() => AtOperation::of($collection)($key));
 }
-

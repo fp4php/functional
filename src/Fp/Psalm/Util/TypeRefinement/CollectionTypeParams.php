@@ -6,6 +6,9 @@ namespace Fp\Psalm\Util\TypeRefinement;
 
 use Psalm\Type\Union;
 
+/**
+ * @psalm-immutable
+ */
 final class CollectionTypeParams
 {
     public function __construct(

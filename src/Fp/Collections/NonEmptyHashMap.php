@@ -4,23 +4,26 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
-use Fp\Operations\CountOperation;
-use Fp\Operations\EveryMapOperation;
-use Fp\Operations\EveryOperation;
-use Fp\Operations\KeysOperation;
-use Fp\Operations\MapKeysOperation;
-use Fp\Operations\MapValuesOperation;
-use Fp\Operations\ValuesOperation;
+use Fp\Functional\Separated\Separated;
+use Fp\Operations as Ops;
+use Fp\Operations\FoldOperation;
+use Fp\Streams\Stream;
 use Generator;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asGenerator;
 
 /**
  * @template TK
  * @template-covariant TV
- * @psalm-immutable
  * @implements NonEmptyMap<TK, TV>
+ *
+ * @psalm-seal-methods
+ * @mixin NonEmptyHashMapExtensions<TK, TV>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class NonEmptyHashMap implements NonEmptyMap
 {
@@ -28,20 +31,24 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @internal
      * @param HashMap<TK, TV> $hashMap
      */
-    public function __construct(private HashMap $hashMap)
+    public function __construct(private readonly HashMap $hashMap)
     {
     }
 
+    #region NonEmptyMapCollectorOps
+
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
-     * @return Option<self<TKI, TVI>>
+     * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
     public static function collect(iterable $source): Option
     {
-        return self::collectPairs(asGenerator(function () use ($source) {
+        return NonEmptyHashMap::collectPairs(asGenerator(function () use ($source) {
             foreach ($source as $key => $value) {
                 yield [$key, $value];
             }
@@ -49,35 +56,41 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
+     *
      * @param iterable<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectUnsafe(iterable $source): self
+    public static function collectUnsafe(iterable $source): NonEmptyHashMap
     {
-        return self::collect($source)->getUnsafe();
+        return NonEmptyHashMap::collect($source)->getUnsafe();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
+     *
      * @param non-empty-array<TKI, TVI> $source
-     * @return self<TKI, TVI>
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectNonEmpty(array $source): self
+    public static function collectNonEmpty(array $source): NonEmptyHashMap
     {
-        return self::collectUnsafe($source);
+        return NonEmptyHashMap::collectUnsafe($source);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
-     * @return Option<self<TKI, TVI>>
+     *
+     * @param (iterable<mixed, array{TKI, TVI}>|Collection<mixed, array{TKI, TVI}>) $source
+     * @return Option<NonEmptyHashMap<TKI, TVI>>
      */
     public static function collectPairs(iterable $source): Option
     {
@@ -87,128 +100,159 @@ final class NonEmptyHashMap implements NonEmptyMap
         $hashTable = new HashTable();
 
         foreach ($source as [$key, $value]) {
-            $hashTable = $hashTable->update($hashTable, $key, $value);
+            $hashTable->update($key, $value);
         }
 
-        $isEmpty = empty($hashTable->table);
-
-        return Option::when(!$isEmpty, fn() => new HashMap($hashTable))
-            ->map(fn(HashMap $map) => new self($map));
+        return Option::some($hashTable)
+            ->filter(fn($hs) => !empty($hs->table))
+            ->map(fn($hs) => new HashMap($hs))
+            ->map(fn($hs) => new NonEmptyHashMap($hs));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
-     * @param iterable<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     *
+     * @param (iterable<mixed, array{TKI, TVI}>|Collection<mixed, array{TKI, TVI}>) $source
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectPairsUnsafe(iterable $source): self
+    public static function collectPairsUnsafe(iterable $source): NonEmptyHashMap
     {
-        return self::collectPairs($source)->getUnsafe();
+        return NonEmptyHashMap::collectPairs($source)->getUnsafe();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TKI
      * @template TVI
-     * @param non-empty-array<array{TKI, TVI}>|NonEmptyCollection<array{TKI, TVI}> $source
-     * @return self<TKI, TVI>
+     *
+     * @param non-empty-array<array-key, array{TKI, TVI}>|NonEmptyCollection<mixed, array{TKI, TVI}> $source
+     * @return NonEmptyHashMap<TKI, TVI>
      */
-    public static function collectPairsNonEmpty(array|NonEmptyCollection $source): self
+    public static function collectPairsNonEmpty(array|NonEmptyCollection $source): NonEmptyHashMap
     {
-        return self::collectPairsUnsafe($source);
+        return NonEmptyHashMap::collectPairsUnsafe($source);
+    }
+
+    #endregion NonEmptyMapCollectorOps
+
+    #region NonEmptyMapCastableOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return list<array{TK, TV}>
+     */
+    public function toList(): array
+    {
+        return $this->hashMap->toList();
     }
 
     /**
-     * @return Generator<int, array{TK, TV}>
-     */
-    public function getIterator(): Generator
-    {
-        return $this->hashMap->getIterator();
-    }
-
-    /**
-     * @return Generator<TK, TV>
-     */
-    public function getKeyValueIterator(): Generator
-    {
-        return $this->hashMap->getKeyValueIterator();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function count(): int
-    {
-        return CountOperation::of($this->getIterator())();
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return non-empty-list<array{TK, TV}>
+     */
+    public function toNonEmptyList(): array
+    {
+        /** @var non-empty-list<array{TK, TV}> */
+        return $this->toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TKO, TVO>
+     *
+     * @return array<TKO, TVO>
      */
     public function toArray(): array
     {
-        return $this->toNonEmptyArrayList()->toArray();
+        return $this->hashMap->toArray();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TKO, TVO>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array
+    {
+        return $this->hashMap->toNonEmptyArray()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return LinkedList<array{TK, TV}>
      */
     public function toLinkedList(): LinkedList
     {
-        return LinkedList::collect($this->getIterator());
+        return $this->hashMap->toLinkedList();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyLinkedList<array{TK, TV}>
      */
     public function toNonEmptyLinkedList(): NonEmptyLinkedList
     {
-        return NonEmptyLinkedList::collectUnsafe($this->getIterator());
+        return $this->hashMap->toNonEmptyLinkedList()->getUnsafe();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return ArrayList<array{TK, TV}>
      */
     public function toArrayList(): ArrayList
     {
-        return ArrayList::collect($this->getIterator());
+        return $this->hashMap->toArrayList();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyArrayList<array{TK, TV}>
      */
     public function toNonEmptyArrayList(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe($this->getIterator());
+        return $this->hashMap->toNonEmptyArrayList()->getUnsafe();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashSet<array{TK, TV}>
      */
     public function toHashSet(): HashSet
     {
-        return HashSet::collect($this->getIterator());
+        return $this->hashMap->toHashSet();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyHashSet<array{TK, TV}>
      */
     public function toNonEmptyHashSet(): NonEmptyHashSet
     {
-        return NonEmptyHashSet::collectUnsafe($this->getIterator());
+        return $this->hashMap->toNonEmptyHashSet()->getUnsafe();
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return HashMap<TK, TV>
      */
     public function toHashMap(): HashMap
@@ -217,7 +261,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @return NonEmptyHashMap<TK, TV>
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap
@@ -226,43 +271,605 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array
+    {
+        return $this->hashMap->toMergedArray();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, non-empty-array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyMergedArray(): array
+    {
+        return $this->hashMap->toNonEmptyMergedArray()->getUnsafe();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Stream<array{TK, TV}>
+     */
+    public function toStream(): Stream
+    {
+        return $this->hashMap->toStream();
+    }
+
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
+    #endregion NonEmptyMapCastableOps
+
+    #region NonEmptyMapChainableOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKI
+     * @template TVI
+     *
+     * @param TKI $key
+     * @param TVI $value
+     * @return NonEmptyHashMap<TK|TKI, TV|TVI>
+     */
+    public function appended(mixed $key, mixed $value): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->appended($key, $value));
+    }
+
+    /**
+     * @template TKO
+     * @template TVO
+     *
+     * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
+     * @return NonEmptyHashMap<TK|TKO, TV|TVO>
+     */
+    public function appendedAll(iterable $map): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->appendedAll($map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>>
+     *
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function flatten(): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->flatten());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function flatMap(callable $callback): NonEmptyHashMap
+    {
+        return $this->flatMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(mixed...): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function flatMapN(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->flatMapN($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): (non-empty-array<TKO, TVO>|NonEmptyCollection<TKO, TVO>) $callback
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function flatMapKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->flatMapKV($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): TVO $callback
+     * @return NonEmptyHashMap<TK, TVO>
+     */
+    public function map(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->map($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): TVO $callback
+     * @return NonEmptyHashMap<TK, TVO>
+     */
+    public function mapKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->mapKV($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): TVO $callback
+     * @return NonEmptyHashMap<TK, TVO>
+     */
+    public function mapN(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->mapN($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): void $callback
+     * @return NonEmptyHashMap<TK, TV>
+     */
+    public function tap(callable $callback): NonEmptyHashMap
+    {
+        return $this->tapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): void $callback
+     * @return NonEmptyHashMap<TK, TV>
+     */
+    public function tapN(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->tapN($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): void $callback
+     * @return NonEmptyHashMap<TK, TV>
+     */
+    public function tapKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->tapKV($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindex(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->reindex($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindexN(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->reindexN($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TK, TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, TV>
+     */
+    public function reindexKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->reindexKV($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TV>>
+     */
+    public function groupBy(callable $callback): NonEmptyHashMap
+    {
+        return $this->groupByKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     *
+     * @param callable(TK, TV): TKO $callback
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TV>>
+     */
+    public function groupByKV(callable $callback): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->groupByKV($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TVO>>
+     */
+    public function groupMap(callable $group, callable $map): NonEmptyHashMap
+    {
+        return $this->groupMapKV(dropFirstArg($group), dropFirstArg($map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
+     * @return NonEmptyHashMap<TKO, NonEmptyHashMap<TK, TVO>>
+     */
+    public function groupMapKV(callable $group, callable $map): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->groupMapKV($group, $map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): NonEmptyHashMap
+    {
+        return $this->groupMapReduceKV(dropFirstArg($group), dropFirstArg($map), $reduce);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TK, TV): TKO $group
+     * @param callable(TK, TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return NonEmptyHashMap<TKO, TVO>
+     */
+    public function groupMapReduceKV(callable $group, callable $map, callable $reduce): NonEmptyHashMap
+    {
+        return new NonEmptyHashMap($this->hashMap->groupMapReduceKV($group, $map, $reduce));
+    }
+
+    #endregion NonEmptyMapChainableOps
+
+    #region NonEmptyMapTerminalOps
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool
     {
-        return EveryOperation::of($this->getKeyValueIterator())(
-            fn($value, $key) => $predicate(new Entry($key, $value))
-        );
+        return $this->everyKV(dropFirstArg($predicate));
     }
 
     /**
-     * @inheritDoc
-     * @psalm-template TVO
-     * @psalm-param callable(Entry<TK, TV>): Option<TVO> $callback
-     * @psalm-return Option<self<TK, TVO>>
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
      */
-    public function everyMap(callable $callback): Option
+    public function everyN(callable $predicate): bool
     {
-        $hs = EveryMapOperation::of($this->getKeyValueIterator())(
-            fn($value, $key) => $callback(new Entry($key, $value))
-        );
-
-        return $hs->map(fn($gen) => NonEmptyHashMap::collectUnsafe($gen));
+        return $this->hashMap->everyN($predicate);
     }
 
     /**
-     * @inheritDoc
-     * @param TK $key
-     * @return Option<TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
      */
-    public function __invoke(mixed $key): Option
+    public function everyKV(callable $predicate): bool
     {
-        return $this->get($key);
+        return $this->hashMap->everyKV($predicate);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     */
+    public function exists(callable $predicate): bool
+    {
+        return $this->existsKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool
+    {
+        return $this->hashMap->existsN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     */
+    public function existsKV(callable $predicate): bool
+    {
+        return $this->hashMap->existsKV($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseOption(callable $callback): Option
+    {
+        return $this->traverseOptionKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option
+    {
+        return $this->hashMap->traverseOptionN($callback)->map(fn($map) => new NonEmptyHashMap($map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseOptionKV(callable $callback): Option
+    {
+        return $this->hashMap
+            ->traverseOptionKV($callback)
+            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, Option<TVO>>
+     *
+     * @return Option<NonEmptyHashMap<TK, TVO>>
+     */
+    public function sequenceOption(): Option
+    {
+        return $this->hashMap
+            ->sequenceOption()
+            ->flatMap(fn(HashMap $hs) => $hs->toNonEmptyHashMap());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEither(callable $callback): Either
+    {
+        return $this->traverseEitherKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either
+    {
+        return $this->hashMap->traverseEitherN($callback)->map(fn($map) => new NonEmptyHashMap($map));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<E, TVO> $callback
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function traverseEitherKV(callable $callback): Either
+    {
+        return $this->hashMap->traverseEitherKV($callback)
+            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partition(callable $predicate): Separated
+    {
+        return $this->partitionKV(dropFirstArg($predicate));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionN(callable $predicate): Separated
+    {
+        return $this->hashMap->partitionN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Separated<HashMap<TK, TV>, HashMap<TK, TV>>
+     */
+    public function partitionKV(callable $predicate): Separated
+    {
+        return $this->hashMap->partitionKV($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMap(callable $callback): Separated
+    {
+        return $this->partitionMapKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapN(callable $callback): Separated
+    {
+        return $this->hashMap->partitionMapN($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TK, TV): Either<LO, RO> $callback
+     * @return Separated<HashMap<TK, LO>, HashMap<TK, RO>>
+     */
+    public function partitionMapKV(callable $callback): Separated
+    {
+        return $this->hashMap->partitionMapKV($callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is NonEmptyHashMap<TK, Either<E, TVO>>
+     *
+     * @return Either<E, NonEmptyHashMap<TK, TVO>>
+     */
+    public function sequenceEither(): Either
+    {
+        return $this->hashMap->sequenceEither()
+            ->map(fn(HashMap $hs) => new NonEmptyHashMap($hs));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template TVO
+     *
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
+     */
+    public function fold(mixed $init): FoldOperation
+    {
+        return new FoldOperation($this, $init);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param TK $key
      * @return Option<TV>
      */
@@ -272,20 +879,8 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
-     * @template TKI
-     * @template TVI
-     * @param TKI $key
-     * @param TVI $value
-     * @return self<TK|TKI, TV|TVI>
-     */
-    public function updated(mixed $key, mixed $value): self
-    {
-        return self::collectPairsUnsafe([...$this->toArray(), [$key, $value]]);
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param TK $key
      * @return HashMap<TK, TV>
      */
@@ -295,9 +890,10 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
-     * @psalm-param callable(Entry<TK, TV>): bool $predicate
-     * @psalm-return HashMap<TK, TV>
+     * {@inheritDoc}
+     *
+     * @param callable(TV): bool $predicate
+     * @return HashMap<TK, TV>
      */
     public function filter(callable $predicate): HashMap
     {
@@ -305,72 +901,151 @@ final class NonEmptyHashMap implements NonEmptyMap
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param callable(mixed...): bool $predicate
+     * @return HashMap<TK, TV>
+     */
+    public function filterN(callable $predicate): HashMap
+    {
+        return $this->hashMap->filterN($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param callable(TK, TV): bool $predicate
+     * @return Map<TK, TV>
+     */
+    public function filterKV(callable $predicate): Map
+    {
+        return $this->hashMap->filterKV($predicate);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @template TVO
-     * @param callable(Entry<TK, TV>): Option<TVO> $callback
+     *
+     * @param callable(TV): Option<TVO> $callback
      * @return HashMap<TK, TVO>
      */
     public function filterMap(callable $callback): HashMap
     {
-        return $this->hashMap->filterMap($callback);
+        return $this->filterMapKV(dropFirstArg($callback));
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
-     * @psalm-param callable(Entry<TK, TV>): TVO $callback
-     * @psalm-return self<TK, TVO>
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
      */
-    public function map(callable $callback): self
+    public function filterMapN(callable $callback): HashMap
     {
-        return $this->mapValues($callback);
+        return $this->hashMap->filterMapN($callback);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @template TVO
-     * @psalm-param callable(Entry<TK, TV>): TVO $callback
-     * @psalm-return self<TK, TVO>
+     *
+     * @param callable(TK, TV): Option<TVO> $callback
+     * @return HashMap<TK, TVO>
      */
-    public function mapValues(callable $callback): self
+    public function filterMapKV(callable $callback): HashMap
     {
-        return self::collectUnsafe(
-            MapValuesOperation::of($this->getKeyValueIterator())(
-                fn($value, $key) => $callback(new Entry($key, $value))
-            )
-        );
+        return $this->hashMap->filterMapKV($callback);
     }
 
     /**
-     * @inheritDoc
-     * @template TKO
-     * @psalm-param callable(Entry<TK, TV>): TKO $callback
-     * @psalm-return self<TKO, TV>
+     * {@inheritDoc}
+     *
+     * @return NonEmptyArrayList<TK>
      */
-    public function mapKeys(callable $callback): self
+    public function keys(): NonEmptyArrayList
     {
-        return self::collectUnsafe(
-            MapKeysOperation::of($this->getKeyValueIterator())(
-                fn($value, $key) => $callback(new Entry($key, $value))
-            )
-        );
+        return $this->hashMap->keys()
+            ->toNonEmptyArrayList()
+            ->getUnsafe();
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return NonEmptySeq<TK>
+     * {@inheritDoc}
+     *
+     * @return NonEmptyArrayList<TV>
      */
-    public function keys(): NonEmptySeq
+    public function values(): NonEmptyArrayList
     {
-        return NonEmptyArrayList::collectUnsafe(KeysOperation::of($this->getKeyValueIterator())());
+        return $this->hashMap->values()
+            ->toNonEmptyArrayList()
+            ->getUnsafe();
+    }
+
+    #endregion NonEmptyMapTerminalOps
+
+    #region Traversable
+
+    /**
+     * @return Generator<TK, TV>
+     */
+    public function getIterator(): Generator
+    {
+        return $this->hashMap->getIterator();
     }
 
     /**
-     * @inheritDoc
-     * @psalm-return NonEmptySeq<TV>
+     * {@inheritDoc}
      */
-    public function values(): NonEmptySeq
+    public function count(): int
     {
-        return NonEmptyArrayList::collectUnsafe(ValuesOperation::of($this->getKeyValueIterator())());
+        return $this->hashMap->count();
     }
+
+    #endregion Traversable
+
+    #region Magic methods
+
+    public function __toString(): string
+    {
+        return $this
+            ->mapKV(fn($key, $value) => Ops\ToStringOperation::of($key) . ' => ' . Ops\ToStringOperation::of($value))
+            ->values()
+            ->toArrayList()
+            ->mkString('NonEmptyHashMap(', ', ', ')');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param TK $key
+     * @return Option<TV>
+     */
+    public function __invoke(mixed $key): Option
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return NonEmptyHashMapExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return NonEmptyHashMapExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Magic methods
 }

@@ -7,10 +7,10 @@ namespace Fp\Operations;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class CountOperation extends AbstractOperation
+final class CountOperation extends AbstractOperation
 {
     public function __invoke(): int
     {

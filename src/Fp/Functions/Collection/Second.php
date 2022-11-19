@@ -16,11 +16,12 @@ use Fp\Operations\SecondOperation;
  * => 2
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param null|callable(TV, TK): bool $predicate
- * @psalm-return Option<TV>
+ * @template TV
+ *
+ * @param iterable<TV> $collection
+ * @param null|callable(TV): bool $predicate
+ *
+ * @return Option<TV>
  */
 function second(iterable $collection, ?callable $predicate = null): Option
 {

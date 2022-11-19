@@ -7,13 +7,13 @@ namespace Fp\Operations;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class EveryOperation extends AbstractOperation
+final class EveryOperation extends AbstractOperation
 {
     /**
-     * @param callable(TV, TK): bool $f
+     * @param callable(TK, TV): bool $f
      * @return bool
      */
     public function __invoke(callable $f): bool
@@ -21,7 +21,7 @@ class EveryOperation extends AbstractOperation
         $res = true;
 
         foreach ($this->gen as $key => $value) {
-            if (!$f($value, $key)) {
+            if (!$f($key, $value)) {
                 $res = false;
                 break;
             }

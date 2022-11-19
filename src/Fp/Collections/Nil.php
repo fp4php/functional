@@ -5,19 +5,14 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @psalm-immutable
  * @extends LinkedList<empty>
  */
 final class Nil extends LinkedList
 {
-    private static ?self $instance = null;
+    private static ?Nil $instance = null;
 
-    /**
-     * @psalm-pure
-     * @psalm-suppress ImpureStaticProperty
-     */
-    public static function getInstance(): self
+    public static function getInstance(): Nil
     {
-        return is_null(self::$instance) ? self::$instance = new self() : self::$instance;
+        return null === self::$instance ? self::$instance = new Nil() : self::$instance;
     }
 }

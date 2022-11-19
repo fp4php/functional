@@ -11,21 +11,20 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class TapOperation extends AbstractOperation
+final class TapOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
-     * @param callable(TV, TK): void $f
+     * @param callable(TK, TV): void $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                $f($value, $key);
+                $f($key, $value);
                 yield $key => $value;
             }
         });

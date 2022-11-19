@@ -6,32 +6,31 @@ namespace Fp\Functional\Either;
 
 /**
  * @template-covariant R
- * @psalm-immutable
- * @extends Either<empty, R>
+ * @extends Either<never, R>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class Right extends Either
 {
     /**
-     * @psalm-param R $value
+     * @param R $value
      */
-    public function __construct(protected mixed $value) {}
+    public function __construct(
+        private readonly mixed $value,
+    ) {}
 
     /**
-     * @template RI
-     * @psalm-param RI $value
-     * @psalm-return self<RI>
-     * @psalm-pure
+     * {@inheritDoc}
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(never): LO $ifLeft
+     * @param callable(R): RO $ifRight
+     * @return RO|LO
      */
-    public static function of(mixed $value): self
+    public function fold(callable $ifLeft, callable $ifRight): mixed
     {
-        return new self($value);
-    }
-
-    /**
-     * @psalm-return R
-     */
-    public function get(): mixed
-    {
-        return $this->value;
+        return $ifRight($this->value);
     }
 }

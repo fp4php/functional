@@ -11,13 +11,14 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class IntersperseOperation extends AbstractOperation
+final class IntersperseOperation extends AbstractOperation
 {
     /**
      * @template TVI
+     *
      * @param TVI $separator
      * @return Generator<TK|int, TV|TVI>
      */

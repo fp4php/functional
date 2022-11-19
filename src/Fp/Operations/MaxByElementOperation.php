@@ -7,29 +7,27 @@ namespace Fp\Operations;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
  * @template TK
  * @template TV
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class MaxByElementOperation extends AbstractOperation
+final class MaxByElementOperation extends AbstractOperation
 {
     /**
-     * @psalm-param callable(TV): mixed $by
+     * @param callable(TV): mixed $by
      * @return Option<TV>
      */
     public function __invoke(callable $by): Option
     {
-        $f =
-            /**
-             * @param TV $r
-             * @param TV $l
-             * @return int
-             */
-            fn(mixed $r, mixed $l): int => $by($l) <=> $by($r);
+        $max = null;
 
-        $gen = SortedOperation::of($this->gen)($f);
+        foreach ($this->gen as $item) {
+            if (null === $max || $by($max) < $by($item)) {
+                $max = $item;
+            }
+        }
 
-        return FirstOperation::of($gen)();
+        return Option::fromNullable($max);
     }
 }

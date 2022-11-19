@@ -18,10 +18,11 @@ use function Fp\Cast\asNonEmptyList;
  * => [3, [1, 2]]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-return Option<array{TV, list<TV>}>
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @return Option<array{TV, list<TV>}>
  */
 function pop(iterable $collection): Option
 {

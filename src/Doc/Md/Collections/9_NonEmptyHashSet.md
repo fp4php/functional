@@ -4,14 +4,21 @@
 
 Collection of unique elements.
 
-Object comparison by default uses spl_object_hash function. If you want to override default comparison behaviour then you need to implement HashContract interface for your classes which objects will be used as elements in HashSet.
+Object comparison by default uses `spl_object_hash` function. If you want to override default comparison behaviour then you need to implement HashContract interface for your classes which objects will be used as elements in HashSet.
 
 ```php
-class Foo implements HashContract
+<?php
+
+declare(strict_types=1);
+
+use Fp\Collections\NonEmptyHashSet;
+
+final class Foo implements HashContract
 {
-    public function __construct(public int $a, public bool $b = true)
-    {
-    }
+    public function __construct(
+        public readonly int $a,
+        public readonly bool $b = true,
+    ) {}
 
     public function equals(mixed $that): bool
     {
@@ -26,15 +33,19 @@ class Foo implements HashContract
     }
 }
 
-$collection = NonEmptyHashSet::collect([
-    new Foo(1), new Foo(2), new Foo(2), 
-    new Foo(3), new Foo(3), new Foo(4),
+$collection = NonEmptyHashSet::collectNonEmpty([
+    new Foo(1),
+    new Foo(2),
+    new Foo(2), 
+    new Foo(3),
+    new Foo(3),
+    new Foo(4),
 ]);
 
 $collection
     ->map(fn(Foo $elem) => $elem->a)
-    ->reduce(fn($acc, $elem) => $acc + $elem); // 10
-    
+    ->fold(0)(fn($acc, $elem) => $acc + $elem); // 10
+
 /**
  * Check if set contains given element 
  */
@@ -43,9 +54,15 @@ $collection(new Foo(2)); // true
 /**
  * Check if one set is contained in another set 
  */
-$collection->subsetOf(NonEmptyHashSet::collect([
-    new Foo(1), new Foo(2), new Foo(3), 
-    new Foo(4), new Foo(5), new Foo(6),
-])); // true
+$collection->subsetOf(
+    NonEmptyHashSet::collectNonEmpty([
+        new Foo(1),
+        new Foo(2),
+        new Foo(3), 
+        new Foo(4),
+        new Foo(5),
+        new Foo(6),
+    ]),
+); // true
 ```
 

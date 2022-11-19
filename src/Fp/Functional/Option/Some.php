@@ -6,29 +6,31 @@ namespace Fp\Functional\Option;
 
 /**
  * @template-covariant A
- * @psalm-immutable
  * @extends Option<A>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 final class Some extends Option
 {
     /**
-     * @psalm-var A
+     * @param A $value
      */
-    protected mixed $value;
+    public function __construct(
+        private readonly mixed $value,
+    ) {}
 
     /**
-     * @psalm-param A $value
+     * {@inheritDoc}
+     *
+     * @template SO
+     * @template NO
+     *
+     * @param callable(): NO $ifNone
+     * @param callable(A): SO $ifSome
+     * @return SO|NO
      */
-    public function __construct(mixed $value)
+    public function fold(callable $ifNone, callable $ifSome): mixed
     {
-        $this->value = $value;
-    }
-
-    /**
-     * @psalm-return A
-     */
-    public function get(): mixed
-    {
-        return $this->value;
+        return $ifSome($this->value);
     }
 }

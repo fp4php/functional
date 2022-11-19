@@ -4,6 +4,11 @@ In case of long computation chain you can use do notation to shorten amount of c
 Do-notation is just syntax-sugar.
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+use Fp\Functional\Option\Option;
 
 /** 
  * @return Option<User> 
@@ -14,7 +19,6 @@ function getUserById(int $id): Option {}
  * @return Option<Order> 
  */
 function getUserFirstOrder(User $user): Option {}
-
 
 /** 
  * @return Option<TrackNumber> 

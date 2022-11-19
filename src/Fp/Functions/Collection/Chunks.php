@@ -17,11 +17,11 @@ use Generator;
  * => [[1, 2], [3, 4]]
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param positive-int $chunkSize
- * @psalm-return Generator<non-empty-list<TV>>
+ * @template TV
+ *
+ * @param iterable<TV> $collection
+ * @param positive-int $chunkSize
+ * @return Generator<non-empty-list<TV>>
  */
 function chunks(iterable $collection, int $chunkSize): Generator
 {

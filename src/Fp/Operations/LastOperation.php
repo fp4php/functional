@@ -9,13 +9,13 @@ use Fp\Functional\Option\Option;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class LastOperation extends AbstractOperation
+final class LastOperation extends AbstractOperation
 {
     /**
-     * @param null|callable(TV, TK): bool $f
+     * @param null|callable(TK, TV): bool $f
      * @return Option<TV>
      */
     public function __invoke(?callable $f = null): Option
@@ -23,7 +23,7 @@ class LastOperation extends AbstractOperation
         $last = null;
 
         foreach ($this->gen as $key => $value) {
-            if (is_null($f) || $f($value, $key)) {
+            if (is_null($f) || $f($key, $value)) {
                 $last = $value;
             }
         }

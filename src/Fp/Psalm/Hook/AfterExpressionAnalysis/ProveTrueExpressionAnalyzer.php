@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\AfterExpressionAnalysis;
 
-use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
-use Fp\Psalm\Util\Psalm;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Yield_;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use Psalm\Node\Expr\VirtualFuncCall;
@@ -19,7 +18,10 @@ use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\AfterExpressionAnalysisInterface;
 use Psalm\Plugin\EventHandler\Event\AfterExpressionAnalysisEvent;
 
+use function Fp\Collection\sequenceOptionT;
+use function Fp\Evidence\proveNonEmptyArray;
 use function Fp\Evidence\proveOf;
+use function Fp\Evidence\of;
 
 final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterface
 {
@@ -30,52 +32,57 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
 
     public static function afterExpressionAnalysis(AfterExpressionAnalysisEvent $event): ?bool
     {
-        return Option::do(function() use ($event) {
-            $statements_source = $event->getStatementsSource();
+        sequenceOptionT(
+            fn() => Option::some($event->getExpr())
+                ->flatMap(of(Yield_::class))
+                ->flatMap(self::getProveTrueArgsFromYield(...)),
+            fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class)
+                ->filter(fn(StatementsAnalyzer $source) => $source->getSource() instanceof ClosureAnalyzer),
+            fn() => Option::some($event),
+        )->tapN(self::assert(...));
 
-            yield proveOf($statements_source->getSource(), ClosureAnalyzer::class);
-            $statements_analyzer = yield proveOf($statements_source, StatementsAnalyzer::class);
-
-            $prove_true_args = yield self::getProveTrueArgsFromYield($event->getExpr());
-
-            FunctionCallAnalyzer::analyze(
-                $statements_analyzer,
-                new VirtualFuncCall(
-                    new VirtualFullyQualified('assert'),
-                    $prove_true_args->toArray(),
-                ),
-                $event->getContext(),
-            );
-        })
-        ->get();
+        return null;
     }
 
     /**
-     * @psalm-return Option<ArrayList<Node\Arg>>
+     * @param Node\Arg[] $prove_true_args
      */
-    private static function getProveTrueArgsFromYield(Node\Expr $expr): Option
+    private static function assert(
+        array $prove_true_args,
+        StatementsAnalyzer $analyzer,
+        AfterExpressionAnalysisEvent $event,
+    ): void {
+        FunctionCallAnalyzer::analyze(
+            $analyzer,
+            new VirtualFuncCall(
+                new VirtualFullyQualified('assert'),
+                $prove_true_args,
+            ),
+            $event->getContext(),
+        );
+    }
+
+    /**
+     * @psalm-return Option<Node\Arg[]>
+     */
+    private static function getProveTrueArgsFromYield(Yield_ $expr): Option
     {
-        if (!($expr instanceof Yield_)) {
-            return Option::none();
-        }
-
         $visitor = new class extends NodeVisitorAbstract {
-            /**
-             * @var null|ArrayList<Node\Arg>
-             */
-            public ?ArrayList $proveTrueArgs = null;
+            /** @var Node\Arg[] */
+            public array $proveTrueArgs = [];
 
-            public function leaveNode(Node $node): void
+            public function leaveNode(Node $node): ?int
             {
-                if (null !== $this->proveTrueArgs) {
-                    return;
-                }
-
                 $this->proveTrueArgs = Option::some($node)
-                    ->filter(fn($n) => $n instanceof Node\Expr\FuncCall)
-                    ->filter(fn($n) => 'Fp\Evidence\proveTrue' === $n->name->getAttribute('resolvedName'))
-                    ->map(fn($n) => Psalm::getCallArgs($n)->get())
-                    ->get();
+                    ->flatMap(of(FuncCall::class))
+                    ->filter(fn(FuncCall $n) => 'Fp\Evidence\proveTrue' === $n->name->getAttribute('resolvedName'))
+                    ->filter(fn(FuncCall $n) => !$n->isFirstClassCallable())
+                    ->map(fn(FuncCall $n) => $n->getArgs())
+                    ->getOrElse([]);
+
+                return !empty($this->proveTrueArgs)
+                    ? NodeTraverser::STOP_TRAVERSAL
+                    : null;
             }
         };
 
@@ -83,6 +90,6 @@ final class ProveTrueExpressionAnalyzer implements AfterExpressionAnalysisInterf
         $traverser->addVisitor($visitor);
         $traverser->traverse([$expr]);
 
-        return Option::fromNullable($visitor->proveTrueArgs);
+        return proveNonEmptyArray($visitor->proveTrueArgs);
     }
 }

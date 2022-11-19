@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Operations\MapKeysOperation;
+use Fp\Operations\ReindexOperation;
 
+use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
 
 /**
@@ -16,14 +17,43 @@ use function Fp\Cast\asArray;
  * => [1 => 1, 2 => 2]
  * ```
  *
- * @psalm-template TKI of array-key
- * @psalm-template TKO of array-key
- * @psalm-template TV
- * @psalm-param iterable<TKI, TV> $collection
- * @psalm-param callable(TV, TKI): TKO $callback
- * @psalm-return array<TKO, TV>
+ * @template TV
+ * @template TKO of array-key
+ *
+ * @param iterable<TV> $collection
+ * @param callable(TV): TKO $callback
+ * @return array<TKO, TV>
+ *
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-array<TKO, TV>
+ *     : array<TKO, TV>)
  */
 function reindex(iterable $collection, callable $callback): array
 {
-    return asArray(MapKeysOperation::of($collection)($callback));
+    return reindexKV($collection, dropFirstArg($callback));
+}
+
+/**
+ * Same as {@see reindex()}, but passing also the key to the $callback function.
+ *
+ * ```php
+ * >>> reindexKV(['a' => 1, 'b' => 2], fn (string $key, int $value) => "{$key}-{$value}");
+ * => ['a-1' => 1, 'b-2' => 2]
+ * ```
+ *
+ * @template TK
+ * @template TV
+ * @template TKO of array-key
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): TKO $callback
+ * @return array<TKO, TV>
+ *
+ * @psalm-return ($collection is non-empty-array
+ *     ? non-empty-array<TKO, TV>
+ *     : array<TKO, TV>)
+ */
+function reindexKV(iterable $collection, callable $callback): array
+{
+    return asArray(ReindexOperation::of($collection)($callback));
 }

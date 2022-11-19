@@ -11,10 +11,16 @@ use PHPUnit\Framework\TestCase;
 
 final class NonEmptySeqCollectorTest extends TestCase
 {
+    public function testSingleton(): void
+    {
+        $this->assertEquals([1], NonEmptyArrayList::singleton(1)->toList());
+        $this->assertEquals([1], NonEmptyLinkedList::singleton(1)->toList());
+    }
+
     public function testCollect(): void
     {
-        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collect([1, 2, 3])->getUnsafe()->toArray());
-        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collect([1, 2, 3])->getUnsafe()->toArray());
+        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collect([1, 2, 3])->getUnsafe()->toList());
+        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collect([1, 2, 3])->getUnsafe()->toList());
 
         $this->assertTrue(Option::try(fn() => NonEmptyArrayList::collectUnsafe([]))->isNone());
         $this->assertTrue(Option::try(fn() => NonEmptyLinkedList::collectUnsafe([]))->isNone());
@@ -22,8 +28,8 @@ final class NonEmptySeqCollectorTest extends TestCase
 
     public function testCollectUnsafe(): void
     {
-        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collectUnsafe([1, 2, 3])->toArray());
-        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collectUnsafe([1, 2, 3])->toArray());
+        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collectUnsafe([1, 2, 3])->toList());
+        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collectUnsafe([1, 2, 3])->toList());
 
         $this->assertTrue(Option::try(fn() => NonEmptyArrayList::collectUnsafe([]))->isNone());
         $this->assertTrue(Option::try(fn() => NonEmptyLinkedList::collectUnsafe([]))->isNone());
@@ -31,14 +37,14 @@ final class NonEmptySeqCollectorTest extends TestCase
 
     public function testCollectNonEmpty(): void
     {
-        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toArray());
-        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->toArray());
+        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collectNonEmpty([1, 2, 3])->toList());
+        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collectNonEmpty([1, 2, 3])->toList());
     }
 
     public function testCollectOption(): void
     {
-        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collect([1, 2, 3])->getUnsafe()->toArray());
-        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collect([1, 2, 3])->getUnsafe()->toArray());
+        $this->assertEquals([1, 2, 3], NonEmptyArrayList::collect([1, 2, 3])->getUnsafe()->toList());
+        $this->assertEquals([1, 2, 3], NonEmptyLinkedList::collect([1, 2, 3])->getUnsafe()->toList());
 
         $this->assertNull(NonEmptyArrayList::collect([])->get());
         $this->assertNull(NonEmptyLinkedList::collect([])->get());

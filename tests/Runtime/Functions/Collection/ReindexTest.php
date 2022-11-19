@@ -7,6 +7,7 @@ namespace Tests\Runtime\Functions\Collection;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\reindex;
+use function Fp\Collection\reindexKV;
 
 final class ReindexTest extends TestCase
 {
@@ -22,9 +23,9 @@ final class ReindexTest extends TestCase
 
         $this->assertEquals(
             [0 => 1, '2' => 2],
-            reindex(
+            reindexKV(
                 [1, '2' => 2],
-                fn (int $v, int|string $k) => $k
+                fn (int|string $k, int $v) => $k
             )
         );
     }

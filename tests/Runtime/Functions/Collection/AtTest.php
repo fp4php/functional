@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
-
 use Tests\Mock\FooIterable;
 
 use function Fp\Collection\at;

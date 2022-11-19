@@ -6,23 +6,27 @@ namespace Fp\Operations;
 
 use Fp\Functional\Option\Option;
 
-use function Fp\Cast\asList;
-
 /**
- * @psalm-immutable
  * @template TK
  * @template TV
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class MaxElementOperation extends AbstractOperation
+final class MaxElementOperation extends AbstractOperation
 {
     /**
      * @return Option<TV>
      */
     public function __invoke(): Option
     {
-        $list = asList($this->gen);
+        $max = null;
 
-        return Option::fromNullable(!empty($list) ? max($list) : null);
+        foreach ($this->gen as $val) {
+            if (null === $max || $max < $val) {
+                $max = $val;
+            }
+        }
+
+        return Option::fromNullable($max);
     }
 }

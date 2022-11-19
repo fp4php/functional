@@ -7,6 +7,11 @@ Consists of Left and Right subclasses. Left represents error outcome and Right r
 Allow short-circuiting the computation if there was step which returned Left (error outcome).
 
 ```php
+<?php
+
+declare(strict_types=1);
+
+use Fp\Functional\Either\Either;
 
 /** 
  * @return Either<string, User> 

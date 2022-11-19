@@ -9,15 +9,13 @@ use Iterator;
 use IteratorAggregate;
 
 /**
- * @psalm-immutable
+ * @template-covariant TK
  * @template-covariant TV
- * @implements IteratorAggregate<empty, TV>
+ * @extends IteratorAggregate<TK, TV>
  */
 interface Collection extends IteratorAggregate, Countable
 {
-    /**
-     * @inheritDoc
-     * @return Iterator<TV>
-     */
-    public function getIterator(): Iterator;
+    public function toString(): string;
+
+    public function __toString(): string;
 }

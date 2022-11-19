@@ -9,10 +9,10 @@ use Fp\Functional\Option\Option;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class HeadOperation extends AbstractOperation
+final class HeadOperation extends AbstractOperation
 {
     /**
      * @return Option<TV>

@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
+use Fp\Functional\Separated\Separated;
+use Fp\Operations\FoldOperation;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
 /**
- * @psalm-immutable
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface SetTerminalOps
 {
@@ -24,7 +29,7 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param TV $element
+     * @param TV $element
      */
     public function __invoke(mixed $element): bool;
 
@@ -39,7 +44,7 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param TV $element
+     * @param TV $element
      */
     public function contains(mixed $element): bool;
 
@@ -55,47 +60,187 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function every(callable $predicate): bool;
 
     /**
-     * Returns true if every collection element is of given class
-     * false otherwise
+     * Same as {@see SetTerminalOps::every()}, but deconstruct input tuple and pass it to the $predicate function.
      *
-     * ```php
-     * >>> HashSet::collect([new Foo(1), new Foo(2)])->everyOf(Foo::class);
-     * => true
-     *
-     * >>> HashSet::collect([new Foo(1), new Bar(2)])->everyOf(Foo::class);
-     * => false
-     * ```
-     *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @param callable(mixed...): bool $predicate
      */
-    public function everyOf(string $fqcn, bool $invariant = false): bool;
+    public function everyN(callable $predicate): bool;
 
     /**
-     * A combined {@see Set::map} and {@see Set::every}.
-     *
-     * Predicate satisfying is handled via Option instead of Boolean.
-     * So the output type TVO can be different from the input type TV.
+     * Suppose you have an HashSet<TV> and you want to format each element with a function that returns an Option<TVO>.
+     * Using traverseOption you can apply $callback to all elements and directly obtain as a result an Option<HashSet<TVO>>
+     * i.e. an Some<HashSet<TVO>> if all the results are Some<TVO>, or a None if at least one result is None.
      *
      * ```php
-     * >>> HashSet::collect([1, 2, 3])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * >>> HashSet::collect([1, 2, 3])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
      * => Some(HashSet(1, 2, 3))
      *
-     * >>> HashSet::collect([0, 1, 2])->everyMap(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
+     * >>> HashSet::collect([0, 1, 2])->traverseOption(fn($x) => $x >= 1 ? Option::some($x) : Option::none());
      * => None
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param callable(TV): Option<TVO> $callback
-     * @psalm-return Option<Set<TVO>>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<Set<TVO>>
      */
-    public function everyMap(callable $callback): Option;
+    public function traverseOption(callable $callback): Option;
+
+    /**
+     * @template TVO
+     *
+     * @param callable(mixed...): Option<TVO> $callback
+     * @return Option<Set<TVO>>
+     */
+    public function traverseOptionN(callable $callback): Option;
+
+    /**
+     * Same as {@see SetTerminalOps::traverseOption()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> HashSet::collect([Option::some(1), Option::some(2), Option::some(3)])->sequenceOption();
+     * => Some(HashSet(1, 2, 3))
+     *
+     * >>> HashSet::collect([Option::none(), Option::some(1), Option::some(2)])->sequenceOption();
+     * => None
+     * ```
+     *
+     * @template TVO
+     * @psalm-if-this-is Set<Option<TVO>>
+     *
+     * @return Option<Set<TVO>>
+     */
+    public function sequenceOption(): Option;
+
+    /**
+     * Suppose you have an Set<TV> and you want to format each element with a function that returns an Either<E, TVO>.
+     * Using traverseEither you can apply $callback to all elements and directly obtain as a result an Either<E, Set<TVO>>
+     * i.e. an Right<Set<TVO>> if all the results are Right<TVO>, or a Left<E> if at least one result is Left<E>.
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2, 3])->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'));
+     * => Right(HashSet(1, 2, 3))
+     *
+     * >>> HashSet::collect([0, 1, 2])->traverseEither(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'));
+     * => Left('err')
+     * ```
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<E, TVO> $callback
+     * @return Either<E, Set<TVO>>
+     */
+    public function traverseEither(callable $callback): Either;
+
+    /**
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<E, TVO> $callback
+     * @return Either<E, Set<TVO>>
+     */
+    public function traverseEitherN(callable $callback): Either;
+
+    /**
+     * Same as {@see SetTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
+     *
+     * ```php
+     * >>> HashSet::collect([Either::right(1), Either::right(2), Either::right(3)])->sequenceEither();
+     * => Right(HashSet(1, 2, 3))
+     *
+     * >>> HashSet::collect([Either::left('err'), Either::right(1), Either::right(2)])->sequenceEither();
+     * => Left('err')
+     * ```
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is Set<Either<E, TVO>>
+     *
+     * @return Either<E, Set<TVO>>
+     */
+    public function sequenceEither(): Either;
+
+    /**
+     * Split collection to two parts by predicate function.
+     * If $predicate returns true then item gonna to right.
+     * Otherwise to left.
+     *
+     * ```php
+     * >>> HashSet::collect([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3);
+     * => Separated(HashSet(3, 4, 5), HashSet(0, 1, 2))
+     * ```
+     *
+     * @param callable(TV): bool $predicate
+     * @return Separated<Set<TV>, Set<TV>>
+     */
+    public function partition(callable $predicate): Separated;
+
+    /**
+     * @param callable(mixed...): bool $predicate
+     * @return Separated<Set<TV>, Set<TV>>
+     */
+    public function partitionN(callable $predicate): Separated;
+
+    /**
+     * Similar to {@see SetTerminalOps::partition()} but uses {@see Either} instead of bool.
+     * So the output types LO/RO can be different from the input type TV.
+     * If $callback returns Right then item gonna to right.
+     * Otherwise to left.
+     *
+     * ```php
+     * >>> HashSet::collect([0, 1, 2, 3, 4, 5])
+     * >>>     ->partitionMap(fn($i) => $i >= 5 ? Either::left("L: {$i}") : Either::right("R: {$i}"));
+     * => Separated(HashSet('L: 5'), HashSet('R: 0', 'R: 1', 'R: 2', 'R: 3', 'R: 4'))
+     * ```
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param callable(TV): Either<LO, RO> $callback
+     * @return Separated<Set<LO>, Set<RO>>
+     */
+    public function partitionMap(callable $callback): Separated;
+
+    /**
+     * @template LO
+     * @template RO
+     *
+     * @param callable(mixed...): Either<LO, RO> $callback
+     * @return Separated<Set<LO>, Set<RO>>
+     */
+    public function partitionMapN(callable $callback): Separated;
+
+    /**
+     * Produces a new Map of elements by assigning the values to keys generated by a transformation function (callback).
+     *
+     * ```php
+     * >>> $collection = HashSet::collect([1, 2, 2]);
+     * => HashSet(1, 2)
+     *
+     * >>> $collection->reindex(fn($v) => "key-{$v}");
+     * => HashMap('key-1' -> 1, 'key-2' -> 2)
+     * ```
+     *
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return Map<TKO, TV>
+     */
+    public function reindex(callable $callback): Map;
+
+    /**
+     * @template TKO
+     *
+     * @param callable(mixed...): TKO $callback
+     * @return Map<TKO, TV>
+     */
+    public function reindexN(callable $callback): Map;
 
     /**
      * Find if there is element which satisfies the condition
@@ -108,57 +253,108 @@ interface SetTerminalOps
      * => false
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
+     * @param callable(TV): bool $predicate
      */
     public function exists(callable $predicate): bool;
 
     /**
-     * Returns true if there is collection element of given class
-     * False otherwise
+     * @param callable(mixed...): bool $predicate
+     */
+    public function existsN(callable $predicate): bool;
+
+    /**
+     * Group elements
      *
      * ```php
-     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Foo::class);
-     * => true
-     *
-     * >>> HashSet::collect([1, new Foo(2)])->existsOf(Bar::class);
-     * => false
+     * >>> HashSet::collect([1, 1, 2, 2, 3, 3])
+     * >>>     ->groupBy(fn($i) => 0 === $i % 2 ? 'even' : 'odd')
+     * => HashMap('odd' => NonEmptyHashSet(3, 1), 'even' => NonEmptyHashSet(2))
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
+     * @template TKO
+     *
+     * @param callable(TV): TKO $callback
+     * @return Map<TKO, NonEmptySet<TV>>
      */
-    public function existsOf(string $fqcn, bool $invariant = false): bool;
+    public function groupBy(callable $callback): Map;
+
+    /**
+     * ```php
+     * >>> HashSet::collect([
+     * >>>     ['id' => 10, 'sum' => 10],
+     * >>>     ['id' => 10, 'sum' => 15],
+     * >>>     ['id' => 10, 'sum' => 20],
+     * >>>     ['id' => 20, 'sum' => 10],
+     * >>>     ['id' => 20, 'sum' => 15],
+     * >>>     ['id' => 30, 'sum' => 20],
+     * >>> ])->groupMap(
+     * >>>     fn(array $a) => $a['id'],
+     * >>>     fn(array $a) => $a['sum'] + 1,
+     * >>> );
+     * => HashMap(
+     * =>   10 -> NonEmptyHashSet(21, 16, 11),
+     * =>   20 -> NonEmptyHashSet(16, 11),
+     * =>   30 -> NonEmptyHashSet(21),
+     * => )
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @return Map<TKO, NonEmptySet<TVO>>
+     */
+    public function groupMap(callable $group, callable $map): Map;
+
+    /**
+     * Partitions this Set<TV> into a Map<TKO, TVO> according to a discriminator function $group.
+     * All the values that have the same discriminator are then transformed by the $map and
+     * then reduced into a single value with the $reduce.
+     *
+     *  * ```php
+     * >>> HashSet::collect([
+     * >>>      ['id' => 10, 'val' => 10],
+     * >>>      ['id' => 10, 'val' => 15],
+     * >>>      ['id' => 10, 'val' => 20],
+     * >>>      ['id' => 20, 'val' => 10],
+     * >>>      ['id' => 20, 'val' => 15],
+     * >>>      ['id' => 30, 'val' => 20],
+     * >>> ])->groupMapReduce(
+     * >>>     fn(array $a) => $a['id'],
+     * >>>     fn(array $a) => $a['val'],
+     * >>>     fn(int $old, int $new) => $old + $new,
+     * >>> );
+     * => HashMap([10 => 45, 20 => 25, 30 => 20])
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     *
+     * @param callable(TV): TKO $group
+     * @param callable(TV): TVO $map
+     * @param callable(TVO, TVO): TVO $reduce
+     *
+     * @return Map<TKO, TVO>
+     */
+    public function groupMapReduce(callable $group, callable $map, callable $reduce): Map;
 
     /**
      * Fold many elements into one
      *
      * ```php
-     * >>> HashSet::collect(['1', '2', '2'])->fold('0', fn($acc, $cur) => $acc . $cur);
+     * >>> HashSet::collect(['1', '2'])->fold('0')(fn($acc, $cur) => $acc . $cur);
      * => '012'
      * ```
      *
-     * @template TA
-     * @psalm-param TA $init initial accumulator value
-     * @psalm-param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
-     * @psalm-return TA
-     */
-    public function fold(mixed $init, callable $callback): mixed;
-
-    /**
-     * Reduce multiple elements into one
-     * Returns None for empty collection
+     * @template TVO
      *
-     * ```php
-     * >>> HashSet::collect(['1', '2', '2'])->reduce(fn($acc, $cur) => $acc . $cur)->get();
-     * => '12'
-     * ```
+     * @param TVO $init
+     * @return FoldOperation<TV, TVO>
      *
-     * @template TA
-     * @psalm-param callable(TV|TA, TV): (TV|TA) $callback (accumulator, current value): new accumulator
-     * @psalm-return Option<TV|TA>
+     * @see FoldMethodReturnTypeProvider
      */
-    public function reduce(callable $callback): Option;
+    public function fold(mixed $init): FoldOperation;
 
     /**
      * Check if this set is subset of another set
@@ -184,10 +380,35 @@ interface SetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function first(callable $predicate): Option;
+
+    /**
+     * A combined {@see Set::first} and {@see Set::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
+     *
+     * ```php
+     * >>> HashSet::collect(['zero', '1', '2'])
+     * >>>     ->firstMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(1)
+     * ```
+     *
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
+     */
+    public function firstMap(callable $callback): Option;
+
+    /**
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function firstN(callable $predicate): Option;
 
     /**
      * Returns last collection element which satisfies the condition
@@ -197,25 +418,35 @@ interface SetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-param callable(TV): bool $predicate
-     * @psalm-return Option<TV>
+     * @param callable(TV): bool $predicate
+     * @return Option<TV>
      */
     public function last(callable $predicate): Option;
 
     /**
-     * Find first element of given class
+     * @param callable(mixed...): bool $predicate
+     * @return Option<TV>
+     */
+    public function lastN(callable $predicate): Option;
+
+    /**
+     * A combined {@see Set::last} and {@see Set::map}.
+     *
+     * Filtering is handled via Option instead of Boolean.
+     * So the output type TVO can be different from the input type TV.
      *
      * ```php
-     * >>> HashSet::collect([new Bar(1), new Foo(2), new Foo(3)])->firstOf(Foo::class)->get();
-     * => Foo(2)
+     * >>> HashSet::collect(['zero', '1', '2'])
+     * >>>     ->lastMap(fn($elem) => Option::when(is_numeric($elem), fn() => (int) $elem));
+     * => Some(2)
      * ```
      *
-     * @psalm-template TVO
-     * @psalm-param class-string<TVO> $fqcn fully qualified class name
-     * @psalm-param bool $invariant if turned on then subclasses are not allowed
-     * @psalm-return Option<TVO>
+     * @template TVO
+     *
+     * @param callable(TV): Option<TVO> $callback
+     * @return Option<TVO>
      */
-    public function firstOf(string $fqcn, bool $invariant = false): Option;
+    public function lastMap(callable $callback): Option;
 
     /**
      * Return first collection element
@@ -225,7 +456,7 @@ interface SetTerminalOps
      * => 1
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function head(): Option;
 
@@ -238,7 +469,7 @@ interface SetTerminalOps
      * => 1
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function firstElement(): Option;
 
@@ -250,7 +481,73 @@ interface SetTerminalOps
      * => 2
      * ```
      *
-     * @psalm-return Option<TV>
+     * @return Option<TV>
      */
     public function lastElement(): Option;
+
+    /**
+     * Displays all elements of this collection in a string
+     * using start, end, and separator strings.
+     *
+     * ```php
+     * >>> HashSet::collect([1, 2, 3])->mkString("(", ",", ")")
+     * => '(1,2,3)'
+     *
+     * >>> HashSet::collect([])->mkString("(", ",", ")")
+     * => '()'
+     * ```
+     */
+    public function mkString(string $start = '', string $sep = ',', string $end = ''): string;
+
+    /**
+     * Returns the maximum value from collection
+     *
+     * ```php
+     * >>> HashSet::collect([1, 4, 2])->max()->get();
+     * => 4
+     * ```
+     *
+     * @return Option<TV>
+     */
+    public function max(): Option;
+
+    /**
+     * Returns the maximum value from collection by iterating each element using the callback
+     *
+     * ```php
+     * >>> HashSet::collect([new Foo(1), new Bar(6), new Foo(2)])->maxBy(fn(Foo $foo) => $foo->a)->get();
+     * => Bar(6)
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function maxBy(callable $callback): Option;
+
+    /**
+     * Returns the minimum value from collection
+     *
+     * ```php
+     * >>> HashSet::collect([1, 4, 2])->min()->get();
+     * => 1
+     * ```
+     *
+     * @return Option<TV>
+     */
+    public function min(): Option;
+
+    /**
+     * Returns the minimum value from collection by iterating each element using the callback
+     *
+     * ```php
+     * >>> HashSet::collect([new Foo(1), new Bar(6), new Foo(2)])->minBy(fn(Foo $foo) => $foo->a)->get();
+     * => Foo(1)
+     * ```
+     *
+     * @param callable(TV): mixed $callback
+     * @return Option<TV>
+     */
+    public function minBy(callable $callback): Option;
+
+    public function isEmpty(): bool;
 }

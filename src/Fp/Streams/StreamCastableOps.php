@@ -9,41 +9,74 @@ use Fp\Collections\HashMap;
 use Fp\Collections\HashSet;
 use Fp\Collections\LinkedList;
 use Fp\Collections\NonEmptyArrayList;
+use Fp\Collections\NonEmptyHashMap;
+use Fp\Collections\NonEmptyHashSet;
+use Fp\Collections\NonEmptyLinkedList;
 use Fp\Functional\Option\Option;
 
 /**
- * @psalm-immutable
  * @template-covariant TV
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 interface StreamCastableOps
 {
     /**
      * ```php
-     * >>> Stream::emits([1, 2, 2])->toArray();
+     * >>> Stream::emits([1, 2, 2])->toList();
      * => [1, 2, 2]
      * ```
      *
      * @return list<TV>
      */
-    public function toArray(): array;
+    public function toList(): array;
 
     /**
      * ```php
-     * >>> Stream::emits([[1, 'a'], [2, 'b']])->toAssocArray(fn($pair) => $pair);
-     * => [1 => 'a', 2 => 'b']
+     * >>> Stream::emits([1, 2, 3])->toNonEmptyList();
+     * => Some([1, 2, 3])
+     * >>> Stream::emits([])->toNonEmptyList();
+     * => None
+     * ```
+     *
+     * @return Option<non-empty-list<TV>>
+     */
+    public function toNonEmptyList(): Option;
+
+    /**
+     * ```php
+     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toArray();
+     * => ['fst' => 1, 'snd' => 2]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @param callable(TV): array{TKO, TVO} $callback
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
      * @return array<TKO, TVO>
      */
-    public function toAssocArray(callable $callback): array;
+    public function toArray(): array;
 
     /**
      * ```php
-     * >>> Stream::emits([1, 2, 2])->toLinkedList();
-     * => LinkedList(1, 2, 2)
+     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toNonEmptyArray();
+     * => Some(['fst' => 1, 'snd' => 2])
+     * >>> Stream::emits([])->toNonEmptyArray();
+     * => None
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
+     * @return Option<non-empty-array<TKO, TVO>>
+     */
+    public function toNonEmptyArray(): Option;
+
+    /**
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->toLinkedList();
+     * => LinkedList(1, 2, 3)
      * ```
      *
      * @return LinkedList<TV>
@@ -52,8 +85,20 @@ interface StreamCastableOps
 
     /**
      * ```php
-     * >>> Stream::emits([1, 2, 2])->toArrayList();
-     * => ArrayList(1, 2, 2)
+     * >>> Stream::emits([1, 2, 3])->toNonEmptyLinkedList();
+     * => Some(NonEmptyLinkedList(1, 2, 3))
+     * >>> Stream::emits([])->toNonEmptyLinkedList();
+     * => None
+     * ```
+     *
+     * @return Option<NonEmptyLinkedList<TV>>
+     */
+    public function toNonEmptyLinkedList(): Option;
+
+    /**
+     * ```php
+     * >>> Stream::emits([1, 2, 3])->toArrayList();
+     * => ArrayList(1, 2, 3)
      * ```
      *
      * @return ArrayList<TV>
@@ -62,8 +107,8 @@ interface StreamCastableOps
 
     /**
      * ```php
-     * >>> Stream::emits([1, 2, 2])->toNonEmptyArrayList();
-     * => Some(NonEmptyArrayList(1, 2, 2))
+     * >>> Stream::emits([1, 2, 3])->toNonEmptyArrayList();
+     * => Some(NonEmptyArrayList(1, 2, 3))
      * >>> Stream::emits([])->toNonEmptyArrayList();
      * => None
      * ```
@@ -84,17 +129,45 @@ interface StreamCastableOps
 
     /**
      * ```php
-     * >>> Stream::emits([1, 2])
-     * >>>    ->toHashMap(fn($elem) => [(string) $elem, $elem]);
-     * => HashMap('1' -> 1, '2' -> 2)
+     * >>> Stream::emits([1, 2, 2])->toNonEmptyHashSet();
+     * => Some(NonEmptyHashSet(1, 2))
+     * >>> Stream::emits([])->toNonEmptyHashSet();
+     * => None
      * ```
      *
-     * @template TKI
-     * @template TVI
-     * @param callable(TV): array{TKI, TVI} $callback
-     * @return HashMap<TKI, TVI>
+     * @return Option<NonEmptyHashSet<TV>>
      */
-    public function toHashMap(callable $callback): HashMap;
+    public function toNonEmptyHashSet(): Option;
+
+    /**
+     * ```php
+     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toHashMap();
+     * => HashMap('fst' -> 1, 'snd' -> 2)
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
+     * @return HashMap<TKO, TVO>
+     */
+    public function toHashMap(): HashMap;
+
+    /**
+     * ```php
+     * >>> Stream::emits([['fst', 1], ['snd', 2]])->toNonEmptyHashMap();
+     * => Some(NonEmptyHashMap('fst' -> 1, 'snd' -> 2))
+     * >>> Stream::emits([])->toNonEmptyHashMap();
+     * => None
+     * ```
+     *
+     * @template TKO
+     * @template TVO
+     * @psalm-if-this-is Stream<array{TKO, TVO}>
+     *
+     * @return Option<NonEmptyHashMap<TKO, TVO>>
+     */
+    public function toNonEmptyHashMap(): Option;
 
     /**
      * @param string $path file path

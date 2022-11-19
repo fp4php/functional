@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use Fp\Streams\Stream;
+
 /**
- * @psalm-immutable
  * @template TK
  * @template-covariant TV
  */
@@ -13,13 +14,53 @@ interface NonEmptyMapCastableOps
 {
     /**
      * ```php
-     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toArray();
+     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toList();
+     * => [['a', 1], ['b', 2]]
+     * ```
+     *
+     * @return list<array{TK, TV}>
+     */
+    public function toList(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2])->toList();
      * => [['a', 1], ['b', 2]]
      * ```
      *
      * @return non-empty-list<array{TK, TV}>
      */
+    public function toNonEmptyList(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a',  1], ['b', 2]])->toArray();
+     * => ['a' => 1, 'b' => 2]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TKO, TVO>
+     *
+     * @return array<TKO, TVO>
+     */
     public function toArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['a',  1], ['b', 2]])->toNonEmptyArray();
+     * => Some(['a' => 1, 'b' => 2])
+     * >>> HashMap::collectPairs([])->toNonEmptyArray();
+     * => None
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TKO, TVO>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyArray(): array;
 
     /**
      * ```php
@@ -100,4 +141,51 @@ interface NonEmptyMapCastableOps
      * @return NonEmptyHashMap<TK, TV>
      */
     public function toNonEmptyHashMap(): NonEmptyHashMap;
+
+    /**
+     * If each element of the collection is an associative array then call of this method will fold all elements to one associative array.
+     *
+     * ```php
+     * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TK, array<TKO, TVO>>
+     *
+     * @return array<TKO, TVO>
+     */
+    public function toMergedArray(): array;
+
+    /**
+     * Non-empty version of {@see NonEmptyMapCastableOps::toMergedArray()}.
+     *
+     * ```php
+     * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toNonEmptyMergedArray()
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * ```
+     *
+     * @template TKO of array-key
+     * @template TVO
+     * @psalm-if-this-is NonEmptyMap<TK, non-empty-array<TKO, TVO>>
+     *
+     * @return non-empty-array<TKO, TVO>
+     */
+    public function toNonEmptyMergedArray(): array;
+
+    /**
+     * ```php
+     * >>> NonEmptyHashMap::collectPairsNonEmpty([['fst', 1], ['snd', 2], ['thr', 3]])
+     * >>>     ->toStream()
+     * >>>     ->lines()
+     * >>>     ->drain();
+     * => Array([0] => fst, [1] => 1)
+     * => Array([0] => snd, [1] => 2)
+     * => Array([0] => thr, [1] => 3)
+     * ```
+     *
+     * @return Stream<array{TK, TV}>
+     */
+    public function toStream(): Stream;
 }

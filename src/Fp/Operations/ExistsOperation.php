@@ -7,20 +7,20 @@ namespace Fp\Operations;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class ExistsOperation extends AbstractOperation
+final class ExistsOperation extends AbstractOperation
 {
     /**
-     * @psalm-param callable(TV, TK): bool $f
+     * @param callable(TK, TV): bool $f
      */
     public function __invoke(callable $f): bool
     {
         $exists = false;
 
         foreach ($this->gen as $key => $value) {
-            if ($f($value, $key)) {
+            if ($f($key, $value)) {
                 $exists = true;
                 break;
             }

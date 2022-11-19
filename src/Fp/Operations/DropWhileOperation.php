@@ -11,15 +11,15 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class DropWhileOperation extends AbstractOperation
+final class DropWhileOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @template TKO
-     * @psalm-param callable(TV, TK): bool $f
+     *
+     * @param callable(TK, TV): bool $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
@@ -28,7 +28,7 @@ class DropWhileOperation extends AbstractOperation
             $toggle = true;
 
             foreach ($this->gen as $key => $value) {
-                if (!($toggle = $toggle && $f($value, $key))) {
+                if (!($toggle = $toggle && $f($key, $value))) {
                     yield $key => $value;
                 }
             }

@@ -12,15 +12,6 @@ final class FoldTest extends TestCase
 {
     public function testFold(): void
     {
-        $c = ['a', 'b', 'c'];
-
-        $this->assertEquals(
-            'abc',
-            fold(
-                '',
-                $c,
-                fn(string $acc, string $v) => $acc . $v
-            )
-        );
+        $this->assertEquals('abc', fold('', ['a', 'b', 'c'])(fn($acc, $v) => $acc . $v));
     }
 }

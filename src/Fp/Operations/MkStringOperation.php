@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace Fp\Operations;
 
+use function Fp\Collection\fold;
+
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class MkStringOperation extends AbstractOperation
+final class MkStringOperation extends AbstractOperation
 {
     public function __invoke(string $start, string $sep, string $end): string
     {
-        $interspersed = IntersperseOperation::of($this->gen)($sep);
-        $reduced = FoldOperation::of($interspersed)(
-            '',
-            fn(string $acc, $cur) => $acc . (string) $cur
-        );
-
-        return $start . $reduced . $end;
+        $fold = fold('', IntersperseOperation::of($this->gen)($sep))(fn($acc, $cur) => $acc . (string) $cur);
+        return $start . $fold . $end;
     }
 }

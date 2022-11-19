@@ -7,18 +7,12 @@ namespace Fp\Collections;
 use Iterator;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
- * @psalm-immutable
- * @extends Collection<array{TK, TV}>
+ * @extends Collection<TK, TV>
  * @extends MapOps<TK, TV>
  * @extends MapCollector<TK, TV>
  */
 interface Map extends Collection, MapOps, MapCollector
 {
-    /**
-     * @inheritDoc
-     * @return Iterator<array{TK, TV}>
-     */
-    public function getIterator(): Iterator;
 }

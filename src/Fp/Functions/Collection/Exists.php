@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Collection;
 
-use Fp\Operations\ExistsOfOperation;
 use Fp\Operations\ExistsOperation;
+
+use function Fp\Callable\dropFirstArg;
 
 /**
  * Find if there is element which satisfies the condition
@@ -16,35 +17,27 @@ use Fp\Operations\ExistsOperation;
  * => true
  * ```
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param callable(TV, TK): bool $predicate
- * @psalm-return bool
+ * @template TK of array-key
+ * @template TV
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): bool $predicate
  */
 function exists(iterable $collection, callable $predicate): bool
 {
-    return ExistsOperation::of($collection)($predicate);
+    return existsKV($collection, dropFirstArg($predicate));
 }
 
 /**
- * Returns true if there is collection element of given class
- * False otherwise
+ * Same as {@see exists()} but passing also the key to the $predicate function.
  *
- * ```php
- * >>> existsOf([new Foo(), 2, 3], Foo::class);
- * => true
- * ```
+ * @template TK
+ * @template TV
  *
- * @psalm-template TK of array-key
- * @psalm-template TV
- * @psalm-template TVO
- * @psalm-param iterable<TK, TV> $collection
- * @psalm-param class-string<TVO> $fqcn fully qualified class name
- * @psalm-param bool $invariant if turned on then subclasses are not allowed
- * @psalm-return bool
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): bool $predicate
  */
-function existsOf(iterable $collection, string $fqcn, bool $invariant = false): bool
+function existsKV(iterable $collection, callable $predicate): bool
 {
-    return ExistsOfOperation::of($collection)($fqcn, $invariant);
+    return ExistsOperation::of($collection)($predicate);
 }

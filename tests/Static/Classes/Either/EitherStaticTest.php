@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Static\Classes\Either;
 
 use Fp\Functional\Either\Either;
+use RuntimeException;
+use Throwable;
 
 final class EitherStaticTest
 {
@@ -83,5 +85,26 @@ final class EitherStaticTest
             ->flatMap(fn(int $v) => Either::right((float) $v))
             ->mapLeft(fn(string $e) => (bool) $e)
             ->mapLeft(fn(bool $e) => (int) $e);
+    }
+
+    /**
+     * @param Either<Throwable, int|string> $in
+     * @return Either<Throwable, string>
+     */
+    public function testFilterOrElse(Either $in): Either
+    {
+        return $in->filterOrElse(
+            fn($i) => is_string($i),
+            fn() => new RuntimeException('Unable to filter'),
+        );
+    }
+
+    /**
+     * @param Either<Throwable, int|string> $in
+     * @return Either<Throwable, string>
+     */
+    public function testFilterOrElseWithFirstClassCallable(Either $in): Either
+    {
+        return $in->filterOrElse(is_string(...), fn() => new RuntimeException('Unable to filter'));
     }
 }

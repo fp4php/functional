@@ -6,37 +6,26 @@
   - [partialRight](#partialRight)
 - [Collection](#Collection)
   - [exists](#exists)
-  - [existsOf](#existsOf)
   - [at](#at)
   - [every](#every)
-  - [everyOf](#everyOf)
   - [filter](#filter)
   - [filterNotNull](#filterNotNull)
-  - [filterOf](#filterOf)
   - [first](#first)
-  - [firstOf](#firstOf)
   - [flatMap](#flatMap)
-  - [fold](#fold)
   - [groupBy](#groupBy)
   - [head](#head)
   - [keys](#keys)
   - [last](#last)
   - [map](#map)
-  - [partition](#partition)
-  - [partitionOf](#partitionOf)
+  - [partitionT](#partitionT)
   - [pop](#pop)
-  - [reduce](#reduce)
+  - [fold](#fold)
   - [reindex](#reindex)
   - [reverse](#reverse)
   - [second](#second)
   - [shift](#shift)
   - [tail](#tail)
   - [zip](#zip)
-- [Reflection](#Reflection)
-  - [getReflectionClass](#getReflectionClass)
-  - [getReflectionProperty](#getReflectionProperty)
-- [Json](#Json)
-  - [jsonDecode](#jsonDecode)
 - [Cast](#Cast)
   - [asArray](#asArray)
   - [asBool](#asBool)
@@ -48,12 +37,8 @@
 - [Evidence](#Evidence)
   - [proveArray](#proveArray)
   - [proveNonEmptyArray](#proveNonEmptyArray)
-  - [proveArrayOf](#proveArrayOf)
-  - [proveNonEmptyArrayOf](#proveNonEmptyArrayOf)
   - [proveList](#proveList)
   - [proveNonEmptyList](#proveNonEmptyList)
-  - [proveListOf](#proveListOf)
-  - [proveNonEmptyListOf](#proveNonEmptyListOf)
   - [proveBool](#proveBool)
   - [proveTrue](#proveTrue)
   - [proveFalse](#proveFalse)
@@ -61,6 +46,7 @@
   - [proveNonEmptyString](#proveNonEmptyString)
   - [proveCallableString](#proveCallableString)
   - [proveClassString](#proveClassString)
+  - [proveClassStringOf](#proveClassStringOf)
   - [proveFloat](#proveFloat)
   - [proveInt](#proveInt)
   - [proveOf](#proveOf)
@@ -120,16 +106,11 @@
     condition and false otherwise
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\exists;
+    
     exists([1, 2, 3], fn(int $value) => $value === 2); // true
-    ```
-
-  - #### existsOf
-    
-    Returns true if there is collection element of given class and false
-    otherwise
-    
-    ``` php
-    existsOf([new Foo(), 2, 3], Foo::class); // true
     ```
 
   - #### at
@@ -140,6 +121,10 @@
     other cases
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\at;
+    
     /** @var Option<Foo|int> $result */
     $result = at([new Foo(), 2, 3], 1);
     ```
@@ -150,16 +135,11 @@
     false otherwise
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\every;
+    
     every([1, 2], fn(int $v) => $v === 1); // false
-    ```
-
-  - #### everyOf
-    
-    Returns true if every collection element is of given class and false
-    otherwise
-    
-    ``` php
-    everyOf([1, new Foo()], Foo::class); // false
     ```
 
   - #### filter
@@ -167,6 +147,10 @@
     Filter collection by condition. Do not preserve keys by default
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\filter;
+    
     filter([1, 2], fn(int $v): bool => $v === 2); // [2]
     ```
 
@@ -175,16 +159,11 @@
     Filter not null elements. Do not preserve keys by default
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\filterNotNull;
+    
     filterNotNull([1, null, 2]); // [1, 2]
-    ```
-
-  - #### filterOf
-    
-    Filter elements of given class. Do not preserve keys by default
-    
-    ``` php
-    /** @var list<Foo> $result */
-    $result = filterOf([1, new Foo(), 2], Foo::class);
     ```
 
   - #### first
@@ -192,17 +171,12 @@
     Find first element which satisfies the condition
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\first;
+    
     /** @var Option<int> $result */
     $result = first([1, 2], fn(int $v): bool => $v === 2);
-    ```
-
-  - #### firstOf
-    
-    Find first element of given class
-    
-    ``` php
-    /** @var Option<Foo> $result */
-    $result = firstOf([1, new Foo(1), new Foo(2)], Foo::class);
     ```
 
   - #### flatMap
@@ -210,6 +184,10 @@
     Flat map Consists of map and flatten operations
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\flatMap;
+    
     /**
      * 1) map [1, 4] to [[0, 1, 2], [3, 4, 5]]
      * 2) flatten [[0, 1, 2], [3, 4, 5]] to [0, 1, 2, 3, 4, 5]
@@ -217,31 +195,16 @@
     flatMap([1, 4], fn(int $x) => [$x - 1, $x, $x + 1]); // [0, 1, 2, 3, 4, 5]
     ```
 
-  - #### fold
-    
-    Fold many elements into one
-    
-    ``` php
-    fold(
-      '', 
-      ['a', 'b', 'c'], 
-      fn(string $accumulator, $currentValue) => $accumulator . $currentValue
-    ); 
-    
-    // 'abc'
-    ```
-
   - #### groupBy
     
     Group collection elements by key returned by function
     
     ``` php
-    groupBy( 
-      [1, 2, 3], 
-      fn(int $v): int => $v
-    ); 
+    <?php
     
-    // [1 => [1], 2 => [2], 3 => [3]]
+    use function Fp\Collection\groupBy;
+    
+    $result = groupBy([1, 2, 3], fn(int $v): int => $v); // [1 => [1], 2 => [2], 3 => [3]] 
     ```
 
   - #### head
@@ -249,8 +212,12 @@
     Returns collection first element
     
     ``` php
-    /** @var Option<int> $result */
-    $result = head([1, 2, 3]); 
+    <?php
+    
+    use function Fp\Collection\head;
+    
+    $result = head([1, 2, 3]); // Some(1)
+    $result = head([]); // None
     ```
 
   - #### keys
@@ -258,6 +225,10 @@
     Returns list of collection keys
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\keys;
+    
     keys(['a' => 1, 'b' => 2]); // ['a', 'b']
     ```
 
@@ -266,6 +237,10 @@
     Returns last collection element and None if there is no last element
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\last;
+    
     /** @var Option<int> $result */
     $result = last([1, 2, 3]);
     ```
@@ -276,32 +251,29 @@
     collection through a transformation function (callback).
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\map;
+    
     map([1, 2, 3], fn(int $v) => (string) $v); // ['1', '2', '3']
     ```
 
-  - #### partition
-    
-    Divide collection by given conditions
-    
-    ``` php
-    partition(
-      ['a' => 1, 'b' => 2],
-      fn(int $x) => $x % 2 === 0 
-    );
-    
-    // [[2], [1]]
-    ```
-
-  - #### partitionOf
+  - #### partitionT
     
     Divide collection by given classes
     
     ``` php
-    /** @var array{list<Foo>, list<Bar>, list<Foo|Bar>} $result */
-    $result = partitionOf(
+    <?php
+    
+    use Tests\Mock\Foo;
+    use Tests\Mock\Bar;
+    use function Fp\Collection\partitionT;
+    
+    // inferred as array{list<Foo>, list<Bar>, list<Foo|Bar>}
+    $result = partitionT(
       [new Foo(), new Bar()],
-      Foo::class,
-      Bar::class 
+      fn($i) => $i instanceof Foo,
+      fn($i) => $i instanceof Bar, 
     );
     ```
 
@@ -312,28 +284,35 @@
     returns None
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\pop;
+    
     [$head, $tail] = pop([1, 2, 3])->get(); // [3, [1, 2]]
     ```
     
     ``` php
+    <?php
+    
+    use Fp\Functional\Option\Option;
+    use function Fp\Collection\pop;
+    
     Option::do(function () use ($collection) {
       [$head, $tail] = yield pop($collection);
       return doSomethingWithHeadAndTail($head, $tail);
     })   
     ```
 
-  - #### reduce
+  - #### fold
     
-    Reduce multiple elements into one. Returns None for empty collection
+    Fold multiple elements into one. Returns None for empty collection
     
     ``` php
-    /** @var Option<string> $option */
-    $option = reduce(
-      ['a', 'b', 'c'], 
-      fn(string $accumulator, string $currentValue) => $accumulator . $currentValue
-    ); 
+    <?php
     
-    $option->get(); // 'abc'
+    use function Fp\Collection\fold;
+    
+    $result = fold('', ['a', 'b', 'c'])(fn($acc, string $cur) => $acc . $cur); // 'abc'
     ```
 
   - #### reindex
@@ -342,6 +321,10 @@
     generated by a transformation function (callback).
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\reindex;
+    
     reindex([1, 'a' => 2], fn (int $value) => $value); // [1 => 1, 2 => 2]
     ```
 
@@ -350,6 +333,10 @@
     Copy collection in reversed order
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\reverse;
+    
     reverse([1, 2, 3]); // [3, 2, 1]   
     ```
 
@@ -359,6 +346,10 @@
     collection element
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\second;
+    
     second([1, 2, 3])->get(); // 2   
     ```
 
@@ -369,10 +360,19 @@
     then returns None
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\shift;
+    
     [$head, $tail] = shift([1, 2, 3])->get(); // [1, [2, 3]]   
     ```
     
     ``` php
+    <?php
+    
+    use Fp\Functional\Option\Option;
+    use function Fp\Collection\shift;
+    
     Option::do(function () use ($collection) {
       [$head, $tail] = yield shift($collection);
       return doSomethingWithHeadAndTail($head, $tail);
@@ -384,6 +384,10 @@
     Returns every collection element except first
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\tail;
+    
     tail([1, 2, 3]); // [2, 3]   
     ```
 
@@ -397,37 +401,11 @@
     remaining elements are ignored.
     
     ``` php
+    <?php
+    
+    use function Fp\Collection\zip;
+    
     zip([1, 2, 3], ['a', 'b']); // [[1, 'a'], [2, 'b']]
-    ```
-
-# Reflection
-
-  - #### getReflectionClass
-    
-    Returns class reflection or Left on exception
-    
-    ``` php
-    /** @var Either<ReflectionException, ReflectionClass> $result */
-    $result = getReflectionClass(Foo::class); 
-    ```
-
-  - #### getReflectionProperty
-    
-    Returns property reflection or Left on exception
-    
-    ``` php
-    /** @var Either<ReflectionException, ReflectionProperty> $result */
-    $result = getReflectionProperty(Foo::class, 'a'); 
-    ```
-
-# Json
-
-  - #### jsonDecode
-    
-    Decode json string into associative array. Returns Left on error
-    
-    ``` php
-    jsonDecode('{"a": [{"b": true}]}')->get(); // ['a' => [['b' => true]]] 
     ```
 
 # Cast
@@ -437,6 +415,12 @@
     Copy collection as array
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asArray;
+    
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
     
@@ -449,6 +433,12 @@
     Try cast boolean like value. Returns None if cast is not possible
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asBool;
+    
     /** @var Option<bool> $result */
     $result = asBool('yes');
     ```
@@ -458,6 +448,12 @@
     Try cast float like value. Returns None if cast is not possible
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asFloat;
+    
     /** @var Option<float> $result */
     $result = asFloat('1.1');
     ```
@@ -467,6 +463,11 @@
     Try cast integer like value. Returns None if cast is not possible
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asInt;
     /** @var Option<int> $result */
     $result = asInt(1);
     ```
@@ -476,6 +477,12 @@
     Copy one or multiple collections as list
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asList;
+    
     $result = asList([1], ['prop' => 2], [3, 4]); // [1, 2, 3, 4]
     ```
 
@@ -485,6 +492,12 @@
     no first collection element
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asNonEmptyArray;
+    
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
     
@@ -498,6 +511,12 @@
     no first collection element
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Cast\asNonEmptyList;
+    
     /** @psalm-return iterable<string, int> */
     function getCollection(): array { return []; }
     
@@ -509,14 +528,53 @@
 
   - #### proveArray
     
-    Prove that given collection is of array type
+    Prove that given value is of array type
     
     ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    <?php
     
-    /** @var Option<array<string, int>> $result */
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveArray;
+    
+    function getMixed(): mixed { return []; }
+    
+    // inferred as Option<array<array-key, mixed>>
+    $result = proveArray(getMixed());
+    ```
+    
+    Type params from any iterable type will be preserved:
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveArray;
+    
+    /** @return iterable<string, int> */
+    function getCollection(): iterable { return []; }
+    
+    // inferred as Option<array<string, int>>
     $result = proveArray(getCollection());
+    ```
+    
+    Key and value type can be proved separately:
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveArray;
+    use function Fp\Evidence\proveString;
+    use function Fp\Evidence\proveInt;
+    
+    /** @return iterable<mixed, mixed> */
+    function getCollection(): iterable { return []; }
+    
+    // inferred as Option<array<string, int>>
+    $result = proveArray(getCollection(), proveString(...), proveInt(...));
     ```
 
   - #### proveNonEmptyArray
@@ -524,87 +582,149 @@
     Prove that given collection is of non-empty-array type
     
     ``` php
-    /** @psalm-return iterable<string, int> */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyArray;
+    
+    /** @return iterable<string, int> */
     function getCollection(): array { return []; }
     
-    /** @var Option<non-empty-array<string, int>> $result */
+    // Inferred as Option<non-empty-array<string, int>>
     $result = proveNonEmptyArray(getCollection());
     ```
-
-  - #### proveArrayOf
     
-    Prove that collection is of array type and every element is of given
-    class
+    Type params from any iterable type will be preserved:
     
     ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    <?php
     
-    /** @var Option<array<string, Foo>> $result */
-    $result = proveArrayOf(getCollection(), Foo::class);
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyArray;
+    
+    /** @return iterable<string, int> */
+    function getCollection(): iterable { return []; }
+    
+    // inferred as Option<non-empty-array<string, int>>
+    $result = proveNonEmptyArray(getCollection());
     ```
-
-  - #### proveNonEmptyArrayOf
     
-    Prove that collection is of non-empty-array type and every element
-    is of given class
+    Key and value type can be proved separately:
     
     ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    <?php
     
-    /** @var Option<non-empty-array<string, Foo>> $result */
-    $result = proveNonEmptyArrayOf(getCollection(), Foo::class);
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyArray;
+    use function Fp\Evidence\proveString;
+    use function Fp\Evidence\proveInt;
+    
+    /** @return iterable<mixed, mixed> */
+    function getCollection(): iterable { return []; }
+    
+    // inferred as Option<non-empty-array<string, int>>
+    $result = proveNonEmptyArray(getCollection(), proveString(...), proveInt(...));
     ```
 
   - #### proveList
     
-    Prove that given collection is of list type
+    Prove that given value is of list type
     
     ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    <?php
     
-    /** @var Option<list<string, int>> $result */
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveList;
+    
+    function getMixed(): mixed { return []; }
+    
+    // Inferred as Option<list<mixed>>
+    $result = proveList(getMixed());
+    ```
+    
+    Type params from any iterable type will be preserved:
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveList;
+    
+    /** @return iterable<int, string> */
+    function getCollection(): iterable { return []; }
+    
+    // inferred as Option<list<string>>
     $result = proveList(getCollection());
+    ```
+    
+    Value type can be proved separately:
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveList;
+    use function Fp\Evidence\proveInt;
+    
+    function getMixed(): mixed { return []; }
+    
+    // Inferred as Option<list<int>>
+    $result = proveList(getMixed(), proveInt(...));
     ```
 
   - #### proveNonEmptyList
     
-    Prove that given collection is of non-empty-list type
+    Prove that given value is of non-empty-list type
     
     ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    <?php
     
-    /** @var Option<non-empty-list<string, int>> $result */
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyList;
+    
+    function getMixed(): mixed { return []; }
+    
+    // Inferred as Option<non-empty-list<mixed>>
+    $result = proveNonEmptyList(getMixed());
+    ```
+    
+    Type params from any iterable type will be preserved:
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyList;
+    
+    /** @return iterable<int, string> */
+    function getCollection(): iterable { return []; }
+    
+    // Inferred as Option<non-empty-list<string>>
     $result = proveNonEmptyList(getCollection());
     ```
-
-  - #### proveListOf
     
-    Prove that collection is of array type and every element is of given
-    class
+    Value type can be proved separately:
     
     ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    <?php
     
-    /** @var Option<list<string, Foo>> $result */
-    $result = proveListOf(getCollection(), Foo::class);
-    ```
-
-  - #### proveNonEmptyListOf
+    declare(strict_types=1);
     
-    Prove that collection is of non-empty-list type and every element is
-    of given class
+    use function Fp\Evidence\proveNonEmptyList;
+    use function Fp\Evidence\proveInt;
     
-    ``` php
-    /** @psalm-return iterable<string, int> */
-    function getCollection(): array { return []; }
+    function getMixed(): mixed { return []; }
     
-    /** @var Option<non-empty-list<string, Foo>> $result */
-    $result = proveNonEmptyListOf(getCollection(), Foo::class);
+    // Inferred as Option<non-empty-list<int>>
+    $result = proveNonEmptyList(getMixed(), proveInt(...));
     ```
 
   - #### proveBool
@@ -612,25 +732,43 @@
     Prove that subject is of boolean type
     
     ``` php
-    /** @var Option<bool> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveBool;
+    
+    // Inferred as Option<bool>
     $result = proveBool($subject);
     ```
 
   - #### proveTrue
     
-    Prove that subject is of boolean type and it's value is true
+    Prove that subject is of boolean type, and it's value is true
     
     ``` php
-    /** @var Option<true> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveTrue;
+    
+    // Inferred as Option<true>
     $result = proveTrue($subject);
     ```
 
   - #### proveFalse
     
-    Prove that subject is of boolean type and it's value is false
+    Prove that subject is of boolean type, and it's value is false
     
     ``` php
-    /** @var Option<false> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveFalse;
+    
+    // Inferred as Option<false>
     $result = proveFalse($subject);
     ```
 
@@ -639,7 +777,13 @@
     Prove that subject is of string type
     
     ``` php
-    /** @var Option<string> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveString;
+    
+    // Inferred as Option<string>
     $result = proveString($subject);
     ```
 
@@ -648,9 +792,15 @@
     Prove that subject is of given class
     
     ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveNonEmptyString;
+    
     $possiblyEmptyString = '';
     
-    /** @var Option<non-empty-string> $result */
+    // Inferred as Option<non-empty-string>
     $result = proveNonEmptyString($possiblyEmptyString);
     ```
 
@@ -659,7 +809,13 @@
     Prove that subject is of callable-string type
     
     ``` php
-    /** @var Option<callable-string> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveCallableString;
+    
+    // Inferred as Option<callable-string>
     $result = proveCallableString($subject);
     ```
 
@@ -668,8 +824,29 @@
     Prove that subject is of class-string type
     
     ``` php
-    /** @var Option<class-string> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveClassString;
+    
+    // Inferred as Option<class-string>
     $result = proveClassString($subject);
+    ```
+
+  - #### proveClassStringOf
+    
+    Prove that subject is subtype of given class-string
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveClassStringOf;
+    
+    // Inferred as Option<class-string<Collection>>
+    $result = proveClassStringOf(ArrayList::class, Collection::class);
     ```
 
   - #### proveFloat
@@ -677,7 +854,13 @@
     Prove that subject is of float type
     
     ``` php
-    /** @var Option<float> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveFloat;
+    
+    // Inferred as Option<float>
     $result = proveFloat($subject);
     ```
 
@@ -686,7 +869,13 @@
     Prove that subject is of int type
     
     ``` php
-    /** @var Option<int> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveInt;
+    
+    // Inferred as Option<int>
     $result = proveInt($subject);
     ```
 
@@ -695,6 +884,12 @@
     Prove that subject is of given class
     
     ``` php
-    /** @var Option<Foo> $result */
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Evidence\proveOf;
+    
+    // Inferred as Option<Foo>
     $result = proveOf(new Bar(), Foo::class);
     ```

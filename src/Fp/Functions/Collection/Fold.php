@@ -10,23 +10,18 @@ use Fp\Operations\FoldOperation;
  * Fold many elements into one
  *
  * ```php
- * >>> fold(
- *     '',
- *     ['a', 'b', 'c'],
- *     fn(string $accumulator, $currentValue) => $accumulator . $currentValue
- * );
+ * >>> fold('', ['a', 'b', 'c'])(fn($acc, $curr) => $acc . $cur);
  * => 'abc'
  * ```
  *
- * @template TK of array-key
  * @template TV
- * @template TA
- * @param TA $init initial accumulator value
- * @param iterable<TK, TV> $collection
- * @param callable(TA, TV): TA $callback (accumulator, current element): new accumulator
- * @return TA
+ * @template TInit
+ *
+ * @param TInit $init
+ * @param iterable<TV> $collection
+ * @return FoldOperation<TV, TInit>
  */
-function fold(mixed $init, iterable $collection, callable $callback): mixed
+function fold(mixed $init, iterable $collection): FoldOperation
 {
-    return FoldOperation::of($collection)($init, $callback);
+    return new FoldOperation($collection, $init);
 }

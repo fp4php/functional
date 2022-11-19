@@ -9,10 +9,17 @@ use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
+use Fp\Functional\WithExtensions;
+use Fp\Operations\ToStringOperation;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionGetReturnTypeProvider;
+use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
 use Generator;
 use Throwable;
 
-use function Fp\objectOf;
+use function Fp\Callable\toSafeClosure;
+use function Fp\Evidence\proveOf;
 
 /**
  * Option monad
@@ -32,245 +39,128 @@ use function Fp\objectOf;
  *
  * @template-covariant A
  * @psalm-yield A
- * @psalm-immutable
+ *
+ * @psalm-seal-methods
+ * @mixin OptionExtensions<A>
+ *
+ * @psalm-suppress InvalidTemplateParam
  */
 abstract class Option
 {
+    # region Constructors
+
     /**
-     * Check if "the box" is empty
+     * Fabric method for {@see None} instance
      *
      * ```php
-     * >>> Option::fromNullable(null)->isEmpty();
-     * => true
+     * >>> Option::none();
+     * => None
      * ```
      *
-     * @psalm-assert-if-false Some<A> $this
+     * @return Option<empty>
      */
-    public function isEmpty(): bool
+    public static function none(): Option
     {
-        return $this instanceof None;
+        return None::getInstance();
     }
 
     /**
-     * Check if there is something inside the box
+     * Fabric method for {@see Some} instance
      *
      * ```php
-     * >>> Option::fromNullable(null)->isNonEmpty();
-     * => false
+     * >>> Option::some(1);
+     * => Some(1)
      * ```
      *
-     * @psalm-assert-if-true Some<A> $this
+     * @template B
+     *
+     * @param B $value
+     * @return Option<B>
      */
-    public function isNonEmpty(): bool
+    public static function some(mixed $value): Option
     {
-        return $this instanceof Some;
+        return new Some($value);
     }
 
     /**
-     * Check if there is something inside the box
-     * Alias for {@see Option::isNonEmpty()}
+     * Fabric method.
      *
      * ```php
-     * >>> Option::fromNullable(null)->isSome();
-     * => false
-     * ```
-     *
-     * @psalm-assert-if-true Some<A>&\Fp\Functional\Assertion<"must-be-some"> $this
-     */
-    public function isSome(): bool
-    {
-        return $this instanceof Some;
-    }
-
-    /**
-     * Check if "the box" is empty
-     * Alias for {@see Option::isEmpty()}
-     *
-     * ```php
-     * >>> Option::fromNullable(null)->isNone();
-     * => true
-     * ```
-     *
-     * @psalm-assert-if-true None&\Fp\Functional\Assertion<"must-be-none"> $this
-     */
-    public function isNone(): bool
-    {
-        return $this instanceof None;
-    }
-
-    /**
-     * 1) Unwrap the box
-     * 2) If the box is empty then do nothing
-     * 3) Pass unwrapped value to callback
-     * 4) Place callback result value into the new box
-     *
-     * ```php
-     * >>> $res1 = Option::fromNullable(1);
+     * >>> Option::when(true, fn() => 1);
      * => Some(1)
      *
-     * >>> $res2 = $res1->map(fn(int $i) => $i + 1);
-     * => Some(2)
-     *
-     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
-     * => Some('2')
+     * >>> Option::when(false, fn() => 1);
+     * => None
      * ```
      *
-     * @psalm-template B
-     * @param callable(A): (B) $callback
-     * @psalm-return Option<B>
+     * Create {@see Some} from value if given condition is true
+     * Create {@see None} if given condition is false
+     *
+     * @template AI
+     *
+     * @param callable(): AI $some
+     * @return Option<AI>
      */
-    public function map(callable $callback): Option
+    public static function when(bool $cond, callable $some): Option
     {
-        return $this->isSome()
-            ? self::some($callback($this->value))
+        return $cond
+            ? self::some($some())
             : self::none();
     }
 
     /**
-     * 1) Unwrap the box
-     * 2) If the box is empty then do nothing
-     * 3) Pass unwrapped value to callback
-     * 4) Return the same box
+     * Fabric method which creates Option.
+     *
+     * Try/catch replacement.
      *
      * ```php
-     * >>> $res1 = Option::fromNullable(1);
+     * >>> Option::try(fn() => 1);
      * => Some(1)
      *
-     * >>> $res2 = $res1->tap(function (int $i) { echo $i; });
-     * 1
-     * => Some(1)
-     *
-     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
-     * => Some('1')
-     * ```
-     *
-     * @param callable(A): void $callback
-     * @psalm-return Option<A>
-     */
-    public function tap(callable $callback): Option
-    {
-        if ($this->isSome()) {
-            $callback($this->value);
-            return $this;
-        } else {
-            return self::none();
-        }
-    }
-
-    /**
-     * 1) Unwrap the box
-     * 2) If the box is empty then do nothing
-     * 3) Pass unwrapped value to callback
-     * 4) If the callback returns empty box then short circuit the execution
-     * 5) Return the same box
-     *
-     * ```php
-     * >>> $res1 = Option::fromNullable([1]);
-     * => Some([1])
-     *
-     * >>> $res2 = $res1->flatTap(fn(array $arr): Option => first($arr));
-     * => Some([1])
-     *
-     * >>> $res3 = $res2->flatTap(fn(array $arr): Option => second($arr))
+     * >>> Option::try(fn() => throw new Exception('handled and converted to None'));
      * => None
      * ```
      *
      * @template B
-     * @param callable(A): Option<B> $callback
-     * @psalm-return Option<A>
+     *
+     * @param callable(): B $callback
+     * @return Option<B>
      */
-    public function flatTap(callable $callback): Option
+    public static function try(callable $callback): Option
     {
-        if ($this->isSome() && $callback($this->value)->isSome()) {
-            $callback($this->value);
-            return $this;
-        } else {
-            return self::none();
+        try {
+            return Option::some($callback());
+        } catch (Throwable) {
+            return Option::none();
         }
     }
 
     /**
-     * 1) Unwrap the box
-     * 2) If the box is empty then do nothing
-     * 3) Pass unwrapped value to callback
-     * 4) If callback return true, return Some<A>. Otherwise None.
+     * Fabric method which creates Option.
+     *
+     * Wrap given value into Option context.
+     *
+     * Creates {@see None} for null values
+     * and {@see Some} for not null values.
      *
      * ```php
-     * >>> $res1 = Option::fromNullable(42);
-     * => Some(42)
-     *
-     * >>> $res2 = $res1->filter(fn(int $i) => $i >= 42);
-     * => Some(42)
-     *
-     * >>> $res3 = $res2->filter(fn(int $i) => $i > 42);
-     * => None
-     * ```
-     *
-     * @param callable(A): bool $callback
-     * @return Option<A>
-     */
-    public function filter(callable $callback): Option
-    {
-        return $this->isSome() && $callback($this->value)
-            ? $this
-            : self::none();
-    }
-
-    /**
-     * 1) Unwrap the box
-     * 2) If the box is empty then do nothing
-     * 3) Check if unwrapped value is of given class
-     * 4) If the value is of given class then return Some. Otherwise, None.
-     *
-     * ```php
-     * >>> $res1 = Option::fromNullable(new Foo(1));
-     * => Some(Foo(1))
-     *
-     * >>> $res2 = $res1->filterOf(Foo::class);
-     * => Some(Foo(1))
-     *
-     * >>> $res3 = $res2->filterOf(Bar::class);
-     * => None
-     * ```
-     *
-     * @template AA
-     * @param class-string<AA> $fqcn
-     * @return Option<AA>
-     */
-    public function filterOf(string $fqcn, bool $invariant = false): Option
-    {
-        /** @var Option<AA> */
-        return $this->isSome() && objectOf($this->value, $fqcn, $invariant)
-            ? $this
-            : self::none();
-    }
-
-    /**
-     * 1) Unwrap the box
-     * 2) If the box is empty then do nothing
-     * 3) Pass unwrapped value to callback
-     * 4) Replace old box with new one returned by callback
-     *
-     * ```php
-     * >>> $res1 = Option::fromNullable(1);
-     * => Some(1)
-     *
-     * >>> $res2 = $res1->flatMap(fn(int $i) => Option::some($i + 1));
+     * >>> Option::fromNullable(2);
      * => Some(2)
      *
-     * >>> $res3 = $res2->flatMap(fn(int $i) => Option::none());
+     * >>> Option::fromNullable(null);
      * => None
      * ```
      *
-     * @psalm-template B
-     * @param callable(A): Option<B> $callback
-     * @psalm-return Option<B>
+     * @template B
+     *
+     * @param B|null $value
+     * @return Option<B>
      */
-    public function flatMap(callable $callback): Option
+    public static function fromNullable(mixed $value): Option
     {
-        return $this->isSome()
-            ? $callback($this->value)
-            : self::none();
+        return null !== $value
+            ? Option::some($value)
+            : Option::none();
     }
 
     /**
@@ -299,8 +189,9 @@ abstract class Option
      *
      * @template TS
      * @template TO
-     * @psalm-param callable(): Generator<int, Option<mixed>, TS, TO> $computation
-     * @psalm-return Option<TO>
+     *
+     * @param callable(): Generator<int, Option<mixed>, TS, TO> $computation
+     * @return Option<TO>
      */
     public static function do(callable $computation): Option {
         $generator = $computation();
@@ -321,59 +212,9 @@ abstract class Option
         return Option::some($generator->getReturn());
     }
 
-    /**
-     * Fabric method which creates Option.
-     *
-     * Wrap given value into Option context.
-     *
-     * Creates {@see None} for null values
-     * and {@see Some} for not null values.
-     *
-     * ```php
-     * >>> Option::fromNullable(2);
-     * => Some(2)
-     *
-     * >>> Option::fromNullable(null);
-     * => None
-     * ```
-     *
-     * @psalm-template B
-     * @psalm-param B|null $value
-     * @psalm-return Option<B>
-     * @psalm-pure
-     */
-    public static function fromNullable(mixed $value): Option
-    {
-        return null !== $value
-            ? self::some($value)
-            : self::none();
-    }
+    # endregion Constructors
 
-    /**
-     * Fabric method which creates Option.
-     *
-     * Try/catch replacement.
-     *
-     * ```php
-     * >>> Option::try(fn() => 1);
-     * => Some(1)
-     *
-     * >>> Option::try(fn() => throw new Exception('handled and converted to None'));
-     * => None
-     * ```
-     *
-     * @psalm-template B
-     * @psalm-param callable(): B $callback
-     * @psalm-return Option<B>
-     */
-    public static function try(callable $callback): Option
-    {
-        try {
-            return self::some($callback());
-        } catch (Throwable) {
-            return self::none();
-        }
-    }
+    # region Destructors
 
     /**
      * Fold possible outcomes
@@ -392,18 +233,14 @@ abstract class Option
      * => 0
      * ```
      *
-     * @psalm-template TOutSome
-     * @psalm-template TOutNone
-     * @psalm-param callable(A): TOutSome $ifSome
-     * @psalm-param callable(): TOutNone $ifNone
-     * @psalm-return TOutSome|TOutNone
+     * @template SO
+     * @template NO
+     *
+     * @param callable(): NO $ifNone
+     * @param callable(A): SO $ifSome
+     * @return SO|NO
      */
-    public function fold(callable $ifSome, callable $ifNone): mixed
-    {
-        return $this->isSome()
-            ? $ifSome($this->value)
-            : $ifNone();
-    }
+    public abstract function fold(callable $ifNone, callable $ifSome): mixed;
 
     /**
      * Unwrap "the box" and get contained value
@@ -417,9 +254,18 @@ abstract class Option
      * => null
      * ```
      *
-     * @psalm-return A|null
+     * @return A|null
+     *
+     * @see OptionGetReturnTypeProvider
      */
-    public abstract function get(): mixed;
+    public function get(): mixed
+    {
+        return $this->fold(
+            fn() => null,
+            /** @param A $value */
+            fn(mixed $value) => $value,
+        );
+    }
 
     /**
      * Unwrap "the box" and get contained value
@@ -433,13 +279,11 @@ abstract class Option
      * PHP Error: Trying to get value of None
      * ```
      *
-     * @psalm-return A
+     * @return A
      */
     public function getUnsafe(): mixed
     {
-        return $this->isSome()
-            ? $this->get()
-            : throw new Error("Trying to get value of None");
+        return $this->getOrCall(fn() => throw new Error("Trying to get value of None"));
     }
 
     /**
@@ -454,15 +298,14 @@ abstract class Option
      * => 0
      * ```
      *
-     * @psalm-template B
-     * @psalm-param B $fallback
-     * @psalm-return A|B
+     * @template B
+     *
+     * @param B $fallback
+     * @return A|B
      */
     public function getOrElse(mixed $fallback): mixed
     {
-        return $this->isSome()
-            ? $this->value
-            : $fallback;
+        return $this->getOrCall(fn() => $fallback);
     }
 
     /**
@@ -477,94 +320,57 @@ abstract class Option
      * => 0
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): B $fallback
-     * @psalm-return A|B
+     * @template B
+     *
+     * @param callable(): B $fallback
+     * @return A|B
      */
     public function getOrCall(callable $fallback): mixed
     {
-        return $this->isSome()
-            ? $this->value
-            : $fallback();
+        return $this->fold(
+            fn() => $fallback(),
+            /** @param A $value */
+            fn(mixed $value): mixed => $value
+        );
+    }
+
+    # endregion Destructors
+
+    # region Refinements
+
+    /**
+     * Check if there is something inside the box
+     *
+     * ```php
+     * >>> Option::fromNullable(null)->isSome();
+     * => false
+     * ```
+     *
+     * @psalm-assert-if-true Some<A>&\Fp\Functional\Assertion<"must-be-some"> $this
+     */
+    public function isSome(): bool
+    {
+        return $this instanceof Some;
     }
 
     /**
-     * Unwrap "the box" and get contained value
-     * or throw an exception if the box is empty
+     * Check if "the box" is empty
      *
      * ```php
-     * >>> Option::some(1)->getOrThrow(fn() => new RuntimeException('???'));
-     * => 1
-     *
-     * >>> Option::none()->getOrThrow(fn() => new RuntimeException('???'));
-     * RuntimeException with message '???'
+     * >>> Option::fromNullable(null)->isNone();
+     * => true
      * ```
      *
-     * @psalm-param callable(): Throwable $fallback
-     * @psalm-return A
+     * @psalm-assert-if-true None&\Fp\Functional\Assertion<"must-be-none"> $this
      */
-    public function getOrThrow(callable $fallback): mixed
+    public function isNone(): bool
     {
-        return $this->isSome()
-            ? $this->value
-            : throw $fallback();
+        return $this instanceof None;
     }
 
-    /**
-     * Combine two Options into one
-     *
-     * ```php
-     * >>> Option::some(1)->orElse(fn() => Option::some(2));
-     * => Some(1)
-     *
-     * >>> Option::none()->orElse(fn() => Option::some(2));
-     * => Some(2)
-     * ```
-     *
-     * @psalm-template B
-     * @psalm-param callable(): Option<B> $fallback
-     * @psalm-return Option<A|B>
-     */
-    public function orElse(callable $fallback): Option
-    {
-        return $this->isSome()
-            ? $this
-            : $fallback();
-    }
+    # endregion Refinements
 
-    /**
-     * Fabric method for {@see Some} instance
-     *
-     * ```php
-     * >>> Option::some(1);
-     * => Some(1)
-     * ```
-     *
-     * @psalm-template B
-     * @psalm-param B $value
-     * @psalm-return Option<B>
-     * @psalm-pure
-     */
-    public static function some(mixed $value): Option
-    {
-        return new Some($value);
-    }
-
-    /**
-     * Fabric method for {@see None} instance
-     *
-     * ```php
-     * >>> Option::none();
-     * => None
-     * ```
-     *
-     * @psalm-return Option<empty>
-     * @psalm-pure
-     */
-    public static function none(): Option
-    {
-        return None::getInstance();
-    }
+    # region Castable
 
     /**
      * Convert {@see Option} to {@see Either}
@@ -580,15 +386,17 @@ abstract class Option
      * => Right(1)
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): B $right
-     * @psalm-return Either<A, B>
+     * @template B
+     *
+     * @param callable(): B $right
+     * @return Either<A, B>
      */
     public function toLeft(callable $right): Either
     {
-        return $this->isSome()
-            ? Either::left($this->value)
-            : Either::right($right());
+        return $this->fold(
+            fn() => Either::right($right()),
+            fn($value) => Either::left($value),
+        );
     }
 
     /**
@@ -605,149 +413,375 @@ abstract class Option
      * => Left('error')
      * ```
      *
-     * @psalm-template B
-     * @psalm-param callable(): B $left
-     * @psalm-return Either<B, A>
+     * @template B
+     *
+     * @param callable(): B $left
+     * @return Either<B, A>
      */
     public function toRight(callable $left): Either
     {
-        return $this->isSome()
-            ? Either::right($this->value)
-            : Either::left($left());
+        return $this->fold(
+            fn() => Either::left($left()),
+            fn($value) => Either::right($value)
+        );
     }
 
     /**
-     * @deprecated use {@see Option::when}
-     *
-     * Fabric method.
+     * Convert Option<A> to ArrayList<A> with 0 or 1 element.
      *
      * ```php
-     * >>> Option::cond(true, 1);
+     * >>> Option::some(1)->toArrayList();
+     * => ArrayList(1)
+     *
+     * >>> Option::none()->toArrayList();
+     * => ArrayList()
+     * ```
+     *
+     * @return ArrayList<A>
+     */
+    public function toArrayList(): ArrayList
+    {
+        return $this->fold(
+            fn() => ArrayList::empty(),
+            fn($value) => ArrayList::singleton($value)
+        );
+    }
+
+    public function toString(): string
+    {
+        return (string) $this;
+    }
+
+    public function __toString(): string
+    {
+        $value = ToStringOperation::of($this->get());
+
+        return $this instanceof None ? 'None' : "Some({$value})";
+    }
+
+    # endregion Castable
+
+    # region Chainable
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
+     * 4) Place callback result value into the new box
+     *
+     * ```php
+     * >>> $res1 = Option::fromNullable(1);
      * => Some(1)
      *
-     * >>> Option::cond(false, 1);
+     * >>> $res2 = $res1->map(fn(int $i) => $i + 1);
+     * => Some(2)
+     *
+     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
+     * => Some('2')
+     * ```
+     *
+     * @template B
+     *
+     * @param callable(A): (B) $callback
+     * @return Option<B>
+     */
+    public function map(callable $callback): Option
+    {
+        return $this->fold(
+            fn() => Option::none(),
+            /** @param A $val */
+            fn(mixed $val) => Option::some($callback($val))
+        );
+    }
+
+    /**
+     * Same as {@see Option::map()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Option::some([1, 2, 3]);
+     * => Some([1, 2, 3])
+     *
+     * >>> $res2 = $res1->map(fn(int $a, int $b, int $c) => $a + $b + $c);
+     * => Some(6)
+     * ```
+     *
+     * @template B
+     *
+     * @param callable(mixed...): B $callback
+     * @return Option<B>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function mapN(callable $callback): Option
+    {
+        return $this->map(function($tuple) use ($callback): mixed {
+            /** @var array $tuple */
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
+     * 4) Return the same box
+     *
+     * ```php
+     * >>> $res1 = Option::fromNullable(1);
+     * => Some(1)
+     *
+     * >>> $res2 = $res1->tap(function (int $i) { echo $i; });
+     * 1
+     * => Some(1)
+     *
+     * >>> $res3 = $res2->map(fn(int $i) => (string) $i);
+     * => Some('1')
+     * ```
+     *
+     * @param callable(A): void $callback
+     * @return Option<A>
+     */
+    public function tap(callable $callback): Option
+    {
+        return $this->map(
+            /** @param A $value */
+            function(mixed $value) use ($callback) {
+                $callback($value);
+                return $value;
+            }
+        );
+    }
+
+    /**
+     * Same as {@see Option::tap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * ```php
+     * >>> $res1 = Option::some([1, 2, 3]);
+     * => Some([1, 2, 3])
+     *
+     * >>> $res2 = $res1->tapN(function (int $a, int $b, int $c) { print_r([$a, $b, $c]); });
+     * [1, 2, 3]
+     * => Some([1, 2, 3])
+     * ```
+     *
+     * @param callable(mixed...): void $callback
+     * @return Option<A>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function tapN(callable $callback): Option
+    {
+        return $this->tap(function($tuple) use ($callback) {
+            /** @var array $tuple */
+            toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
+     * 4) Replace old box with new one returned by callback
+     *
+     * ```php
+     * >>> $res1 = Option::fromNullable(1);
+     * => Some(1)
+     *
+     * >>> $res2 = $res1->flatMap(fn(int $i) => Option::some($i + 1));
+     * => Some(2)
+     *
+     * >>> $res3 = $res2->flatMap(fn(int $i) => Option::none());
      * => None
      * ```
      *
-     * @psalm-pure
-     * @psalm-template AI
-     * @psalm-param AI $some
-     * @psalm-return Option<AI>
+     * @template B
+     *
+     * @param callable(A): Option<B> $callback
+     * @return Option<B>
      */
-    public static function cond(bool $condition, mixed $some): Option
+    public function flatMap(callable $callback): Option
     {
-        return $condition
-            ? self::some($some)
-            : self::none();
+        return $this->fold(
+            fn() => Option::none(),
+            /** @param A $value */
+            fn(mixed $value) => $callback($value),
+        );
     }
 
     /**
-     * @deprecated use {@see Option::when}
-     *
-     * Fabric method.
+     * Same as {@see Option::flatMap()}, but deconstruct input tuple and pass it to the $callback function.
      *
      * ```php
-     * >>> Option::condLazy(true, fn() => 1);
-     * => Some(1)
+     * >>> $res1 = Option::some([1, 2, 3]);
+     * => Some([1, 2, 3])
      *
-     * >>> Option::condLazy(false, fn() => 1);
+     * >>> $res2 = $res1->flatMapN(fn(int $a, int $b, int $c) => Option::some($a + $b + $c));
+     * => Some(6)
+     * ```
+     *
+     * @template B
+     *
+     * @param callable(mixed...): Option<B> $callback
+     * @return Option<B>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function flatMapN(callable $callback): Option
+    {
+        return $this->flatMap(function($tuple) use ($callback): Option {
+            /** @var array $tuple */
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
+     * 4) If the callback returns empty box then short circuit the execution
+     * 5) Return the same box
+     *
+     * ```php
+     * >>> $res1 = Option::fromNullable([1]);
+     * => Some([1])
+     *
+     * >>> $res2 = $res1->flatTap(fn(array $arr): Option => first($arr));
+     * => Some([1])
+     *
+     * >>> $res3 = $res2->flatTap(fn(array $arr): Option => second($arr))
      * => None
      * ```
      *
-     * Create {@see Some} from value if given condition is true
-     * Create {@see None} if given condition is false
+     * @template B
      *
-     * @psalm-pure
-     * @psalm-template AI
-     * @psalm-param pure-callable(): AI $some
-     * @psalm-return Option<AI>
+     * @param callable(A): Option<B> $callback
+     * @return Option<A>
      */
-    public static function condLazy(bool $condition, callable $some): Option
+    public function flatTap(callable $callback): Option
     {
-        return $condition
-            ? self::some($some())
-            : self::none();
+        return $this->flatMap(
+            /** @param A $value */
+            fn(mixed $value) => $callback($value)->fold(
+                fn() => Option::none(),
+                fn() => Option::some($value),
+            )
+        );
     }
 
     /**
-     * Fabric method.
+     * Same as {@see Option::flatTap()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template B
+     *
+     * @param callable(mixed...): Option<B> $callback
+     * @return Option<A>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function flatTapN(callable $callback): Option
+    {
+        return $this->flatTap(function($tuple) use ($callback): Option {
+            /** @var array $tuple */
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * 1) Unwrap the box
+     * 2) If the box is empty then do nothing
+     * 3) Pass unwrapped value to callback
+     * 4) If callback return true, return Some<A>. Otherwise None.
      *
      * ```php
-     * >>> Option::when(true, fn() => 1);
-     * => Some(1)
+     * >>> $res1 = Option::fromNullable(42);
+     * => Some(42)
      *
-     * >>> Option::when(false, fn() => 1);
+     * >>> $res2 = $res1->filter(fn(int $i) => $i >= 42);
+     * => Some(42)
+     *
+     * >>> $res3 = $res2->filter(fn(int $i) => $i > 42);
      * => None
      * ```
      *
-     * Create {@see Some} from value if given condition is true
-     * Create {@see None} if given condition is false
+     * @param callable(A): bool $callback
+     * @return Option<A>
      *
-     * @psalm-pure
-     * @psalm-template AI
-     * @psalm-param pure-callable(): AI $callback
-     * @psalm-return Option<AI>
+     * @see OptionFilterMethodReturnTypeProvider
      */
-    public static function when(bool $condition, callable $callback): Option
+    public function filter(callable $callback): Option
     {
-        return $condition
-            ? self::some($callback())
-            : self::none();
+        return $this->flatMap(
+            /** @param A $value */
+            fn(mixed $value) => $callback($value)
+                ? Option::some($value)
+                : Option::none()
+        );
     }
 
     /**
-     * Fabric method.
+     * Combine two Options into one
      *
      * ```php
-     * >>> Option::unless(false, fn() => 1);
+     * >>> Option::some(1)->orElse(fn() => Option::some(2));
      * => Some(1)
      *
-     * >>> Option::unless(true, fn() => 1);
-     * => None
+     * >>> Option::none()->orElse(fn() => Option::some(2));
+     * => Some(2)
      * ```
      *
-     * Create {@see Some} from value if given condition is false
-     * Create {@see None} if given condition is true
+     * @template B
      *
-     * @psalm-pure
-     * @psalm-template AI
-     * @psalm-param pure-callable(): AI $callback
-     * @psalm-return Option<AI>
+     * @param callable(): Option<B> $fallback
+     * @return Option<A|B>
      */
-    public static function unless(bool $condition, callable $callback): Option
+    public function orElse(callable $fallback): Option
     {
-        return self::when(!$condition, $callback);
+        return $this->fold($fallback, fn() => $this);
     }
 
     /**
-     * Convert optional value to ArrayList collection
-     * via transformation function $callback.
+     * Shortcut for {@see Option::map()}
      *
      * ```php
-     * >>> Option::some(1)
-     *     ->toArrayList(ArrayList::singleton(...))
-     *     ->toArray();
-     * => [1]
-     *
-     * >>> Option::some([1])
-     *     ->toArrayList(ArrayList::collect(...))
-     *     ->toArray();
-     * => [1]
-     *
-     * >>> Option::none()
-     *     ->toArrayList(ArrayList::collect(...))
-     *     ->toArray();
-     * => []
+     * >>> Option::some(['a' => 1])->pluck('a')
+     * => Some(1)
+     * >>> Option::some(new Foo(a: 1))->pluck('a')
+     * => Some(1)
      * ```
      *
-     * @template TOutValue
-     * @param callable(A): ArrayList<TOutValue> $callback
-     * @return ArrayList<TOutValue>
+     * @return Option<mixed>
+     *
+     * @see PluckMethodReturnTypeProvider
      */
-    public function toArrayList(callable $callback): ArrayList
+    public function pluck(string $key): Option
     {
-        return $this->isSome()
-            ? $callback($this->value)
-            : new ArrayList([]);
+        return $this->map(fn($item) => match (true) {
+            is_object($item) => $item->{$key} ?? null,
+            is_array($item) => $item[$key] ?? null,
+        });
     }
+
+    # endregion Chainable
+
+    #region Extension
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        return OptionExtensions::call($this, $name, $arguments);
+    }
+
+    /**
+     * @param non-empty-string $name
+     * @param list<mixed> $arguments
+     */
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        return OptionExtensions::callStatic($name, $arguments);
+    }
+
+    #endregion Extension
 }

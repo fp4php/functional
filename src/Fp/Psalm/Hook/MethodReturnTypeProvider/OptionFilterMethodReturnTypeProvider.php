@@ -6,9 +6,10 @@ namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
-use Fp\Psalm\Util\Psalm;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
+use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
+use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
@@ -17,7 +18,9 @@ use Psalm\Type;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 
+use function Fp\Callable\ctor;
 use function Fp\Collection\first;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveTrue;
 
@@ -30,37 +33,20 @@ final class OptionFilterMethodReturnTypeProvider implements MethodReturnTypeProv
 
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
-        $return_type = Option::do(function() use ($event) {
-            yield proveTrue('filter' === $event->getMethodNameLowercase());
-
-            $call_args = $event->getCallArgs();
-            yield proveTrue(count($call_args) === 1);
-
-            $source = yield proveOf($event->getSource(), StatementsAnalyzer::class);
-            $option_type_param = yield first($event->getTemplateTypeParameters() ?? []);
-
-            $collection_type_params = new CollectionTypeParams(
-                key_type: Type::getArrayKey(),
-                val_type: $option_type_param,
-            );
-
-            $predicate = yield Psalm::getArgFunctionLike($call_args[0]);
-
-            $refinement_context = new RefinementContext(
-                refine_for: $event->getFqClasslikeName(),
-                predicate: $predicate,
-                execution_context: $event->getContext(),
-                codebase: $source->getCodebase(),
-                source: $source,
-            );
-
-            $result = RefineByPredicate::for($refinement_context, $collection_type_params);
-
-            return new Union([
-                new TGenericObject(Option::class, [$result->collection_value_type]),
-            ]);
-        });
-
-        return $return_type->get();
+        return proveTrue('filter' === $event->getMethodNameLowercase())
+            ->flatMap(fn() => sequenceOptionT(
+                fn() => Option::some(RefineForEnum::Value),
+                fn() => PredicateExtractor::extract($event),
+                fn() => Option::some($event->getContext()),
+                fn() => proveOf($event->getSource(), StatementsAnalyzer::class),
+                fn() => first($event->getTemplateTypeParameters() ?? [])
+                    ->map(fn($value_type) => [Type::getArrayKey(), $value_type])
+                    ->mapN(ctor(CollectionTypeParams::class)),
+            ))
+            ->mapN(ctor(RefinementContext::class))
+            ->map(RefineByPredicate::for(...))
+            ->map(fn(CollectionTypeParams $result) => new TGenericObject(Option::class, [$result->val_type]))
+            ->map(fn(TGenericObject $result) => new Union([$result]))
+            ->get();
     }
 }

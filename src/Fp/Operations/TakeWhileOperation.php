@@ -11,22 +11,22 @@ use function Fp\Cast\asGenerator;
 /**
  * @template TK
  * @template TV
- * @psalm-immutable
+ *
  * @extends AbstractOperation<TK, TV>
  */
-class TakeWhileOperation extends AbstractOperation
+final class TakeWhileOperation extends AbstractOperation
 {
     /**
-     * @psalm-pure
      * @template TKO
-     * @psalm-param callable(TV, TK): bool $f
+     *
+     * @param callable(TK, TV): bool $f
      * @return Generator<TK, TV>
      */
     public function __invoke(callable $f): Generator
     {
         return asGenerator(function () use ($f) {
             foreach ($this->gen as $key => $value) {
-                if (!$f($value, $key)) {
+                if (!$f($key, $value)) {
                     break;
                 }
 
