@@ -1,12 +1,20 @@
 ## Functions BC
 
-All collection functions with `$callback`/`$predicate` params does not allow key as second parameter anymore.
-To use key in the map, filter and other collection functions use *KV combinators:
+- All collection functions with `$callback`/`$predicate` params does not allow key as second parameter anymore.
+  To use key in the map, filter and other collection functions use *KV combinators.
+  Each collection function with `$callback`/`$predicate` has *KV version:
 ```diff
 - \Fp\Collection\map(fn($value, $key) => new Row(id: $key, data: $value));
 + \Fp\Collection\mapKV(fn($key, $value) => new Row(id: $key, data: $value));
 ```
-Each collection function with `$callback`/`$predicate` has *KV version.
+
+- Parameter `$preserveKeys` of `Fp\Collection\filter` has been removed. Type of input array will be preserved:
+```diff
+- \Fp\Collection\filter(['a' => 1, 'b' => 2], fn($value) => $value !== 1, preserveKeys: true);  // result is ['b' => 2]
++ \Fp\Collection\filter(['a' => 1, 'b' => 2], fn($value) => $value !== 1); // result is ['b' => 2]
+- \Fp\Collection\filter([1, 2], fn($value) => $value !== 1, preserveKeys: true);  // result is [2]
++ \Fp\Collection\filter([1, 2], fn($value) => $value !== 1); // result is [2]
+```
 
 - `Fp\Collection\existsOf` has been removed. Use `Fp\Collection\exists` instead:
 ```diff
@@ -79,6 +87,21 @@ Each collection function with `$callback`/`$predicate` has *KV version.
 - \Fp\Evidence\proveNonEmptyArrayOf(getMixed(), Foo::class);
 + \Fp\Evidence\proveNonEmptyArray(getMixed(), vType: of(Foo::class));
 ```
+
+- `Fp\Json\jsonDecode` moved to `Fp\Util\jsonDecode`:
+```diff
+- \Fp\Json\jsonDecode('[1,2,3]');
++ \Fp\Util\jsonDecode('[1,2,3]');
+```
+
+- `Fp\String\regExpMatch` moved to `Fp\Util\regExpMatch`:
+```diff
+- \Fp\String\regExpMatch('/[a-z]+(?<num>[0-9]+)/', 'aa1123');
++ \Fp\Util\regExpMatch('/[a-z]+(?<num>[0-9]+)/', 'aa1123');
+```
+
+- `Fp\Reflection\getReflectionClass` has been removed without replacement.
+- `Fp\Reflection\getReflectionProperty` has been removed without replacement.
 
 ## Option BC
 - `Fp\Functional\Option\Option::filterOf` has been removed. Use `Fp\Functional\Option\Option::flatMap` and `Fp\Evidence\of`:
