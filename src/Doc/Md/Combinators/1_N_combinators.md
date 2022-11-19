@@ -24,6 +24,7 @@ use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveArray;
 use function Fp\Evidence\proveBool;
 use function Fp\Evidence\proveInt;
+use function Fp\Json\jsonDecode;
 
 $json = <<<JSON
 {
@@ -38,7 +39,7 @@ JSON;
  */
 function fooFromJson(string $json): Option
 {
-    return Option::try(fn(): mixed => json_decode($json, associative: true, flags: JSON_THROW_ON_ERROR))
+    return jsonDecode($json)->toOption()
         ->flatMap(proveArray(...))
         ->flatMap(fn(array $data) => sequenceOptionT(
             fn() => at($data, 'a')->flatMap(proveInt(...)),
