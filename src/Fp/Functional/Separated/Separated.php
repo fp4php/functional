@@ -136,7 +136,7 @@ final class Separated
      * => Right(ArrayList(4, 5, 6));
      *
      * >>> Separated(ArrayList::empty(), ArrayList::empty())->toEither();
-     * => Right(ArrayList(4, 5, 6));
+     * => Right(ArrayList());
      * ```
      *
      * @template LO
