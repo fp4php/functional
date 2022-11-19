@@ -20,6 +20,8 @@ namespace Fp\Cast;
  *         ? non-empty-list<TV>
  *         : list<TV>
  * )
+ *
+ * @no-named-arguments
  */
 function asList(iterable ...$collections): array
 {

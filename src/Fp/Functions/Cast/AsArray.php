@@ -12,23 +12,26 @@ namespace Fp\Cast;
  * => [1, 2]
  * ```
  *
- * @template TP of bool
  * @template TK of array-key
  * @template TV
  *
- * @param iterable<TK, TV> $collection
+ * @param iterable<TK, TV> $collections
  * @param TP $preserveKeys
- * @return (TP is true ? array<TK, TV> : list<TV>)
+ * @return (
+ *     $collections is non-empty-array
+ *         ? non-empty-array<TK, TV>
+ *         : array<TK, TV>
+ * )
+ *
+ * @no-named-arguments
  */
-function asArray(iterable $collection, bool $preserveKeys = true): array
+function asArray(iterable ...$collections): array
 {
     $aggregate = [];
 
-    foreach ($collection as $index => $element) {
-        if ($preserveKeys) {
+    foreach ($collections as $collection) {
+        foreach ($collection as $index => $element) {
             $aggregate[$index] = $element;
-        } else {
-            $aggregate[] = $element;
         }
     }
 

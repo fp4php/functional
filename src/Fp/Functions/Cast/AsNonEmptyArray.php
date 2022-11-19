@@ -7,6 +7,7 @@ namespace Fp\Cast;
 use Fp\Functional\Option\Option;
 
 use function Fp\Collection\head;
+use function Fp\Collection\map;
 
 /**
  * Try copy and cast collection to non-empty-array
@@ -22,15 +23,17 @@ use function Fp\Collection\head;
  *
  * @template TK of array-key
  * @template TV
- * @template TP of bool
  *
- * @param iterable<TK, TV> $collection
- * @param TP $preserveKeys
- * @return (TP is true ? Option<non-empty-array<TK, TV>> : Option<non-empty-array<int, TV>>)
+ * @param iterable<TK, TV> ...$collections
+ * @return Option<non-empty-array<TK, TV>>
+ *
+ * @no-named-arguments
  */
-function asNonEmptyArray(iterable $collection, bool $preserveKeys = true): Option
+function asNonEmptyArray(iterable ...$collections): Option
 {
-    /** @psalm-var Option<non-empty-array<TK, TV>> */
-    return head($collection)
-        ->map(fn() => asArray($collection, $preserveKeys));
+    $array = asArray(...$collections);
+
+    return !empty($array)
+        ? Option::some($array)
+        : Option::none();
 }
