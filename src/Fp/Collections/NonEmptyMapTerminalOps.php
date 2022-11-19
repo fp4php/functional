@@ -363,7 +363,7 @@ interface NonEmptyMapTerminalOps
      * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return NonEmptyHashMap<TK|TKO, TV|TVO>
      */
-    public function merge(iterable $map): NonEmptyMap;
+    public function appendedAll(iterable $map): NonEmptyMap;
 
     /**
      * Filter collection by condition

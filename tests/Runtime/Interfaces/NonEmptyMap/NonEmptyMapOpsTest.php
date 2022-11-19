@@ -28,7 +28,7 @@ final class NonEmptyMapOpsTest extends TestCase
     public function testUpdatedAndRemoved(): void
     {
         $hm = NonEmptyHashMap::collectPairsUnsafe([['a', 1], ['b', 2]]);
-        $hm = $hm->updated('c', 3);
+        $hm = $hm->appended('c', 3);
         $hm = $hm->removed('a');
 
         $this->assertEquals([['b', 2], ['c', 3]], $hm->toList());
@@ -561,7 +561,7 @@ final class NonEmptyMapOpsTest extends TestCase
     {
         $this->assertEquals(
             NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 2, 'c' => 3]),
-            NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 3])->merge(HashMap::collect(['b' => 2, 'c' => 3])),
+            NonEmptyHashMap::collectNonEmpty(['a' => 1, 'b' => 3])->appendedAll(HashMap::collect(['b' => 2, 'c' => 3])),
         );
     }
 }

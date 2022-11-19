@@ -327,7 +327,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @param TVI $value
      * @return NonEmptyHashMap<TK|TKI, TV|TVI>
      */
-    public function updated(mixed $key, mixed $value): NonEmptyHashMap
+    public function appended(mixed $key, mixed $value): NonEmptyHashMap
     {
         return new NonEmptyHashMap($this->hashMap->appended($key, $value));
     }
@@ -339,7 +339,7 @@ final class NonEmptyHashMap implements NonEmptyMap
      * @param Map<TKO, TVO>|NonEmptyMap<TKO, TVO>|iterable<TKO, TVO> $map
      * @return NonEmptyHashMap<TK|TKO, TV|TVO>
      */
-    public function merge(iterable $map): NonEmptyHashMap
+    public function appendedAll(iterable $map): NonEmptyHashMap
     {
         return new NonEmptyHashMap($this->hashMap->appendedAll($map));
     }

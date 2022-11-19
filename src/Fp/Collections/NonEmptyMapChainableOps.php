@@ -29,7 +29,7 @@ interface NonEmptyMapChainableOps
      * @param TVI $value
      * @return NonEmptyMap<TK|TKI, TV|TVI>
      */
-    public function updated(mixed $key, mixed $value): NonEmptyMap;
+    public function appended(mixed $key, mixed $value): NonEmptyMap;
 
     /**
      * Produces a new collection of elements by mapping each element in collection
