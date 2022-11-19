@@ -95,6 +95,7 @@
             "src/Fp/Functions/Evidence/ProveOf.php",
             "src/Fp/Functions/Evidence/ProveString.php",
             "src/Fp/Functions/Util/JsonDecode.php",
+            "src/Fp/Functions/Util/RegExp.php",
             "src/Fp/Functions/Panic.php",
             "src/Fp/Functions/Id.php",
             "src/Fp/Functions/Unit.php"
