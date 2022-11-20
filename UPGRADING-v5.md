@@ -1,3 +1,32 @@
+## Remove psalm-pure and psalm-immutable
+
+Before v5 all data structures and most function was pure.
+Since v5 `@psalm-pure` and `@psalm-immutable` has been removed.
+It has many false positives, and it's to difficult use in the real applications.
+
+Some examples with useful code (but with false positives):
+- https://psalm.dev/r/e58c340477
+- https://psalm.dev/r/de37ebb8ed
+- https://psalm.dev/r/627b50d716
+
+Discussion of the problem: https://github.com/vimeo/psalm/issues/8116
+
+This code is invalid since v5:
+```php
+/**
+ * @param ArrayList<int> $list
+ * @return ArrayList<int>
+ * @psalm-pure
+ */
+function pureFn(ArrayList $list): ArrayList
+{
+    // ERROR: ImpureMethodCall
+    return $list->map(fn($i) => $i + 2);
+}
+```
+
+Removing `@psalm-pure` from the `pureFn` fix that problem.
+
 ## Functions BC
 
 - All collection functions with `$callback`/`$predicate` params does not allow key as second parameter anymore.
