@@ -122,3 +122,75 @@ function filterTGenericObjectTypeParam(Atomic $atomic): Option
 }
 ```
 
+- #### Filter Option
+If you want to apply an operation that returns `Option` for each element and collect only `Option::some` use `filterMap`:
+
+```php
+<?php
+
+use Fp\Collections\ArrayList;
+use Fp\Functional\Option\Option;
+
+// Inferred as ArrayList<int>
+// Result is ArrayList(3, 4, 5, 6, 7)
+$result = ArrayList::collect([1, 2, 3, 4, 5, 6, 7])
+    ->filterMap(fn($i) => $i > 5 ? Option::none() : Option::some($i + 2));
+```
+
+- #### List of all errors
+
+If you want to apply an operation that returns `Either` for each element and want collect all errors, use can use `partitionMap`+`toEither` 
+```php
+<?php
+
+use Fp\Collections\ArrayList;
+use Fp\Functional\Either\Either;
+
+// Inferred as Either<ArrayList<string>, ArrayList<int>>
+// Result is Left(ArrayList('6 is greater than 5', '7 is greater than 5'))
+$result = ArrayList::collect([1, 2, 3, 4, 5, 6, 7])
+    ->partitionMap(
+        fn($i) => $i > 5
+            ? Either::left("{$i} is greater than 5")
+            : Either::right($i),
+    )
+    ->toEither();
+```
+
+- #### Traverse
+
+If you want to apply operation for each element, but `$callback` returns `Option` or `Either`, use can use `traverseOption`/`traverseEither`:
+
+```php
+<?php
+
+use Fp\Collections\ArrayList;
+use Fp\Functional\Option\Option;
+use Tests\Mock\Foo;
+use Tests\Mock\Bar;
+
+/**
+* @param ArrayList<Foo|Bar> $list
+* @return Option<ArrayList<Foo>>
+ */
+function assertAllFoo(ArrayList $list): Option
+{
+    return $list->traverseOption(
+        fn(Foo|Bar $item) => $item instanceof Foo
+            ? Option::some($item)
+            : Option::none(),
+    );
+}
+
+$fooAndBarItems = ArrayList::collect([new Foo(a: 42), new Bar(a: true)]);
+
+// Inferred type ArrayList<Foo>
+// Result is ArrayList()
+$noItems = assertAllFoo($items)->getOrElse(ArrayList::empty());
+
+$fooItems = ArrayList::collect([new Foo(a: 42), new Foo(a: 43)]);
+
+// Inferred type ArrayList<Foo>
+// Result is ArrayList(Foo(a: 42), Foo(a: 43))
+$noItems = assertAllFoo($fooItems)->getOrElse(ArrayList::empty());
+```
