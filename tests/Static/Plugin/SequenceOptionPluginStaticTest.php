@@ -6,7 +6,9 @@ namespace Tests\Static\Plugin;
 
 use Fp\Functional\Option\Option;
 
+use function Fp\Collection\at;
 use function Fp\Collection\sequenceOption;
+use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveString;
 
@@ -90,5 +92,17 @@ final class SequenceOptionPluginStaticTest
             fn() => proveString($name),
             fn() => proveInt($age),
         ]);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return Option<array{string, int}>
+     */
+    public function sequenceT(array $data): Option
+    {
+        return sequenceOptionT(
+            at($data, 'name')->flatMap(proveString(...)),
+            at($data, 'age')->flatMap(proveInt(...)),
+        );
     }
 }
