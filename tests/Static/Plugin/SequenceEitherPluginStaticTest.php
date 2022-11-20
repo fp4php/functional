@@ -11,6 +11,7 @@ use RuntimeException;
 use function Fp\Collection\at;
 use function Fp\Collection\sequenceEither;
 use function Fp\Collection\sequenceEitherAcc;
+use function Fp\Collection\sequenceEitherT;
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveNonEmptyString;
 use function Fp\Evidence\proveString;
@@ -134,6 +135,22 @@ final class SequenceEitherPluginStaticTest
     }
 
     /**
+     * @param array<string, mixed> $data
+     * @return Either<InvalidArgumentException, array{non-empty-string, int}>
+     */
+    public function sequenceEitherT(array $data): Either
+    {
+        return sequenceEitherT(
+            at($data, 'name')
+                ->flatMap(proveNonEmptyString(...))
+                ->toRight(fn() => new InvalidArgumentException()),
+            at($data, 'age')
+                ->flatMap(proveInt(...))
+                ->toRight(fn() => new InvalidArgumentException()),
+        );
+    }
+
+    /**
      * @return Either<
      *     array{
      *         name?: "Is not non-empty-string",
@@ -146,7 +163,7 @@ final class SequenceEitherPluginStaticTest
      *     array{
      *         name: non-empty-string,
      *         age: int,
-     *         address?: array{
+     *         address: array{
      *             postcode: int,
      *             city: non-empty-string
      *         }

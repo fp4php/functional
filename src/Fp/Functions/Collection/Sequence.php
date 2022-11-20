@@ -71,6 +71,20 @@ function sequenceEither(iterable $collection): Either
 }
 
 /**
+ * Varargs version of {@see sequenceEither()}.
+ *
+ * @template E
+ * @template TVI
+ *
+ * @param Either<E, TVI> | Closure(): Either<E, TVI> ...$items
+ * @return Either<E, list<TVI>>
+ */
+function sequenceEitherT(Either|Closure ...$items): Either
+{
+    return TraverseEitherOperation::id($items)->map(asList(...));
+}
+
+/**
  * Same as {@see sequenceEither()} but accumulates all left errors.
  *
  * @template E
