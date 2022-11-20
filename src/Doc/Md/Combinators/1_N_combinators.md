@@ -1,4 +1,4 @@
-# *N combinators
+# N combinators
 - #### Introduction
 
 There are useful combinators for working with shape and tuples:
@@ -24,7 +24,8 @@ use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveArray;
 use function Fp\Evidence\proveBool;
 use function Fp\Evidence\proveInt;
-use function Fp\Json\jsonDecode;
+use function Fp\Util\jsonDecode;
+use function Fp\Callable\ctor;
 
 $json = <<<JSON
 {
@@ -46,7 +47,10 @@ function fooFromJson(string $json): Option
             fn() => at($data, 'b')->flatMap(proveBool(...)),
             fn() => at($data, 'c')->flatMap(proveBool(...)),
         ))
-        ->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
+        ->mapN(ctor(Foo::class));
+
+        // or more verbose version:
+        // ->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
 }
 ```
 
@@ -112,7 +116,7 @@ This is non-valid case and Psalm tells about it.
 
 - #### Ctor function
 
-There is useful function `Fp\Callable\ctor` that is friend of *N combinators. Examples above can be rewritten as follows:
+There is useful function `Fp\Callable\ctor` that is friend of N combinators. Examples above can be rewritten as follows:
 
 ```php
 <?php
@@ -139,7 +143,7 @@ That function supports all features meant above (skip unnecessary args, psalm is
 
 - #### Caveats
 
-For shapes with string keys the `Fp\Callable\ctor` and *N combinators use `ReflectionFunction` but for tuples not.
+For shapes with string keys the `Fp\Callable\ctor` and N combinators use `ReflectionFunction` but for tuples not.
 
 For tuples reflection is unnecessary because PHP allows to pass extra arguments to functions with array spread:
 

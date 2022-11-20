@@ -1,15 +1,16 @@
 # Combinators
 **Contents**
-- [\*N combinators](#\*N-combinators)
+- [N combinators](#N-combinators)
   - [Introduction](#Introduction)
   - [Omit values from tuple or shape](#Omit-values-from-tuple-or-shape)
   - [Ctor function](#Ctor-function)
   - [Caveats](#Caveats)
-- [\*KV combinators](#\*KV-combinators)
+- [KV combinators](#KV-combinators)
   - [Map](#Map)
   - [Functions](#Functions)
+- [T combinators](#T-combinators)
 
-# \*N combinators
+# N combinators
 
   - #### Introduction
 
@@ -38,7 +39,8 @@ use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\proveArray;
 use function Fp\Evidence\proveBool;
 use function Fp\Evidence\proveInt;
-use function Fp\Json\jsonDecode;
+use function Fp\Util\jsonDecode;
+use function Fp\Callable\ctor;
 
 $json = <<<JSON
 {
@@ -60,7 +62,10 @@ function fooFromJson(string $json): Option
             fn() => at($data, 'b')->flatMap(proveBool(...)),
             fn() => at($data, 'c')->flatMap(proveBool(...)),
         ))
-        ->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
+        ->mapN(ctor(Foo::class));
+
+        // or more verbose version:
+        // ->mapN(fn(int $a, bool $b, bool $c) => new Foo($a, $b, $c));
 }
 ```
 
@@ -128,7 +133,7 @@ three parameters. This is non-valid case and Psalm tells about it.
 
   - #### Ctor function
 
-There is useful function `Fp\Callable\ctor` that is friend of \*N
+There is useful function `Fp\Callable\ctor` that is friend of N
 combinators. Examples above can be rewritten as follows:
 
 ``` php
@@ -158,8 +163,8 @@ unnecessary args, psalm issues)
 
   - #### Caveats
 
-For shapes with string keys the `Fp\Callable\ctor` and \*N combinators
-use `ReflectionFunction` but for tuples not.
+For shapes with string keys the `Fp\Callable\ctor` and N combinators use
+`ReflectionFunction` but for tuples not.
 
 For tuples reflection is unnecessary because PHP allows to pass extra
 arguments to functions with array spread:
@@ -205,7 +210,7 @@ test(...['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4]);
 So `ReflectionFunction` used for filtering extra arguments before array
 will be spread.
 
-# \*KV combinators
+# KV combinators
 
   - #### Map
 
@@ -213,7 +218,7 @@ Before v5 `Fp\Collections\Map` used `Fp\Collections\Entry` to represents
 kv pair. It was unfriendly for ide (lack autocompletion ability).
 
 Since v5 `Fp\Collections\Entry` has been removed. Instead, each method
-of `Fp\Collections\Map` has \*KV version:
+of `Fp\Collections\Map` has KV version:
 
 ``` php
 <?php
@@ -244,7 +249,7 @@ time.
 
   - #### Functions
 
-Regular functions has \*KV combinators too:
+Regular functions has KV combinators too:
 
 ``` php
 <?php
@@ -272,3 +277,60 @@ function sumWithKeys(array $hashMap): HashMap
     return mapKV($hashMap, fn(int $key, int $value) => $key + $value);
 }
 ```
+
+Keys were passed as the second parameter $callback/$predicate prior to
+v5. At first glance, it was convenient. This leads to such problems:
+<https://psalm.dev/r/f00c0b19be>. But with v5 there is no problem
+anymore: <https://psalm.dev/r/20e91dfded>.
+
+# T combinators
+
+That combinators accepts varargs as input and return tuples.
+
+`Fp\Collection\partitionT`:
+
+``` php
+<?php
+
+use Tests\Mock\Foo;
+use Tests\Mock\Bar;
+use Tests\Mock\Baz;
+
+use function Fp\Collection\partitionT;
+
+/**
+* @param list<Foo|Bar|Baz> $list
+* @return array{list<Foo>, list<Bar>, list<Baz>}
+ */
+function example(array $list): array
+{
+    return partitionT($list, fn($i) => $i instanceof Foo, fn($i) => $i instanceof Bar);
+}
+```
+
+`Fp\Collection\sequenceOptionT`:
+
+``` php
+<?php
+
+use Fp\Functional\Option\Option;
+
+use function Fp\Evidence\proveInt;
+use function Fp\Evidence\proveString;
+use function Fp\Collection\sequenceOptionT;
+use function Fp\Collection\at;
+
+/**
+ * @param array<string, mixed> $data
+ * @return Option<array{string, int}>
+ */
+function sequenceT(array $data): Option
+{
+    return sequenceOptionT(
+        at($data, 'name')->flatMap(proveString(...)),
+        at($data, 'age')->flatMap(proveInt(...)),
+    );
+}
+```
+
+And others.

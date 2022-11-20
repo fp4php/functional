@@ -1,11 +1,11 @@
-# *KV combinators
+# KV combinators
 
 - #### Map
 
 Before v5 `Fp\Collections\Map` used `Fp\Collections\Entry` to represents kv pair.
 It was unfriendly for ide (lack autocompletion ability). 
 
-Since v5 `Fp\Collections\Entry` has been removed. Instead, each method of `Fp\Collections\Map` has *KV version:
+Since v5 `Fp\Collections\Entry` has been removed. Instead, each method of `Fp\Collections\Map` has KV version:
 
 ```php
 <?php
@@ -35,7 +35,7 @@ This makes sense since the key and value are rarely needed at the same time.
 
 - #### Functions
 
-Regular functions has *KV combinators too:
+Regular functions has KV combinators too:
 
 ```php
 <?php
@@ -63,3 +63,7 @@ function sumWithKeys(array $hashMap): HashMap
     return mapKV($hashMap, fn(int $key, int $value) => $key + $value);
 }
 ```
+
+Keys were passed as the second parameter $callback/$predicate prior to v5.
+At first glance, it was convenient. This leads to such problems: https://psalm.dev/r/f00c0b19be.
+But with v5 there is no problem anymore: https://psalm.dev/r/20e91dfded.
