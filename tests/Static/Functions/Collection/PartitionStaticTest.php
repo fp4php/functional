@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Static\Functions\Collection;
 
+use Tests\Mock\Bar;
+use Tests\Mock\Baz;
+use Tests\Mock\Foo;
+
 use function Fp\Collection\partitionT;
 
 final class PartitionStaticTest
@@ -28,5 +32,14 @@ final class PartitionStaticTest
             fn(int $v) => $v % 2 === 0,
             fn(int $v) => $v % 2 === 1,
         );
+    }
+
+    /**
+     * @param list<Foo|Bar|Baz> $list
+     * @return array{list<Foo>, list<Bar>, list<Baz>}
+     */
+    public function testExhaustiveInference(array $list): array
+    {
+        return partitionT($list, fn($i) => $i instanceof Foo, fn($i) => $i instanceof Bar);
     }
 }

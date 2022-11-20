@@ -56,16 +56,28 @@ final class PartitionFunctionReturnTypeProvider implements FunctionReturnTypePro
                         fn() => proveOf($event->getStatementsSource(), StatementsAnalyzer::class),
                         fn() => Option::some($type_params),
                     ))
-                    ->map(fn(ArrayList $args) => $args
-                        ->mapN(ctor(RefinementContext::class))
-                        ->map(RefineByPredicate::for(...))
-                        ->map(fn(CollectionTypeParams $params) => new Union(
-                            [new TList($params->val_type)],
-                        ))
-                        ->appended(new Union(
-                            [new TList($type_params->val_type)],
-                        ))
-                        ->toList())
+                    ->map(function(ArrayList $args) use ($type_params) {
+                        $init_types = $args
+                            ->mapN(ctor(RefinementContext::class))
+                            ->map(RefineByPredicate::for(...))
+                            ->map(fn(CollectionTypeParams $params) => $params->val_type);
+
+                        $last_type = $init_types
+                            ->fold($type_params->val_type)(
+                                function(Union $last, Union $current) {
+                                    $cloned = clone $last;
+                                    $cloned->removeType($current->getId());
+
+                                    return $cloned;
+                                },
+                            );
+
+                        return $init_types
+                            ->appended($last_type)
+                            ->map(fn(Union $type) => [new TList($type)])
+                            ->map(ctor(Union::class))
+                            ->toList();
+                    })
             )
             ->flatMap(fn(array $partitions) => asNonEmptyArray($partitions))
             ->map(function(array $non_empty_partitions) {
