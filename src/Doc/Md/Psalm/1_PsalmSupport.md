@@ -321,4 +321,28 @@ $ vendor/bin/psalm-plugin enable fp4php/functional
       return $separated->toEither();
   }
   ```
+
+- #### partitionT
+
+  Plugin infers each `list` type from predicates of `partitionT`:
+
+  ```php
+  <?php
   
+  declare(strict_types=1);
+  
+  use Tests\Mock\Foo;
+  use Tests\Mock\Bar;
+  use Tests\Mock\Baz;
+  
+  use function Fp\Collection\partitionT;
+  
+  /**
+   * @param list<Foo|Bar|Baz> $list
+   * @return array{list<Foo>, list<Bar>, list<Baz>}
+   */
+  function testExhaustiveInference(array $list): array
+  {
+      return partitionT($list, fn($i) => $i instanceof Foo, fn($i) => $i instanceof Bar);
+  }
+  ```
