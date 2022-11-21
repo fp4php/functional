@@ -11,6 +11,8 @@
   - [N-combinators](#N-combinators)
   - [proveTrue](#proveTrue)
   - [toEither](#toEither)
+  - [partitionT](#partitionT)
+  - [filterNotNull](#filterNotNull)
 
 # Static analysis
 
@@ -348,4 +350,50 @@ $ vendor/bin/psalm-plugin enable fp4php/functional
     {
         return $separated->toEither();
     }
+    ```
+
+  - #### partitionT
+    
+    Plugin infers each `list` type from predicates of `partitionT`:
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use Tests\Mock\Foo;
+    use Tests\Mock\Bar;
+    use Tests\Mock\Baz;
+    
+    use function Fp\Collection\partitionT;
+    
+    /**
+     * @param list<Foo|Bar|Baz> $list
+     * @return array{list<Foo>, list<Bar>, list<Baz>}
+     */
+    function testExhaustiveInference(array $list): array
+    {
+        return partitionT($list, fn($i) => $i instanceof Foo, fn($i) => $i instanceof Bar);
+    }
+    ```
+
+  - #### filterNotNull
+    
+    Plugin turns all nullable keys to possibly undefined keys:
+    
+    ``` php
+    <?php
+    
+    declare(strict_types=1);
+    
+    use function Fp\Collection\filterNotNull;
+    
+    /**
+     * @param array{name: string, age: int|null} $shape
+     * @return array{name: string, age?: int}
+     */
+     function example(array $shape): array
+     {
+         return filterNotNull($shape);
+     }
     ```
