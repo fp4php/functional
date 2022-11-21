@@ -346,3 +346,23 @@ $ vendor/bin/psalm-plugin enable fp4php/functional
       return partitionT($list, fn($i) => $i instanceof Foo, fn($i) => $i instanceof Bar);
   }
   ```
+
+- #### filterNotNull
+  
+  Plugin turns all nullable keys to possibly undefined keys:
+  ```php
+  <?php
+
+  declare(strict_types=1);
+
+  use function Fp\Collection\filterNotNull;
+
+  /**
+   * @param array{name: string, age: int|null} $shape
+   * @return array{name: string, age?: int}
+   */
+   function example(array $shape): array
+   {
+       return filterNotNull($shape);
+   }
+   ```
