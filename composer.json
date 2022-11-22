@@ -45,6 +45,7 @@
             "src/Fp/Functions/Callable/Partial.php",
             "src/Fp/Functions/Callable/PartialLeft.php",
             "src/Fp/Functions/Callable/PartialRight.php",
+            "src/Fp/Functions/Cast/AsEnumOf.php",
             "src/Fp/Functions/Cast/AsArray.php",
             "src/Fp/Functions/Cast/AsBool.php",
             "src/Fp/Functions/Cast/AsFloat.php",
