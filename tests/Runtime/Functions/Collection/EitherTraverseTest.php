@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\sequenceEither;
 use function Fp\Collection\sequenceEitherAcc;
+use function Fp\Collection\sequenceEitherT;
 use function Fp\Collection\traverseEither;
 use function Fp\Collection\traverseEitherAcc;
 use function Fp\Collection\traverseEitherKV;
@@ -126,6 +127,22 @@ final class EitherTraverseTest extends TestCase
                 fn() => Either::right(1),
                 fn() => Either::right(2),
             ])
+        );
+
+        $this->assertEquals(
+            Either::right([
+                'fst' => 1,
+                'snd' => 2,
+            ]),
+            sequenceEither([
+                'fst' => fn() => Either::right(1),
+                'snd' => fn() => Either::right(2),
+            ])
+        );
+
+        $this->assertEquals(
+            Either::right([1, 2]),
+            sequenceEitherT(Either::right(1), Either::right(2)),
         );
 
         $this->assertEquals(
