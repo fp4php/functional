@@ -112,7 +112,25 @@ function filterNotNull(iterable $collection): array
  */
 function filterMap(iterable $collection, callable $predicate): array
 {
-    $gen = FilterMapOperation::of($collection)(dropFirstArg($predicate));
+    return filterMapKV($collection, dropFirstArg($predicate));
+}
+
+/**
+ * Same as {@see filterMap()} but passing also the key to the $predicate function.
+ *
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): Option<TVO> $predicate
+ * @return array<TK, TVO>
+ *
+ * @psalm-return ($collection is list<TV> ? list<TVO> : array<TK, TVO>)
+ */
+function filterMapKV(iterable $collection, callable $predicate): array
+{
+    $gen = FilterMapOperation::of($collection)($predicate);
 
     return is_array($collection) && array_is_list($collection)
         ? asList($gen)
