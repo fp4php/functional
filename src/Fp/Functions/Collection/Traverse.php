@@ -7,6 +7,7 @@ namespace Fp\Collection;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Operations\TraverseEitherAccOperation;
+use Fp\Operations\TraverseEitherMergeOperation;
 use Fp\Operations\TraverseEitherOperation;
 use Fp\Operations\TraverseOptionOperation;
 
@@ -89,6 +90,78 @@ function traverseEither(iterable $collection, callable $callback): Either
 }
 
 /**
+ * Same as {@see traverseEither()}, but passing also the key to the $callback function.
+ *
+ * @template E
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): Either<E, TVO> $callback
+ * @return Either<E, array<TK, TVO>>
+ *
+ * @psalm-return (
+ *    $collection is non-empty-list  ? Either<E, non-empty-list<TVO>>      :
+ *    $collection is list            ? Either<E, list<TVO>>                :
+ *    $collection is non-empty-array ? Either<E, non-empty-array<TK, TVO>> :
+ *    Either<E, array<TK, TVO>>
+ * )
+ */
+function traverseEitherKV(iterable $collection, callable $callback): Either
+{
+    return TraverseEitherOperation::of($collection)($callback)->map(asArray(...));
+}
+
+/**
+ * Similar to {@see traverseEither} but collects all errors to non-empty-list.
+ *
+ * @template E
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+ * @return Either<non-empty-list<E>, array<TK, TVO>>
+ *
+ * @psalm-return (
+ *    $collection is non-empty-list  ? Either<non-empty-list<E>, non-empty-list<TVO>>      :
+ *    $collection is list            ? Either<non-empty-list<E>, list<TVO>>                :
+ *    $collection is non-empty-array ? Either<non-empty-list<E>, non-empty-array<TK, TVO>> :
+ *    Either<non-empty-list<E>, array<TK, TVO>>
+ * )
+ */
+function traverseEitherMerge(iterable $collection, callable $callback): Either
+{
+    return traverseEitherKVMerge($collection, dropFirstArg($callback));
+}
+
+/**
+ * Same as {@see traverseEitherMerge()}, but passing also the key to the $callback function.
+ *
+ * @template E
+ * @template TK of array-key
+ * @template TV
+ * @template TVO
+ *
+ * @param iterable<TK, TV> $collection
+ * @param callable(TK, TV): Either<non-empty-list<E>, TVO> $callback
+ * @return Either<non-empty-list<E>, array<TK, TVO>>
+ *
+ * @psalm-return (
+ *    $collection is non-empty-list  ? Either<non-empty-list<E>, non-empty-list<TVO>>      :
+ *    $collection is list            ? Either<non-empty-list<E>, list<TVO>>                :
+ *    $collection is non-empty-array ? Either<non-empty-list<E>, non-empty-array<TK, TVO>> :
+ *    Either<non-empty-list<E>, array<TK, TVO>>
+ * )
+ */
+function traverseEitherKVMerge(iterable $collection, callable $callback): Either
+{
+    return TraverseEitherMergeOperation::of($collection)($callback)->map(asArray(...));
+}
+
+/**
  * Same as {@see traverseEither()} but accumulates all left errors.
  *
  * @template E
@@ -140,28 +213,4 @@ function traverseEitherKVAcc(iterable $collection, callable $callback): Either
                 : asArray($gen);
         })
         ->map(asArray(...));
-}
-
-/**
- * Same as {@see traverseEither()}, but passing also the key to the $callback function.
- *
- * @template E
- * @template TK of array-key
- * @template TV
- * @template TVO
- *
- * @param iterable<TK, TV> $collection
- * @param callable(TK, TV): Either<E, TVO> $callback
- * @return Either<E, array<TK, TVO>>
- *
- * @psalm-return (
- *    $collection is non-empty-list  ? Either<E, non-empty-list<TVO>>      :
- *    $collection is list            ? Either<E, list<TVO>>                :
- *    $collection is non-empty-array ? Either<E, non-empty-array<TK, TVO>> :
- *    Either<E, array<TK, TVO>>
- * )
- */
-function traverseEitherKV(iterable $collection, callable $callback): Either
-{
-    return TraverseEitherOperation::of($collection)($callback)->map(asArray(...));
 }
