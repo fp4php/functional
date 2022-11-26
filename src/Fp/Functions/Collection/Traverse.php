@@ -7,7 +7,7 @@ namespace Fp\Collection;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Operations\TraverseEitherAccOperation;
-use Fp\Operations\TraverseEitherMergeOperation;
+use Fp\Operations\TraverseEitherMergedOperation;
 use Fp\Operations\TraverseEitherOperation;
 use Fp\Operations\TraverseOptionOperation;
 
@@ -132,13 +132,13 @@ function traverseEitherKV(iterable $collection, callable $callback): Either
  *    Either<non-empty-list<E>, array<TK, TVO>>
  * )
  */
-function traverseEitherMerge(iterable $collection, callable $callback): Either
+function traverseEitherMerged(iterable $collection, callable $callback): Either
 {
-    return traverseEitherKVMerge($collection, dropFirstArg($callback));
+    return traverseEitherMergedKV($collection, dropFirstArg($callback));
 }
 
 /**
- * Same as {@see traverseEitherMerge()}, but passing also the key to the $callback function.
+ * Same as {@see traverseEitherMerged()}, but passing also the key to the $callback function.
  *
  * @template E
  * @template TK of array-key
@@ -156,9 +156,9 @@ function traverseEitherMerge(iterable $collection, callable $callback): Either
  *    Either<non-empty-list<E>, array<TK, TVO>>
  * )
  */
-function traverseEitherKVMerge(iterable $collection, callable $callback): Either
+function traverseEitherMergedKV(iterable $collection, callable $callback): Either
 {
-    return TraverseEitherMergeOperation::of($collection)($callback)->map(asArray(...));
+    return TraverseEitherMergedOperation::of($collection)($callback)->map(asArray(...));
 }
 
 /**

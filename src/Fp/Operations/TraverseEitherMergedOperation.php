@@ -15,7 +15,7 @@ use Generator;
  *
  * @extends AbstractOperation<TK, TV>
  */
-final class TraverseEitherMergeOperation extends AbstractOperation
+final class TraverseEitherMergedOperation extends AbstractOperation
 {
     /**
      * @template E
