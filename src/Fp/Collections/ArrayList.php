@@ -249,9 +249,11 @@ final class ArrayList implements Seq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is ArrayList<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is ArrayList<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array
     {
@@ -263,9 +265,11 @@ final class ArrayList implements Seq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is ArrayList<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is ArrayList<TArray>
      *
      * @return Option<non-empty-array<TKO, TVO>>
+     * @psalm-return (TArray is list ? Option<non-empty-list<TVO>> : Option<non-empty-array<TKO, TVO>>)
      */
     public function toNonEmptyMergedArray(): Option
     {

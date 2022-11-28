@@ -168,13 +168,17 @@ interface NonEmptySetCastableOps
      * ```php
      * >>> NonEmptyHashSet::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
      * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> NonEmptyHashSet::collectNonEmpty([[1, 2], [3, 4], [5, 6]])->toMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySet<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is NonEmptySet<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array;
 
@@ -182,15 +186,19 @@ interface NonEmptySetCastableOps
      * Non-empty version of {@see NonEmptySetCastableOps::toMergedArray()}.
      *
      * ```php
-     * >>> NonEmptyHashSet::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
+     * >>> NonEmptyHashSet::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toNonEmptyMergedArray()
      * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> NonEmptyHashSet::collectNonEmpty([[1, 2], [3, 4], [5, 6]])->toNonEmptyMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySet<non-empty-array<TKO, TVO>>
+     * @template TArray of non-empty-array<TKO, TVO>
+     * @psalm-if-this-is NonEmptySet<TArray>
      *
      * @return non-empty-array<TKO, TVO>
+     * @psalm-return (TArray is list ? non-empty-list<TVO> : non-empty-array<TKO, TVO>)
      */
     public function toNonEmptyMergedArray(): array;
 }

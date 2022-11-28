@@ -275,9 +275,11 @@ final class NonEmptyHashMap implements NonEmptyMap
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyHashMap<TK, TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array
     {
@@ -289,9 +291,10 @@ final class NonEmptyHashMap implements NonEmptyMap
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashMap<TK, non-empty-array<TKO, TVO>>
+     * @template TArray of non-empty-array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyHashMap<TK, TArray>
      *
-     * @return non-empty-array<TKO, TVO>
+     * @psalm-return (TArray is non-empty-list ? non-empty-list<TVO> : non-empty-array<TKO, TVO>)
      */
     public function toNonEmptyMergedArray(): array
     {

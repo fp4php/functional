@@ -1032,9 +1032,11 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyArrayList<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyArrayList<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array
     {
@@ -1046,9 +1048,11 @@ final class NonEmptyArrayList implements NonEmptySeq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyArrayList<non-empty-array<TKO, TVO>>
+     * @template TArray of non-empty-array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyArrayList<TArray>
      *
      * @return non-empty-array<TKO, TVO>
+     * @psalm-return (TArray is non-empty-list ? non-empty-list<TVO> : non-empty-array<TKO, TVO>)
      */
     public function toNonEmptyMergedArray(): array
     {

@@ -228,9 +228,11 @@ final class HashSet implements Set
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is HashSet<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is HashSet<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array
     {
@@ -242,9 +244,11 @@ final class HashSet implements Set
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is HashSet<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is HashSet<TArray>
      *
      * @return Option<non-empty-array<TKO, TVO>>
+     * @psalm-return (TArray is list ? Option<non-empty-list<TVO>> : Option<non-empty-array<TKO, TVO>>)
      */
     public function toNonEmptyMergedArray(): Option
     {

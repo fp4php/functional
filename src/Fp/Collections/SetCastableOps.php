@@ -181,13 +181,17 @@ interface SetCastableOps
      * ```php
      * >>> HashSet::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
      * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> HashSet::collect([[1, 2], [3, 4], [5, 6]])->toMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is Set<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is Set<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array;
 
@@ -197,15 +201,19 @@ interface SetCastableOps
      * ```php
      * >>> HashSet::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toNonEmptyMergedArray()
      * => Some(['fst' => 1, 'snd' => 2, 'thr' => 3])
+     * >>> HashSet::collect([[1, 2], [3, 4], [5, 6]])->toNonEmptyMergedArray()
+     * => Some([1, 2, 3, 4, 5, 6])
      * >>> HashSet::collect([])->toNonEmptyMergedArray()
      * => None
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is Set<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is Set<TArray>
      *
      * @return Option<non-empty-array<TKO, TVO>>
+     * @psalm-return (TArray is list ? Option<non-empty-list<TVO>> : Option<non-empty-array<TKO, TVO>>)
      */
     public function toNonEmptyMergedArray(): Option;
 }

@@ -243,9 +243,11 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashSet<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyHashSet<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array
     {
@@ -257,9 +259,11 @@ final class NonEmptyHashSet implements NonEmptySet
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyHashSet<non-empty-array<TKO, TVO>>
+     * @template TArray of non-empty-array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyHashSet<TArray>
      *
      * @return non-empty-array<TKO, TVO>
+     * @psalm-return (TArray is list ? non-empty-list<TVO> : non-empty-array<TKO, TVO>)
      */
     public function toNonEmptyMergedArray(): array
     {

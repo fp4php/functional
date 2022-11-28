@@ -222,6 +222,10 @@ final class SeqTest extends TestCase
             ['fst' => 1, 'snd' => 2, 'thr' => 3],
             $seq::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray(),
         );
+        $this->assertEquals(
+            [1, 2, 3, 4, 5, 6],
+            $seq::collect([[1, 2], [3, 4], [5, 6]])->toMergedArray(),
+        );
     }
 
     /**
@@ -237,6 +241,10 @@ final class SeqTest extends TestCase
         $this->assertEquals(
             Option::some(['fst' => 1, 'snd' => 2, 'thr' => 3]),
             $seq::collect([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toNonEmptyMergedArray(),
+        );
+        $this->assertEquals(
+            Option::some([1, 2, 3, 4, 5, 6]),
+            $seq::collect([[1, 2], [3, 4], [5, 6]])->toNonEmptyMergedArray(),
         );
     }
 }

@@ -146,15 +146,19 @@ interface NonEmptyMapCastableOps
      * If each element of the collection is an associative array then call of this method will fold all elements to one associative array.
      *
      * ```php
-     * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toMergedArray()
+     * >>> NonEmptyHashMap::collectNonEmpty(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toMergedArray()
      * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> NonEmptyHashMap::collectNonEmpty(['f' => [1, 2], 's' => [3, 4], 't' => [5, 6]])->toMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyMap<TK, array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyMap<TK, TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array;
 
@@ -162,15 +166,18 @@ interface NonEmptyMapCastableOps
      * Non-empty version of {@see NonEmptyMapCastableOps::toMergedArray()}.
      *
      * ```php
-     * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toNonEmptyMergedArray()
+     * >>> NonEmptyHashMap::collectNonEmpty(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toNonEmptyMergedArray()
      * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> NonEmptyHashMap::collectNonEmpty(['f' => [1, 2], 's' => [3, 4], 't' => [5, 6]])->toNonEmptyMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptyMap<TK, non-empty-array<TKO, TVO>>
+     * @template TArray of non-empty-array<TKO, TVO>
+     * @psalm-if-this-is NonEmptyMap<TK, TArray>
      *
-     * @return non-empty-array<TKO, TVO>
+     * @psalm-return (TArray is non-empty-list ? non-empty-list<TVO> : non-empty-array<TKO, TVO>)
      */
     public function toNonEmptyMergedArray(): array;
 

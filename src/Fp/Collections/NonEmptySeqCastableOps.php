@@ -168,13 +168,17 @@ interface NonEmptySeqCastableOps
      * ```php
      * >>> NonEmptyArrayList::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toMergedArray()
      * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> NonEmptyArrayList::collectNonEmpty([[1, 2], [3, 4], [5, 6]])->toMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySeq<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is NonEmptySeq<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array;
 
@@ -183,14 +187,18 @@ interface NonEmptySeqCastableOps
      *
      * ```php
      * >>> NonEmptyArrayList::collectNonEmpty([['fst' => 1], ['snd' => 2], ['thr' => 3]])->toNonEmptyMergedArray()
-     * => Some(['fst' => 1, 'snd' => 2, 'thr' => 3])
+     * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> NonEmptyArrayList::collectNonEmpty([[1, 2], [3, 4], [5, 6]])->toNonEmptyMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is NonEmptySeq<non-empty-array<TKO, TVO>>
+     * @template TArray of non-empty-array<TKO, TVO>
+     * @psalm-if-this-is NonEmptySeq<TArray>
      *
      * @return non-empty-array<TKO, TVO>
+     * @psalm-return (TArray is non-empty-list ? non-empty-list<TVO> : non-empty-array<TKO, TVO>)
      */
     public function toNonEmptyMergedArray(): array;
 }

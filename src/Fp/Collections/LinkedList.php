@@ -245,9 +245,11 @@ abstract class LinkedList implements Seq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is LinkedList<TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array
     {
@@ -259,9 +261,11 @@ abstract class LinkedList implements Seq
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is LinkedList<array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is LinkedList<TArray>
      *
      * @return Option<non-empty-array<TKO, TVO>>
+     * @psalm-return (TArray is list ? Option<non-empty-list<TVO>> : Option<non-empty-array<TKO, TVO>>)
      */
     public function toNonEmptyMergedArray(): Option
     {

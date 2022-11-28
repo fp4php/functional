@@ -157,13 +157,17 @@ interface MapCastableOps
      * ```php
      * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toMergedArray()
      * => ['fst' => 1, 'snd' => 2, 'thr' => 3]
+     * >>> HashMap::collect(['f' => [1, 2], 's' => [3, 4], 't' => [5, 6]])->toMergedArray()
+     * => [1, 2, 3, 4, 5, 6]
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is Map<TK, array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is Map<TK, TArray>
      *
      * @return array<TKO, TVO>
+     * @psalm-return (TArray is list ? list<TVO> : array<TKO, TVO>)
      */
     public function toMergedArray(): array;
 
@@ -173,15 +177,19 @@ interface MapCastableOps
      * ```php
      * >>> HashMap::collect(['f' => ['fst' => 1], 's' => ['snd' => 2], 't' => ['thr' => 3]])->toNonEmptyMergedArray()
      * => Some(['fst' => 1, 'snd' => 2, 'thr' => 3])
+     * >>> HashMap::collect(['f' => [1, 2], 's' => [3, 4], 't' => [5, 6]])->toNonEmptyMergedArray()
+     * => Some([1, 2, 3, 4, 5, 6])
      * >>> HashMap::collect([])->toNonEmptyMergedArray()
      * => None
      * ```
      *
      * @template TKO of array-key
      * @template TVO
-     * @psalm-if-this-is Map<TK, array<TKO, TVO>>
+     * @template TArray of array<TKO, TVO>
+     * @psalm-if-this-is Map<TK, TArray>
      *
      * @return Option<non-empty-array<TKO, TVO>>
+     * @psalm-return (TArray is list ? Option<non-empty-list<TVO>> : Option<non-empty-array<TKO, TVO>>)
      */
     public function toNonEmptyMergedArray(): Option;
 
