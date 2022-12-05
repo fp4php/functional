@@ -66,6 +66,7 @@
             "src/Fp/Functions/Collection/FlatMap.php",
             "src/Fp/Functions/Collection/Traverse.php",
             "src/Fp/Functions/Collection/Sequence.php",
+            "src/Fp/Functions/Collection/Contains.php",
             "src/Fp/Functions/Collection/Fold.php",
             "src/Fp/Functions/Collection/Tap.php",
             "src/Fp/Functions/Collection/GroupBy.php",
