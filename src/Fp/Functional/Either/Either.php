@@ -682,7 +682,7 @@ abstract class Either
      * @template LO
      *
      * @param callable(R): bool $callback
-     * @param callable(): LO $left
+     * @param callable(R): LO $left
      * @return Either<L|LO, R>
      */
     public function filterOrElse(callable $callback, callable $left): Either
@@ -691,7 +691,7 @@ abstract class Either
             /** @param L $l */
             fn(mixed $l) => Either::left($l),
             /** @param R $r */
-            fn(mixed $r) => $callback($r) ? Either::right($r) : Either::left($left()),
+            fn(mixed $r) => $callback($r) ? Either::right($r) : Either::left($left($r)),
         );
     }
 

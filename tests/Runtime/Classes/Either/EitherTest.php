@@ -350,8 +350,8 @@ final class EitherTest extends TestCase
         $num = Either::right(9);
 
         $this->assertEquals(
-            Either::left('Less than 10'),
-            $num->filterOrElse(fn($i) => $i >= 10, fn() => 'Less than 10'),
+            Either::left('9 is less than 10'),
+            $num->filterOrElse(fn($i) => $i >= 10, fn($i) => "{$i} is less than 10"),
         );
     }
 
