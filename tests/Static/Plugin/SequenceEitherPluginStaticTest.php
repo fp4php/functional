@@ -11,6 +11,8 @@ use RuntimeException;
 use function Fp\Collection\at;
 use function Fp\Collection\sequenceEither;
 use function Fp\Collection\sequenceEitherAcc;
+use function Fp\Collection\sequenceEitherMerged;
+use function Fp\Collection\sequenceEitherMergedT;
 use function Fp\Collection\sequenceEitherT;
 use function Fp\Evidence\proveInt;
 use function Fp\Evidence\proveNonEmptyString;
@@ -148,6 +150,33 @@ final class SequenceEitherPluginStaticTest
                 ->flatMap(proveInt(...))
                 ->toRight(fn() => new InvalidArgumentException()),
         );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return Either<non-empty-list<-1|-2>, array{non-empty-string, int}>
+     */
+    public function sequenceEitherMergedT(array $data): Either
+    {
+        return sequenceEitherMergedT(
+            at($data, 'name')->flatMap(proveNonEmptyString(...))->toRight(fn() => [-1]),
+            at($data, 'age')->flatMap(proveInt(...))->toRight(fn() => [-2]),
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return Either<non-empty-list<-1|-2>, array{
+     *     n: non-empty-string,
+     *     a: int,
+     * }>
+     */
+    public function sequenceEitherMerged(array $data): Either
+    {
+        return sequenceEitherMerged([
+            'n' => at($data, 'name')->flatMap(proveNonEmptyString(...))->toRight(fn() => [-1]),
+            'a' => at($data, 'age')->flatMap(proveInt(...))->toRight(fn() => [-2]),
+        ]);
     }
 
     /**

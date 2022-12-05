@@ -20,6 +20,7 @@ use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
+use function Fp\Collection\contains;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\of;
 use function Fp\Evidence\proveTrue;
@@ -31,6 +32,8 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
         return [
             strtolower('Fp\Collection\sequenceEither'),
             strtolower('Fp\Collection\sequenceEitherT'),
+            strtolower('Fp\Collection\sequenceEitherMerged'),
+            strtolower('Fp\Collection\sequenceEitherMergedT'),
         ];
     }
 
@@ -67,7 +70,12 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
      */
     private static function getInputTypeFromSequenceEither(FunctionReturnTypeProviderEvent $event): Option
     {
-        return proveTrue(strtolower('Fp\Collection\sequenceEither') === $event->getFunctionId())
+        $isSequenceEither = contains($event->getFunctionId(), [
+            strtolower('Fp\Collection\sequenceEither'),
+            strtolower('Fp\Collection\sequenceEitherMerged'),
+        ]);
+
+        return proveTrue($isSequenceEither)
             ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn($args) => $args->head())
             ->flatMap(fn(CallArg $arg) => PsalmApi::$types->asSingleAtomic($arg->type))
@@ -79,7 +87,12 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
      */
     private static function getInputTypeFromSequenceEitherT(FunctionReturnTypeProviderEvent $event): Option
     {
-        return proveTrue(strtolower('Fp\Collection\sequenceEitherT') === $event->getFunctionId())
+        $isSequenceEitherT = contains($event->getFunctionId(), [
+            strtolower('Fp\Collection\sequenceEitherT'),
+            strtolower('Fp\Collection\sequenceEitherMergedT'),
+        ]);
+
+        return proveTrue($isSequenceEitherT)
             ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn(ArrayList $args) => $args->toNonEmptyArrayList())
             ->map(fn(NonEmptyArrayList $args) => new TKeyedArray(

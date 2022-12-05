@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\sequenceEither;
 use function Fp\Collection\sequenceEitherAcc;
+use function Fp\Collection\sequenceEitherMerged;
+use function Fp\Collection\sequenceEitherMergedT;
 use function Fp\Collection\sequenceEitherT;
 use function Fp\Collection\traverseEither;
 use function Fp\Collection\traverseEitherAcc;
@@ -137,6 +139,59 @@ final class EitherTraverseTest extends TestCase
                 Either::left('error'),
                 Either::right(1),
             ])
+        );
+    }
+
+    public function testSequenceMerged(): void
+    {
+        $this->assertEquals(
+            Either::right([]),
+            sequenceEitherMerged([]),
+        );
+
+        $this->assertEquals(
+            Either::right([1, 2]),
+            sequenceEitherMerged([
+                Either::right(1),
+                Either::right(2),
+            ])
+        );
+
+        $this->assertEquals(
+            Either::left(['error1']),
+            sequenceEitherMerged([
+                Either::right(1),
+                Either::left(['error1']),
+            ])
+        );
+
+        $this->assertEquals(
+            Either::left(['error1', 'error2']),
+            sequenceEitherMerged([
+                Either::right(1),
+                Either::left(['error1']),
+                Either::left(['error2']),
+            ])
+        );
+
+        $this->assertEquals(
+            Either::right([]),
+            sequenceEitherMergedT(),
+        );
+
+        $this->assertEquals(
+            Either::right([1, 2]),
+            sequenceEitherMergedT(Either::right(1), Either::right(2)),
+        );
+
+        $this->assertEquals(
+            Either::left(['error1']),
+            sequenceEitherMergedT(Either::right(1), Either::left(['error1']))
+        );
+
+        $this->assertEquals(
+            Either::left(['error1', 'error2']),
+            sequenceEitherMergedT(Either::right(1), Either::left(['error1']), Either::left(['error2']))
         );
     }
 
