@@ -13,6 +13,7 @@ use function Fp\Collection\sequenceEitherT;
 use function Fp\Collection\traverseEither;
 use function Fp\Collection\traverseEitherAcc;
 use function Fp\Collection\traverseEitherKV;
+use function Fp\Collection\traverseEitherMerged;
 
 final class EitherTraverseTest extends TestCase
 {
@@ -33,6 +34,26 @@ final class EitherTraverseTest extends TestCase
             traverseEither($c, fn(int $v) => $v < 2
                 ? Either::right($v)
                 : Either::left('Is too high'))
+        );
+    }
+
+    public function testTraverseEitherMerged(): void
+    {
+        /** @psalm-var list<int> $c */
+        $c = [1, 2, 3, 4];
+
+        $this->assertEquals(
+            Either::right($c),
+            traverseEitherMerged($c, fn(int $v) => $v < 5
+                ? Either::right($v)
+                : Either::left(["{$v} is too high"]))
+        );
+
+        $this->assertEquals(
+            Either::left(['3 is too high', '4 is too high']),
+            traverseEitherMerged($c, fn(int $v) => $v < 3
+                ? Either::right($v)
+                : Either::left(["{$v} is too high"]))
         );
     }
 
