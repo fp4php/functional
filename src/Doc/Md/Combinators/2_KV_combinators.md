@@ -49,7 +49,7 @@ use function Fp\Collection\mapKV;
  * @param array<int, int> $hashMap
  * @return array<int, int>
  */
-function addOne(HashMap $hashMap): HashMap
+function addOne(array $hashMap): array
 {
     return map($hashMap, fn(int $value) => $value + 2);
 }
@@ -58,7 +58,7 @@ function addOne(HashMap $hashMap): HashMap
  * @param array<int, int> $hashMap
  * @return array<int, int>
  */
-function sumWithKeys(array $hashMap): HashMap
+function sumWithKeys(array $hashMap): array
 {
     return mapKV($hashMap, fn(int $key, int $value) => $key + $value);
 }
