@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Option;
 
+use Closure;
 use Error;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Either\Left;
 use Fp\Functional\Either\Right;
-use Fp\Functional\WithExtensions;
 use Fp\Operations\ToStringOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
@@ -19,7 +19,6 @@ use Generator;
 use Throwable;
 
 use function Fp\Callable\toSafeClosure;
-use function Fp\Evidence\proveOf;
 
 /**
  * Option monad
@@ -161,6 +160,59 @@ abstract class Option
         return null !== $value
             ? Option::some($value)
             : Option::none();
+    }
+
+    /**
+     * Traverses over $collection and return the first Some value.
+     *
+     * ```php
+     * >>> Option::first([
+     * >>>     Option::none(),
+     * >>>     Option::some(42),
+     * >>>     Option::some(43),
+     * >>> ]);
+     * => Some(42)
+     *
+     * >>> Option::first([
+     * >>>     Option::none(),
+     * >>>     Option::none(),
+     * >>>     Option::none(),
+     * >>> ]);
+     * => None
+     * ```
+     *
+     * @template B
+     *
+     * @param non-empty-array<(Option<B>) | (Closure(): Option<B>)> $collection
+     * @return Option<B>
+     */
+    public static function first(array $collection): Option
+    {
+        foreach ($collection as $option) {
+            $o = $option instanceof Closure ? $option() : $option;
+
+            if ($o->isSome()) {
+                return $o;
+            }
+        }
+
+        return Option::none();
+    }
+
+    /**
+     * Varargs version of {@see Option::first()}.
+     *
+     * @template B
+     *
+     * @param (Option<B>) | (Closure(): Option<B>) $head
+     * @param (Option<B>) | (Closure(): Option<B>) ...$tail
+     * @return Option<B>
+     *
+     * @no-named-arguments
+     */
+    public static function firstT(Option|Closure $head, Option|Closure ...$tail): Option
+    {
+        return Option::first([$head, ...$tail]);
     }
 
     /**

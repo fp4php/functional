@@ -12,7 +12,6 @@ use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class OptionTest extends TestCase
@@ -238,5 +237,47 @@ final class OptionTest extends TestCase
     {
         $this->assertEquals(Option::some(42), Option::when(true, fn() => 42));
         $this->assertEquals(Option::none(), Option::when(false, fn() => 42));
+    }
+
+    public function testFirst(): void
+    {
+        $this->assertEquals(
+            Option::some(42),
+            Option::first([
+                Option::none(),
+                Option::some(42),
+                Option::some(43),
+            ]),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            Option::first([
+                Option::none(),
+                Option::none(),
+                Option::none(),
+            ]),
+        );
+    }
+
+    public function testFirstT(): void
+    {
+        $this->assertEquals(
+            Option::some(42),
+            Option::firstT(
+                Option::none(),
+                Option::some(42),
+                Option::some(43),
+            ),
+        );
+
+        $this->assertEquals(
+            Option::none(),
+            Option::firstT(
+                Option::none(),
+                Option::none(),
+                Option::none(),
+            ),
+        );
     }
 }

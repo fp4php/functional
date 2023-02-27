@@ -41,13 +41,15 @@ final class GetCollectionTypeParams
      */
     public static function key(Type\Union $union): Option
     {
-        return PsalmApi::$types->asSingleAtomic($union)->flatMap(
-            fn($atomic) => self::keyFromIterable($atomic)
-                ->orElse(fn() => self::keyFromGenerator($atomic))
-                ->orElse(fn() => self::keyFromArray($atomic))
-                ->orElse(fn() => self::keyFromGenericObject($atomic))
-                ->orElse(fn() => self::keyFromKeyedArray($atomic)),
-        );
+        return PsalmApi::$types
+            ->asSingleAtomic($union)
+            ->flatMap(fn($atomic) => Option::firstT(
+                fn() => self::keyFromIterable($atomic),
+                fn() => self::keyFromGenerator($atomic),
+                fn() => self::keyFromArray($atomic),
+                fn() => self::keyFromGenericObject($atomic),
+                fn() => self::keyFromKeyedArray($atomic),
+            ));
     }
 
     /**
@@ -110,14 +112,16 @@ final class GetCollectionTypeParams
      */
     public static function value(Type\Union $union): Option
     {
-        return PsalmApi::$types->asSingleAtomic($union)->flatMap(
-            fn($atomic) => self::valueFromIterable($atomic)
-                ->orElse(fn() => self::valueFromGenerator($atomic))
-                ->orElse(fn() => self::valueFromArray($atomic))
-                ->orElse(fn() => self::valueFromList($atomic))
-                ->orElse(fn() => self::valueFromGenericObject($atomic))
-                ->orElse(fn() => self::valueFromKeyedArray($atomic)),
-        );
+        return PsalmApi::$types
+            ->asSingleAtomic($union)
+            ->flatMap(fn($atomic) => Option::firstT(
+                fn() => self::valueFromIterable($atomic),
+                fn() => self::valueFromGenerator($atomic),
+                fn() => self::valueFromArray($atomic),
+                fn() => self::valueFromList($atomic),
+                fn() => self::valueFromGenericObject($atomic),
+                fn() => self::valueFromKeyedArray($atomic),
+            ));
     }
 
     /**

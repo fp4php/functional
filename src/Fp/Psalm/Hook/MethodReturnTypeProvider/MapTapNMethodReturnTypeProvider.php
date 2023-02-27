@@ -81,11 +81,13 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             //    Option<A>    -> A
             //    Either<E, A> -> A
             //    Map<K, A>    -> A
-            $current_args = yield last($templates)
-                ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                ->flatMap(of(TKeyedArray::class))
-                ->filter(fn(TKeyedArray $keyed) => self::isTuple($keyed) || self::isAssoc($keyed))
-                ->orElse(fn() => self::valueTypeIsNotValidKeyedArrayIssue($event));
+            $current_args = yield Option::firstT(
+                fn() => last($templates)
+                    ->flatMap(PsalmApi::$types->asSingleAtomic(...))
+                    ->flatMap(of(TKeyedArray::class))
+                    ->filter(fn(TKeyedArray $keyed) => self::isTuple($keyed) || self::isAssoc($keyed)),
+                fn() => self::valueTypeIsNotValidKeyedArrayIssue($event),
+            );
 
             $current_args_kind = self::isTuple($current_args)
                 ? MapTapNContextEnum::Tuple
@@ -128,12 +130,16 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                     ->count(),
             );
 
-            proveFalse($ctx->is_variadic && self::isAssoc($current_args))
-                ->orElse(fn() => self::cannotSafelyCallShapeWithVariadicArg($ctx));
+            Option::firstT(
+                fn() => proveFalse($ctx->is_variadic && self::isAssoc($current_args)),
+                fn() => self::cannotSafelyCallShapeWithVariadicArg($ctx),
+            );
 
             // Assert that $func_args is assignable to $current_args
-            proveTrue(self::isTypeContainedByType($ctx))
-                ->orElse(fn() => self::typesAreNotCompatibleIssue($ctx));
+            Option::firstT(
+                fn() => proveTrue(self::isTypeContainedByType($ctx)),
+                fn() => self::typesAreNotCompatibleIssue($ctx),
+            );
         });
 
         return null;

@@ -48,15 +48,25 @@ final class PredicateExtractor
      */
     public static function extract(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $event): Option
     {
+        return Option::firstT(
+            fn() => self::getPredicateCallback($event),
+            fn() => self::mockNotNullPredicateArg($event),
+            fn() => self::mockFirstClassCallable($event),
+        );
+    }
+
+    /**
+     * @return Option<Closure|ArrowFunction>
+     */
+    private static function getPredicateCallback(MethodReturnTypeProviderEvent|FunctionReturnTypeProviderEvent $event): Option
+    {
         $predicate_arg = $event instanceof MethodReturnTypeProviderEvent
             ? first($event->getCallArgs())
             : second($event->getCallArgs());
 
         return $predicate_arg
             ->map(fn(Arg $arg) => $arg->value)
-            ->flatMap(of([Closure::class, ArrowFunction::class]))
-            ->orElse(fn() => self::mockNotNullPredicateArg($event))
-            ->orElse(fn() => self::mockFirstClassCallable($event));
+            ->flatMap(of([Closure::class, ArrowFunction::class]));
     }
 
     /**
@@ -66,7 +76,7 @@ final class PredicateExtractor
     {
         return Option::some($event)
             ->flatMap(of(MethodReturnTypeProviderEvent::class))
-            ->flatMap(fn($e) => proveTrue($e->getMethodNameLowercase() === strtolower('filterNotNull')))
+            ->filter(fn($e) => $e->getMethodNameLowercase() === strtolower('filterNotNull'))
             ->map(fn() => new VirtualVariable('elem'))
             ->map(fn(VirtualVariable $var) => new VirtualArrowFunction([
                 'expr' => new Isset_([$var]),
