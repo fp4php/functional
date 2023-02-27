@@ -371,4 +371,88 @@ final class EitherTest extends TestCase
         $this->assertEquals(Either::right(42), Either::when(true, fn() => 42, fn() => 'err'));
         $this->assertEquals(Either::left('err'), Either::when(false, fn() => 42, fn() => 'err'));
     }
+
+    public function testFirst(): void
+    {
+        $this->assertEquals(
+            Either::right(42),
+            Either::first([
+                Either::left('err'),
+                Either::right(42),
+                Either::right(43),
+            ]),
+        );
+
+        $this->assertEquals(
+            Either::left('err3'),
+            Either::first([
+                Either::left('err1'),
+                Either::left('err2'),
+                Either::left('err3'),
+            ]),
+        );
+    }
+
+    public function testFirstT(): void
+    {
+        $this->assertEquals(
+            Either::right(42),
+            Either::firstT(
+                Either::left('err'),
+                Either::right(42),
+                Either::right(43),
+            ),
+        );
+
+        $this->assertEquals(
+            Either::left('err3'),
+            Either::firstT(
+                Either::left('err1'),
+                Either::left('err2'),
+                Either::left('err3'),
+            ),
+        );
+    }
+
+    public function testFirstMerged(): void
+    {
+        $this->assertEquals(
+            Either::right(42),
+            Either::firstMerged([
+                Either::left(['err']),
+                Either::right(42),
+                Either::right(43),
+            ]),
+        );
+
+        $this->assertEquals(
+            Either::left(['err1', 'err2', 'err3']),
+            Either::firstMerged([
+                Either::left(['err1']),
+                Either::left(['err2']),
+                Either::left(['err3']),
+            ]),
+        );
+    }
+
+    public function testFirstMergedT(): void
+    {
+        $this->assertEquals(
+            Either::right(42),
+            Either::firstMergedT(
+                Either::left(['err']),
+                Either::right(42),
+                Either::right(43),
+            ),
+        );
+
+        $this->assertEquals(
+            Either::left(['err1', 'err2', 'err3']),
+            Either::firstMergedT(
+                Either::left(['err1']),
+                Either::left(['err2']),
+                Either::left(['err3']),
+            ),
+        );
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Functional\Either;
 
+use Closure;
 use Throwable;
 use Generator;
 use Fp\Collections\ArrayList;
@@ -132,6 +133,125 @@ abstract class Either
 
             return Either::left($mapLeft($exception));
         }
+    }
+
+    /**
+     * Traverses over $collection and return the first Right value.
+     * Otherwise the last Left value.
+     *
+     * ```php
+     * >>> Either::first([
+     * >>>     Either::left('err'),
+     * >>>     Either::right(42),
+     * >>>     Either::right(43),
+     * >>> ]);
+     * => Right(42)
+     *
+     * >>> Either::first([
+     * >>>     Either::left('err1'),
+     * >>>     Option::left('err2'),
+     * >>>     Option::left('err3'),
+     * >>> ]);
+     * => Left('err3')
+     * ```
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param non-empty-array<Either<LO, RO> | Closure(): Either<LO, RO>> $collection
+     * @return Either<LO, RO>
+     */
+    public static function first(array $collection): Either
+    {
+        $lastLeft = null;
+
+        foreach ($collection as $either) {
+            $e = $either instanceof Closure ? $either() : $either;
+
+            if ($e->isRight()) {
+                return $e;
+            } else {
+                $lastLeft = $e;
+            }
+        }
+
+        return $lastLeft;
+    }
+
+    /**
+     * Varargs version of {@see Either::first()}.
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param Either<LO, RO> | Closure(): Either<LO, RO> $first
+     * @param Either<LO, RO> | Closure(): Either<LO, RO> ...$tail
+     * @return Either<LO, RO>
+     */
+    public static function firstT(Either|Closure $first, Either|Closure ...$tail): Either
+    {
+        return self::first([$first, ...$tail]);
+    }
+
+    /**
+     * Traverses over $collection and return the first Right value.
+     * Otherwise returns all left values.
+     *
+     * ```php
+     * >>> Either::first([
+     * >>>     Either::left('err'),
+     * >>>     Either::right(42),
+     * >>>     Either::right(43),
+     * >>> ]);
+     * => Right(42)
+     *
+     * >>> Either::first([
+     * >>>     Either::left('err1'),
+     * >>>     Option::left('err2'),
+     * >>>     Option::left('err3'),
+     * >>> ]);
+     * => Left(['err1', 'err2', 'err3'])
+     * ```
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param non-empty-array<Either<non-empty-list<LO>, RO> | Closure(): Either<non-empty-list<LO>, RO>> $collection
+     * @return Either<non-empty-list<LO>, RO>
+     */
+    public static function firstMerged(array $collection): Either
+    {
+        $merged = [];
+
+        foreach ($collection as $either) {
+            $e = $either instanceof Closure ? $either() : $either;
+
+            if ($e->isRight()) {
+                return $e;
+            }
+
+            /** @var Left<non-empty-list<LO>> $e */
+            foreach ($e->get() as $left) {
+                $merged[] = $left;
+            }
+        }
+
+        return Either::left($merged);
+    }
+
+    /**
+     * Varargs version of {@see Either::firstMerged()}.
+     *
+     * @template LO
+     * @template RO
+     *
+     * @param Either<non-empty-list<LO>, RO> | Closure(): Either<non-empty-list<LO>, RO> $first
+     * @param Either<non-empty-list<LO>, RO> | Closure(): Either<non-empty-list<LO>, RO> ...$tail
+     * @return Either<non-empty-list<LO>, RO>
+     */
+    public static function firstMergedT(Either|Closure $first, Either|Closure ...$tail): Either
+    {
+        return self::firstMerged([$first, ...$tail]);
     }
 
     /**
