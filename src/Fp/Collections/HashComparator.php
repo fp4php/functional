@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
+use UnitEnum;
+use BackedEnum;
 use Fp\Functional\Option\Option;
 
+use function Fp\Util\jsonEncode;
 use function Fp\Collection\map;
 use function Fp\Evidence\proveOf;
 
@@ -16,30 +19,27 @@ final class HashComparator
 {
     public static function hashEquals(mixed $lhs, mixed $rhs): bool
     {
-        return self::asHashContract($lhs)->map(fn(HashContract $lhs) => $lhs->equals($rhs))
-            ->orElse(fn() => self::asHashContract($rhs)->map(fn(HashContract $rhs) => $rhs->equals($lhs)))
+        return Option
+            ::firstT(
+                fn() => self::asHashContract($lhs)->map(fn(HashContract $lhs) => $lhs->equals($rhs)),
+                fn() => self::asHashContract($rhs)->map(fn(HashContract $rhs) => $rhs->equals($lhs)),
+            )
             ->getOrCall(fn() => self::computeHash($lhs) === self::computeHash($rhs));
     }
 
     public static function computeHash(mixed $subject): mixed
     {
         return match (true) {
-            is_object($subject) => self::computeHashForObject($subject),
-            is_array($subject) => self::computeHashForArray($subject),
+            is_object($subject) => self::asHashContract($subject)
+                ->map(fn(HashContract $hc) => $hc->hashCode())
+                ->getOrCall(fn() => spl_object_hash($subject)),
+            is_array($subject) => jsonEncode(
+                map($subject, self::computeHash(...)),
+            ),
+            $subject instanceof BackedEnum => $subject->value,
+            $subject instanceof UnitEnum => $subject->name,
             default => $subject,
         };
-    }
-
-    public static function computeHashForObject(object $object): string
-    {
-        return self::asHashContract($object)
-            ->map(fn(HashContract $hc) => $hc->hashCode())
-            ->getOrCall(fn() => spl_object_hash($object));
-    }
-
-    public static function computeHashForArray(array $arr): string
-    {
-        return json_encode(map($arr, self::computeHash(...))) ?: '';
     }
 
     /**
@@ -47,6 +47,9 @@ final class HashComparator
      */
     private static function asHashContract(mixed $value): Option
     {
-        return proveOf($value, HashContract::class)->orElse(fn() => HashContractGlobal::get($value));
+        return Option::firstT(
+            fn() => proveOf($value, HashContract::class),
+            fn() => HashContractGlobal::get($value),
+        );
     }
 }

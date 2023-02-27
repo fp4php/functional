@@ -17,6 +17,8 @@ use Fp\Streams\Stream;
 use PHPUnit\Framework\TestCase;
 use Tests\Mock\Bar;
 use Tests\Mock\Foo;
+use Tests\Mock\SimpleEnum;
+use Tests\Mock\StringEnum;
 
 final class MapTest extends TestCase
 {
@@ -202,6 +204,36 @@ final class MapTest extends TestCase
         $this->assertEquals('v1', $hm1(0)->get());
         $this->assertEquals('v2', $hm1(false)->get());
         $this->assertEquals('v3', $hm1('')->get());
+    }
+
+    public function testBackedEnum(): void
+    {
+        $actual = HashMap
+            ::collectPairs([
+                [StringEnum::FST, 1],
+                [StringEnum::SND, 2],
+                [StringEnum::THR, 3],
+            ])
+            ->appended(StringEnum::FST, 100)
+            ->get(StringEnum::FST)
+            ->toString();
+
+        $this->assertEquals('Some(100)', $actual);
+    }
+
+    public function testUnitEnum(): void
+    {
+        $actual = HashMap
+            ::collectPairs([
+                [SimpleEnum::FST, 1],
+                [SimpleEnum::SND, 2],
+                [SimpleEnum::THR, 3],
+            ])
+            ->appended(SimpleEnum::FST, 100)
+            ->get(SimpleEnum::FST)
+            ->toString();
+
+        $this->assertEquals('Some(100)', $actual);
     }
 
     public function testCount(): void
