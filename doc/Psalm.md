@@ -32,6 +32,7 @@ To enable plugin shipped with library:
 
 ``` console
 $ composer require --dev fp4php/psalm-toolkit
+$ vendor/bin/psalm-plugin enable fp4php/psalm-toolkit
 $ vendor/bin/psalm-plugin enable fp4php/functional
 ```
 
