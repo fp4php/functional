@@ -22,7 +22,7 @@ use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\MapTapNContext;
 use Fp\Psalm\Util\MapTapNContextEnum;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Issue\IfThisIsMismatch;
 use Psalm\IssueBuffer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
@@ -95,7 +95,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
 
             // $callback mapN/tapN argument
             $map_callback = yield PsalmApi::$args->getCallArgs($event)
-                ->flatMap(fn(ArrayList $args) => $args->firstElement())
+                ->firstElement()
                 ->pluck('type')
                 ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                 ->flatMap(of([TCallable::class, TClosure::class]));

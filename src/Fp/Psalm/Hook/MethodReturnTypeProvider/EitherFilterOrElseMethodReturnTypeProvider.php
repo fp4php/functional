@@ -11,7 +11,7 @@ use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;

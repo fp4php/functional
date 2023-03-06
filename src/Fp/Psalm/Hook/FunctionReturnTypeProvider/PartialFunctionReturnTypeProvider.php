@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use Psalm\CodeLocation;
 use Psalm\Internal\Type\Comparator\CallableTypeComparator;
@@ -50,9 +50,8 @@ final class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProvi
                     )
                 ))
             )))
-            ->map(function (TClosure|TCallable $closure_type) use ($event) {
+            ->map(function (TClosure|TCallable $closure_type_copy) use ($event) {
                 $is_partial_right = str_ends_with($event->getFunctionId(), 'right');
-                $closure_type_copy = clone $closure_type;
                 $closure_params = $closure_type_copy->params ?? [];
                 $tail_args = tail($event->getCallArgs());
 
@@ -73,9 +72,9 @@ final class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProvi
                     ? array_slice($closure_params, 0, -$args_tail_size)
                     : array_slice($closure_params, $args_tail_size);
 
-                $closure_type_copy->params = $free_params;
-
-                return new Union([$closure_type_copy]);
+                return new Union([
+                    $closure_type_copy->replace($free_params, $closure_type_copy->return_type),
+                ]);
             })
             ->get();
     }

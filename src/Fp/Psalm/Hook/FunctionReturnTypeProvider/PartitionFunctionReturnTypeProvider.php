@@ -11,14 +11,14 @@ use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use PhpParser\Node\FunctionLike;
 use Psalm\Internal\Analyzer\StatementsAnalyzer;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
+use Psalm\Type;
 use Psalm\Type\Atomic\TKeyedArray;
-use Psalm\Type\Atomic\TList;
 use Psalm\Type\Union;
 
 use function Fp\Evidence\of;
@@ -65,27 +65,25 @@ final class PartitionFunctionReturnTypeProvider implements FunctionReturnTypePro
                         $last_type = $init_types
                             ->fold($type_params->val_type)(
                                 function(Union $last, Union $current) {
-                                    $cloned = clone $last;
-                                    $cloned->removeType($current->getId());
+                                    $builder = $last->getBuilder();
+                                    $builder->removeType($current->getId());
 
-                                    return $cloned;
+                                    return $builder->freeze();
                                 },
                             );
 
                         return $init_types
                             ->appended($last_type)
-                            ->map(fn(Union $type) => [new TList($type)])
+                            ->map(fn(Union $type) => [Type::getListAtomic($type)])
                             ->map(ctor(Union::class))
                             ->toList();
                     })
             )
             ->flatMap(fn(array $partitions) => asNonEmptyArray($partitions))
             ->map(function(array $non_empty_partitions) {
-                $tuple = new TKeyedArray($non_empty_partitions);
-                $tuple->is_list = true;
-                $tuple->sealed = true;
-
-                return new Union([$tuple]);
+                return new Union([
+                    new TKeyedArray($non_empty_partitions, is_list: true),
+                ]);
             })
             ->get();
     }

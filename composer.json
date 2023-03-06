@@ -22,12 +22,12 @@
         "ext-simplexml": "*"
     },
     "require-dev": {
-        "vimeo/psalm": "^4.23",
+        "vimeo/psalm": "^5.7",
         "phpunit/phpunit": "^9",
         "symfony/process": "^5.2",
         "rregeer/phpunit-coverage-check": "^0.3.1",
         "php-coveralls/php-coveralls": "~2.4.0",
-        "fp4php/psalm-toolkit": "dev-main"
+        "fp4php/psalm-toolkit": "dev-psalm-v5"
     },
     "autoload": {
         "psr-4": {

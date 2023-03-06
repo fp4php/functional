@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Util\TypeRefinement;
 
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
@@ -13,6 +13,7 @@ use Fp\Functional\Option\Option;
 use Psalm\CodeLocation;
 use Psalm\Internal\Algebra;
 use Psalm\Internal\Algebra\FormulaGenerator;
+use Psalm\Storage\Assertion;
 use Psalm\Type\Reconciler;
 use Psalm\Type\Union;
 
@@ -27,7 +28,7 @@ use function Fp\Evidence\proveOf;
 use function Fp\Evidence\proveString;
 
 /**
- * @psalm-type PsalmAssertions = array<string, array<array<int, string>>>
+ * @psalm-type PsalmAssertions = array<string, list<list<Assertion>>>
  */
 final class RefineByPredicate
 {
@@ -163,12 +164,13 @@ final class RefineByPredicate
                 new_types: $assertions,
                 active_new_types: $assertions,
                 existing_types: [$arg_name => $type],
+                existing_references: [],
                 changed_var_ids: $changed_var_ids,
                 referenced_var_ids: [$arg_name => true],
                 statements_analyzer: $context->source,
                 template_type_map: $context->source->getTemplateTypeMap() ?: [],
                 code_location: new CodeLocation($context->source, $return_expr)
             ))
-            ->flatMap(fn($reconciled_types) => at($reconciled_types, $arg_name));
+            ->flatMap(fn($reconciled_types) => at($reconciled_types[0], $arg_name));
     }
 }

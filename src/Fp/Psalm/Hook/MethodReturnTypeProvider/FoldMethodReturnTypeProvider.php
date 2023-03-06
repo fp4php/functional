@@ -20,7 +20,7 @@ use Fp\Collections\Seq;
 use Fp\Collections\Set;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldOperation;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Fp\Streams\Stream;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
@@ -136,7 +136,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
                 );
             })
 
-            // Fold return type will be subsume of the TFold and the TInit
+            // Fold return type will be subsumed of the TFold and the TInit
             // when TInit = ArrayList<never>
             //  and TFold = ArrayList<int>
             // then ArrayList<never> | ArrayList<int> = ArrayList<int>
@@ -179,7 +179,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
         return new Union(
             map(asList($type->getAtomicTypes()), fn(Atomic $a) => match (true) {
                 $a instanceof TKeyedArray => $a->is_list
-                    ? new TNonEmptyList(
+                    ? Type::getNonEmptyListAtomic(
                         self::neverToMixed($a->getGenericValueType()),
                     )
                     : new TNonEmptyArray([
@@ -204,7 +204,7 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
                     $a->value,
                     map($a->type_params, fn(Union $t) => self::neverToMixed($t)),
                 ),
-                default => $a instanceof TNever || $a instanceof TEmpty ? new TMixed() : $a,
+                default => $a instanceof TNever ? new TMixed() : $a,
             }),
         );
     }

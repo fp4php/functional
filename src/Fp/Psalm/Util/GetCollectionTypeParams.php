@@ -13,7 +13,7 @@ use Fp\Collections\Set;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Generator;
 use Psalm\Type;
 
@@ -161,8 +161,9 @@ final class GetCollectionTypeParams
     private static function valueFromList(Type\Atomic $atomic): Option
     {
         return Option::some($atomic)
-            ->flatMap(of(Type\Atomic\TList::class))
-            ->map(fn(Type\Atomic\TList $a) => $a->type_param);
+            ->flatMap(of(Type\Atomic\TKeyedArray::class))
+            ->filter(fn(Type\Atomic\TKeyedArray $a) => str_contains($a->getId(), 'list'))
+            ->map(fn(Type\Atomic\TKeyedArray $a) => $a->getGenericValueType());
     }
 
     /**

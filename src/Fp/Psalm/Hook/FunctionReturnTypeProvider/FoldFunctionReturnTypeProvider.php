@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
-use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Operations\FoldOperation;
 use Fp\Psalm\Util\GetCollectionTypeParams;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TGenericObject;
@@ -29,11 +28,11 @@ final class FoldFunctionReturnTypeProvider implements FunctionReturnTypeProvider
         return Option::some($event)
             ->flatMap(fn() => sequenceOptionT(
                 fn() => PsalmApi::$args->getCallArgs($event)
-                    ->flatMap(fn(ArrayList $args) => $args->lastElement())
+                    ->lastElement()
                     ->pluck('type')
                     ->flatMap(GetCollectionTypeParams::value(...)),
                 fn() => PsalmApi::$args->getCallArgs($event)
-                    ->flatMap(fn(ArrayList $args) => $args->firstElement())
+                    ->firstElement()
                     ->pluck('type')
                     ->map(PsalmApi::$types->asNonLiteralType(...)),
             ))

@@ -7,8 +7,8 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 use Fp\Collections\ArrayList;
 use Fp\Collections\NonEmptyArrayList;
 use Fp\Functional\Option\Option;
-use Fp\PsalmToolkit\Toolkit\CallArg;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\CallArg;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TClosure;
@@ -38,15 +38,11 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
             ->orElse(fn() => self::getInputTypeFromSequenceOptionT($event))
             ->flatMap(fn(TKeyedArray $types) => traverseOption($types->properties, self::getOptionTypeParam(...)))
             ->map(function(array $mapped) {
-                $is_list = array_is_list($mapped);
-
-                $keyed = new TKeyedArray($mapped);
-                $keyed->is_list = $is_list;
-                $keyed->sealed = $is_list;
-
                 return new Union([
                     new TGenericObject(Option::class, [
-                        new Union([$keyed]),
+                        new Union([
+                            new TKeyedArray($mapped, is_list: array_is_list($mapped)),
+                        ]),
                     ]),
                 ]);
             })
@@ -59,7 +55,7 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
     private static function getInputTypeFromSequenceOption(FunctionReturnTypeProviderEvent $event): Option
     {
         return proveTrue(strtolower('Fp\Collection\sequenceOption') === $event->getFunctionId())
-            ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
+            ->map(fn() => PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn(ArrayList $args) => $args->head())
             ->map(fn(CallArg $arg) => $arg->type)
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
@@ -72,7 +68,7 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
     private static function getInputTypeFromSequenceOptionT(FunctionReturnTypeProviderEvent $event): Option
     {
         return proveTrue(strtolower('Fp\Collection\sequenceOptionT') === $event->getFunctionId())
-            ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
+            ->map(fn() => PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn(ArrayList $args) => $args->toNonEmptyArrayList())
             ->map(fn(NonEmptyArrayList $args) => new TKeyedArray(
                 $args->map(fn(CallArg $arg) => $arg->type)->toNonEmptyList(),

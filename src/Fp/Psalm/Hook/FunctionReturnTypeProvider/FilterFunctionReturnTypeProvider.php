@@ -11,9 +11,10 @@ use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
 use Fp\Psalm\Util\TypeRefinement\RefineForEnum;
 use Fp\Psalm\Util\TypeRefinement\RefinementContext;
-use Fp\PsalmToolkit\Toolkit\CallArg;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\CallArg;
+use Fp\PsalmToolkit\PsalmApi;
 use PhpParser\Node\Arg;
+use Psalm\Type;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TList;
@@ -43,7 +44,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
 
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
-        return PsalmApi::$args->getCallArgs($event)
+        return Option::some(PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn(ArrayList $args) => sequenceOptionT(
                 fn() => Option::some($event->getFunctionId() === 'fp\collection\filterkv'
                     ? RefineForEnum::KeyValue
@@ -68,7 +69,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         return first($event->getCallArgs())
             ->flatMap(fn(Arg $preserve_keys) => PsalmApi::$args->getArgType($event, $preserve_keys))
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->map(fn($atomic) => $atomic::class === TList::class || $atomic::class === TNonEmptyList::class
+            ->map(fn($atomic) => str_contains($atomic->getId(), 'non-empty-list') || str_contains($atomic->getId(), 'list')
                 ? self::listType($result)
                 : self::arrayType($result))
             ->getOrCall(fn() => self::listType($result));
@@ -89,7 +90,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
     private static function listType(CollectionTypeParams $result): Union
     {
         return new Union([
-            new TList($result->val_type),
+            Type::getListAtomic($result->val_type),
         ]);
     }
 

@@ -6,7 +6,7 @@ namespace Fp\Psalm\Util\Sequence;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic;

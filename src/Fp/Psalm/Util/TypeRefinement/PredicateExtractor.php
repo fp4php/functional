@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Util\TypeRefinement;
 
 use Fp\Functional\Option\Option;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\CallLike;

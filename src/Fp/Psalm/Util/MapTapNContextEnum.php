@@ -4,6 +4,7 @@ namespace Fp\Psalm\Util;
 
 use Fp\Functional\Option\Option;
 use Psalm\Type\Atomic\TKeyedArray;
+
 use function Fp\Collection\dropRight;
 use function Fp\Collection\init;
 use function Fp\Collection\last;
@@ -35,10 +36,7 @@ enum MapTapNContextEnum
     {
         $propsOption = proveNonEmptyList(dropRight($func_args->properties, $drop_length));
 
-        $cloned = clone $func_args;
-        $cloned->properties = $propsOption->getOrElse($cloned->properties);
-
-        return $cloned;
+        return $func_args->setProperties($propsOption->getOrElse($func_args->properties));
     }
 
     private function tuneForVariadic(TKeyedArray $func_args, TKeyedArray $current_args): TKeyedArray
@@ -61,9 +59,6 @@ enum MapTapNContextEnum
             default => Option::none(),
         };
 
-        $cloned = clone $func_args;
-        $cloned->properties = $propsOption->getOrElse($cloned->properties);
-
-        return $cloned;
+        return $func_args->setProperties($propsOption->getOrElse($func_args->properties));
     }
 }

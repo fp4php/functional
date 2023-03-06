@@ -10,8 +10,8 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Sequence\GetEitherTypeParam;
-use Fp\PsalmToolkit\Toolkit\CallArg;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\CallArg;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type;
@@ -49,13 +49,12 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
                 fn() => NonEmptyHashMap::collectNonEmpty($types->properties)
                     ->traverseOption(GetEitherTypeParam::right(...))
                     ->map(function(NonEmptyHashMap $props) {
-                        $is_list = $props->keys()->every(is_int(...));
-
-                        $keyed = new TKeyedArray($props->toNonEmptyArray());
-                        $keyed->is_list = $is_list;
-                        $keyed->sealed = $is_list;
-
-                        return new Union([$keyed]);
+                        return new Union([
+                            new TKeyedArray(
+                                properties: $props->toNonEmptyArray(),
+                                is_list: $props->keys()->every(is_int(...)),
+                            ),
+                        ]);
                     }),
             ))
             ->map(fn(array $type_params) => [
@@ -76,7 +75,7 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
         ]);
 
         return proveTrue($isSequenceEither)
-            ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
+            ->map(fn() => PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn($args) => $args->head())
             ->flatMap(fn(CallArg $arg) => PsalmApi::$types->asSingleAtomic($arg->type))
             ->flatMap(of(TKeyedArray::class));
@@ -93,7 +92,7 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
         ]);
 
         return proveTrue($isSequenceEitherT)
-            ->flatMap(fn() => PsalmApi::$args->getCallArgs($event))
+            ->map(fn() => PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn(ArrayList $args) => $args->toNonEmptyArrayList())
             ->map(fn(NonEmptyArrayList $args) => new TKeyedArray(
                 $args->map(fn(CallArg $arg) => $arg->type)->toNonEmptyList(),

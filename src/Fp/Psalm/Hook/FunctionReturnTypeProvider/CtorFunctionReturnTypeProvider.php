@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Storage\ClassLikeStorage;
@@ -29,7 +29,7 @@ final class CtorFunctionReturnTypeProvider implements FunctionReturnTypeProvider
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
         return PsalmApi::$args->getCallArgs($event)
-            ->flatMap(fn(ArrayList $args) => $args->head())
+            ->head()
             ->pluck('type')
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
             ->flatMap(of(TLiteralClassString::class))

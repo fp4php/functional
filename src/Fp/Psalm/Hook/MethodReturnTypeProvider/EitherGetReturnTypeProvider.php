@@ -11,6 +11,7 @@ use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\TypeFromPsalmAssertionResolver;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
+use Psalm\Storage\Assertion;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 use function Fp\Collection\first;
@@ -27,11 +28,11 @@ final class EitherGetReturnTypeProvider implements MethodReturnTypeProviderInter
         return TypeFromPsalmAssertionResolver::getMethodReturnType(
             event: $event,
             for_class: Either::class,
-            to_negated: fn(TGenericObject $either, string $possibility) => match (true) {
-                str_starts_with($possibility, '!' . Right::class) => new Union([
+            to_negated: fn(TGenericObject $either, Assertion $possibility) => match (true) {
+                $possibility->isNegation() && $possibility->getAtomicType()?->getId() === Right::class => new Union([
                     new TGenericObject(Left::class, [$either->type_params[0]]),
                 ]),
-                str_starts_with($possibility, '!' . Left::class) => new Union([
+                $possibility->isNegation() && $possibility->getAtomicType()?->getId() === Left::class => new Union([
                     new TGenericObject(Right::class, [$either->type_params[1]]),
                 ]),
                 default => new Union([$either]),

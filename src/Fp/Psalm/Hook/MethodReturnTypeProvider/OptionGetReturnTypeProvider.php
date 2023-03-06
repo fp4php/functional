@@ -8,8 +8,10 @@ use Fp\Functional\Option\None;
 use Fp\Functional\Option\Option;
 use Fp\Functional\Option\Some;
 use Fp\Psalm\Util\TypeFromPsalmAssertionResolver;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
+use Psalm\Storage\Assertion;
 use Psalm\Type;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TNamedObject;
@@ -28,11 +30,11 @@ final class OptionGetReturnTypeProvider implements MethodReturnTypeProviderInter
         return TypeFromPsalmAssertionResolver::getMethodReturnType(
             event: $event,
             for_class: Option::class,
-            to_negated: fn(TGenericObject $option, string $possibility) => match (true) {
-                str_starts_with($possibility, '!' . Some::class) => new Union([
+            to_negated: fn(TGenericObject $option, Assertion $possibility) => match (true) {
+                $possibility->isNegation() && $possibility->getAtomicType()?->getId() === Some::class => new Union([
                     new TNamedObject(None::class),
                 ]),
-                str_starts_with($possibility, '!' . None::class) => new Union([
+                $possibility->isNegation() && $possibility->getAtomicType()?->getId() === None::class => new Union([
                     new TGenericObject(Some::class, [$option->type_params[0]]),
                 ]),
                 default => new Union([$option]),
@@ -40,10 +42,7 @@ final class OptionGetReturnTypeProvider implements MethodReturnTypeProviderInter
             to_return_type: fn(TGenericObject $generic) => match ($generic->value) {
                 Some::class => first($generic->type_params),
                 Option::class => first($generic->type_params)->map(function(Union $union) {
-                    $nullable = clone $union;
-                    $nullable->addType(new Type\Atomic\TNull());
-
-                    return $nullable;
+                    return PsalmApi::$types->asNullable($union);
                 }),
                 default => Option::some(Type::getNull())
             },

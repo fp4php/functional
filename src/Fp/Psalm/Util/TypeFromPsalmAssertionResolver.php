@@ -6,12 +6,13 @@ namespace Fp\Psalm\Util;
 
 use Closure;
 use Fp\Functional\Option\Option;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use Psalm\Context;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
+use Psalm\Storage\Assertion;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Union;
 use function Fp\Collection\at;
@@ -23,7 +24,7 @@ final class TypeFromPsalmAssertionResolver
 {
     /**
      * @param class-string $for_class
-     * @param Closure(TGenericObject, string): Union $to_negated
+     * @param Closure(TGenericObject, Assertion): Union $to_negated
      * @param Closure(TGenericObject): Option<Union> $to_return_type
      */
     public static function getMethodReturnType(
@@ -46,17 +47,19 @@ final class TypeFromPsalmAssertionResolver
     }
 
     /**
-     * @param Closure(TGenericObject, string): Union $to_negated
+     * @param Closure(TGenericObject, Assertion): Union $to_negated
      * @param class-string $for_class
      */
     private static function negateAssertion(Context $context, string $for_class, Closure $to_negated): void
     {
         foreach ($context->clauses as $clause) {
-            if (count($clause->possibilities) > 1) {
+            if (count($clause->possibilities) !== 1) {
                 continue;
             }
 
-            foreach ($clause->possibilities as $variable => [$possibility]) {
+            foreach ($clause->possibilities as $variable => $possibility) {
+                $possibility = array_values($possibility)[0];
+
                 $reconciled = at($context->vars_in_scope, $variable)
                     ->flatMap(fn(Union $from_scope) => PsalmApi::$types->asSingleAtomicOf(TGenericObject::class, $from_scope))
                     ->filter(fn(TGenericObject $generic) => $generic->value === $for_class)

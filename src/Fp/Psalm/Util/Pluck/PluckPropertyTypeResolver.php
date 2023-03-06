@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Util\Pluck;
 
 use Fp\Functional\Option\Option;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Issue\PossiblyUndefinedArrayOffset;
 use Psalm\Issue\UndefinedPropertyFetch;
 use Psalm\IssueBuffer;

@@ -8,7 +8,7 @@ use Fp\Collections\NonEmptyHashMap;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Sequence\GetEitherTypeParam;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TGenericObject;
@@ -58,13 +58,12 @@ final class SequenceEitherAccFunctionReturnTypeProvider implements FunctionRetur
                     : $property_type
             ))
             ->map(function(NonEmptyHashMap $properties) use ($idx) {
-                $is_list = $properties->keys()->every(is_int(...));
-
-                $keyed = new TKeyedArray($properties->toNonEmptyArray());
-                $keyed->is_list = $is_list;
-                $keyed->sealed = $is_list;
-
-                return new Union([$keyed]);
+                return new Union([
+                    new TKeyedArray(
+                        properties: $properties->toNonEmptyArray(),
+                        is_list: $properties->keys()->every(is_int(...)),
+                    ),
+                ]);
             });
     }
 }

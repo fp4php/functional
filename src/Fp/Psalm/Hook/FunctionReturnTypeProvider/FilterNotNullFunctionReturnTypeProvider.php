@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Collections\NonEmptyHashMap;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type\Atomic\TKeyedArray;
@@ -35,11 +35,7 @@ final class FilterNotNullFunctionReturnTypeProvider implements FunctionReturnTyp
                         return $property;
                     }
 
-                    $possibly_undefined = clone $property;
-                    $possibly_undefined->removeType('null');
-                    $possibly_undefined->possibly_undefined = true;
-
-                    return $possibly_undefined;
+                    return PsalmApi::$types->asNonNullable($property)->setPossiblyUndefined(true);
                 })
                 ->toNonEmptyArray())
             ->map(ctor(TKeyedArray::class))

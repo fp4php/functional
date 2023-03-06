@@ -8,7 +8,7 @@ use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Pluck\PluckPropertyTypeResolver;
 use Fp\Psalm\Util\Pluck\PluckResolveContext;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\MethodReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\MethodReturnTypeProviderInterface;
 use Psalm\Type\Atomic;
@@ -37,10 +37,10 @@ final class PluckMethodReturnTypeProvider implements MethodReturnTypeProviderInt
         return proveTrue('pluck' === $event->getMethodNameLowercase())
             ->flatMap(fn() => sequenceOptionT(
                 fn() => PsalmApi::$args->getCallArgs($event)
-                    ->flatMap(fn(ArrayList $args) => $args->lastElement()
-                        ->pluck('type')
-                        ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-                        ->flatMap(of(TLiteralString::class))),
+                    ->lastElement()
+                    ->pluck('type')
+                    ->flatMap(PsalmApi::$types->asSingleAtomic(...))
+                    ->flatMap(of(TLiteralString::class)),
                 fn() => Option::fromNullable($event->getTemplateTypeParameters())
                     ->flatMap(fn(array $templates) => last($templates))
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))

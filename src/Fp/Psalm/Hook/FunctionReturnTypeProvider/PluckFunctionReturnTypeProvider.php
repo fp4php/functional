@@ -9,7 +9,7 @@ use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\GetCollectionTypeParams;
 use Fp\Psalm\Util\Pluck\PluckPropertyTypeResolver;
 use Fp\Psalm\Util\Pluck\PluckResolveContext;
-use Fp\PsalmToolkit\Toolkit\PsalmApi;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;
 use Psalm\Type;
@@ -36,7 +36,7 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
 
     public static function getFunctionReturnType(FunctionReturnTypeProviderEvent $event): ?Union
     {
-        return PsalmApi::$args->getCallArgs($event)
+        return Option::some(PsalmApi::$args->getCallArgs($event))
             ->flatMap(fn(ArrayList $args) => sequenceOptionT(
                 fn() => $args->lastElement()
                     ->pluck('type')
@@ -67,7 +67,7 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
     private static function getArrayKey(FunctionReturnTypeProviderEvent $event): Union
     {
         return PsalmApi::$args->getCallArgs($event)
-            ->flatMap(fn(ArrayList $args) => $args->head())
+            ->head()
             ->pluck('type')
             ->flatMap(GetCollectionTypeParams::key(...))
             ->getOrCall(fn() => Type::getArrayKey());
@@ -76,7 +76,7 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
     private static function itWas(string $class, FunctionReturnTypeProviderEvent $event): bool
     {
         return PsalmApi::$args->getCallArgs($event)
-            ->flatMap(fn(ArrayList $args) => $args->head())
+            ->head()
             ->pluck('type')
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
             ->map(fn(Type\Atomic $atomic) => $atomic instanceof $class)

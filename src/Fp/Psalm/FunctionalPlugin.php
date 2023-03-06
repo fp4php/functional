@@ -24,6 +24,7 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionFilterMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\OptionGetReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\PluckMethodReturnTypeProvider;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\SeparatedToEitherMethodReturnTypeProvider;
+use Fp\PsalmToolkit\PsalmApi;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Plugin\RegistrationInterface;
 use SimpleXMLElement;
@@ -35,6 +36,8 @@ final class FunctionalPlugin implements PluginEntryPointInterface
 {
     public function __invoke(RegistrationInterface $registration, ?SimpleXMLElement $config = null): void
     {
+        PsalmApi::init();
+
         $register = function(string $hook) use ($registration): void {
             if (class_exists($hook)) {
                 $registration->registerHooksFromClass($hook);
