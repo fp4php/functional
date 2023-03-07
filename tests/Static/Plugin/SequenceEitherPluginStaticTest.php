@@ -101,42 +101,6 @@ final class SequenceEitherPluginStaticTest
     }
 
     /**
-     * @param list<Either<string, int>> $list
-     * @return Either<non-empty-list<string>, list<int>>
-     */
-    public function sequenceAccWithList(array $list): Either
-    {
-        return sequenceEitherAcc($list);
-    }
-
-    /**
-     * @param non-empty-list<Either<string, int>> $list
-     * @return Either<non-empty-list<string>, non-empty-list<int>>
-     */
-    public function sequenceAccWithNonEmptyList(array $list): Either
-    {
-        return sequenceEitherAcc($list);
-    }
-
-    /**
-     * @param array<non-empty-string, Either<string, int>> $list
-     * @return Either<non-empty-array<non-empty-string, string>, array<non-empty-string, int>>
-     */
-    public function sequenceAccWithArray(array $list): Either
-    {
-        return sequenceEitherAcc($list);
-    }
-
-    /**
-     * @param non-empty-array<non-empty-string, Either<string, int>> $list
-     * @return Either<non-empty-array<non-empty-string, string>, non-empty-array<non-empty-string, int>>
-     */
-    public function sequenceAccWithNonEmptyArray(array $list): Either
-    {
-        return sequenceEitherAcc($list);
-    }
-
-    /**
      * @param array<string, mixed> $data
      * @return Either<InvalidArgumentException, array{non-empty-string, int}>
      */

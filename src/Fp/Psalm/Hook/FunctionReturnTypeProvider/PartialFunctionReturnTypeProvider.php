@@ -112,7 +112,9 @@ final class PartialFunctionReturnTypeProvider implements FunctionReturnTypeProvi
                 continue;
             }
 
-            $is_subtype_of = $codebase->isTypeContainedByType($arg_type->get(), $param_type);
+            $is_subtype_of = $arg_type
+                ->map(fn($t) => $codebase->isTypeContainedByType($t, $param_type))
+                ->getOrElse(false);
 
             if ($is_subtype_of) {
                 continue;

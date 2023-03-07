@@ -35,11 +35,9 @@ use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Atomic\TEmpty;
 use Psalm\Type\Atomic\TGenericObject;
 use Psalm\Type\Atomic\TKeyedArray;
-use Psalm\Type\Atomic\TList;
 use Psalm\Type\Atomic\TMixed;
 use Psalm\Type\Atomic\TNever;
 use Psalm\Type\Atomic\TNonEmptyArray;
-use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 
 use function Fp\Callable\ctor;
@@ -186,12 +184,6 @@ final class FoldMethodReturnTypeProvider implements MethodReturnTypeProviderInte
                         self::neverToMixed($a->getGenericKeyType()),
                         self::neverToMixed($a->getGenericValueType()),
                     ]),
-                $a instanceof TNonEmptyList => new TNonEmptyList(
-                    self::neverToMixed($a->type_param),
-                ),
-                $a instanceof TList => new TList(
-                    self::neverToMixed($a->type_param),
-                ),
                 $a instanceof TNonEmptyArray => new TNonEmptyArray([
                     self::neverToMixed($a->type_params[0]),
                     self::neverToMixed($a->type_params[1]),

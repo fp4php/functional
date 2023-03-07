@@ -7,6 +7,7 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\GetCollectionTypeParams;
+use Fp\Psalm\Util\ListChecker;
 use Fp\Psalm\Util\Pluck\PluckPropertyTypeResolver;
 use Fp\Psalm\Util\Pluck\PluckResolveContext;
 use Fp\PsalmToolkit\PsalmApi;
@@ -16,8 +17,6 @@ use Psalm\Type;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TNonEmptyArray;
 use Psalm\Type\Atomic\TKeyedArray;
-use Psalm\Type\Atomic\TNonEmptyList;
-use Psalm\Type\Atomic\TList;
 use Psalm\Type\Atomic\TLiteralString;
 use Psalm\Type\Atomic\TNamedObject;
 use Psalm\Type\Union;
@@ -52,14 +51,19 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
             ))
             ->mapN(ctor(PluckResolveContext::class))
             ->flatMap(PluckPropertyTypeResolver::resolve(...))
-            ->map(fn(Union $result) => [
-                match (true) {
-                    self::itWas(TNonEmptyList::class, $event) => new TNonEmptyList($result),
-                    self::itWas(TList::class, $event) => new TList($result),
-                    self::itWas(TNonEmptyArray::class, $event) => new TNonEmptyArray([self::getArrayKey($event), $result]),
-                    default => new TArray([self::getArrayKey($event), $result]),
-                },
-            ])
+            ->flatMap(fn(Union $result) => PsalmApi::$args->getCallArgs($event)
+                ->head()
+                ->pluck('type')
+                ->flatMap(PsalmApi::$types->asSingleAtomic(...))
+                ->map(fn(Type\Atomic $atomic) => [
+                    match (true) {
+                        $atomic instanceof TKeyedArray && ListChecker::isNonEmptyList($atomic) => Type::getNonEmptyListAtomic($result),
+                        $atomic instanceof TKeyedArray && ListChecker::isList($atomic) => Type::getListAtomic($result),
+                        $atomic instanceof TNonEmptyArray => new TNonEmptyArray([self::getArrayKey($event), $result]),
+                        default => new TArray([self::getArrayKey($event), $result]),
+                    },
+                ])
+            )
             ->map(ctor(Union::class))
             ->get();
     }
@@ -71,15 +75,5 @@ final class PluckFunctionReturnTypeProvider implements FunctionReturnTypeProvide
             ->pluck('type')
             ->flatMap(GetCollectionTypeParams::key(...))
             ->getOrCall(fn() => Type::getArrayKey());
-    }
-
-    private static function itWas(string $class, FunctionReturnTypeProviderEvent $event): bool
-    {
-        return PsalmApi::$args->getCallArgs($event)
-            ->head()
-            ->pluck('type')
-            ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->map(fn(Type\Atomic $atomic) => $atomic instanceof $class)
-            ->getOrElse(false);
     }
 }

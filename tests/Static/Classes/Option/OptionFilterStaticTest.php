@@ -14,7 +14,7 @@ final class OptionFilterStaticTest
 {
     /**
      * @param array $in
-     * @return Option<array{a: mixed, b: mixed}>
+     * @return Option<array{a: mixed, b: mixed, ...}>
      */
     public function testPreviousTypeRemainUnchanged(array $in): Option
     {

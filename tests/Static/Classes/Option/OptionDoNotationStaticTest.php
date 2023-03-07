@@ -44,12 +44,12 @@ final class OptionDoNotationStaticTest
     public function testWithFilter(): Option
     {
         return Option::do(function() {
-            /** @var int $num */
-            $num = yield Option::some(10);
+            /** @var int $n */
+            $n = 10;
 
-            if ($num < 10) {
-                return yield Option::none();
-            }
+            $num = yield $n > 10
+                ? Option::some($n)
+                : Option::none();
 
             return $num + 32;
         });
