@@ -7,7 +7,7 @@ namespace Fp\Collections;
 use Fp\Streams\Stream;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
  */
 interface NonEmptyMapCastableOps

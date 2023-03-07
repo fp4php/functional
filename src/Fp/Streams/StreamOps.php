@@ -6,9 +6,9 @@ namespace Fp\Streams;
 
 /**
  * @template-covariant TV
- * @implements StreamChainableOps<TV>
- * @implements StreamTerminalOps<TV>
- * @implements StreamCastableOps<TV>
+ * @extends StreamChainableOps<TV>
+ * @extends StreamTerminalOps<TV>
+ * @extends StreamCastableOps<TV>
  */
 interface StreamOps extends StreamChainableOps, StreamTerminalOps, StreamCastableOps
 {

@@ -8,7 +8,7 @@ use Fp\Functional\Option\Option;
 use Fp\Streams\Stream;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
  */
 interface MapCastableOps

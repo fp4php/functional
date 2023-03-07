@@ -80,7 +80,7 @@ final class ArrayList implements Seq
      */
     public static function empty(): ArrayList
     {
-        return new ArrayList([]);
+        return ArrayList::collect([]);
     }
 
     /**

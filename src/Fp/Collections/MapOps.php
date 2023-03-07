@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
  * @extends MapChainableOps<TK, TV>
  * @extends MapTerminalOps<TK, TV>
