@@ -57,13 +57,11 @@ final class SequenceEitherAccFunctionReturnTypeProvider implements FunctionRetur
                     ? PsalmApi::$types->asPossiblyUndefined($property_type)
                     : $property_type
             ))
-            ->map(function(NonEmptyHashMap $properties) use ($idx) {
-                return new Union([
-                    new TKeyedArray(
-                        properties: $properties->toNonEmptyArray(),
-                        is_list: $properties->keys()->every(is_int(...)),
-                    ),
-                ]);
-            });
+            ->map(fn(NonEmptyHashMap $properties) => PsalmApi::$types->asUnion(
+                new TKeyedArray(
+                    properties: $properties->toNonEmptyArray(),
+                    is_list: $properties->keys()->every(is_int(...)),
+                ),
+            ));
     }
 }

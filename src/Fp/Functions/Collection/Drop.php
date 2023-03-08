@@ -28,11 +28,10 @@ use function Fp\Cast\asList;
  */
 function drop(iterable $collection, int $length): array
 {
+    $isList = is_array($collection) && array_is_list($collection);
     $gen = DropOperation::of($collection)($length);
 
-    return is_array($collection) && array_is_list($collection)
-        ? asList($gen)
-        : asArray($gen);
+    return $isList ? asList($gen) : asArray($gen);
 }
 
 /**
@@ -73,9 +72,8 @@ function dropRight(iterable $collection, int $length): array
  */
 function dropWhile(iterable $collection, callable $predicate): array
 {
+    $isList = is_array($collection) && array_is_list($collection);
     $gen = DropWhileOperation::of($collection)(dropFirstArg($predicate));
 
-    return is_array($collection) && array_is_list($collection)
-        ? asList($gen)
-        : asArray($gen);
+    return $isList ? asList($gen) : asArray($gen);
 }

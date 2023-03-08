@@ -20,7 +20,7 @@ use Tests\Mock\Foo;
 final class NonEmptySeqOpsTest extends TestCase
 {
     /**
-     * @return list<array{class-string<NonEmptySeq>}>
+     * @return list<array{class-string<NonEmptySeq>, class-string<Seq>}>
      */
     public function seqClassDataProvider(): array
     {

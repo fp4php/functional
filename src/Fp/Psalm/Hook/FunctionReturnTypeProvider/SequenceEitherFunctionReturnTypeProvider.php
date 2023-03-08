@@ -48,14 +48,12 @@ final class SequenceEitherFunctionReturnTypeProvider implements FunctionReturnTy
                     ->map(fn(array $left_cases) => Type::combineUnionTypeArray($left_cases, PsalmApi::$codebase)),
                 fn() => NonEmptyHashMap::collectNonEmpty($types->properties)
                     ->traverseOption(GetEitherTypeParam::right(...))
-                    ->map(function(NonEmptyHashMap $props) {
-                        return new Union([
-                            new TKeyedArray(
-                                properties: $props->toNonEmptyArray(),
-                                is_list: $props->keys()->every(is_int(...)),
-                            ),
-                        ]);
-                    }),
+                    ->map(fn(NonEmptyHashMap $props) => PsalmApi::$types->asUnion(
+                        new TKeyedArray(
+                            properties: $props->toNonEmptyArray(),
+                            is_list: $props->keys()->every(is_int(...)),
+                        ),
+                    )),
             ))
             ->map(fn(array $type_params) => [
                 new TGenericObject(Either::class, $type_params),

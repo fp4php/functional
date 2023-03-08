@@ -50,6 +50,7 @@ final class EitherDoNotationTest extends TestCase
             $a = 1;
             $b = yield Either::right(2);
             $c = yield new Right(3);
+            /** @psalm-suppress NoValue */
             $d = yield Either::left('error!');
             $e = 5;
 

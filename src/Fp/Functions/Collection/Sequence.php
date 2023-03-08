@@ -139,12 +139,12 @@ function sequenceEitherT(Either|Closure ...$items): Either
  */
 function sequenceEitherAcc(iterable $collection): Either
 {
+    $isList = is_array($collection) && array_is_list($collection);
+
     return TraverseEitherAccOperation::id($collection)
-        ->mapLeft(function($gen) use ($collection) {
+        ->mapLeft(function($gen) use ($collection, $isList) {
             /** @var non-empty-array<TK, E> */
-            return is_array($collection) && array_is_list($collection)
-                ? asList($gen)
-                : asArray($gen);
+            return $isList ? asList($gen) : asArray($gen);
         })
         ->map(asArray(...));
 }

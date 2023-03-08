@@ -39,7 +39,6 @@ use function Fp\Collection\second;
 use function Fp\Collection\sequenceOptionT;
 use function Fp\Evidence\of;
 use function Fp\Evidence\proveNonEmptyString;
-use function Fp\Evidence\proveTrue;
 
 final class PredicateExtractor
 {
@@ -183,12 +182,12 @@ final class PredicateExtractor
     {
         return Option::some($source)
             ->flatMap(of(StatementsAnalyzer::class))
-            ->flatMap(fn(StatementsAnalyzer $analyzer) => Option
-                ::when(
+            ->flatMap(fn(StatementsAnalyzer $analyzer) => Option::firstT(
+                fn() => Option::when(
                     cond: PsalmApi::$codebase->functions->functionExists($analyzer, strtolower($function_id)),
                     some: fn() => PsalmApi::$codebase->functions->getStorage($analyzer, strtolower($function_id)),
-                )
-                ->orElse(fn() => Option::when(
+                ),
+                fn() => Option::when(
                     cond: PsalmApi::$codebase->methods->hasStorage(MethodIdentifier::wrap($function_id)),
                     some: fn() => PsalmApi::$codebase->methods->getStorage(MethodIdentifier::wrap($function_id)),
                 ))

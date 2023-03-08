@@ -205,12 +205,12 @@ function traverseEitherAcc(iterable $collection, callable $callback): Either
  */
 function traverseEitherKVAcc(iterable $collection, callable $callback): Either
 {
+    $isList = is_array($collection) && array_is_list($collection);
+
     return TraverseEitherAccOperation::of($collection)($callback)
-        ->mapLeft(function($gen) use ($collection) {
+        ->mapLeft(function($gen) use ($isList, $collection) {
             /** @var non-empty-array<TK, E> */
-            return is_array($collection) && array_is_list($collection)
-                ? asList($gen)
-                : asArray($gen);
+            return $isList ? asList($gen) : asArray($gen);
         })
         ->map(asArray(...));
 }

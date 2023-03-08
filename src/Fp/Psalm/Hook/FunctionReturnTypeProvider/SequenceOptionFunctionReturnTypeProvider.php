@@ -37,15 +37,16 @@ final class SequenceOptionFunctionReturnTypeProvider implements FunctionReturnTy
         return self::getInputTypeFromSequenceOption($event)
             ->orElse(fn() => self::getInputTypeFromSequenceOptionT($event))
             ->flatMap(fn(TKeyedArray $types) => traverseOption($types->properties, self::getOptionTypeParam(...)))
-            ->map(function(array $mapped) {
-                return new Union([
-                    new TGenericObject(Option::class, [
-                        new Union([
-                            new TKeyedArray($mapped, is_list: array_is_list($mapped)),
-                        ]),
+            ->map(fn(array $mapped) => PsalmApi::$types->asUnion(
+                new TGenericObject(Option::class, [
+                    new Union([
+                        new TKeyedArray(
+                            properties: $mapped,
+                            is_list: array_is_list($mapped),
+                        ),
                     ]),
-                ]);
-            })
+                ]),
+            ))
             ->get();
     }
 

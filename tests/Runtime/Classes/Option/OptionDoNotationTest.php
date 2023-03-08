@@ -51,6 +51,7 @@ final class OptionDoNotationTest extends TestCase
             $a = 1;
             $b = yield Option::fromNullable(2);
             $c = yield Option::some(3);
+            /** @psalm-suppress NoValue */
             $d = yield Option::none();
             $e = 5;
 

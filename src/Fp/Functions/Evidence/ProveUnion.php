@@ -70,6 +70,8 @@ function union(array $evidences): Closure
  * @param Closure(mixed): Option<T> $evidence
  * @param Closure(mixed): Option<T> ...$evidences
  * @return Closure(mixed): Option<T>
+ *
+ * @no-named-arguments
  */
 function unionT(Closure $evidence, Closure ...$evidences): Closure
 {

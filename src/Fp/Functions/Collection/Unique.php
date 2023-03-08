@@ -9,7 +9,6 @@ use Fp\Operations\UniqueByOperation;
 use function Fp\Cast\asArray;
 use function Fp\Cast\asList;
 
-
 /**
  * Returns collection unique elements
  *
@@ -25,11 +24,9 @@ use function Fp\Cast\asList;
  */
 function unique(iterable $collection): array
 {
-    $gen = UniqueByOperation::of($collection)(fn(mixed $i): mixed => $i);
-
     return is_array($collection) && array_is_list($collection)
-        ? asList($gen)
-        : asArray($gen);
+        ? asList(UniqueByOperation::of($collection)(fn(mixed $i): mixed => $i))
+        : asArray(UniqueByOperation::of($collection)(fn(mixed $i): mixed => $i));
 }
 
 /**
@@ -51,9 +48,7 @@ function unique(iterable $collection): array
  */
 function uniqueBy(iterable $collection, callable $callback): array
 {
-    $gen = UniqueByOperation::of($collection)($callback);
-
     return is_array($collection) && array_is_list($collection)
-        ? asList($gen)
-        : asArray($gen);
+        ? asList(UniqueByOperation::of($collection)($callback))
+        : asArray(UniqueByOperation::of($collection)($callback));
 }

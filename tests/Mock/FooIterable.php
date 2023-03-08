@@ -12,16 +12,18 @@ use Iterator;
  */
 class FooIterable implements Iterator
 {
-    public function current()
+    public function current(): int
+    {
+        return 0;
+    }
+
+    public function next(): void
     {
     }
 
-    public function next()
+    public function key(): int
     {
-    }
-
-    public function key()
-    {
+        return 0;
     }
 
     public function valid(): bool
@@ -29,7 +31,7 @@ class FooIterable implements Iterator
         return false;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
     }
 }

@@ -53,8 +53,6 @@ use Fp\Functional\Option\Option;
  *         ? ($vType is null ? Option<array<TK, TV>> : Option<array<TK, TVO>>)
  *         : ($vType is null ? Option<array<TKO, TV>> : Option<array<TKO, TVO>>)
  * )
- *
- * @psalm-suppress MixedAssignment, PossiblyNullArrayOffset, InvalidReturnStatement, InvalidReturnType
  */
 function proveArray(mixed $value, null|callable $kType = null, null|callable $vType = null): Option
 {

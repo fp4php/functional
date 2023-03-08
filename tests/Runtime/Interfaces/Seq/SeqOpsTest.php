@@ -31,7 +31,7 @@ final class SeqOpsTest extends TestCase
     }
 
     /**
-     * @return list<array{class-string<Seq>}>
+     * @return list<array{class-string<Seq>, class-string<NonEmptySeq>}>
      */
     public function seqWithNonEmptySeqClassDataProvider(): array
     {

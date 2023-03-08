@@ -6,6 +6,7 @@ namespace Fp\Psalm\Hook\FunctionReturnTypeProvider;
 
 use Fp\Collections\ArrayList;
 use Fp\Psalm\Util\GetCollectionTypeParams;
+use Fp\Psalm\Util\ListChecker;
 use Fp\Psalm\Util\TypeRefinement\CollectionTypeParams;
 use Fp\Psalm\Util\TypeRefinement\PredicateExtractor;
 use Fp\Psalm\Util\TypeRefinement\RefineByPredicate;
@@ -69,7 +70,7 @@ final class FilterFunctionReturnTypeProvider implements FunctionReturnTypeProvid
         return first($event->getCallArgs())
             ->flatMap(fn(Arg $preserve_keys) => PsalmApi::$args->getArgType($event, $preserve_keys))
             ->flatMap(PsalmApi::$types->asSingleAtomic(...))
-            ->map(fn($atomic) => str_contains($atomic->getId(), 'non-empty-list') || str_contains($atomic->getId(), 'list')
+            ->map(fn($atomic) => $atomic instanceof Type\Atomic\TKeyedArray && (ListChecker::isList($atomic) || ListChecker::isNonEmptyList($atomic))
                 ? self::listType($result)
                 : self::arrayType($result))
             ->getOrCall(fn() => self::listType($result));

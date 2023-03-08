@@ -30,13 +30,9 @@ final class FilterNotNullFunctionReturnTypeProvider implements FunctionReturnTyp
             ->flatMap(of(TKeyedArray::class))
             ->filter(fn(TKeyedArray $keyed) => !$keyed->is_list)
             ->map(fn(TKeyedArray $keyed) => NonEmptyHashMap::collectNonEmpty($keyed->properties)
-                ->map(function(Union $property) {
-                    if (!$property->isNullable()) {
-                        return $property;
-                    }
-
-                    return PsalmApi::$types->asNonNullable($property)->setPossiblyUndefined(true);
-                })
+                ->map(fn(Union $property) => $property->isNullable()
+                    ? PsalmApi::$types->asNonNullable($property)->setPossiblyUndefined(true)
+                    : $property)
                 ->toNonEmptyArray())
             ->map(ctor(TKeyedArray::class))
             ->map(fn($keyed) => new Union([$keyed]))
