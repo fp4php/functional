@@ -442,7 +442,8 @@ abstract class Either
      * => true
      * ```
      *
-     * @psalm-assert-if-true Left<L>&\Fp\Functional\Assertion<"must-be-left"> $this
+     * @psalm-assert-if-true Left<L>&\Fp\Functional\Assertion $this
+     * @psalm-assert-if-false Right<R>&\Fp\Functional\Assertion $this
      */
     public function isLeft(): bool
     {
@@ -460,7 +461,8 @@ abstract class Either
      * => false
      * ```
      *
-     * @psalm-assert-if-true Right<R>&\Fp\Functional\Assertion<"must-be-right"> $this
+     * @psalm-assert-if-true Right<R>&\Fp\Functional\Assertion $this
+     * @psalm-assert-if-false Left<L>&\Fp\Functional\Assertion $this
      */
     public function isRight(): bool
     {

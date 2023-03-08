@@ -6,6 +6,8 @@ namespace Tests\Static\Classes\Either;
 
 use Fp\Functional\Either\Either;
 
+use function Fp\Evidence\proveTrue;
+
 final class EitherDoNotationStaticTest
 {
     /**
@@ -19,9 +21,7 @@ final class EitherDoNotationStaticTest
             /** @var int $num2 */
             $num2 = yield Either::right(20);
 
-            if ($num1 < 10) {
-                return yield Either::left("num1 less than 10");
-            }
+            yield proveTrue($num1 < 10)->toRight(fn() => 'num1 less than 10');
 
             return $num1 + $num2;
         });

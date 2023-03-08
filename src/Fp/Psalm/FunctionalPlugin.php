@@ -44,6 +44,11 @@ final class FunctionalPlugin implements PluginEntryPointInterface
             }
         };
 
+        $register(ProveTrueExpressionAnalyzer::class);
+
+        $register(OptionGetReturnTypeProvider::class);
+        $register(EitherGetReturnTypeProvider::class);
+
         $register(PartialFunctionReturnTypeProvider::class);
         $register(PartitionFunctionReturnTypeProvider::class);
         $register(PluckFunctionReturnTypeProvider::class);
@@ -52,10 +57,6 @@ final class FunctionalPlugin implements PluginEntryPointInterface
         $register(CollectionFilterMethodReturnTypeProvider::class);
         $register(OptionFilterMethodReturnTypeProvider::class);
         $register(EitherFilterOrElseMethodReturnTypeProvider::class);
-
-        $register(ProveTrueExpressionAnalyzer::class);
-        $register(EitherGetReturnTypeProvider::class);
-        $register(OptionGetReturnTypeProvider::class);
 
         $register(SequenceOptionFunctionReturnTypeProvider::class);
         $register(SequenceEitherFunctionReturnTypeProvider::class);

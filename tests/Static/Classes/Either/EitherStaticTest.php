@@ -43,7 +43,10 @@ final class EitherStaticTest
      */
     public function testMap(): int|string
     {
-        return Either::left(1)
+        /** @var Either<1, float> */
+        $either = Either::left(1);
+
+        return $either
             ->map(fn(mixed $v) => (string) $v)
             ->get();
     }
@@ -77,11 +80,12 @@ final class EitherStaticTest
      */
     public function testMapLeft(): Either
     {
-        $getEither = fn (): Either => rand(0, 1)
+        /** @var Either<string, int> */
+        $getEither = rand(0, 1)
             ? Either::right(1)
             : Either::left("error!");
 
-        return $getEither()
+        return $getEither
             ->flatMap(fn(int $v) => Either::right((float) $v))
             ->mapLeft(fn(string $e) => (bool) $e)
             ->mapLeft(fn(bool $e) => (int) $e);
