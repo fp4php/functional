@@ -68,6 +68,16 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
         ];
     }
 
+    private static function makeUnsealed(TKeyedArray $keyedArray): TKeyedArray
+    {
+        return new TKeyedArray(
+            properties: $keyedArray->properties,
+            fallback_params: [$keyedArray->getGenericKeyType(), $keyedArray->getGenericValueType()],
+            is_list: $keyedArray->is_list,
+            from_docblock: false,
+        );
+    }
+
     public static function getMethodReturnType(MethodReturnTypeProviderEvent $event): ?Union
     {
         Option::do(function() use ($event) {
@@ -85,7 +95,8 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                 fn() => last($templates)
                     ->flatMap(PsalmApi::$types->asSingleAtomic(...))
                     ->flatMap(of(TKeyedArray::class))
-                    ->filter(fn(TKeyedArray $keyed) => self::isTuple($keyed) || self::isAssoc($keyed)),
+                    ->filter(fn(TKeyedArray $keyed) => self::isTuple($keyed) || self::isAssoc($keyed))
+                    ->map(self::makeUnsealed(...)),
                 fn() => self::valueTypeIsNotValidKeyedArrayIssue($event),
             );
 
@@ -112,7 +123,11 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
                             : $param_type;
                     })
                     ->toNonEmptyArray())
-                ->map(ctor(TKeyedArray::class));
+                ->map(fn(array $properties) => new TKeyedArray(
+                    properties: $properties,
+                    is_list: array_is_list($properties),
+                ))
+                ->map(self::makeUnsealed(...));
 
             $ctx = new MapTapNContext(
                 event: $event,
@@ -223,8 +238,8 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
 
         $issue = new IfThisIsMismatch(
             message: implode(', ', [
-                "Object must be type of {$mappable_class}<{$tuned_func_args->getId()}>",
-                "actual type {$mappable_class}<{$ctx->current_args->getId()}>",
+                "Object must be type of {$mappable_class}<{$tuned_func_args->makeSealed()->getId()}>",
+                "actual type {$mappable_class}<{$ctx->current_args->makeSealed()->getId()}>",
             ]),
             code_location: $ctx->event->getCodeLocation(),
         );

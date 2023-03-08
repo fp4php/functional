@@ -266,4 +266,40 @@ final class MapTapNPluginStaticTest
         /** @psalm-suppress IfThisIsMismatch */
         return $args->mapN(self::methodWithOptionalParams(...));
     }
+
+    /**
+     * @param Option<array{a: int, b: bool, c: bool, d: string}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllArgumentsToMethodWithOptionalParamsAndOneUnknownUsingShape(Option $args): Option
+    {
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
+
+    /**
+     * @param Option<array{int, bool, bool, string, int}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllArgumentsAndTwoUnnecessaryArgumentToMethodWithOptionalParams(Option $args): Option
+    {
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
+
+    /**
+     * @param Option<array{int, bool, bool, string}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutAllArgumentsAndOneUnnecessaryArgumentToMethodWithOptionalParams(Option $args): Option
+    {
+        return $args->mapN(self::methodWithOptionalParams(...));
+    }
+
+    /**
+     * @param Option<array{int, bool, bool, string}> $args
+     * @return Option<Foo>
+     */
+    public static function testPutMoreThanRequiredArgumentToRegularMethod(Option $args): Option
+    {
+        return $args->mapN(self::methodWithRegularParams(...));
+    }
 }
