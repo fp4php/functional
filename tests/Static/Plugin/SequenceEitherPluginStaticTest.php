@@ -10,7 +10,6 @@ use RuntimeException;
 
 use function Fp\Collection\at;
 use function Fp\Collection\sequenceEither;
-use function Fp\Collection\sequenceEitherAcc;
 use function Fp\Collection\sequenceEitherMerged;
 use function Fp\Collection\sequenceEitherMergedT;
 use function Fp\Collection\sequenceEitherT;
@@ -140,38 +139,6 @@ final class SequenceEitherPluginStaticTest
         return sequenceEitherMerged([
             'n' => at($data, 'name')->flatMap(proveNonEmptyString(...))->toRight(fn() => [-1]),
             'a' => at($data, 'age')->flatMap(proveInt(...))->toRight(fn() => [-2]),
-        ]);
-    }
-
-    /**
-     * @return Either<
-     *     array{
-     *         name?: "Is not non-empty-string",
-     *         age?: "Is not int",
-     *         address?: array{
-     *             postcode?: "Is not int",
-     *             city?: "Is not string"
-     *         }
-     *     },
-     *     array{
-     *         name: non-empty-string,
-     *         age: int,
-     *         address: array{
-     *             postcode: int,
-     *             city: non-empty-string
-     *         }
-     *     }
-     * >
-     */
-    public function sequenceAccShape(array $data): Either
-    {
-        return sequenceEitherAcc([
-            'name' => at($data, 'name')->flatMap(proveNonEmptyString(...))->toRight(fn() => 'Is not non-empty-string'),
-            'age' => at($data, 'age')->flatMap(proveInt(...))->toRight(fn() => 'Is not int'),
-            'address' => sequenceEitherAcc([
-                'postcode' => at($data, 'postcode')->flatMap(proveInt(...))->toRight(fn() => 'Is not int'),
-                'city' => at($data, 'city')->flatMap(proveNonEmptyString(...))->toRight(fn() => 'Is not string'),
-            ]),
         ]);
     }
 }

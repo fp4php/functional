@@ -7,7 +7,6 @@ namespace Fp\Collection;
 use Closure;
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
-use Fp\Operations\TraverseEitherAccOperation;
 use Fp\Operations\TraverseEitherMergedOperation;
 use Fp\Operations\TraverseEitherOperation;
 use Fp\Operations\TraverseOptionOperation;
@@ -72,6 +71,20 @@ function sequenceEither(iterable $collection): Either
 }
 
 /**
+ * Varargs version of {@see sequenceEither()}.
+ *
+ * @template E
+ * @template TVI
+ *
+ * @param Either<E, TVI> | Closure(): Either<E, TVI> ...$items
+ * @return Either<E, list<TVI>>
+ */
+function sequenceEitherT(Either|Closure ...$items): Either
+{
+    return TraverseEitherOperation::id($items)->map(asList(...));
+}
+
+/**
  * Same as {@see traverseEither()} but merge all left errors into non-empty-list.
  *
  * @template E
@@ -105,46 +118,4 @@ function sequenceEitherMerged(iterable $collection): Either
 function sequenceEitherMergedT(Either|Closure ...$items): Either
 {
     return TraverseEitherMergedOperation::id($items)->map(asList(...));
-}
-
-/**
- * Varargs version of {@see sequenceEither()}.
- *
- * @template E
- * @template TVI
- *
- * @param Either<E, TVI> | Closure(): Either<E, TVI> ...$items
- * @return Either<E, list<TVI>>
- */
-function sequenceEitherT(Either|Closure ...$items): Either
-{
-    return TraverseEitherOperation::id($items)->map(asList(...));
-}
-
-/**
- * Same as {@see sequenceEither()} but accumulates all left errors.
- *
- * @template E
- * @template TK of array-key
- * @template TVI
- *
- * @param iterable<TK, Either<E, TVI> | Closure(): Either<E, TVI>> $collection
- * @return Either<non-empty-array<TK, E>, array<TK, TVI>>
- * @psalm-return (
- *    $collection is non-empty-list  ? Either<non-empty-list<E>, non-empty-list<TVI>>           :
- *    $collection is list            ? Either<non-empty-list<E>, list<TVI>>                     :
- *    $collection is non-empty-array ? Either<non-empty-array<TK, E>, non-empty-array<TK, TVI>> :
- *    Either<non-empty-array<TK, E>, array<TK, TVI>>
- * )
- */
-function sequenceEitherAcc(iterable $collection): Either
-{
-    $isList = is_array($collection) && array_is_list($collection);
-
-    return TraverseEitherAccOperation::id($collection)
-        ->mapLeft(function($gen) use ($collection, $isList) {
-            /** @var non-empty-array<TK, E> */
-            return $isList ? asList($gen) : asArray($gen);
-        })
-        ->map(asArray(...));
 }
