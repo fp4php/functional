@@ -6,6 +6,7 @@ namespace Fp\Operations;
 
 use Stringable;
 use Throwable;
+
 use function Fp\Collection\map;
 use function Fp\Collection\mapKV;
 
@@ -14,10 +15,12 @@ final class ToStringOperation
     public static function of(mixed $value): string
     {
         if ($value instanceof Throwable) {
-            $message = $value->getMessage();
+            $message = ToStringOperation::of($value->getMessage());
             $exClass = $value::class;
 
-            return empty($message) ? "{$exClass}()" : "{$exClass}('{$message}')";
+            return $message !== "''"
+                ? "{$exClass}({$message})"
+                : "{$exClass}()";
         }
 
         if ($value instanceof Stringable) {
