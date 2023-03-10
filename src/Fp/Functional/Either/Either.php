@@ -276,13 +276,11 @@ abstract class Either
      * => Left('error!')
      * ```
      *
-     * @todo Replace Either<TL, mixed> with Either<TL, TR> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
-     *
      * @template TL
      * @template TR
      * @template TO
      *
-     * @param callable(): Generator<int, Either<TL, mixed>, TR, TO> $computation
+     * @param callable(): Generator<int, Either<TL, TR>, TR, TO> $computation
      * @return Either<TL, TO>
      */
     public static function do(callable $computation): Either {
@@ -291,14 +289,11 @@ abstract class Either
         while ($generator->valid()) {
             $currentStep = $generator->current();
 
-            if ($currentStep->isRight()) {
-                /** @psalm-suppress MixedArgument */
-                $generator->send($currentStep->get());
-            } else {
-                /** @var Either<TL, TO> $currentStep */
+            if ($currentStep->isLeft()) {
                 return $currentStep;
             }
 
+            $generator->send($currentStep->get());
         }
 
         return Either::right($generator->getReturn());
