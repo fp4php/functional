@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Fp\Collections;
 
 use Countable;
-use Iterator;
 use IteratorAggregate;
 
 /**

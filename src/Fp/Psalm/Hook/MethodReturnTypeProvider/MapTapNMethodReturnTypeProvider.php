@@ -34,7 +34,6 @@ use Psalm\Type\Atomic\TClosure;
 use Psalm\Type\Atomic\TKeyedArray;
 use Psalm\Type\Union;
 
-use function Fp\Callable\ctor;
 use function Fp\Collection\every;
 use function Fp\Collection\exists;
 use function Fp\Collection\keys;

@@ -18,8 +18,6 @@ use PhpParser\Node\Arg;
 use Psalm\Type;
 use Psalm\Type\Atomic\TArray;
 use Psalm\Type\Atomic\TGenericObject;
-use Psalm\Type\Atomic\TList;
-use Psalm\Type\Atomic\TNonEmptyList;
 use Psalm\Type\Union;
 use Psalm\Plugin\EventHandler\Event\FunctionReturnTypeProviderEvent;
 use Psalm\Plugin\EventHandler\FunctionReturnTypeProviderInterface;

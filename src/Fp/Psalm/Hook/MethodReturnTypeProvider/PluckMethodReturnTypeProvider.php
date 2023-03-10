@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Psalm\Hook\MethodReturnTypeProvider;
 
-use Fp\Collections\ArrayList;
 use Fp\Functional\Option\Option;
 use Fp\Psalm\Util\Pluck\PluckPropertyTypeResolver;
 use Fp\Psalm\Util\Pluck\PluckResolveContext;

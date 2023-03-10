@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Fp\Collections;
 
-use Iterator;
-
 /**
  * @template-covariant TK
  * @template-covariant TV
