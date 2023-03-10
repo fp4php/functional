@@ -24,22 +24,20 @@ final class ZipOperation extends AbstractOperation
      */
     public function __invoke(iterable $that): Generator
     {
-        return asGenerator(function () use ($that) {
-            $thisIter = $this->gen;
-            $thatIter = asGenerator(fn() => $that);
+        $thisIter = $this->gen;
+        $thatIter = asGenerator(fn() => $that);
 
-            $thisIter->rewind();
-            $thatIter->rewind();
+        $thisIter->rewind();
+        $thatIter->rewind();
 
-            while ($thisIter->valid() && $thatIter->valid()) {
-                $thisElem = $thisIter->current();
-                $thatElem = $thatIter->current();
+        while ($thisIter->valid() && $thatIter->valid()) {
+            $thisElem = $thisIter->current();
+            $thatElem = $thatIter->current();
 
-                yield [$thisElem, $thatElem];
+            yield [$thisElem, $thatElem];
 
-                $thisIter->next();
-                $thatIter->next();
-            }
-        });
+            $thisIter->next();
+            $thatIter->next();
+        }
     }
 }

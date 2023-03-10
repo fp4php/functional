@@ -7,8 +7,6 @@ namespace Fp\Operations;
 use Generator;
 use Fp\Collections\Collection;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -26,14 +24,12 @@ final class FlatMapOperation extends AbstractOperation
      */
     public function __invoke(callable $f): Generator
     {
-        return asGenerator(function () use ($f) {
-            foreach ($this->gen as $key => $value) {
-                $xs = $f($key, $value);
+        foreach ($this->gen as $key => $value) {
+            $xs = $f($key, $value);
 
-                foreach ($xs as $k => $x) {
-                    yield $k => $x;
-                }
+            foreach ($xs as $k => $x) {
+                yield $k => $x;
             }
-        });
+        }
     }
 }

@@ -7,8 +7,6 @@ namespace Fp\Operations;
 use Fp\Functional\Option\Option;
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -25,14 +23,12 @@ final class FilterMapOperation extends AbstractOperation
      */
     public function __invoke(callable $f): Generator
     {
-        return asGenerator(function () use ($f) {
-            foreach ($this->gen as $key => $value) {
-                $res = $f($key, $value);
+        foreach ($this->gen as $key => $value) {
+            $res = $f($key, $value);
 
-                if ($res->isSome()) {
-                    yield $key => $res->get();
-                }
+            if ($res->isSome()) {
+                yield $key => $res->get();
             }
-        });
+        }
     }
 }

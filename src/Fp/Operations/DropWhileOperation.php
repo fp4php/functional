@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -24,14 +22,12 @@ final class DropWhileOperation extends AbstractOperation
      */
     public function __invoke(callable $f): Generator
     {
-        return asGenerator(function () use ($f) {
-            $toggle = true;
+        $toggle = true;
 
-            foreach ($this->gen as $key => $value) {
-                if (!($toggle = $toggle && $f($key, $value))) {
-                    yield $key => $value;
-                }
+        foreach ($this->gen as $key => $value) {
+            if (!($toggle = $toggle && $f($key, $value))) {
+                yield $key => $value;
             }
-        });
+        }
     }
 }
