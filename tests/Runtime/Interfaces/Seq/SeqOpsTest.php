@@ -166,6 +166,37 @@ final class SeqOpsTest extends TestCase
      * @param class-string<Seq> $seq
      * @dataProvider seqClassDataProvider
      */
+    public function testTraverseEitherMerged(string $seq): void
+    {
+        /** @var Seq<int> $seq1 */
+        $seq1 = $seq::collect([1, 2, 3]);
+
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+        );
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEitherMerged(),
+        );
+
+        /** @var Seq<int> $seq2 */
+        $seq2 = $seq::collect([-2, -1, 0, 1, 2]);
+
+        $this->assertEquals(
+            Either::left(['wrong: -2', 'wrong: -1', 'wrong: 0']),
+            $seq2->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left(["wrong: {$x}"])),
+        );
+        $this->assertEquals(
+            Either::left(['wrong: -2', 'wrong: -1', 'wrong: 0']),
+            $seq2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left(["wrong: {$x}"]))->sequenceEitherMerged(),
+        );
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
     public function testPartition(string $seq): void
     {
         $actual = $seq::collect([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3);
@@ -919,6 +950,33 @@ final class SeqOpsTest extends TestCase
             Either::left('invalid'),
             $collection->traverseEitherN(
                 fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left('invalid'),
+            ),
+        );
+    }
+
+    /**
+     * @param class-string<Seq> $seq
+     * @dataProvider seqClassDataProvider
+     */
+    public function testTraverseEitherMergedN(string $seq): void
+    {
+        $collection = $seq::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+            [4, 4],
+        ]);
+
+        $this->assertEquals(
+            Either::right($seq::collect([2, 4, 6, 8])),
+            $collection->traverseEitherMergedN(
+                fn(int $a, int $b) => $a + $b <= 8 ? Either::right($a + $b) : Either::left(['invalid']),
+            ),
+        );
+        $this->assertEquals(
+            Either::left(['invalid: 3 + 3', 'invalid: 4 + 4']),
+            $collection->traverseEitherMergedN(
+                fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left(["invalid: {$a} + {$b}"]),
             ),
         );
     }

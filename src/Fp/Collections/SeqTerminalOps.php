@@ -157,6 +157,30 @@ interface SeqTerminalOps
     public function traverseEitherN(callable $callback): Either;
 
     /**
+     * Same as {@see SeqTerminalOps::traverseEither()}, but collects all errors to non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, Seq<TVO>>
+     */
+    public function traverseEitherMerged(callable $callback): Either;
+
+    /**
+     * Same as {@see SeqTerminalOps::traverseEitherMerged()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, Seq<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseEitherMergedN(callable $callback): Either;
+
+    /**
      * Same as {@see SeqTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
      *
      * ```php
@@ -176,9 +200,20 @@ interface SeqTerminalOps
     public function sequenceEither(): Either;
 
     /**
+     * Same as {@see Seq::sequenceEither()} but merge all left errors into non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is Seq<Either<non-empty-list<E>, TVO>>
+     *
+     * @return Either<non-empty-list<E>, Seq<TVO>>
+     */
+    public function sequenceEitherMerged(): Either;
+
+    /**
      * Split collection to two parts by predicate function.
      * If $predicate returns true then item gonna to right.
-     * Otherwise to left.
+     * Otherwise, to left.
      *
      * ```php
      * >>> ArrayList::collect([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3);

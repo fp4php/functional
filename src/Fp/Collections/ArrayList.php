@@ -801,6 +801,39 @@ final class ArrayList implements Seq
      *
      * @template E
      * @template TVO
+     *
+     * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, ArrayList<TVO>>
+     */
+    public function traverseEitherMerged(callable $callback): Either
+    {
+        return Ops\TraverseEitherMergedOperation::of($this)(dropFirstArg($callback))->map(ArrayList::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, ArrayList<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseEitherMergedN(callable $callback): Either
+    {
+        return $this->traverseEitherMerged(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
      * @psalm-if-this-is ArrayList<Either<E, TVO>>
      *
      * @return Either<E, ArrayList<TVO>>
@@ -808,6 +841,22 @@ final class ArrayList implements Seq
     public function sequenceEither(): Either
     {
         return Ops\TraverseEitherOperation::id($this)->map(ArrayList::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Same as {@see Seq::sequenceEither()} but merge all left errors into non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is ArrayList<Either<non-empty-list<E>, TVO>>
+     *
+     * @return Either<non-empty-list<E>, ArrayList<TVO>>
+     */
+    public function sequenceEitherMerged(): Either
+    {
+        return Ops\TraverseEitherMergedOperation::id($this)->map(ArrayList::collect(...));
     }
 
     /**

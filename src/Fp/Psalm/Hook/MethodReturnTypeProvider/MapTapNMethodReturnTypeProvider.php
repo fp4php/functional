@@ -173,6 +173,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
             'existsN',
             'traverseOptionN',
             'traverseEitherN',
+            'traverseEitherMergedN',
             'partitionN',
             'partitionMapN',
             'firstN',
