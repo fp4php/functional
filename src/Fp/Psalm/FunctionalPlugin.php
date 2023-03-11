@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Fp\Psalm;
 
+use Fp\Psalm\Hook\AfterExpressionAnalysis\FirstClassCallableInfer;
 use Fp\Psalm\Hook\AfterExpressionAnalysis\ProveTrueExpressionAnalyzer;
+use Fp\Psalm\Hook\DynamicFunctionStorageProvider\PipeFunctionStorageProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\CtorFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterFunctionReturnTypeProvider;
 use Fp\Psalm\Hook\FunctionReturnTypeProvider\FilterNotNullFunctionReturnTypeProvider;
@@ -67,5 +69,7 @@ final class FunctionalPlugin implements PluginEntryPointInterface
         $register(PluckMethodReturnTypeProvider::class);
         $register(CtorFunctionReturnTypeProvider::class);
         $register(SeparatedToEitherMethodReturnTypeProvider::class);
+
+        $register(PipeFunctionStorageProvider::class);
     }
 }
