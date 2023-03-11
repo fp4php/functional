@@ -43,7 +43,7 @@ final class NonEmptySeqTest extends TestCase
                 Either::right(2),
                 Either::left('err'),
             ]),
-            'NonEmptyArrayList(Right(1), Right(2), Left(\'err\'))',
+            'NonEmptyArrayList(Right(1), Right(2), Left("err"))',
         ];
         yield 'NonEmptyLinkedList<int>' => [
             NonEmptyLinkedList::collectNonEmpty([1, 2, 3]),
@@ -63,7 +63,7 @@ final class NonEmptySeqTest extends TestCase
                 Either::right(2),
                 Either::left('err'),
             ]),
-            'NonEmptyLinkedList(Right(1), Right(2), Left(\'err\'))',
+            'NonEmptyLinkedList(Right(1), Right(2), Left("err"))',
         ];
     }
 

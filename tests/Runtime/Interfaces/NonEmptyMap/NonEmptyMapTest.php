@@ -21,7 +21,7 @@ final class NonEmptyMapTest extends TestCase
     public function testToString(): void
     {
         $this->assertEquals(
-            "NonEmptyHashMap('k1' => 1, 'k2' => 2, 'k3' => 3)",
+            'NonEmptyHashMap("k1" => 1, "k2" => 2, "k3" => 3)',
             (string) NonEmptyHashMap::collectPairsNonEmpty([
                 ['k1', 1],
                 ['k2', 2],
@@ -29,7 +29,7 @@ final class NonEmptyMapTest extends TestCase
             ]),
         );
         $this->assertEquals(
-            "NonEmptyHashMap('k1' => Some(1), 'k2' => Some(2), 'k3' => None)",
+            'NonEmptyHashMap("k1" => Some(1), "k2" => Some(2), "k3" => None)',
             (string) NonEmptyHashMap::collectPairsNonEmpty([
                 ['k1', Option::some(1)],
                 ['k2', Option::some(2)],
@@ -37,7 +37,7 @@ final class NonEmptyMapTest extends TestCase
             ]),
         );
         $this->assertEquals(
-            "NonEmptyHashMap('k1' => 1, 'k2' => 2, 'k3' => 3)",
+            'NonEmptyHashMap("k1" => 1, "k2" => 2, "k3" => 3)',
             NonEmptyHashMap::collectPairsNonEmpty([
                 ['k1', 1],
                 ['k2', 2],
@@ -45,7 +45,7 @@ final class NonEmptyMapTest extends TestCase
             ])->toString(),
         );
         $this->assertEquals(
-            "NonEmptyHashMap('k1' => Some(1), 'k2' => Some(2), 'k3' => None)",
+            'NonEmptyHashMap("k1" => Some(1), "k2" => Some(2), "k3" => None)',
             NonEmptyHashMap::collectPairsNonEmpty([
                 ['k1', Option::some(1)],
                 ['k2', Option::some(2)],

@@ -98,6 +98,7 @@
             "src/Fp/Functions/Evidence/ProveObject.php",
             "src/Fp/Functions/Evidence/ProveOf.php",
             "src/Fp/Functions/Evidence/ProveString.php",
+            "src/Fp/Functions/Util/ToString.php",
             "src/Fp/Functions/Util/JsonDecode.php",
             "src/Fp/Functions/Util/RegExp.php",
             "src/Fp/Functions/Util/Writeln.php",

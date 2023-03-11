@@ -173,11 +173,11 @@ final class SeqOpsTest extends TestCase
 
         $this->assertEquals(
             Either::right($seq1),
-            $seq1->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err')),
+            $seq1->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left(['err'])),
         );
         $this->assertEquals(
             Either::right($seq1),
-            $seq1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left('err'))->sequenceEitherMerged(),
+            $seq1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left(['err']))->sequenceEitherMerged(),
         );
 
         /** @var Seq<int> $seq2 */

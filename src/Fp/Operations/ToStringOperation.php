@@ -9,16 +9,17 @@ use Throwable;
 
 use function Fp\Collection\map;
 use function Fp\Collection\mapKV;
+use function Fp\Util\jsonEncode;
 
 final class ToStringOperation
 {
     public static function of(mixed $value): string
     {
         if ($value instanceof Throwable) {
-            $message = ToStringOperation::of($value->getMessage());
+            $message = self::of($value->getMessage());
             $exClass = $value::class;
 
-            return $message !== "''"
+            return $message !== '""'
                 ? "{$exClass}({$message})"
                 : "{$exClass}()";
         }
@@ -28,10 +29,8 @@ final class ToStringOperation
         }
 
         return match (get_debug_type($value)) {
-            'null' => 'null',
-            'int', 'float' => "{$value}",
-            'bool' => $value ? 'true' : 'false',
-            'string' => "'" . str_replace("'", "\'", $value) . "'",
+            'null', 'int', 'bool', 'string', => jsonEncode($value),
+            'float' => $value - ((int) $value) === 0.0 ? "{$value}.00" : "{$value}",
             'array' => self::arrayToStr($value),
             default => get_debug_type($value),
         };
