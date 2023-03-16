@@ -612,14 +612,58 @@ final class HashSet implements Set
      *
      * @template E
      * @template TVO
+     *
+     * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, HashSet<TVO>>
+     */
+    public function traverseEitherMerged(callable $callback): Either
+    {
+        return Ops\TraverseEitherMergedOperation::of($this)(dropFirstArg($callback))->map(HashSet::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, HashSet<TVO>>
+     */
+    public function traverseEitherMergedN(callable $callback): Either
+    {
+        return $this->traverseEitherMerged(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
      * @psalm-if-this-is HashSet<Either<E, TVO>>
      *
      * @return Either<E, HashSet<TVO>>
      */
     public function sequenceEither(): Either
     {
-        return Ops\TraverseEitherOperation::id($this->getIterator())
-            ->map(fn($gen) => HashSet::collect($gen));
+        return Ops\TraverseEitherOperation::id($this->getIterator())->map(HashSet::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is HashSet<Either<non-empty-list<E>, TVO>>
+     *
+     * @return Either<non-empty-list<E>, HashSet<TVO>>
+     */
+    public function sequenceEitherMerged(): Either
+    {
+        return Ops\TraverseEitherMergedOperation::id($this)->map(HashSet::collect(...));
     }
 
     /**

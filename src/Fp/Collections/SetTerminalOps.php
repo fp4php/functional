@@ -118,7 +118,7 @@ interface SetTerminalOps
     public function sequenceOption(): Option;
 
     /**
-     * Suppose you have an Set<TV> and you want to format each element with a function that returns an Either<E, TVO>.
+     * Suppose you have a Set<TV> and you want to format each element with a function that returns an Either<E, TVO>.
      * Using traverseEither you can apply $callback to all elements and directly obtain as a result an Either<E, Set<TVO>>
      * i.e. an Right<Set<TVO>> if all the results are Right<TVO>, or a Left<E> if at least one result is Left<E>.
      *
@@ -148,6 +148,30 @@ interface SetTerminalOps
     public function traverseEitherN(callable $callback): Either;
 
     /**
+     * Same as {@see SetTerminalOps::traverseEither()}, but collects all errors to non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, Set<TVO>>
+     */
+    public function traverseEitherMerged(callable $callback): Either;
+
+    /**
+     * Same as {@see SetTerminalOps::traverseEitherMerged()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, Set<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseEitherMergedN(callable $callback): Either;
+
+    /**
      * Same as {@see SetTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
      *
      * ```php
@@ -167,9 +191,20 @@ interface SetTerminalOps
     public function sequenceEither(): Either;
 
     /**
+     * Same as {@see Set::sequenceEither()} but merge all left errors into non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is Set<Either<non-empty-list<E>, TVO>>
+     *
+     * @return Either<non-empty-list<E>, Set<TVO>>
+     */
+    public function sequenceEitherMerged(): Either;
+
+    /**
      * Split collection to two parts by predicate function.
      * If $predicate returns true then item gonna to right.
-     * Otherwise to left.
+     * Otherwise, to left.
      *
      * ```php
      * >>> HashSet::collect([0, 1, 2, 3, 4, 5])->partition(fn($i) => $i < 3);
@@ -191,7 +226,7 @@ interface SetTerminalOps
      * Similar to {@see SetTerminalOps::partition()} but uses {@see Either} instead of bool.
      * So the output types LO/RO can be different from the input type TV.
      * If $callback returns Right then item gonna to right.
-     * Otherwise to left.
+     * Otherwise, to left.
      *
      * ```php
      * >>> HashSet::collect([0, 1, 2, 3, 4, 5])

@@ -165,6 +165,56 @@ final class SetOpsTest extends TestCase
         );
     }
 
+    public function testTraverseEitherMerged(): void
+    {
+        /** @var HashSet<int> $seq1 */
+        $seq1 = HashSet::collect([1, 2, 3]);
+
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left(['err'])),
+        );
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left(['err']))->sequenceEitherMerged(),
+        );
+
+        /** @var HashSet<int> $seq2 */
+        $seq2 = HashSet::collect([-2, -1, 0, 1, 2]);
+
+        $this->assertEquals(
+            Either::left(['wrong: -2', 'wrong: -1', 'wrong: 0']),
+            $seq2->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left(["wrong: {$x}"])),
+        );
+        $this->assertEquals(
+            Either::left(['wrong: -2', 'wrong: -1', 'wrong: 0']),
+            $seq2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left(["wrong: {$x}"]))->sequenceEitherMerged(),
+        );
+    }
+
+    public function testTraverseEitherMergedN(): void
+    {
+        $collection = HashSet::collect([
+            [1, 1],
+            [2, 2],
+            [3, 3],
+            [4, 4],
+        ]);
+
+        $this->assertEquals(
+            Either::right(HashSet::collect([2, 4, 6, 8])),
+            $collection->traverseEitherMergedN(
+                fn(int $a, int $b) => $a + $b <= 8 ? Either::right($a + $b) : Either::left(['invalid']),
+            ),
+        );
+        $this->assertEquals(
+            Either::left(['invalid: 3 + 3', 'invalid: 4 + 4']),
+            $collection->traverseEitherMergedN(
+                fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left(["invalid: {$a} + {$b}"]),
+            ),
+        );
+    }
+
     public function testPartition(): void
     {
         $this->assertEquals(
