@@ -709,7 +709,10 @@ abstract class Option
     public function flatTap(callable $callback): Option
     {
         return $this->flatMap(
-            /** @param A $value */
+            /**
+             * @param A $value
+             * @psalm-suppress InvalidArgument
+             */
             fn(mixed $value) => $callback($value)->fold(
                 fn() => Option::none(),
                 fn() => Option::some($value),

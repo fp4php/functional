@@ -659,6 +659,7 @@ abstract class LinkedList implements Seq
      */
     public function reverse(): LinkedList
     {
+        /** @var LinkedList<TV> */
         $list = Nil::getInstance();
 
         foreach ($this as $elem) {

@@ -12,7 +12,6 @@ use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class MapOpsTest extends TestCase
@@ -571,14 +570,16 @@ final class MapOpsTest extends TestCase
 
     public function testGroupMapReduce(): void
     {
-        $actual = HashMap::collect([
+        /** @var array<string, array{id: int, sum: int}> */
+        $source = [
             '10-1' => ['id' => 10, 'sum' => 10],
             '10-2' => ['id' => 10, 'sum' => 15],
             '10-3' => ['id' => 10, 'sum' => 20],
             '20-1' => ['id' => 20, 'sum' => 10],
             '20-2' => ['id' => 20, 'sum' => 15],
             '30-1' => ['id' => 30, 'sum' => 20],
-        ])->groupMapReduce(
+        ];
+        $actual = HashMap::collect($source)->groupMapReduce(
             fn(array $a) => $a['id'],
             fn(array $a) => $a['sum'],
             fn(int $old, int $new) => $old + $new,

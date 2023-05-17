@@ -71,7 +71,7 @@ final class MapTapNMethodReturnTypeProvider implements MethodReturnTypeProviderI
     {
         return new TKeyedArray(
             properties: $keyedArray->properties,
-            fallback_params: [$keyedArray->getGenericKeyType(), $keyedArray->getGenericValueType()],
+            fallback_params: [Type::getArrayKey(), Type::getMixed()],
             is_list: $keyedArray->is_list,
             from_docblock: false,
         );

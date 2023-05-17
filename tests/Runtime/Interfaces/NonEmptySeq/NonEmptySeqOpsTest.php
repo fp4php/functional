@@ -421,22 +421,24 @@ final class NonEmptySeqOpsTest extends TestCase
      */
     public function testGroupMapReduce(string $seq): void
     {
+        /** @var non-empty-list<array{id: int, sum: int}> */
+        $source = [
+            ['id' => 10, 'sum' => 10],
+            ['id' => 10, 'sum' => 15],
+            ['id' => 10, 'sum' => 20],
+            ['id' => 20, 'sum' => 10],
+            ['id' => 20, 'sum' => 15],
+            ['id' => 30, 'sum' => 20],
+        ];
         $this->assertEquals(
             NonEmptyHashMap::collectNonEmpty([
                 10 => [10, 15, 20],
                 20 => [10, 15],
                 30 => [20],
             ]),
-            $seq::collectNonEmpty([
-                ['id' => 10, 'sum' => 10],
-                ['id' => 10, 'sum' => 15],
-                ['id' => 10, 'sum' => 20],
-                ['id' => 20, 'sum' => 10],
-                ['id' => 20, 'sum' => 15],
-                ['id' => 30, 'sum' => 20],
-            ])->groupMapReduce(
+            $seq::collectNonEmpty($source)->groupMapReduce(
                 fn(array $a) => $a['id'],
-                fn(array $a) => [$a['sum']],
+                fn(array $a) => /** @var non-empty-list<int> */[$a['sum']],
                 fn(array $old, array $new) => [...$old, ...$new],
             )
         );

@@ -12,7 +12,6 @@ use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class NonEmptyMapOpsTest extends TestCase
@@ -511,12 +510,15 @@ final class NonEmptyMapOpsTest extends TestCase
 
     public function testGroupMapReduce(): void
     {
+        /** @var non-empty-array<string, int> */
+        $source = ['fst' => 1, 'snd' => 2, 'trd' => 3];
+
         $this->assertEquals(
             NonEmptyHashMap::collectNonEmpty([
                 'oddDoubledSum' => 8,
                 'evenDoubledSum' => 4,
             ]),
-            NonEmptyHashMap::collectNonEmpty(['fst' => 1, 'snd' => 2, 'trd' => 3])
+            NonEmptyHashMap::collectNonEmpty($source)
                 ->groupMapReduce(
                     fn(int $i) => 0 === $i % 2 ? 'evenDoubledSum' : 'oddDoubledSum',
                     fn(int $i) => $i * 2,

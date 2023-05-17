@@ -725,7 +725,10 @@ abstract class Either
     public function flatTap(callable $callback): Either
     {
         return $this->flatMap(
-            /** @param R $r */
+            /**
+             * @param R $r
+             * @psalm-suppress InvalidArgument
+             */
             fn(mixed $r) => $callback($r)->fold(
                 fn($l) => Either::left($l),
                 fn() => Either::right($r),

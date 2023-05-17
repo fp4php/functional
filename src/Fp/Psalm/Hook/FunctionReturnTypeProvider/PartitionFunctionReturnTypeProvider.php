@@ -65,6 +65,10 @@ final class PartitionFunctionReturnTypeProvider implements FunctionReturnTypePro
                         $last_type = $init_types
                             ->fold($type_params->val_type)(
                                 function(Union $last, Union $current) {
+                                    if ($last->getId() === $current->getId()) {
+                                        return $last;
+                                    }
+
                                     $builder = $last->getBuilder();
                                     $builder->removeType($current->getId());
 
