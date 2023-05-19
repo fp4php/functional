@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="1"
-    findUnusedBaselineEntry="false"
-    findUnusedCode="false"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    findUnusedPsalmSuppress="true"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+        errorLevel="1"
+        findUnusedBaselineEntry="false"
+        findUnusedCode="false"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://getpsalm.org/schema/config"
+        findUnusedPsalmSuppress="true"
+        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
         <directory name="src"/>
@@ -15,9 +15,6 @@
             <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
-    <plugins>
-        <pluginClass class="Fp\Psalm\FunctionalPlugin"/>
-    </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
         <DeprecatedMethod errorLevel="suppress">
@@ -45,21 +42,6 @@
                 <directory name="src/Fp/Functional"/>
             </errorLevel>
         </DuplicateClass>
-        <InternalMethod errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Psalm"/>
-            </errorLevel>
-        </InternalMethod>
-        <InternalClass errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Psalm"/>
-            </errorLevel>
-        </InternalClass>
-        <InternalProperty errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Psalm"/>
-            </errorLevel>
-        </InternalProperty>
         <UnusedClosureParam errorLevel="suppress"/>
         <UnusedMethodCall errorLevel="suppress">
             <errorLevel type="suppress">
@@ -67,4 +49,7 @@
             </errorLevel>
         </UnusedMethodCall>
     </issueHandlers>
+    <plugins>
+        <pluginClass class="Fp\PsalmPlugin\FunctionalPlugin"/>
+    </plugins>
 </psalm>

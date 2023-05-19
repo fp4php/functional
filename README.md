@@ -25,9 +25,8 @@ $ composer require fp4php/functional
 Read more about [plugin](doc/Psalm.md).
 
 ```console
-$ composer require --dev fp4php/psalm-toolkit
-$ vendor/bin/psalm-plugin enable fp4php/psalm-toolkit
-$ vendor/bin/psalm-plugin enable fp4php/functional
+$ composer require --dev fp4php/functional-psalm-plugin
+$ vendor/bin/psalm-plugin enable Fp\PsalmPlugin\FunctionalPlugin
 ```
 
 ## Overview
