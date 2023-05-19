@@ -844,6 +844,51 @@ final class HashMap implements Map
      *
      * @template E
      * @template TVO
+     *
+     * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, HashMap<TK, TVO>>
+     */
+    public function traverseEitherMerged(callable $callback): Either
+    {
+        return $this->traverseEitherMergedKV(dropFirstArg($callback));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, HashMap<TK, TVO>>
+     */
+    public function traverseEitherMergedKV(callable $callback): Either
+    {
+        return Ops\TraverseEitherMergedOperation::of($this)($callback)->map(HashMap::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, HashMap<TK, TVO>>
+     */
+    public function traverseEitherMergedN(callable $callback): Either
+    {
+        return $this->traverseEitherMerged(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
      * @psalm-if-this-is HashMap<TK, Either<E, TVO>>
      *
      * @return Either<E, HashMap<TK, TVO>>
@@ -851,6 +896,20 @@ final class HashMap implements Map
     public function sequenceEither(): Either
     {
         return Ops\TraverseEitherOperation::id($this)->map(fn($gen) => HashMap::collect($gen));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is HashMap<TK, Either<non-empty-list<E>, TVO>>
+     *
+     * @return Either<non-empty-list<E>, HashMap<TK, TVO>>
+     */
+    public function sequenceEitherMerged(): Either
+    {
+        return Ops\TraverseEitherMergedOperation::id($this)->map(HashMap::collect(...));
     }
 
     /**
