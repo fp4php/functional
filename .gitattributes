@@ -1,0 +1,17 @@
+/.idea export-ignore
+/.github export-ignore
+/doc export-ignore
+/src/Doc export-ignore
+/tests export-ignore
+/docker export-ignore
+phpunit.xml export-ignore
+psalm.xml export-ignore
+Makefile export-ignore
+README.md export-ignore
+UPGRADING-v5.md export-ignore
+UPGRADING-v6.md export-ignore
+LICENSE export-ignore
+linker.php export-ignore
+docker-compose.yaml export-ignore
+/.gitignore export-ignore
+/.gitattributes export-ignore
