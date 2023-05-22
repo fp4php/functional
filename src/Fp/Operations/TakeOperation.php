@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -21,17 +19,15 @@ final class TakeOperation extends AbstractOperation
      */
     public function __invoke(int $length): Generator
     {
-        return asGenerator(function () use ($length) {
-            $i = 0;
+        $i = 0;
 
-            foreach ($this->gen as $key => $value) {
-                if ($i === $length) {
-                    break;
-                }
-
-                yield $key => $value;
-                $i++;
+        foreach ($this->gen as $key => $value) {
+            if ($i === $length) {
+                break;
             }
-        });
+
+            yield $key => $value;
+            $i++;
+        }
     }
 }

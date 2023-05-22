@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -24,10 +22,8 @@ final class MapOperation extends AbstractOperation
      */
     public function __invoke(callable $f): Generator
     {
-        return asGenerator(function () use ($f) {
-            foreach ($this->gen as $key => $value) {
-                yield $key => $f($key, $value);
-            }
-        });
+        foreach ($this->gen as $key => $value) {
+            yield $key => $f($key, $value);
+        }
     }
 }

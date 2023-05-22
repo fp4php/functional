@@ -659,6 +659,7 @@ abstract class LinkedList implements Seq
      */
     public function reverse(): LinkedList
     {
+        /** @var LinkedList<TV> */
         $list = Nil::getInstance();
 
         foreach ($this as $elem) {
@@ -793,14 +794,62 @@ abstract class LinkedList implements Seq
      *
      * @template E
      * @template TVO
+     *
+     * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, LinkedList<TVO>>
+     */
+    public function traverseEitherMerged(callable $callback): Either
+    {
+        return Ops\TraverseEitherMergedOperation::of($this)(dropFirstArg($callback))->map(LinkedList::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, LinkedList<TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseEitherMergedN(callable $callback): Either
+    {
+        return $this->traverseEitherMerged(function($tuple) use ($callback) {
+            /** @var array $tuple */;
+            return toSafeClosure($callback)(...$tuple);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @template E
+     * @template TVO
      * @psalm-if-this-is LinkedList<Either<E, TVO>>
      *
      * @return Either<E, LinkedList<TVO>>
      */
     public function sequenceEither(): Either
     {
-        return Ops\TraverseEitherOperation::id($this->getIterator())
-            ->map(fn($gen) => LinkedList::collect($gen));
+        return Ops\TraverseEitherOperation::id($this->getIterator())->map(LinkedList::collect(...));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Same as {@see Seq::sequenceEither()} but merge all left errors into non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is LinkedList<Either<non-empty-list<E>, TVO>>
+     *
+     * @return Either<non-empty-list<E>, LinkedList<TVO>>
+     */
+    public function sequenceEitherMerged(): Either
+    {
+        return Ops\TraverseEitherMergedOperation::id($this->getIterator())->map(LinkedList::collect(...));
     }
 
     /**

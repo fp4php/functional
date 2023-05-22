@@ -8,12 +8,10 @@ use Fp\Functional\Either\Either;
 use PHPUnit\Framework\TestCase;
 
 use function Fp\Collection\sequenceEither;
-use function Fp\Collection\sequenceEitherAcc;
 use function Fp\Collection\sequenceEitherMerged;
 use function Fp\Collection\sequenceEitherMergedT;
 use function Fp\Collection\sequenceEitherT;
 use function Fp\Collection\traverseEither;
-use function Fp\Collection\traverseEitherAcc;
 use function Fp\Collection\traverseEitherKV;
 use function Fp\Collection\traverseEitherMerged;
 
@@ -56,26 +54,6 @@ final class EitherTraverseTest extends TestCase
             traverseEitherMerged($c, fn(int $v) => $v < 3
                 ? Either::right($v)
                 : Either::left(["{$v} is too high"]))
-        );
-    }
-
-    public function testTraverseAcc(): void
-    {
-        /** @psalm-var list<int> $c */
-        $c = [1, 2, 3];
-
-        $this->assertEquals(
-            Either::right($c),
-            traverseEitherAcc($c, fn(int $v) => $v <= 3
-                ? Either::right($v)
-                : Either::left('Is too high'))
-        );
-
-        $this->assertEquals(
-            Either::left(['2 is too high', '3 is too high']),
-            traverseEitherAcc($c, fn(int $v) => $v < 2
-                ? Either::right($v)
-                : Either::left("{$v} is too high"))
         );
     }
 
@@ -235,60 +213,6 @@ final class EitherTraverseTest extends TestCase
                 fn() => Either::left('error'),
                 fn() => Either::right(1),
             ])
-        );
-    }
-
-    public function testSequenceAcc(): void
-    {
-        $this->assertEquals(
-            Either::left([
-                'err1',
-                'err2',
-            ]),
-            sequenceEitherAcc([
-                Either::left('err1'),
-                Either::right('val'),
-                Either::left('err2'),
-            ]),
-        );
-
-        $this->assertEquals(
-            Either::left([
-                'k1' => 'err1',
-                'k3' => 'err2',
-            ]),
-            sequenceEitherAcc([
-                'k1' => Either::left('err1'),
-                'k2' => Either::right('val'),
-                'k3' => Either::left('err2'),
-            ]),
-        );
-    }
-
-    public function testLazySequenceAcc(): void
-    {
-        $this->assertEquals(
-            Either::left([
-                'err1',
-                'err2',
-            ]),
-            sequenceEitherAcc([
-                fn() => Either::left('err1'),
-                fn() => Either::right('val'),
-                fn() => Either::left('err2'),
-            ]),
-        );
-
-        $this->assertEquals(
-            Either::left([
-                'k1' => 'err1',
-                'k3' => 'err2',
-            ]),
-            sequenceEitherAcc([
-                'k1' => fn() => Either::left('err1'),
-                'k2' => fn() => Either::right('val'),
-                'k3' => fn() => Either::left('err2'),
-            ]),
         );
     }
 }

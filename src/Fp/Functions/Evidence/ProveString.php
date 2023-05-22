@@ -88,7 +88,10 @@ function proveClassStringOf(mixed $potential, string|array $fqcn, bool $invarian
  */
 function classStringOf(string|array $fqcn, bool $invariant = false): Closure
 {
-    return fn(mixed $potential) => proveClassStringOf($potential, $fqcn, $invariant);
+    return function(mixed $potential) use ($fqcn, $invariant) {
+        /** @var Option<class-string<TVO>> */
+        return proveClassStringOf($potential, $fqcn, $invariant);
+    };
 }
 
 /**

@@ -26,11 +26,11 @@ final class EitherTest extends TestCase
         $this->assertEquals('Left(42)', Either::left(42)->toString());
         $this->assertEquals('Right(42)', Either::right(42)->toString());
         $this->assertEquals('Right([])', Either::right([]));
-        $this->assertEquals("Right([1, 2, 3])", Either::right([1, 2, 3]));
-        $this->assertEquals("Right(['t' => 1])", Either::right(['t' => 1]));
+        $this->assertEquals('Right([1, 2, 3])', Either::right([1, 2, 3]));
+        $this->assertEquals('Right(["t" => 1])', Either::right(['t' => 1]));
         $this->assertEquals('Left(InvalidArgumentException())', Either::left(new InvalidArgumentException()));
         $this->assertEquals(
-            "Left(InvalidArgumentException('Invalid string given'))",
+            'Left(InvalidArgumentException("Invalid string given"))',
             Either::left(new InvalidArgumentException('Invalid string given')),
         );
     }

@@ -6,14 +6,12 @@ namespace Fp\Collection;
 
 use Fp\Functional\Either\Either;
 use Fp\Functional\Option\Option;
-use Fp\Operations\TraverseEitherAccOperation;
 use Fp\Operations\TraverseEitherMergedOperation;
 use Fp\Operations\TraverseEitherOperation;
 use Fp\Operations\TraverseOptionOperation;
 
 use function Fp\Callable\dropFirstArg;
 use function Fp\Cast\asArray;
-use function Fp\Cast\asList;
 
 /**
  * Suppose you have a list<TV> and you want to format each element with a function that returns an Option<TVO>.
@@ -159,58 +157,4 @@ function traverseEitherMerged(iterable $collection, callable $callback): Either
 function traverseEitherMergedKV(iterable $collection, callable $callback): Either
 {
     return TraverseEitherMergedOperation::of($collection)($callback)->map(asArray(...));
-}
-
-/**
- * Same as {@see traverseEither()} but accumulates all left errors.
- *
- * @template E
- * @template TK of array-key
- * @template TV
- * @template TVO
- *
- * @param iterable<TK, TV> $collection
- * @param callable(TV): Either<E, TVO> $callback
- * @return Either<E, array<TK, TVO>>
- * @psalm-return (
- *    $collection is non-empty-list  ? Either<non-empty-list<E>, non-empty-list<TVO>>      :
- *    $collection is list            ? Either<non-empty-list<E>, list<TVO>>                :
- *    $collection is non-empty-array ? Either<non-empty-array<TK, E>, non-empty-array<TK, TVO>> :
- *    Either<non-empty-array<TK, E>, array<TK, TVO>>
- * )
- */
-function traverseEitherAcc(iterable $collection, callable $callback): Either
-{
-    return traverseEitherKVAcc($collection, dropFirstArg($callback));
-}
-
-/**
- * Same as {@see traverseEitherKV()} but accumulates all left errors.
- *
- * @template E
- * @template TK of array-key
- * @template TV
- * @template TVO
- *
- * @param iterable<TK, TV> $collection
- * @param callable(TK, TV): Either<E, TVO> $callback
- * @return Either<E, array<TK, TVO>>
- *
- * @psalm-return (
- *    $collection is non-empty-list  ? Either<non-empty-list<E>, non-empty-list<TVO>>      :
- *    $collection is list            ? Either<non-empty-list<E>, list<TVO>>                :
- *    $collection is non-empty-array ? Either<non-empty-array<TK, E>, non-empty-array<TK, TVO>> :
- *    Either<non-empty-array<TK, E>, array<TK, TVO>>
- * )
- */
-function traverseEitherKVAcc(iterable $collection, callable $callback): Either
-{
-    return TraverseEitherAccOperation::of($collection)($callback)
-        ->mapLeft(function($gen) use ($collection) {
-            /** @var non-empty-array<TK, E> */
-            return is_array($collection) && array_is_list($collection)
-                ? asList($gen)
-                : asArray($gen);
-        })
-        ->map(asArray(...));
 }

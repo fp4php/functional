@@ -7,7 +7,7 @@ namespace Fp\Collections;
 use Fp\Functional\Option\Option;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
  */
 interface NonEmptyMapCollector

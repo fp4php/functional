@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<psalm
-    errorLevel="1"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="https://getpsalm.org/schema/config"
-    findUnusedPsalmSuppress="true"
-    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
->
+<psalm errorLevel="1"
+       findUnusedBaselineEntry="false"
+       findUnusedCode="false"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="https://getpsalm.org/schema/config"
+       findUnusedPsalmSuppress="true"
+       xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd">
     <projectFiles>
         <directory name="src"/>
         <directory name="tests"/>
@@ -13,57 +13,15 @@
             <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
-    <plugins>
-        <pluginClass class="Fp\Psalm\FunctionalPlugin"/>
-        <pluginClass class="Fp\PsalmToolkit\Toolkit\Plugin"/>
-    </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/>
-        <DeprecatedMethod errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="tests"/>
-            </errorLevel>
-        </DeprecatedMethod>
-        <UnusedVariable errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Functions"/>
-            </errorLevel>
-        </UnusedVariable>
-        <DuplicateFunction errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Functions"/>
-            </errorLevel>
-        </DuplicateFunction>
         <PropertyNotSetInConstructor errorLevel="suppress">
             <errorLevel type="suppress">
                 <directory name="tests"/>
             </errorLevel>
         </PropertyNotSetInConstructor>
-        <DuplicateClass errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Functional"/>
-            </errorLevel>
-        </DuplicateClass>
-        <InternalMethod errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Psalm"/>
-            </errorLevel>
-        </InternalMethod>
-        <InternalClass errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Psalm"/>
-            </errorLevel>
-        </InternalClass>
-        <InternalProperty errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="src/Fp/Psalm"/>
-            </errorLevel>
-        </InternalProperty>
-        <UnusedClosureParam errorLevel="suppress"/>
-        <UnusedMethodCall errorLevel="suppress">
-            <errorLevel type="suppress">
-                <directory name="tests"/>
-            </errorLevel>
-        </UnusedMethodCall>
     </issueHandlers>
+    <plugins>
+        <pluginClass class="Fp\PsalmPlugin\FunctionalPlugin"/>
+    </plugins>
 </psalm>

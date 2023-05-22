@@ -16,19 +16,15 @@ PHP Functional Programming library. Monads and common use functions.
 
 ### Composer 
 
+Supported installation method is via [composer](https://getcomposer.org):
+
 ```console
 $ composer require fp4php/functional
 ```
 
-### Enable psalm plugin (optional)
+### Psalm integration
 
-Read more about [plugin](doc/Psalm.md).
-
-```console
-$ composer require --dev fp4php/psalm-toolkit
-$ vendor/bin/psalm-plugin enable fp4php/psalm-toolkit
-$ vendor/bin/psalm-plugin enable fp4php/functional
-```
+Please refer to the [fp4php/functional-psalm-plugin](https://github.com/fp4php/functional-psalm-plugin) repository.
 
 ## Overview
 Typesafe and concise.

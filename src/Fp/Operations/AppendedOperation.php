@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -24,12 +22,10 @@ final class AppendedOperation extends AbstractOperation
      */
     public function __invoke(mixed $elem): Generator
     {
-        return asGenerator(function () use ($elem) {
-            foreach ($this->gen as $prefixElem) {
-                yield $prefixElem;
-            }
+        foreach ($this->gen as $prefixElem) {
+            yield $prefixElem;
+        }
 
-            yield $elem;
-        });
+        yield $elem;
     }
 }

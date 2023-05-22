@@ -22,25 +22,26 @@
         "ext-simplexml": "*"
     },
     "require-dev": {
-        "vimeo/psalm": "^4.23",
+        "vimeo/psalm": "^5.7",
         "phpunit/phpunit": "^9",
         "symfony/process": "^5.2",
         "rregeer/phpunit-coverage-check": "^0.3.1",
         "php-coveralls/php-coveralls": "~2.4.0",
-        "fp4php/psalm-toolkit": "dev-main"
+        "fp4php/psalm-toolkit": "dev-psalm-v5",
+        "fp4php/functional-psalm-plugin": "^1.0"
     },
     "autoload": {
         "psr-4": {
             "Fp\\Operations\\": "src/Fp/Operations",
             "Fp\\Collections\\": "src/Fp/Collections",
             "Fp\\Streams\\": "src/Fp/Streams",
-            "Fp\\Functional\\": "src/Fp/Functional",
-            "Fp\\Psalm\\": "src/Fp/Psalm"
+            "Fp\\Functional\\": "src/Fp/Functional"
         },
         "files": [
             "src/Fp/Functions/Callable/Ctor.php",
             "src/Fp/Functions/Callable/ToSafeClosure.php",
             "src/Fp/Functions/Callable/DropFirstArg.php",
+            "src/Fp/Functions/Callable/Pipe.php",
             "src/Fp/Functions/Callable/Compose.php",
             "src/Fp/Functions/Callable/Partial.php",
             "src/Fp/Functions/Callable/PartialLeft.php",
@@ -98,6 +99,7 @@
             "src/Fp/Functions/Evidence/ProveObject.php",
             "src/Fp/Functions/Evidence/ProveOf.php",
             "src/Fp/Functions/Evidence/ProveString.php",
+            "src/Fp/Functions/Util/ToString.php",
             "src/Fp/Functions/Util/JsonDecode.php",
             "src/Fp/Functions/Util/RegExp.php",
             "src/Fp/Functions/Util/Writeln.php",

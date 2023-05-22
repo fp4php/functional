@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -21,12 +19,10 @@ final class FilterNotNullOperation extends AbstractOperation
      */
     public function __invoke(): Generator
     {
-        return asGenerator(function () {
-            foreach ($this->gen as $key => $value) {
-                if (null !== $value) {
-                    yield $key => $value;
-                }
+        foreach ($this->gen as $key => $value) {
+            if (null !== $value) {
+                yield $key => $value;
             }
-        });
+        }
     }
 }

@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -24,14 +22,12 @@ final class AppendedAllOperation extends AbstractOperation
      */
     public function __invoke(iterable $suffix): Generator
     {
-        return asGenerator(function () use ($suffix) {
-            foreach ($this->gen as $prefixElem) {
-                yield $prefixElem;
-            }
+        foreach ($this->gen as $prefixElem) {
+            yield $prefixElem;
+        }
 
-            foreach ($suffix as $suffixElem) {
-                yield $suffixElem;
-            }
-        });
+        foreach ($suffix as $suffixElem) {
+            yield $suffixElem;
+        }
     }
 }

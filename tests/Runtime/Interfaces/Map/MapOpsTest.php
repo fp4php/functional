@@ -12,7 +12,6 @@ use Fp\Functional\Option\Option;
 use Fp\Functional\Separated\Separated;
 use Generator;
 use PHPUnit\Framework\TestCase;
-use Tests\Mock\Bar;
 use Tests\Mock\Foo;
 
 final class MapOpsTest extends TestCase
@@ -196,6 +195,62 @@ final class MapOpsTest extends TestCase
             $collection->traverseEitherN(
                 fn(int $a, int $b) => $a + $b < 6 ? Either::right($a + $b) : Either::left('invalid'),
             ),
+        );
+    }
+
+    public function testTraverseEitherMerged(): void
+    {
+        /** @var HashMap<string, int> $seq1 */
+        $seq1 = HashMap::collect(['fst' => 1, 'snd' => 2, 'thr' => 3]);
+
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left(['err'])),
+        );
+        $this->assertEquals(
+            Either::right($seq1),
+            $seq1->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left(['err']))->sequenceEitherMerged(),
+        );
+
+        /** @var HashMap<string, int> $seq2 */
+        $seq2 = HashMap::collect([
+            'neg-snd' => -2,
+            'neg-fst' => -1,
+            'zero' => 0,
+            'fst' => 1,
+            'snd' => 2,
+        ]);
+
+        $this->assertEquals(
+            Either::left(['wrong: -2', 'wrong: -1', 'wrong: 0']),
+            $seq2->traverseEitherMerged(fn($x) => $x >= 1 ? Either::right($x) : Either::left(["wrong: {$x}"])),
+        );
+        $this->assertEquals(
+            Either::left(['wrong: -2', 'wrong: -1', 'wrong: 0']),
+            $seq2->map(fn($x) => $x >= 1 ? Either::right($x) : Either::left(["wrong: {$x}"]))->sequenceEitherMerged(),
+        );
+    }
+
+    public function testTraverseEitherMergedN(): void
+    {
+        $collection = HashMap::collect([
+            'fst' => [1, 1],
+            'snd' => [2, 2],
+            'thr' => [3, 3],
+        ]);
+
+        $this->assertEquals(
+            Either::right(HashMap::collect(['fst' => 2, 'snd' => 4, 'thr' => 6])),
+            $collection->traverseEitherMergedN(fn(int $a, int $b) => $a + $b <= 6
+                ? Either::right($a + $b)
+                : Either::left(["{$a} + {$b} is invalid"])),
+        );
+
+        $this->assertEquals(
+            Either::left(['3 + 3 is invalid', '4 + 4 is invalid']),
+            $collection->appended('fth', [4, 4])->traverseEitherMergedN(fn(int $a, int $b) => $a + $b < 6
+                ? Either::right($a + $b)
+                : Either::left(["{$a} + {$b} is invalid"])),
         );
     }
 
@@ -571,14 +626,16 @@ final class MapOpsTest extends TestCase
 
     public function testGroupMapReduce(): void
     {
-        $actual = HashMap::collect([
+        /** @var array<string, array{id: int, sum: int}> */
+        $source = [
             '10-1' => ['id' => 10, 'sum' => 10],
             '10-2' => ['id' => 10, 'sum' => 15],
             '10-3' => ['id' => 10, 'sum' => 20],
             '20-1' => ['id' => 20, 'sum' => 10],
             '20-2' => ['id' => 20, 'sum' => 15],
             '30-1' => ['id' => 30, 'sum' => 20],
-        ])->groupMapReduce(
+        ];
+        $actual = HashMap::collect($source)->groupMapReduce(
             fn(array $a) => $a['id'],
             fn(array $a) => $a['sum'],
             fn(int $old, int $new) => $old + $new,

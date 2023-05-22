@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -24,18 +22,16 @@ final class IntersperseOperation extends AbstractOperation
      */
     public function __invoke(mixed $separator): Generator
     {
-        return asGenerator(function () use ($separator) {
-            $isFirst = true;
+        $isFirst = true;
 
-            foreach ($this->gen as $elem) {
-                if ($isFirst) {
-                    $isFirst = false;
-                } else {
-                    yield $separator;
-                }
-
-                yield $elem;
+        foreach ($this->gen as $elem) {
+            if ($isFirst) {
+                $isFirst = false;
+            } else {
+                yield $separator;
             }
-        });
+
+            yield $elem;
+        }
     }
 }

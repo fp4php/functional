@@ -15,6 +15,7 @@ use function Fp\Callable\ctor;
 use function Fp\Callable\partial;
 use function Fp\Callable\partialLeft;
 use function Fp\Callable\partialRight;
+use function Fp\Callable\pipe;
 
 final class CallableTest extends TestCase
 {
@@ -50,5 +51,15 @@ final class CallableTest extends TestCase
         $this->assertEquals('abc', partial($c, 'a', 'b')('c'));
         $this->assertEquals('abc', partialLeft($c, 'a', 'b')('c'));
         $this->assertEquals('cba', partialRight($c, 'a', 'b')('c'));
+    }
+
+    public function testPipe(): void
+    {
+        $this->assertEquals(42, pipe(
+            0,
+            fn($i) => $i + 11,
+            fn($i) => $i + 20,
+            fn($i) => $i + 11,
+        ));
     }
 }

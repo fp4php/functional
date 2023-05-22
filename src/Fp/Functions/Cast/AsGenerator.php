@@ -8,14 +8,14 @@ use Generator;
 
 /**
  * ```php
- * >>> asGenerator(function { yield 1; yield 2; });
+ * >>> asGenerator(function() { yield 1; yield 2; });
  * => Generator(1, 2)
  * ```
  *
  * @template TK
  * @template TV
  *
- * @param callable(): iterable<TK, TV> $callback
+ * @param callable(): (iterable<TK, TV> | Generator<TK, TV>) $callback
  * @return Generator<TK, TV>
  */
 function asGenerator(callable $callback): Generator
@@ -34,4 +34,3 @@ function asGenerator(callable $callback): Generator
 
     return $generator();
 }
-

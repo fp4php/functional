@@ -54,7 +54,7 @@ final class SeqTest extends TestCase
                 Either::right(2),
                 Either::left('err'),
             ]),
-            'ArrayList(Right(1), Right(2), Left(\'err\'))',
+            'ArrayList(Right(1), Right(2), Left("err"))',
         ];
         yield 'LinkedList<int>' => [
             LinkedList::collect([1, 2, 3]),
@@ -74,7 +74,7 @@ final class SeqTest extends TestCase
                 Either::right(2),
                 Either::left('err'),
             ]),
-            'LinkedList(Right(1), Right(2), Left(\'err\'))',
+            'LinkedList(Right(1), Right(2), Left("err"))',
         ];
     }
 

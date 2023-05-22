@@ -11,7 +11,7 @@ use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
  *
  * @psalm-suppress InvalidTemplateParam

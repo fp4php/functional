@@ -9,7 +9,7 @@ use Fp\Psalm\Hook\MethodReturnTypeProvider\CollectionFilterMethodReturnTypeProvi
 use Fp\Psalm\Hook\MethodReturnTypeProvider\MapTapNMethodReturnTypeProvider;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
  *
  * @psalm-suppress InvalidTemplateParam

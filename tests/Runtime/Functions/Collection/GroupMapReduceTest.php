@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Runtime\Functions\Collection;
 
 use PHPUnit\Framework\TestCase;
+
 use function Fp\Collection\groupMapReduce;
 use function Fp\Collection\groupMapReduceKV;
 
@@ -29,6 +30,10 @@ final class GroupMapReduceTest extends TestCase
                 ],
                 fn(array $a) => $a['id'],
                 fn(array $a) => [$a['sum']],
+                /**
+                 * @param non-empty-list<int> $old
+                 * @param non-empty-list<int> $new
+                 */
                 fn(array $old, array $new) => array_merge($old, $new),
             )
         );

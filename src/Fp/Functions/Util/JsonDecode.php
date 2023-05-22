@@ -25,6 +25,7 @@ use function Fp\Evidence\proveArray;
  * => Left(JsonException('Syntax error'))
  * ```
  *
+ * @param int<1, 2147483647> $depth
  * @return Either<JsonException, mixed>
  */
 function jsonDecode(string $json, int $depth = 512, int $flags = 0): Either
@@ -68,6 +69,8 @@ function jsonDecodeArray(string $json): Either
  * >>> jsonEncode([1, 2, 3]);
  * => '[1, 2, 3]'
  * ```
+ *
+ * @param int<1, 2147483647> $depth
  */
 function jsonEncode(mixed $value, int $flags = JSON_THROW_ON_ERROR, int $depth = 512): string
 {

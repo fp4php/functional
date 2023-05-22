@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Fp\Collection;
 
 use Fp\Collections\NonEmptyHashMap;
-use Fp\Collections\NonEmptyLinkedList;
 use Fp\Operations\GroupMapOperation;
+
 use function Fp\Callable\dropFirstArg;
 
 /**

@@ -7,8 +7,6 @@ namespace Fp\Operations;
 use Fp\Collections\ArrayList;
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -22,18 +20,16 @@ final class RepeatNOperation extends AbstractOperation
      */
     public function __invoke(int $times): Generator
     {
-        return asGenerator(function () use ($times) {
-            $buffer = ArrayList::collect($this->gen);
+        $buffer = ArrayList::collect($this->gen);
 
+        foreach ($buffer as $elem) {
+            yield $elem;
+        }
+
+        for ($i = 0; $i < $times - 1; $i++) {
             foreach ($buffer as $elem) {
                 yield $elem;
             }
-
-            for($i = 0; $i < $times - 1; $i++) {
-                foreach ($buffer as $elem) {
-                    yield $elem;
-                }
-            }
-        });
+        }
     }
 }

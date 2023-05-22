@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -21,17 +19,15 @@ final class TailOperation extends AbstractOperation
      */
     public function __invoke(): Generator
     {
-        return asGenerator(function () {
-            $isFirst = true;
+        $isFirst = true;
 
-            foreach ($this->gen as $key => $value) {
-                if ($isFirst) {
-                    $isFirst = false;
-                    continue;
-                }
-
-                yield $key => $value;
+        foreach ($this->gen as $key => $value) {
+            if ($isFirst) {
+                $isFirst = false;
+                continue;
             }
-        });
+
+            yield $key => $value;
+        }
     }
 }

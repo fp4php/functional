@@ -6,9 +6,6 @@ namespace Fp\Cast;
 
 use Fp\Functional\Option\Option;
 
-use function Fp\Collection\head;
-use function Fp\Collection\map;
-
 /**
  * Try copy and cast collection to non-empty-array
  * Returns None if there is no first collection element

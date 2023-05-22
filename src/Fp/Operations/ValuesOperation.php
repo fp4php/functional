@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -21,10 +19,8 @@ final class ValuesOperation extends AbstractOperation
      */
     public function __invoke(): Generator
     {
-        return asGenerator(function () {
-            foreach ($this->gen as $value) {
-                yield $value;
-            }
-        });
+        foreach ($this->gen as $value) {
+            yield $value;
+        }
     }
 }

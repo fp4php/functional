@@ -11,7 +11,7 @@ use Fp\Operations\FoldOperation;
 use Fp\Psalm\Hook\MethodReturnTypeProvider\FoldMethodReturnTypeProvider;
 
 /**
- * @template TK
+ * @template-covariant TK
  * @template-covariant TV
  *
  * @psalm-suppress InvalidTemplateParam
@@ -219,6 +219,41 @@ interface MapTerminalOps
     public function traverseEitherKV(callable $callback): Either;
 
     /**
+     * Same as {@see MapTerminalOps::traverseEither()}, but collects all errors to non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, Map<TK, TVO>>
+     */
+    public function traverseEitherMerged(callable $callback): Either;
+
+    /**
+     * Same as {@see MapTerminalOps::traverseEitherMerged()}, but passing also the key to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(TK, TV): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, Map<TK, TVO>>
+     */
+    public function traverseEitherMergedKV(callable $callback): Either;
+
+    /**
+     * Same as {@see MapTerminalOps::traverseEitherMerged()}, but deconstruct input tuple and pass it to the $callback function.
+     *
+     * @template E
+     * @template TVO
+     *
+     * @param callable(mixed...): Either<non-empty-list<E>, TVO> $callback
+     * @return Either<non-empty-list<E>, Map<TK, TVO>>
+     *
+     * @see MapTapNMethodReturnTypeProvider
+     */
+    public function traverseEitherMergedN(callable $callback): Either;
+
+    /**
      * Same as {@see MapTerminalOps::traverseEither()} but use {@see id()} implicitly for $callback.
      *
      * ```php
@@ -244,6 +279,17 @@ interface MapTerminalOps
      * @return Either<E, Map<TK, TVO>>
      */
     public function sequenceEither(): Either;
+
+    /**
+     * Same as {@see Set::sequenceEither()} but merge all left errors into non-empty-list.
+     *
+     * @template E
+     * @template TVO
+     * @psalm-if-this-is Map<TK, Either<non-empty-list<E>, TVO>>
+     *
+     * @return Either<non-empty-list<E>, Map<TK, TVO>>
+     */
+    public function sequenceEitherMerged(): Either;
 
     /**
      * Split collection to two parts by predicate function.

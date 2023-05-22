@@ -276,13 +276,11 @@ abstract class Either
      * => Left('error!')
      * ```
      *
-     * @todo Replace Either<TL, mixed> with Either<TL, TR> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
-     *
      * @template TL
      * @template TR
      * @template TO
      *
-     * @param callable(): Generator<int, Either<TL, mixed>, TR, TO> $computation
+     * @param callable(): Generator<int, Either<TL, TR>, TR, TO> $computation
      * @return Either<TL, TO>
      */
     public static function do(callable $computation): Either {
@@ -291,14 +289,11 @@ abstract class Either
         while ($generator->valid()) {
             $currentStep = $generator->current();
 
-            if ($currentStep->isRight()) {
-                /** @psalm-suppress MixedArgument */
-                $generator->send($currentStep->get());
-            } else {
-                /** @var Either<TL, TO> $currentStep */
+            if ($currentStep->isLeft()) {
                 return $currentStep;
             }
 
+            $generator->send($currentStep->get());
         }
 
         return Either::right($generator->getReturn());
@@ -442,7 +437,8 @@ abstract class Either
      * => true
      * ```
      *
-     * @psalm-assert-if-true Left<L>&\Fp\Functional\Assertion<"must-be-left"> $this
+     * @psalm-assert-if-true Left<L>&\Fp\Functional\Assertion $this
+     * @psalm-assert-if-false Right<R>&\Fp\Functional\Assertion $this
      */
     public function isLeft(): bool
     {
@@ -460,7 +456,8 @@ abstract class Either
      * => false
      * ```
      *
-     * @psalm-assert-if-true Right<R>&\Fp\Functional\Assertion<"must-be-right"> $this
+     * @psalm-assert-if-true Right<R>&\Fp\Functional\Assertion $this
+     * @psalm-assert-if-false Left<L>&\Fp\Functional\Assertion $this
      */
     public function isRight(): bool
     {
@@ -728,7 +725,10 @@ abstract class Either
     public function flatTap(callable $callback): Either
     {
         return $this->flatMap(
-            /** @param R $r */
+            /**
+             * @param R $r
+             * @psalm-suppress InvalidArgument
+             */
             fn(mixed $r) => $callback($r)->fold(
                 fn($l) => Either::left($l),
                 fn() => Either::right($r),

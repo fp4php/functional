@@ -6,8 +6,6 @@ namespace Fp\Operations;
 
 use Generator;
 
-use function Fp\Cast\asGenerator;
-
 /**
  * @template TK
  * @template TV
@@ -24,31 +22,29 @@ final class GroupAdjacentByOperation extends AbstractOperation
      */
     public function __invoke(callable $discriminator): Generator
     {
-        return asGenerator(function () use ($discriminator) {
-            $buffer = [];
-            $prevDisc = null;
-            $isHead = true;
+        $buffer = [];
+        $prevDisc = null;
+        $isHead = true;
 
-            foreach ($this->gen as $elem) {
-                if ($isHead) {
-                    $isHead = false;
-                    $prevDisc = $discriminator($elem);
-                }
-
-                $curDisc = $discriminator($elem);
-
-                if ($prevDisc !== $curDisc && !empty($buffer)) {
-                    yield [$prevDisc, $buffer];
-                    $buffer = [];
-                }
-
-                $buffer[] = $elem;
-                $prevDisc = $curDisc;
+        foreach ($this->gen as $elem) {
+            if ($isHead) {
+                $isHead = false;
+                $prevDisc = $discriminator($elem);
             }
 
-            if (!empty($buffer)) {
+            $curDisc = $discriminator($elem);
+
+            if ($prevDisc !== $curDisc && !empty($buffer)) {
                 yield [$prevDisc, $buffer];
+                $buffer = [];
             }
-        });
+
+            $buffer[] = $elem;
+            $prevDisc = $curDisc;
+        }
+
+        if (!empty($buffer)) {
+            yield [$prevDisc, $buffer];
+        }
     }
 }

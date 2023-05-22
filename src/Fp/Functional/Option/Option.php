@@ -237,12 +237,10 @@ abstract class Option
      * => None
      * ```
      *
-     * @todo Replace Option<mixed> with Option<TS> and drop suppress @see https://github.com/vimeo/psalm/issues/6288
-     *
      * @template TS
      * @template TO
      *
-     * @param callable(): Generator<int, Option<mixed>, TS, TO> $computation
+     * @param callable(): Generator<int, Option<TS>, TS, TO> $computation
      * @return Option<TO>
      */
     public static function do(callable $computation): Option {
@@ -251,14 +249,11 @@ abstract class Option
         while ($generator->valid()) {
             $currentStep = $generator->current();
 
-            if ($currentStep->isSome()) {
-                /** @psalm-suppress MixedArgument */
-                $generator->send($currentStep->get());
-            } else {
-                /** @var Option<TO> $currentStep */
+            if ($currentStep->isNone()) {
                 return $currentStep;
             }
 
+            $generator->send($currentStep->get());
         }
 
         return Option::some($generator->getReturn());
@@ -398,7 +393,8 @@ abstract class Option
      * => false
      * ```
      *
-     * @psalm-assert-if-true Some<A>&\Fp\Functional\Assertion<"must-be-some"> $this
+     * @psalm-assert-if-true Some<A>&\Fp\Functional\Assertion $this
+     * @psalm-assert-if-false None&\Fp\Functional\Assertion $this
      */
     public function isSome(): bool
     {
@@ -413,7 +409,8 @@ abstract class Option
      * => true
      * ```
      *
-     * @psalm-assert-if-true None&\Fp\Functional\Assertion<"must-be-none"> $this
+     * @psalm-assert-if-true None&\Fp\Functional\Assertion $this
+     * @psalm-assert-if-false Some<A>&\Fp\Functional\Assertion $this
      */
     public function isNone(): bool
     {
@@ -712,7 +709,10 @@ abstract class Option
     public function flatTap(callable $callback): Option
     {
         return $this->flatMap(
-            /** @param A $value */
+            /**
+             * @param A $value
+             * @psalm-suppress InvalidArgument
+             */
             fn(mixed $value) => $callback($value)->fold(
                 fn() => Option::none(),
                 fn() => Option::some($value),

@@ -56,10 +56,10 @@ function filter(iterable $collection, callable $predicate): array
  */
 function filterKV(iterable $collection, callable $predicate): array
 {
+    $isList = is_array($collection) && array_is_list($collection);
     $gen = FilterOperation::of($collection)($predicate);
-    return is_array($collection) && array_is_list($collection)
-        ? asList($gen)
-        : asArray($gen);
+
+    return $isList ? asList($gen) : asArray($gen);
 }
 
 /**
@@ -81,11 +81,10 @@ function filterKV(iterable $collection, callable $predicate): array
  */
 function filterNotNull(iterable $collection): array
 {
+    $isList = is_array($collection) && array_is_list($collection);
     $gen = FilterNotNullOperation::of($collection)();
 
-    return is_array($collection) && array_is_list($collection)
-        ? asList($gen)
-        : asArray($gen);
+    return $isList ? asList($gen) : asArray($gen);
 }
 
 /**
@@ -130,9 +129,8 @@ function filterMap(iterable $collection, callable $predicate): array
  */
 function filterMapKV(iterable $collection, callable $predicate): array
 {
+    $isList = is_array($collection) && array_is_list($collection);
     $gen = FilterMapOperation::of($collection)($predicate);
 
-    return is_array($collection) && array_is_list($collection)
-        ? asList($gen)
-        : asArray($gen);
+    return $isList ? asList($gen) : asArray($gen);
 }
