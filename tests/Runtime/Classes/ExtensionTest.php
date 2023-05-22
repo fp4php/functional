@@ -137,7 +137,7 @@ final class ExtensionTest extends TestCase
 
     public function testAddInstanceMethodTwice(): void
     {
-        $this->expectErrorMessage("Instance extension method '{$this->testMethodName}' is already defined!");
+        $this->expectExceptionMessage("Instance extension method '{$this->testMethodName}' is already defined!");
 
         ArrayListExtensions::addInstanceExtension($this->testMethodName, function(ArrayList $list): int {
             /** @var ArrayList<int> $list */;
@@ -147,7 +147,7 @@ final class ExtensionTest extends TestCase
 
     public function testAddStaticMethodTwice(): void
     {
-        $this->expectErrorMessage("Static extension method '{$this->testStaticMethodName}' is already defined!");
+        $this->expectExceptionMessage("Static extension method '{$this->testStaticMethodName}' is already defined!");
 
         ArrayListExtensions::addStaticExtension($this->testStaticMethodName, function(string $string): ArrayList {
             return ArrayList::collect(str_split($string));
