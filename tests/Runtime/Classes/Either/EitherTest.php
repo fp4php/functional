@@ -45,16 +45,22 @@ final class EitherTest extends TestCase
 
     public function testMap(): void
     {
-        $right = Either::right(1)
+        /** @var Either<int, int> $right */
+        $right = Either::right(1);
+
+        $mappedRight = $right
             ->map(fn(int $s) => $s + 1)
             ->map(fn(int $s) => $s + 1);
 
-        $left = Either::left(1)
+        /** @var Either<int, int> $left */
+        $left = Either::left(1);
+
+        $mappedLeft = $left
             ->map(fn(int $s) => $s + 1)
             ->map(fn(int $s) => $s + 1);
 
-        $this->assertEquals(3, $right->get());
-        $this->assertEquals(1, $left->get());
+        $this->assertEquals(3, $mappedRight->get());
+        $this->assertEquals(1, $mappedLeft->get());
     }
 
     public function testMapN(): void
@@ -280,12 +286,18 @@ final class EitherTest extends TestCase
 
     public function testFold(): void
     {
-        $foldRight = Either::right(1)->fold(
+        /** @var Either<string, int> $right */
+        $right = Either::right(1);
+
+        $foldRight = $right->fold(
             fn() => 0,
             fn(int $some) => $some + 1,
         );
 
-        $foldLeft = Either::left('err')->fold(
+        /** @var Either<string, int> $left */
+        $left = Either::left('err');
+
+        $foldLeft = $left->fold(
             fn() => 0,
             fn(int $some) => $some + 1,
         );

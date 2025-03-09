@@ -122,12 +122,18 @@ final class OptionTest extends TestCase
 
     public function testFold(): void
     {
-        $foldSome = Option::some(1)->fold(
+        /** @var Option<int> $some */
+        $some = Option::some(1);
+
+        $foldSome = $some->fold(
             fn() => 0,
             fn(int $some) => $some + 1,
         );
 
-        $foldNone = Option::none()->fold(
+        /** @var Option<int> $none */
+        $none = Option::none();
+
+        $foldNone = $none->fold(
             fn() => 0,
             fn(int $some) => $some + 1,
         );
