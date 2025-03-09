@@ -575,7 +575,7 @@ interface NonEmptySetTerminalOps
      *
      * @template TVO
      *
-     * @param callable(TV): Option<TVO> $callback
+     * @param callable(mixed...): Option<TVO> $callback
      * @return Set<TVO>
      */
     public function filterMapN(callable $callback): Set;
