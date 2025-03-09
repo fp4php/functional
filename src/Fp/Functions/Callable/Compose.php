@@ -63,14 +63,14 @@ use function Fp\Collection\tail;
 function compose(
     callable $aToB,
     callable $bToC,
-    callable $cToD = null,
-    callable $dToF = null,
-    callable $fToG = null,
-    callable $gToH = null,
-    callable $hToI = null,
-    callable $iToJ = null,
-    callable $jToK = null,
-    callable $kToL = null,
+    ?callable $cToD = null,
+    ?callable $dToF = null,
+    ?callable $fToG = null,
+    ?callable $gToH = null,
+    ?callable $hToI = null,
+    ?callable $iToJ = null,
+    ?callable $jToK = null,
+    ?callable $kToL = null,
 ): callable
 {
     $callableChain = filterNotNull([$aToB, $bToC, $cToD, $dToF, $fToG, $gToH, $hToI, $iToJ, $jToK, $kToL]);
